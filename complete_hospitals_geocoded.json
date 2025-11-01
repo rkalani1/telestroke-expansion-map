@@ -569,8 +569,8 @@
     ],
     "verified": true,
     "strokeCertificationType": "PSC",
-    "certifyingBody": "Primary Stroke Center",
-    "certificationDetails": "Certified Primary Stroke Center - Largest stroke program in WA",
+    "certifyingBody": "Joint Commission",
+    "certificationDetails": "Joint Commission Primary Stroke Center (since 2007)",
     "hasELVO": false
   },
   {
@@ -771,10 +771,10 @@
       "CMS (Nov 2024)"
     ],
     "verified": true,
-    "strokeCertificationType": "PSC",
-    "certifyingBody": "DNV",
-    "certificationDetails": "DNV Primary Stroke Center",
-    "hasELVO": false
+    "strokeCertificationType": "CSC",
+    "certifyingBody": "DNV and Joint Commission",
+    "certificationDetails": "DNV and Joint Commission Comprehensive Stroke Center - Only CSC in Inland Northwest",
+    "hasELVO": true
   },
   {
     "name": "PEACEHEALTH SOUTHWEST MEDICAL CENTER",
@@ -1107,24 +1107,26 @@
     "verified": true
   },
   {
-    "name": "TACOMA GENERAL ALLENMORE HOSPITAL",
-    "address": "315 S MLK JR WAY",
+    "name": "TACOMA GENERAL HOSPITAL",
+    "address": "315 Martin Luther King Jr Way",
     "zip": "98405",
     "state": "WA",
-    "cmsId": "500129",
-    "latitude": 47.2512,
-    "longitude": -122.4452,
+    "cmsId": "500012",
+    "latitude": 47.2452,
+    "longitude": -122.4398,
     "geocoded": true,
-    "geocodeSource": "Manual/Web-verified",
+    "geocodeSource": "Verified coordinates",
     "uwPartner": false,
-    "dataSources": [
-      "CMS (Nov 2024)"
-    ],
-    "verified": true,
     "strokeCertificationType": "CSC",
     "certifyingBody": "DNV",
-    "certificationDetails": "DNV Comprehensive Stroke Center (Re-certified 2024)",
-    "hasELVO": true
+    "certificationDetails": "DNV Comprehensive Stroke Center, Washington State Level 1 Stroke Center",
+    "hasELVO": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "DNV",
+      "MultiCare Health System"
+    ],
+    "verified": true
   },
   {
     "name": "CAPITAL MEDICAL CENTER",
@@ -2122,6 +2124,28 @@
       "CMS (Nov 2024)",
       "Joint Commission",
       "VMFH (2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "MULTICARE ALLENMORE HOSPITAL",
+    "address": "1901 South Union Avenue",
+    "zip": "98405",
+    "state": "WA",
+    "cmsId": "500007",
+    "latitude": 47.2356,
+    "longitude": -122.4754,
+    "geocoded": true,
+    "geocodeSource": "Verified coordinates",
+    "uwPartner": false,
+    "strokeCertificationType": "PSC",
+    "certifyingBody": "DNV",
+    "certificationDetails": "DNV Primary Stroke Center (certified January 2025), Washington State Level 3 Stroke Center",
+    "hasELVO": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "DNV",
+      "MultiCare Health System (January 2025)"
     ],
     "verified": true
   }
