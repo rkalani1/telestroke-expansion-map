@@ -831,30 +831,82 @@
 
         // Quick action buttons
         function showUWPartnersOnly() {
+            // Partnership filters
             document.getElementById('filter-uw-partners').checked = true;
             document.getElementById('filter-non-partners').checked = false;
+
+            // Enable ALL hospital types (so all UW partners show regardless of type)
+            document.getElementById('filter-cah').checked = true;
+            document.getElementById('filter-acute').checked = true;
+            document.getElementById('filter-psc').checked = true;
+            document.getElementById('filter-csc').checked = true;
+
+            // Enable ALL distances (so all UW partners show regardless of distance)
+            document.getElementById('filter-0-50').checked = true;
+            document.getElementById('filter-50-100').checked = true;
+            document.getElementById('filter-100-150').checked = true;
+            document.getElementById('filter-150-plus').checked = true;
+
             applyFilters();
         }
 
         function showNonPartnersOnly() {
+            // Partnership filters
             document.getElementById('filter-uw-partners').checked = false;
             document.getElementById('filter-non-partners').checked = true;
+
+            // Enable ALL hospital types (so all non-partners show regardless of type)
+            document.getElementById('filter-cah').checked = true;
+            document.getElementById('filter-acute').checked = true;
+            document.getElementById('filter-psc').checked = true;
+            document.getElementById('filter-csc').checked = true;
+
+            // Enable ALL distances (so all non-partners show regardless of distance)
+            document.getElementById('filter-0-50').checked = true;
+            document.getElementById('filter-50-100').checked = true;
+            document.getElementById('filter-100-150').checked = true;
+            document.getElementById('filter-150-plus').checked = true;
+
             applyFilters();
         }
 
         function showCSCPSCOnly() {
+            // Enable both UW partners and non-partners
+            document.getElementById('filter-uw-partners').checked = true;
+            document.getElementById('filter-non-partners').checked = true;
+
+            // Only stroke centers
             document.getElementById('filter-cah').checked = false;
             document.getElementById('filter-acute').checked = false;
             document.getElementById('filter-psc').checked = true;
             document.getElementById('filter-csc').checked = true;
+
+            // Enable ALL distances
+            document.getElementById('filter-0-50').checked = true;
+            document.getElementById('filter-50-100').checked = true;
+            document.getElementById('filter-100-150').checked = true;
+            document.getElementById('filter-150-plus').checked = true;
+
             applyFilters();
         }
 
         function showCAHOnly() {
+            // Enable both UW partners and non-partners
+            document.getElementById('filter-uw-partners').checked = true;
+            document.getElementById('filter-non-partners').checked = true;
+
+            // Only CAH
             document.getElementById('filter-cah').checked = true;
             document.getElementById('filter-acute').checked = false;
             document.getElementById('filter-psc').checked = false;
             document.getElementById('filter-csc').checked = false;
+
+            // Enable ALL distances
+            document.getElementById('filter-0-50').checked = true;
+            document.getElementById('filter-50-100').checked = true;
+            document.getElementById('filter-100-150').checked = true;
+            document.getElementById('filter-150-plus').checked = true;
+
             applyFilters();
         }
 
