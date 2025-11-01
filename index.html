@@ -127,10 +127,79 @@
             z-index: 1000;
         }
 
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .stats-panel {
+                top: 10px;
+                left: 10px;
+                right: auto;
+                max-width: calc(100vw - 20px);
+                font-size: 12px;
+            }
+
+            .control-panel {
+                top: auto;
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-height: 50vh;
+                max-width: none;
+            }
+
+            .legend {
+                bottom: auto;
+                top: 120px;
+                right: 10px;
+                font-size: 11px;
+            }
+
+            /* Larger touch targets for mobile */
+            .checkbox-label {
+                min-height: 44px;
+                align-items: center;
+            }
+
+            button {
+                min-height: 44px;
+            }
+
+            /* Hide legend on very small screens */
+            @media (max-height: 600px) {
+                .legend {
+                    display: none;
+                }
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .control-panel {
+                max-width: 300px;
+            }
+
+            .stats-panel {
+                min-width: 220px;
+            }
+        }
+
         /* Print styles */
         @media print {
             .control-panel, .no-print { display: none; }
             #map { height: 100vh; }
+            .stats-panel {
+                position: relative !important;
+                max-width: 100% !important;
+            }
+        }
+
+        /* Better touch targets */
+        button, .checkbox-label, select {
+            min-height: 36px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
         }
 
         .stat-value {
