@@ -734,26 +734,6 @@
     "hasELVO": false
   },
   {
-    "name": "HARRISON MEDICAL CENTER",
-    "address": "2520 CHERRY AVENUE",
-    "zip": "98310",
-    "state": "WA",
-    "cmsId": "500039",
-    "latitude": 47.582312,
-    "longitude": -122.625846,
-    "geocoded": true,
-    "geocodeSource": "Nominatim/OpenStreetMap",
-    "uwPartner": false,
-    "dataSources": [
-      "CMS (Nov 2024)"
-    ],
-    "verified": true,
-    "strokeCertificationType": "PSC",
-    "certifyingBody": "Joint Commission",
-    "certificationDetails": "Joint Commission Primary Stroke Center",
-    "hasELVO": false
-  },
-  {
     "name": "PEACEHEALTH ST JOHN MEDICAL CENTER",
     "address": "1615 DELAWARE STREET",
     "zip": "98632",
@@ -2115,6 +2095,28 @@
       "CMS (Nov 2024)",
       "Joint Commission (2024)",
       "WA DOH (2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "ST MICHAEL MEDICAL CENTER",
+    "address": "1800 NW MYHRE ROAD",
+    "zip": "98383",
+    "state": "WA",
+    "cmsId": "500115",
+    "latitude": 47.6744,
+    "longitude": -122.6925,
+    "geocoded": true,
+    "geocodeSource": "Manual (web-verified)",
+    "uwPartner": false,
+    "strokeCertificationType": "PSC",
+    "certifyingBody": "Joint Commission",
+    "certificationDetails": "Joint Commission Primary Stroke Center",
+    "hasELVO": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "Joint Commission",
+      "VMFH (2024)"
     ],
     "verified": true
   }
