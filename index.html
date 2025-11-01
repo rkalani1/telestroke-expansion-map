@@ -612,7 +612,7 @@
             maxZoom: 19
         }).addTo(map);
 
-        // Add Harborview marker (special gold star)
+        // Add Harborview marker (special gold star) - REFERENCE POINT, always visible
         const harborviewIcon = L.divIcon({
             html: '<div style="background-color: gold; width: 20px; height: 20px; border-radius: 50%; border: 3px solid #333; display: flex; align-items: center; justify-content: center;"><span style="color: #333; font-weight: bold; font-size: 16px;">★</span></div>',
             className: 'custom-div-icon',
@@ -620,8 +620,8 @@
             iconAnchor: [10, 10]
         });
 
-        L.marker([HARBORVIEW.lat, HARBORVIEW.lng], { icon: harborviewIcon })
-            .bindPopup(`<strong>${HARBORVIEW.name}</strong><br>Reference Point for Distance Calculations<br>Level I Trauma Center<br>Comprehensive Stroke Center`)
+        const harborviewMarker = L.marker([HARBORVIEW.lat, HARBORVIEW.lng], { icon: harborviewIcon })
+            .bindPopup(`<strong>${HARBORVIEW.name}</strong><br><span style="color: #999; font-style: italic;">Reference Point (Always Visible)</span><br>Distance rings are centered here<br>Level I Trauma & Comprehensive Stroke Center`)
             .addTo(map);
 
         // Add distance rings from Harborview
@@ -1079,9 +1079,15 @@
                 '150+': document.getElementById('filter-150-plus').checked
             };
 
+            let filteredCount = 0;
+            let visibleCount = 0;
+
             hospitals.forEach(hospital => {
                 const layer = markerLayers[hospital.name];
-                if (!layer) return;
+                if (!layer) {
+                    console.warn(`Hospital not found in markerLayers: ${hospital.name}`);
+                    return;
+                }
 
                 let show = true;
 
@@ -1115,12 +1121,20 @@
                     if (!map.hasLayer(layer.marker)) {
                         layer.marker.addTo(map);
                     }
+                    visibleCount++;
                 } else {
                     if (map.hasLayer(layer.marker)) {
                         map.removeLayer(layer.marker);
                     }
+                    filteredCount++;
                 }
             });
+
+            // Debug logging to help identify filter issues
+            console.log(`Filters applied: ${visibleCount} visible, ${filteredCount} hidden`);
+            if (visibleCount === 0 && filteredCount === 0) {
+                console.error('WARNING: No hospitals processed by filters! Check markerLayers.');
+            }
 
             updateStatistics();
             updateLabelDisplay(); // Update labels after filtering
@@ -1177,6 +1191,7 @@
         });
 
         // Initial setup
+        applyFilters(); // CRITICAL: Apply filters on page load to ensure consistent state
         updateStatistics();
         updateLabelDisplay();
         setupSearch();
