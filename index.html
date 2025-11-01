@@ -41,7 +41,7 @@
         .legend {
             position: absolute;
             bottom: 30px;
-            right: 10px;
+            left: 10px;
             background: white;
             padding: 15px;
             border-radius: 8px;
@@ -147,9 +147,8 @@
             }
 
             .legend {
-                bottom: auto;
-                top: 120px;
-                right: 10px;
+                bottom: 70px;
+                left: 10px;
                 font-size: 11px;
             }
 
@@ -253,11 +252,11 @@
                     <div class="text-xs text-gray-600">Acute Care</div>
                 </div>
                 <div>
-                    <div class="font-bold text-red-600" id="psc-count">8</div>
+                    <div class="font-bold text-red-600" id="psc-count">9</div>
                     <div class="text-xs text-gray-600">Primary Stroke</div>
                 </div>
                 <div>
-                    <div class="font-bold text-purple-600" id="csc-count">16</div>
+                    <div class="font-bold text-purple-600" id="csc-count">15</div>
                     <div class="text-xs text-gray-600">Comprehensive</div>
                 </div>
             </div>
@@ -344,11 +343,11 @@
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" id="filter-psc" checked>
-                <span>Primary Stroke Centers (8)</span>
+                <span>Primary Stroke Centers (9)</span>
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" id="filter-csc" checked>
-                <span>Comprehensive Stroke Centers (16)</span>
+                <span>Comprehensive Stroke Centers (15)</span>
             </label>
         </div>
 
@@ -568,7 +567,7 @@
             { name: 'Yakima Valley Memorial Hospital', type: 'Acute', lat: 46.6021, lng: -120.5059, city: 'Yakima', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'PeaceHealth United General Medical Center', type: 'Acute', lat: 48.5032, lng: -122.2362, city: 'Sedro Woolley', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 15000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
 
-            // === PRIMARY STROKE CENTERS (8) ===
+            // === PRIMARY STROKE CENTERS (9) ===
             { name: 'MultiCare Good Samaritan Hospital', type: 'PSC', lat: 47.6732, lng: -122.2060, city: 'Puyallup', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 46000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'MultiCare Tacoma General Hospital', type: 'PSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 54000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'PeaceHealth St. Joseph Medical Center', type: 'PSC', lat: 48.7519, lng: -122.4787, city: 'Bellingham', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
@@ -577,11 +576,11 @@
             { name: 'Swedish Medical Center - Issaquah', type: 'PSC', lat: 47.5301, lng: -122.0326, city: 'Issaquah', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 26000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'Virginia Mason Medical Center', type: 'PSC', lat: 47.6101, lng: -122.3321, city: 'Seattle', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'UW Medical Center - Northwest', type: 'PSC', lat: 47.7231, lng: -122.3654, city: 'Seattle', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'PSC', edVolume: 45000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'EvergreenHealth Medical Center', type: 'PSC', lat: 47.6534, lng: -122.2009, city: 'Kirkland', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'PSC+', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
 
-            // === COMPREHENSIVE STROKE CENTERS (16) ===
+            // === COMPREHENSIVE STROKE CENTERS (15) ===
             { name: 'Harborview Medical Center', type: 'CSC', lat: 47.6052, lng: -122.3204, city: 'Seattle', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 95000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'UW Medical Center - Montlake', type: 'CSC', lat: 47.6505, lng: -122.3050, city: 'Seattle', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
-            { name: 'EvergreenHealth Medical Center', type: 'CSC', lat: 47.6534, lng: -122.2009, city: 'Kirkland', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'Providence Sacred Heart Medical Center', type: 'CSC', lat: 47.6587, lng: -117.4260, city: 'Spokane', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 70000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'MultiCare Tacoma General Hospital', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 56000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
             { name: 'Providence Regional Medical Center Everett', type: 'CSC', lat: 47.9790, lng: -122.2021, city: 'Everett', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 76000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
