@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Label Test - MUST WORK</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
+
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { height: 100vh; width: 100vw; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div style="position: absolute; top: 10px; left: 10px; z-index: 9999; background: yellow; padding: 10px; border: 2px solid red;">
+        <h2>DO YOU SEE "Harborview Medical Center" LABEL ON THE MAP?</h2>
+        <p>If YES, the tooltip code works!</p>
+        <p>If NO, there's still a problem.</p>
+    </div>
+    <script>
+        // Exact same pattern as main index.html
+        const map = L.map('map').setView([47.604, -122.325], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // Create layer and add to map FIRST
+        const testLayer = L.layerGroup().addTo(map);
+
+        // Create icon
+        const icon = L.AwesomeMarkers.icon({
+            icon: 'fa-circle',
+            markerColor: 'blue',
+            prefix: 'fa',
+            iconSize: [20, 30]
+        });
+
+        // Create marker
+        const marker = L.marker([47.604, -122.325], { icon: icon });
+
+        // Add marker to layer
+        testLayer.addLayer(marker);
+
+        // Bind tooltip
+        marker.bindTooltip("Harborview Medical Center", {
+            permanent: true,
+            direction: 'right',
+            offset: [10, 0]
+        });
+
+        console.log('Tooltip should be visible now');
+    </script>
+</body>
+</html>
