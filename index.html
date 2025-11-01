@@ -148,16 +148,16 @@
         <h3 class="text-lg font-bold mb-4">Network Statistics</h3>
         <div class="space-y-3">
             <div>
-                <div class="stat-value" id="total-count">118</div>
+                <div class="stat-value" id="total-count">124</div>
                 <div class="stat-label">Total Hospitals</div>
             </div>
             <div class="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                    <div class="font-bold text-blue-600" id="cah-count">51</div>
+                    <div class="font-bold text-blue-600" id="cah-count">56</div>
                     <div class="text-xs text-gray-600">Critical Access</div>
                 </div>
                 <div>
-                    <div class="font-bold text-gray-600" id="acute-count">43</div>
+                    <div class="font-bold text-gray-600" id="acute-count">44</div>
                     <div class="text-xs text-gray-600">Acute Care</div>
                 </div>
                 <div>
@@ -169,21 +169,9 @@
                     <div class="text-xs text-gray-600">Comprehensive</div>
                 </div>
             </div>
-            <div class="pt-3 border-t border-gray-200">
-                <div class="text-sm">
-                    <div class="flex justify-between mb-1">
-                        <span class="text-gray-600">UW Medicine:</span>
-                        <span class="font-bold" id="uw-count">0</span>
-                    </div>
-                    <div class="flex justify-between mb-1">
-                        <span class="text-gray-600">Unaffiliated (TBD):</span>
-                        <span class="font-bold" id="tbd-count">0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Competitor:</span>
-                        <span class="font-bold" id="competitor-count">0</span>
-                    </div>
-                </div>
+            <div class="mt-3 pt-3 border-t border-gray-300">
+                <div class="font-bold text-amber-600 text-xl" id="uw-partner-count">16</div>
+                <div class="text-xs text-gray-600">UW Medicine Telestroke Partners</div>
             </div>
         </div>
     </div>
@@ -192,16 +180,29 @@
     <div class="control-panel">
         <h3 class="text-lg font-bold mb-4">Map Controls</h3>
 
+        <!-- UW Medicine Partner Filter -->
+        <div class="filter-section">
+            <h4 class="font-semibold mb-2 text-sm">UW Medicine Network</h4>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-uw-partners" checked>
+                <span class="text-amber-600 font-semibold">Show UW Telestroke Partners (16)</span>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-non-partners" checked>
+                <span>Show Non-Partner Hospitals</span>
+            </label>
+        </div>
+
         <!-- Hospital Type Filters -->
         <div class="filter-section">
             <h4 class="font-semibold mb-2 text-sm">Hospital Types</h4>
             <label class="checkbox-label">
                 <input type="checkbox" id="filter-cah" checked>
-                <span>Critical Access Hospitals (51)</span>
+                <span>Critical Access Hospitals (56)</span>
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" id="filter-acute" checked>
-                <span>Acute Care Hospitals (43)</span>
+                <span>Acute Care Hospitals (44)</span>
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" id="filter-psc" checked>
@@ -213,22 +214,6 @@
             </label>
         </div>
 
-        <!-- Affiliation Filters -->
-        <div class="filter-section">
-            <h4 class="font-semibold mb-2 text-sm">Telestroke Affiliation</h4>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-uw" checked>
-                <span>UW Medicine Partners</span>
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-tbd" checked>
-                <span>Unaffiliated (TBD)</span>
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-competitor" checked>
-                <span>Competitor Affiliated</span>
-            </label>
-        </div>
 
         <!-- Distance Filters -->
         <div class="filter-section">
@@ -295,6 +280,12 @@
             <span class="text-sm">Comprehensive Stroke Center</span>
         </div>
         <div class="mt-3 pt-3 border-t border-gray-300">
+            <div class="legend-item">
+                <div style="width: 20px; height: 20px; border-radius: 50%; border: 3px solid #f59e0b; background: white; margin-right: 10px;"></div>
+                <span class="text-sm font-semibold text-amber-600">UW Medicine Partner</span>
+            </div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-gray-300">
             <div class="text-xs text-gray-600">
                 <strong>Harborview Medical Center</strong><br>
                 Base location for distance rings
@@ -313,137 +304,143 @@
             name: 'Harborview Medical Center'
         };
 
-        // Complete hospital data - ALL 118 hospitals
+        // Complete hospital data - ALL hospitals including UW Medicine Telestroke Partners
         const hospitals = [
-            // === WASHINGTON CRITICAL ACCESS HOSPITALS (39) ===
-            { name: 'Columbia County Health System', type: 'CAH', lat: 46.2982, lng: -118.1583, city: 'Dayton', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1800, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Coulee Medical Center', type: 'CAH', lat: 47.2757, lng: -119.2894, city: 'Grand Coulee', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3200, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Dayton General Hospital', type: 'CAH', lat: 46.3238, lng: -117.9722, city: 'Dayton', state: 'WA', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'None', edVolume: 1500, helipad: 'No', ct24: 'Yes' },
-            { name: 'East Adams Rural Hospital', type: 'CAH', lat: 47.1365, lng: -118.1947, city: 'Ritzville', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2100, helipad: 'No', ct24: 'Yes' },
-            { name: 'Forks Community Hospital', type: 'CAH', lat: 47.9501, lng: -124.3856, city: 'Forks', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2800, helipad: 'No', ct24: 'Yes' },
-            { name: 'Garfield County Public Hospital', type: 'CAH', lat: 46.4207, lng: -117.6272, city: 'Pomeroy', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1200, helipad: 'No', ct24: 'Yes' },
-            { name: 'Jefferson Healthcare', type: 'CAH', lat: 48.1121, lng: -122.7601, city: 'Port Townsend', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 8500, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Klickitat Valley Health', type: 'CAH', lat: 45.8151, lng: -121.5211, city: 'Goldendale', state: 'WA', partner: 'OHSU', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 3400, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Lincoln Hospital', type: 'CAH', lat: 47.6579, lng: -118.3836, city: 'Davenport', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1800, helipad: 'No', ct24: 'Yes' },
-            { name: 'Mid-Valley Hospital', type: 'CAH', lat: 46.4101, lng: -120.5059, city: 'Omak', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 5200, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Mt. Carmel Hospital', type: 'CAH', lat: 46.0907, lng: -118.3430, city: 'Colville', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 2400, helipad: 'No', ct24: 'Yes' },
-            { name: 'Newport Hospital & Health Services', type: 'CAH', lat: 48.1785, lng: -117.0442, city: 'Newport', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 4100, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'North Valley Hospital', type: 'CAH', lat: 48.9217, lng: -119.5103, city: 'Tonasket', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3600, helipad: 'No', ct24: 'Yes' },
-            { name: 'Odessa Memorial Healthcare Center', type: 'CAH', lat: 47.3326, lng: -118.6947, city: 'Odessa', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1100, helipad: 'No', ct24: 'Yes' },
-            { name: 'Pullman Regional Hospital', type: 'CAH', lat: 46.7312, lng: -117.1796, city: 'Pullman', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 12000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Quincy Valley Medical Center', type: 'CAH', lat: 47.2338, lng: -119.8528, city: 'Quincy', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 6800, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Samaritan Healthcare', type: 'CAH', lat: 47.9562, lng: -119.4211, city: 'Moses Lake', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 18000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Sunnyside Community Hospital', type: 'CAH', lat: 46.3237, lng: -120.0087, city: 'Sunnyside', state: 'WA', partner: 'Astria', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 9200, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Three Rivers Hospital', type: 'CAH', lat: 48.3640, lng: -119.6550, city: 'Brewster', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3900, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Summit Pacific Medical Center', type: 'CAH', lat: 46.9540, lng: -123.8356, city: 'Elma', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 7500, helipad: 'No', ct24: 'Yes' },
-            { name: 'Toppenish Community Hospital', type: 'CAH', lat: 46.3779, lng: -120.3081, city: 'Toppenish', state: 'WA', partner: 'Virginia Mason', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 8900, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Willapa Harbor Hospital', type: 'CAH', lat: 46.6751, lng: -123.9351, city: 'South Bend', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2200, helipad: 'No', ct24: 'Yes' },
-            { name: 'Othello Community Hospital', type: 'CAH', lat: 46.8260, lng: -119.1753, city: 'Othello', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 5100, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Ocean Beach Hospital', type: 'CAH', lat: 46.9537, lng: -124.1054, city: 'Ilwaco', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 4200, helipad: 'No', ct24: 'Yes' },
-            { name: 'Cascade Valley Hospital', type: 'CAH', lat: 48.4474, lng: -121.8858, city: 'Arlington', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 11000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Ferry County Memorial Hospital', type: 'CAH', lat: 48.6093, lng: -118.5514, city: 'Republic', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1600, helipad: 'No', ct24: 'Yes' },
-            { name: 'Grays Harbor Community Hospital', type: 'CAH', lat: 46.9854, lng: -123.8321, city: 'Aberdeen', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 22000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Island Hospital', type: 'CAH', lat: 48.4625, lng: -122.6092, city: 'Anacortes', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 14000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Lake Chelan Community Hospital', type: 'CAH', lat: 47.8411, lng: -120.0211, city: 'Chelan', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 6500, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Cascade Medical Center', type: 'CAH', lat: 47.2032, lng: -120.8831, city: 'Leavenworth', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 7200, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Morton General Hospital', type: 'CAH', lat: 46.5581, lng: -122.2897, city: 'Morton', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2800, helipad: 'No', ct24: 'Yes' },
-            { name: 'Packwood Medical Clinic', type: 'CAH', lat: 46.6069, lng: -121.6731, city: 'Packwood', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 900, helipad: 'No', ct24: 'No' },
-            { name: 'Prosser Memorial Hospital', type: 'CAH', lat: 46.2068, lng: -119.7689, city: 'Prosser', state: 'WA', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'None', edVolume: 5600, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Skamania County Health Center', type: 'CAH', lat: 45.7190, lng: -121.9517, city: 'Stevenson', state: 'WA', partner: 'OHSU', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 1800, helipad: 'No', ct24: 'Yes' },
-            { name: 'Whidbey Health Medical Center', type: 'CAH', lat: 48.2187, lng: -122.6869, city: 'Coupeville', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 16000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Whitman Hospital', type: 'CAH', lat: 46.9590, lng: -117.3950, city: 'Colfax', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3200, helipad: 'No', ct24: 'Yes' },
-            { name: 'Yakima Valley Farm Workers Clinic - Toppenish', type: 'CAH', lat: 46.3820, lng: -120.3150, city: 'Toppenish', state: 'WA', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'None', edVolume: 4500, helipad: 'No', ct24: 'Yes' },
-            { name: 'Columbia County Public Hospital District', type: 'CAH', lat: 46.2340, lng: -118.1640, city: 'Dayton', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1950, helipad: 'No', ct24: 'Yes' },
-            { name: 'Trios Health - Prosser', type: 'CAH', lat: 46.2118, lng: -119.7720, city: 'Prosser', state: 'WA', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'None', edVolume: 5800, helipad: 'Yes', ct24: 'Yes' },
+            // === WASHINGTON CRITICAL ACCESS HOSPITALS (43) ===
+            { name: 'Columbia County Health System', type: 'CAH', lat: 46.2982, lng: -118.1583, city: 'Dayton', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1800, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Coulee Medical Center', type: 'CAH', lat: 47.2757, lng: -119.2894, city: 'Grand Coulee', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3200, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Dayton General Hospital', type: 'CAH', lat: 46.3238, lng: -117.9722, city: 'Dayton', state: 'WA', affiliation: 'TBD', strokeLevel: 'None', edVolume: 1500, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'East Adams Rural Hospital', type: 'CAH', lat: 47.1365, lng: -118.1947, city: 'Ritzville', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2100, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Forks Community Hospital', type: 'CAH', lat: 47.9501, lng: -124.3856, city: 'Forks', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2800, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Garfield County Public Hospital', type: 'CAH', lat: 46.4207, lng: -117.6272, city: 'Pomeroy', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1200, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Jefferson Healthcare', type: 'CAH', lat: 48.1121, lng: -122.7601, city: 'Port Townsend', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 8500, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Klickitat Valley Health', type: 'CAH', lat: 45.8151, lng: -121.5211, city: 'Goldendale', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 3400, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Lincoln Hospital', type: 'CAH', lat: 47.6579, lng: -118.3836, city: 'Davenport', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1800, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Mid-Valley Hospital', type: 'CAH', lat: 46.4101, lng: -120.5059, city: 'Omak', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 5200, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Mt. Carmel Hospital', type: 'CAH', lat: 46.0907, lng: -118.3430, city: 'Colville', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 2400, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Newport Hospital & Health Services', type: 'CAH', lat: 48.1785, lng: -117.0442, city: 'Newport', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 4100, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'North Valley Hospital', type: 'CAH', lat: 48.9217, lng: -119.5103, city: 'Tonasket', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3600, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Odessa Memorial Healthcare Center', type: 'CAH', lat: 47.3326, lng: -118.6947, city: 'Odessa', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1100, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Pullman Regional Hospital', type: 'CAH', lat: 46.7312, lng: -117.1796, city: 'Pullman', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 12000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Quincy Valley Medical Center', type: 'CAH', lat: 47.2338, lng: -119.8528, city: 'Quincy', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 6800, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Samaritan Healthcare', type: 'CAH', lat: 47.9562, lng: -119.4211, city: 'Moses Lake', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 18000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Sunnyside Community Hospital', type: 'CAH', lat: 46.3237, lng: -120.0087, city: 'Sunnyside', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 9200, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Three Rivers Hospital', type: 'CAH', lat: 48.3640, lng: -119.6550, city: 'Brewster', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3900, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Summit Pacific Medical Center', type: 'CAH', lat: 46.9540, lng: -123.8356, city: 'Elma', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 7500, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Toppenish Community Hospital', type: 'CAH', lat: 46.3779, lng: -120.3081, city: 'Toppenish', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 8900, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Willapa Harbor Hospital', type: 'CAH', lat: 46.6751, lng: -123.9351, city: 'South Bend', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2200, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Othello Community Hospital', type: 'CAH', lat: 46.8260, lng: -119.1753, city: 'Othello', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 5100, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Ocean Beach Hospital', type: 'CAH', lat: 46.9537, lng: -124.1054, city: 'Ilwaco', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 4200, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Cascade Valley Hospital', type: 'CAH', lat: 48.4474, lng: -121.8858, city: 'Arlington', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 11000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Ferry County Memorial Hospital', type: 'CAH', lat: 48.6093, lng: -118.5514, city: 'Republic', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1600, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Grays Harbor Community Hospital', type: 'CAH', lat: 46.9854, lng: -123.8321, city: 'Aberdeen', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 22000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Island Hospital', type: 'CAH', lat: 48.4625, lng: -122.6092, city: 'Anacortes', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 14000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Lake Chelan Community Hospital', type: 'CAH', lat: 47.8411, lng: -120.0211, city: 'Chelan', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 6500, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Cascade Medical Center', type: 'CAH', lat: 47.2032, lng: -120.8831, city: 'Leavenworth', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 7200, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Morton General Hospital', type: 'CAH', lat: 46.5581, lng: -122.2897, city: 'Morton', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2800, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Packwood Medical Clinic', type: 'CAH', lat: 46.6069, lng: -121.6731, city: 'Packwood', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 900, helipad: 'No', ct24: 'No', uwPartner: false },
+            { name: 'Prosser Memorial Hospital', type: 'CAH', lat: 46.2068, lng: -119.7689, city: 'Prosser', state: 'WA', affiliation: 'TBD', strokeLevel: 'None', edVolume: 5600, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Skamania County Health Center', type: 'CAH', lat: 45.7190, lng: -121.9517, city: 'Stevenson', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 1800, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Whidbey Health Medical Center', type: 'CAH', lat: 48.2187, lng: -122.6869, city: 'Coupeville', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 16000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Whitman Hospital', type: 'CAH', lat: 46.9590, lng: -117.3950, city: 'Colfax', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3200, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Yakima Valley Farm Workers Clinic - Toppenish', type: 'CAH', lat: 46.3820, lng: -120.3150, city: 'Toppenish', state: 'WA', affiliation: 'TBD', strokeLevel: 'None', edVolume: 4500, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Columbia County Public Hospital District', type: 'CAH', lat: 46.2340, lng: -118.1640, city: 'Dayton', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1950, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Trios Health - Prosser', type: 'CAH', lat: 46.2118, lng: -119.7720, city: 'Prosser', state: 'WA', affiliation: 'TBD', strokeLevel: 'None', edVolume: 5800, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Columbia Basin Hospital', type: 'CAH', lat: 47.3183, lng: -119.5547, city: 'Ephrata', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 5000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Mason General Hospital', type: 'CAH', lat: 47.2151, lng: -123.0987, city: 'Shelton', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 8000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Snoqualmie Valley Hospital', type: 'CAH', lat: 47.5287, lng: -121.8254, city: 'Snoqualmie', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 6000, helipad: 'No', ct24: 'Yes', uwPartner: true },
+            { name: 'PeaceHealth Island Hospital', type: 'CAH', lat: 48.5343, lng: -123.0174, city: 'Friday Harbor', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 4500, helipad: 'No', ct24: 'Yes', uwPartner: true },
 
             // === NORTHERN IDAHO CRITICAL ACCESS HOSPITALS (8) ===
-            { name: 'Benewah Community Hospital', type: 'CAH', lat: 47.2738, lng: -116.4974, city: 'St. Maries', state: 'ID', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2400, helipad: 'No', ct24: 'Yes' },
-            { name: 'Boundary Community Hospital', type: 'CAH', lat: 48.7569, lng: -116.3386, city: 'Bonners Ferry', state: 'ID', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3100, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Clearwater Valley Hospital', type: 'CAH', lat: 46.4026, lng: -115.9325, city: 'Orofino', state: 'ID', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2800, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Gritman Medical Center', type: 'CAH', lat: 46.7298, lng: -117.0014, city: 'Moscow', state: 'ID', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 11500, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Shoshone Medical Center', type: 'CAH', lat: 47.7465, lng: -116.1481, city: 'Kellogg', state: 'ID', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 4200, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'St. Joseph Regional Medical Center', type: 'CAH', lat: 46.4071, lng: -116.9627, city: 'Lewiston', state: 'ID', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 18500, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Steele Memorial Medical Center', type: 'CAH', lat: 43.6150, lng: -114.3628, city: 'Salmon', state: 'ID', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'None', edVolume: 2900, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Valley Vista Care', type: 'CAH', lat: 46.4817, lng: -116.8233, city: 'Cottonwood', state: 'ID', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1500, helipad: 'No', ct24: 'Yes' },
+            { name: 'Benewah Community Hospital', type: 'CAH', lat: 47.2738, lng: -116.4974, city: 'St. Maries', state: 'ID', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2400, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Boundary Community Hospital', type: 'CAH', lat: 48.7569, lng: -116.3386, city: 'Bonners Ferry', state: 'ID', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3100, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Clearwater Valley Hospital', type: 'CAH', lat: 46.4026, lng: -115.9325, city: 'Orofino', state: 'ID', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2800, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Gritman Medical Center', type: 'CAH', lat: 46.7298, lng: -117.0014, city: 'Moscow', state: 'ID', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 11500, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Shoshone Medical Center', type: 'CAH', lat: 47.7465, lng: -116.1481, city: 'Kellogg', state: 'ID', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 4200, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'St. Joseph Regional Medical Center', type: 'CAH', lat: 46.4071, lng: -116.9627, city: 'Lewiston', state: 'ID', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 18500, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Steele Memorial Medical Center', type: 'CAH', lat: 43.6150, lng: -114.3628, city: 'Salmon', state: 'ID', affiliation: 'TBD', strokeLevel: 'None', edVolume: 2900, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Valley Vista Care', type: 'CAH', lat: 46.4817, lng: -116.8233, city: 'Cottonwood', state: 'ID', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 1500, helipad: 'No', ct24: 'Yes', uwPartner: false },
 
-            // === SOUTHEAST ALASKA CRITICAL ACCESS HOSPITALS (4) ===
-            { name: 'Bartlett Regional Hospital', type: 'CAH', lat: 58.3522, lng: -134.5258, city: 'Juneau', state: 'AK', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 24000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Mt. Edgecumbe Hospital', type: 'CAH', lat: 57.0528, lng: -135.3308, city: 'Sitka', state: 'AK', partner: 'Indian Health Service', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 8500, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'PeaceHealth Ketchikan Medical Center', type: 'CAH', lat: 55.3422, lng: -131.6461, city: 'Ketchikan', state: 'AK', partner: 'PeaceHealth', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 12000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'SEARHC Mt. Edgecumbe Hospital', type: 'CAH', lat: 57.0550, lng: -135.3350, city: 'Sitka', state: 'AK', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'None', edVolume: 6200, helipad: 'Yes', ct24: 'Yes' },
+            // === SOUTHEAST ALASKA CRITICAL ACCESS HOSPITALS (5) ===
+            { name: 'Bartlett Regional Hospital', type: 'CAH', lat: 58.3522, lng: -134.5258, city: 'Juneau', state: 'AK', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 24000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Mt. Edgecumbe Hospital', type: 'CAH', lat: 57.0528, lng: -135.3308, city: 'Sitka', state: 'AK', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 8500, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'PeaceHealth Ketchikan Medical Center', type: 'CAH', lat: 55.3422, lng: -131.6461, city: 'Ketchikan', state: 'AK', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 12000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'SEARHC Mt. Edgecumbe Hospital', type: 'CAH', lat: 57.0550, lng: -135.3350, city: 'Sitka', state: 'AK', affiliation: 'TBD', strokeLevel: 'None', edVolume: 6200, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Petersburg Medical Center', type: 'CAH', lat: 56.8125, lng: -132.9561, city: 'Petersburg', state: 'AK', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3500, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
 
-            // === ACUTE CARE HOSPITALS (43) ===
-            { name: 'Auburn Regional Medical Center', type: 'Acute', lat: 47.3073, lng: -122.2285, city: 'Auburn', state: 'WA', partner: 'MultiCare', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 42000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Capital Medical Center', type: 'Acute', lat: 47.0379, lng: -122.9007, city: 'Olympia', state: 'WA', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'None', edVolume: 28000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Cascade Behavioral Health', type: 'Acute', lat: 47.5231, lng: -122.2009, city: 'Tukwila', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 5200, helipad: 'No', ct24: 'Yes' },
-            { name: 'Central Washington Hospital', type: 'Acute', lat: 47.4232, lng: -120.3103, city: 'Wenatchee', state: 'WA', partner: 'Confluence Health', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 38000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Confluence Health - Wenatchee Valley Hospital', type: 'Acute', lat: 47.4298, lng: -120.3156, city: 'Wenatchee', state: 'WA', partner: 'Confluence Health', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 35000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'EvergreenHealth Monroe', type: 'Acute', lat: 47.8556, lng: -121.9708, city: 'Monroe', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 26000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Fairfax Behavioral Health', type: 'Acute', lat: 47.6534, lng: -122.3210, city: 'Kirkland', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3800, helipad: 'No', ct24: 'No' },
-            { name: 'Good Samaritan Hospital', type: 'Acute', lat: 47.6732, lng: -122.2060, city: 'Puyallup', state: 'WA', partner: 'MultiCare', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 45000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Highline Medical Center', type: 'Acute', lat: 47.4620, lng: -122.3321, city: 'Burien', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 32000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Kadlec Regional Medical Center', type: 'Acute', lat: 46.2396, lng: -119.1372, city: 'Richland', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Kennewick General Hospital', type: 'Acute', lat: 46.2112, lng: -119.1372, city: 'Kennewick', state: 'WA', partner: 'Trios Health', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 31000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Lourdes Medical Center', type: 'Acute', lat: 46.2596, lng: -119.2752, city: 'Pasco', state: 'WA', partner: 'Trios Health', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 29000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'MultiCare Auburn Medical Center', type: 'Acute', lat: 47.3095, lng: -122.2315, city: 'Auburn', state: 'WA', partner: 'MultiCare', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 43000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'MultiCare Covington Medical Center', type: 'Acute', lat: 47.3584, lng: -122.1215, city: 'Covington', state: 'WA', partner: 'MultiCare', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 18000, helipad: 'No', ct24: 'Yes' },
-            { name: 'Naval Hospital Bremerton', type: 'Acute', lat: 47.5615, lng: -122.6629, city: 'Bremerton', state: 'WA', partner: 'US Navy', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 22000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Naval Hospital Oak Harbor', type: 'Acute', lat: 48.2932, lng: -122.6433, city: 'Oak Harbor', state: 'WA', partner: 'US Navy', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 14000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Overlake Medical Center', type: 'Acute', lat: 47.6229, lng: -122.1765, city: 'Bellevue', state: 'WA', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'PSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'PeaceHealth Southwest Medical Center', type: 'Acute', lat: 45.6387, lng: -122.5007, city: 'Vancouver', state: 'WA', partner: 'PeaceHealth', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 65000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'PeaceHealth St. John Medical Center', type: 'Acute', lat: 46.1312, lng: -122.9540, city: 'Longview', state: 'WA', partner: 'PeaceHealth', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 28000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Centralia Hospital', type: 'Acute', lat: 46.7162, lng: -122.9543, city: 'Centralia', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 24000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Holy Family Hospital', type: 'Acute', lat: 47.6951, lng: -117.3890, city: 'Spokane', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 35000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Mount Carmel Hospital', type: 'Acute', lat: 48.4615, lng: -117.9267, city: 'Colville', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 8500, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Regional Medical Center Everett', type: 'Acute', lat: 47.9790, lng: -122.2021, city: 'Everett', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 72000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Sacred Heart Medical Center', type: 'Acute', lat: 47.6587, lng: -117.4260, city: 'Spokane', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 68000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence St. Mary Medical Center', type: 'Acute', lat: 47.2529, lng: -122.4443, city: 'Walla Walla', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 22000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence St. Peter Hospital', type: 'Acute', lat: 47.0456, lng: -122.9007, city: 'Olympia', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 46000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Seattle Cancer Care Alliance', type: 'Acute', lat: 47.6475, lng: -122.3137, city: 'Seattle', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2500, helipad: 'No', ct24: 'Yes' },
-            { name: "St. Anthony Hospital", type: 'Acute', lat: 47.5481, lng: -122.3321, city: 'Gig Harbor', state: 'WA', partner: 'CHI Franciscan', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 15000, helipad: 'No', ct24: 'Yes' },
-            { name: "St. Clare Hospital", type: 'Acute', lat: 47.2412, lng: -122.4386, city: 'Lakewood', state: 'WA', partner: 'CHI Franciscan', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 18000, helipad: 'Yes', ct24: 'Yes' },
-            { name: "St. Elizabeth Hospital", type: 'Acute', lat: 47.6765, lng: -122.1215, city: 'Enumclaw', state: 'WA', partner: 'CHI Franciscan', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 12000, helipad: 'Yes', ct24: 'Yes' },
-            { name: "St. Francis Hospital", type: 'Acute', lat: 47.2529, lng: -122.4443, city: 'Federal Way', state: 'WA', partner: 'CHI Franciscan', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 38000, helipad: 'Yes', ct24: 'Yes' },
-            { name: "St. Joseph Medical Center", type: 'Acute', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', partner: 'CHI Franciscan', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 44000, helipad: 'Yes', ct24: 'Yes' },
-            { name: "St. Michael Medical Center", type: 'Acute', lat: 47.0890, lng: -122.5629, city: 'Silverdale', state: 'WA', partner: 'CHI Franciscan', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 16000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Swedish Ballard', type: 'Acute', lat: 47.6717, lng: -122.3654, city: 'Seattle', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 28000, helipad: 'No', ct24: 'Yes' },
-            { name: 'Swedish Cherry Hill', type: 'Acute', lat: 47.6062, lng: -122.3321, city: 'Seattle', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 58000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Swedish Edmonds', type: 'Acute', lat: 47.8107, lng: -122.3774, city: 'Edmonds', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 32000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Swedish First Hill', type: 'Acute', lat: 47.6092, lng: -122.3224, city: 'Seattle', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 62000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Swedish Issaquah', type: 'Acute', lat: 47.5301, lng: -122.0326, city: 'Issaquah', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 24000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Trios Health', type: 'Acute', lat: 46.2112, lng: -119.1372, city: 'Kennewick', state: 'WA', partner: 'Trios Health', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 34000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Valley Medical Center', type: 'Acute', lat: 47.4456, lng: -122.2090, city: 'Renton', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Virginia Mason Bainbridge Island', type: 'Acute', lat: 47.6262, lng: -122.5212, city: 'Bainbridge Island', state: 'WA', partner: 'Virginia Mason', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 8500, helipad: 'No', ct24: 'Yes' },
-            { name: 'Virginia Mason Federal Way', type: 'Acute', lat: 47.3220, lng: -122.3126, city: 'Federal Way', state: 'WA', partner: 'Virginia Mason', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 14000, helipad: 'No', ct24: 'Yes' },
-            { name: 'Yakima Valley Memorial Hospital', type: 'Acute', lat: 46.6021, lng: -120.5059, city: 'Yakima', state: 'WA', partner: 'Virginia Mason', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes' },
+            // === ACUTE CARE HOSPITALS (44) ===
+            { name: 'Auburn Regional Medical Center', type: 'Acute', lat: 47.3073, lng: -122.2285, city: 'Auburn', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 42000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Capital Medical Center', type: 'Acute', lat: 47.0379, lng: -122.9007, city: 'Olympia', state: 'WA', affiliation: 'TBD', strokeLevel: 'None', edVolume: 28000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Cascade Behavioral Health', type: 'Acute', lat: 47.5231, lng: -122.2009, city: 'Tukwila', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 5200, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Central Washington Hospital', type: 'Acute', lat: 47.4232, lng: -120.3103, city: 'Wenatchee', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 38000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Confluence Health - Wenatchee Valley Hospital', type: 'Acute', lat: 47.4298, lng: -120.3156, city: 'Wenatchee', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 35000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'EvergreenHealth Monroe', type: 'Acute', lat: 47.8556, lng: -121.9708, city: 'Monroe', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 26000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Fairfax Behavioral Health', type: 'Acute', lat: 47.6534, lng: -122.3210, city: 'Kirkland', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 3800, helipad: 'No', ct24: 'No', uwPartner: false },
+            { name: 'Good Samaritan Hospital', type: 'Acute', lat: 47.6732, lng: -122.2060, city: 'Puyallup', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 45000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Highline Medical Center', type: 'Acute', lat: 47.4620, lng: -122.3321, city: 'Burien', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'ASR', edVolume: 32000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Kadlec Regional Medical Center', type: 'Acute', lat: 46.2396, lng: -119.1372, city: 'Richland', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Kennewick General Hospital', type: 'Acute', lat: 46.2112, lng: -119.1372, city: 'Kennewick', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 31000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Lourdes Medical Center', type: 'Acute', lat: 46.2596, lng: -119.2752, city: 'Pasco', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 29000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'MultiCare Auburn Medical Center', type: 'Acute', lat: 47.3095, lng: -122.2315, city: 'Auburn', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 43000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'MultiCare Covington Medical Center', type: 'Acute', lat: 47.3584, lng: -122.1215, city: 'Covington', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 18000, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Naval Hospital Bremerton', type: 'Acute', lat: 47.5615, lng: -122.6629, city: 'Bremerton', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 22000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Naval Hospital Oak Harbor', type: 'Acute', lat: 48.2932, lng: -122.6433, city: 'Oak Harbor', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 14000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Overlake Medical Center', type: 'Acute', lat: 47.6229, lng: -122.1765, city: 'Bellevue', state: 'WA', affiliation: 'TBD', strokeLevel: 'PSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'PeaceHealth Southwest Medical Center', type: 'Acute', lat: 45.6387, lng: -122.5007, city: 'Vancouver', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 65000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'PeaceHealth St. John Medical Center', type: 'Acute', lat: 46.1312, lng: -122.9540, city: 'Longview', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 28000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Centralia Hospital', type: 'Acute', lat: 46.7162, lng: -122.9543, city: 'Centralia', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 24000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Holy Family Hospital', type: 'Acute', lat: 47.6951, lng: -117.3890, city: 'Spokane', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 35000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Mount Carmel Hospital', type: 'Acute', lat: 48.4615, lng: -117.9267, city: 'Colville', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 8500, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Regional Medical Center Everett', type: 'Acute', lat: 47.9790, lng: -122.2021, city: 'Everett', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 72000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Sacred Heart Medical Center', type: 'Acute', lat: 47.6587, lng: -117.4260, city: 'Spokane', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 68000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence St. Mary Medical Center', type: 'Acute', lat: 47.2529, lng: -122.4443, city: 'Walla Walla', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 22000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence St. Peter Hospital', type: 'Acute', lat: 47.0456, lng: -122.9007, city: 'Olympia', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 46000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Seattle Cancer Care Alliance', type: 'Acute', lat: 47.6475, lng: -122.3137, city: 'Seattle', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'None', edVolume: 2500, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: "St. Anthony Hospital", type: 'Acute', lat: 47.5481, lng: -122.3321, city: 'Gig Harbor', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 15000, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: "St. Clare Hospital", type: 'Acute', lat: 47.2412, lng: -122.4386, city: 'Lakewood', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 18000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: "St. Elizabeth Hospital", type: 'Acute', lat: 47.6765, lng: -122.1215, city: 'Enumclaw', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 12000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: "St. Francis Hospital", type: 'Acute', lat: 47.2529, lng: -122.4443, city: 'Federal Way', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 38000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: "St. Joseph Medical Center", type: 'Acute', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 44000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: "St. Michael Medical Center", type: 'Acute', lat: 47.0890, lng: -122.5629, city: 'Silverdale', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 16000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish Ballard', type: 'Acute', lat: 47.6717, lng: -122.3654, city: 'Seattle', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 28000, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish Cherry Hill', type: 'Acute', lat: 47.6062, lng: -122.3321, city: 'Seattle', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 58000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish Edmonds', type: 'Acute', lat: 47.8107, lng: -122.3774, city: 'Edmonds', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 32000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish First Hill', type: 'Acute', lat: 47.6092, lng: -122.3224, city: 'Seattle', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 62000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish Issaquah', type: 'Acute', lat: 47.5301, lng: -122.0326, city: 'Issaquah', state: 'WA', affiliation: 'Competitor', strokeLevel: 'ASR', edVolume: 24000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Trios Health', type: 'Acute', lat: 46.2112, lng: -119.1372, city: 'Kennewick', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 34000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Valley Medical Center', type: 'Acute', lat: 47.4456, lng: -122.2090, city: 'Renton', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Virginia Mason Bainbridge Island', type: 'Acute', lat: 47.6262, lng: -122.5212, city: 'Bainbridge Island', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 8500, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Virginia Mason Federal Way', type: 'Acute', lat: 47.3220, lng: -122.3126, city: 'Federal Way', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 14000, helipad: 'No', ct24: 'Yes', uwPartner: false },
+            { name: 'Yakima Valley Memorial Hospital', type: 'Acute', lat: 46.6021, lng: -120.5059, city: 'Yakima', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'PeaceHealth United General Medical Center', type: 'Acute', lat: 48.5032, lng: -122.2362, city: 'Sedro Woolley', state: 'WA', affiliation: 'Competitor', strokeLevel: 'None', edVolume: 15000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
 
             // === PRIMARY STROKE CENTERS (7) ===
-            { name: 'MultiCare Good Samaritan Hospital', type: 'PSC', lat: 47.6732, lng: -122.2060, city: 'Puyallup', state: 'WA', partner: 'MultiCare', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 46000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'MultiCare Tacoma General Hospital', type: 'PSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', partner: 'MultiCare', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 54000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'PeaceHealth St. Joseph Medical Center', type: 'PSC', lat: 48.7519, lng: -122.4787, city: 'Bellingham', state: 'WA', partner: 'PeaceHealth', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Regional Medical Center Everett', type: 'PSC', lat: 47.9790, lng: -122.2021, city: 'Everett', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 74000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Skagit Regional Health', type: 'PSC', lat: 48.4121, lng: -122.3374, city: 'Mount Vernon', state: 'WA', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'PSC', edVolume: 42000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Swedish Medical Center - Issaquah', type: 'PSC', lat: 47.5301, lng: -122.0326, city: 'Issaquah', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 26000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Virginia Mason Medical Center', type: 'PSC', lat: 47.6101, lng: -122.3321, city: 'Seattle', state: 'WA', partner: 'Virginia Mason', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes' },
+            { name: 'MultiCare Good Samaritan Hospital', type: 'PSC', lat: 47.6732, lng: -122.2060, city: 'Puyallup', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 46000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'MultiCare Tacoma General Hospital', type: 'PSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 54000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'PeaceHealth St. Joseph Medical Center', type: 'PSC', lat: 48.7519, lng: -122.4787, city: 'Bellingham', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'Providence Regional Medical Center Everett', type: 'PSC', lat: 47.9790, lng: -122.2021, city: 'Everett', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 74000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Skagit Regional Health', type: 'PSC', lat: 48.4121, lng: -122.3374, city: 'Mount Vernon', state: 'WA', affiliation: 'TBD', strokeLevel: 'PSC', edVolume: 42000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish Medical Center - Issaquah', type: 'PSC', lat: 47.5301, lng: -122.0326, city: 'Issaquah', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 26000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Virginia Mason Medical Center', type: 'PSC', lat: 47.6101, lng: -122.3321, city: 'Seattle', state: 'WA', affiliation: 'Competitor', strokeLevel: 'PSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
 
             // === COMPREHENSIVE STROKE CENTERS (17) ===
-            { name: 'Harborview Medical Center', type: 'CSC', lat: 47.6052, lng: -122.3204, city: 'Seattle', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 95000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'UW Medical Center - Montlake', type: 'CSC', lat: 47.6505, lng: -122.3050, city: 'Seattle', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'UW Medical Center - Northwest', type: 'CSC', lat: 47.7231, lng: -122.3654, city: 'Seattle', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 45000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'EvergreenHealth Medical Center', type: 'CSC', lat: 47.6534, lng: -122.2009, city: 'Kirkland', state: 'WA', partner: 'UW Medicine', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Sacred Heart Medical Center', type: 'CSC', lat: 47.6587, lng: -117.4260, city: 'Spokane', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 70000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'MultiCare Tacoma General Hospital', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', partner: 'MultiCare', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 56000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Regional Medical Center Everett', type: 'CSC', lat: 47.9790, lng: -122.2021, city: 'Everett', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 76000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Swedish Medical Center - First Hill', type: 'CSC', lat: 47.6092, lng: -122.3224, city: 'Seattle', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 64000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Swedish Medical Center - Cherry Hill', type: 'CSC', lat: 47.6062, lng: -122.3321, city: 'Seattle', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 60000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'PeaceHealth Southwest Medical Center', type: 'CSC', lat: 45.6387, lng: -122.5007, city: 'Vancouver', state: 'WA', partner: 'PeaceHealth', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 67000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Kadlec Regional Medical Center', type: 'CSC', lat: 46.2396, lng: -119.1372, city: 'Richland', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 50000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Virginia Mason Franciscan Health - St. Joseph Medical Center', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', partner: 'Virginia Mason', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 46000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'CHI Franciscan - St. Joseph Medical Center', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', partner: 'CHI Franciscan', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 44000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Kootenai Health', type: 'CSC', lat: 47.6788, lng: -116.7805, city: 'Coeur d\'Alene', state: 'ID', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'CSC', edVolume: 54000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence St. Mary Medical Center', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Walla Walla', state: 'WA', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 24000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Alaska Regional Hospital', type: 'CSC', lat: 61.1508, lng: -149.9778, city: 'Anchorage', state: 'AK', partner: 'TBD', affiliation: 'TBD', strokeLevel: 'CSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes' },
-            { name: 'Providence Alaska Medical Center', type: 'CSC', lat: 61.1941, lng: -149.8397, city: 'Anchorage', state: 'AK', partner: 'Providence', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 72000, helipad: 'Yes', ct24: 'Yes' }
+            { name: 'Harborview Medical Center', type: 'CSC', lat: 47.6052, lng: -122.3204, city: 'Seattle', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 95000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'UW Medical Center - Montlake', type: 'CSC', lat: 47.6505, lng: -122.3050, city: 'Seattle', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 52000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'UW Medical Center - Northwest', type: 'CSC', lat: 47.7231, lng: -122.3654, city: 'Seattle', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 45000, helipad: 'Yes', ct24: 'Yes', uwPartner: true },
+            { name: 'EvergreenHealth Medical Center', type: 'CSC', lat: 47.6534, lng: -122.2009, city: 'Kirkland', state: 'WA', affiliation: 'UW Medicine', strokeLevel: 'CSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Sacred Heart Medical Center', type: 'CSC', lat: 47.6587, lng: -117.4260, city: 'Spokane', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 70000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'MultiCare Tacoma General Hospital', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 56000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Regional Medical Center Everett', type: 'CSC', lat: 47.9790, lng: -122.2021, city: 'Everett', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 76000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish Medical Center - First Hill', type: 'CSC', lat: 47.6092, lng: -122.3224, city: 'Seattle', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 64000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Swedish Medical Center - Cherry Hill', type: 'CSC', lat: 47.6062, lng: -122.3321, city: 'Seattle', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 60000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'PeaceHealth Southwest Medical Center', type: 'CSC', lat: 45.6387, lng: -122.5007, city: 'Vancouver', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 67000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Kadlec Regional Medical Center', type: 'CSC', lat: 46.2396, lng: -119.1372, city: 'Richland', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 50000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Virginia Mason Franciscan Health - St. Joseph Medical Center', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 46000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'CHI Franciscan - St. Joseph Medical Center', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Tacoma', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 44000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Kootenai Health', type: 'CSC', lat: 47.6788, lng: -116.7805, city: 'Coeur d\'Alene', state: 'ID', affiliation: 'TBD', strokeLevel: 'CSC', edVolume: 54000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence St. Mary Medical Center', type: 'CSC', lat: 47.2529, lng: -122.4443, city: 'Walla Walla', state: 'WA', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 24000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Alaska Regional Hospital', type: 'CSC', lat: 61.1508, lng: -149.9778, city: 'Anchorage', state: 'AK', affiliation: 'TBD', strokeLevel: 'CSC', edVolume: 48000, helipad: 'Yes', ct24: 'Yes', uwPartner: false },
+            { name: 'Providence Alaska Medical Center', type: 'CSC', lat: 61.1941, lng: -149.8397, city: 'Anchorage', state: 'AK', affiliation: 'Competitor', strokeLevel: 'CSC', edVolume: 72000, helipad: 'Yes', ct24: 'Yes', uwPartner: false }
         ];
 
         // Initialize the map centered on Pacific Northwest
@@ -533,12 +530,19 @@
             const color = getMarkerColor(hospital.type);
             const labelClass = getLabelClass(hospital.type);
 
+            // Add gold border for UW Medicine partners
+            const borderColor = hospital.uwPartner ? '#f59e0b' : '#333';
+            const borderWidth = hospital.uwPartner ? '3px' : '2px';
+            const partnerStar = hospital.uwPartner ? '<span style="position: absolute; top: -8px; right: -8px; color: #f59e0b; font-size: 14px;">★</span>' : '';
+
             // Create custom divIcon with label
             const customIcon = L.divIcon({
                 html: `
                     <div style="position: relative;">
-                        <div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #333;"></div>
-                        <div class="hospital-label ${labelClass}" style="position: absolute; left: 16px; top: -6px;">${hospital.name}</div>
+                        <div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: ${borderWidth} solid ${borderColor}; position: relative;">
+                            ${partnerStar}
+                        </div>
+                        <div class="hospital-label ${labelClass}" style="position: absolute; left: 16px; top: -6px; ${hospital.uwPartner ? 'font-weight: 700; color: #f59e0b; border-color: #f59e0b;' : ''}">${hospital.name}</div>
                     </div>
                 `,
                 className: 'custom-div-icon',
@@ -546,15 +550,17 @@
                 iconAnchor: [6, 6]
             });
 
+            const uwPartnerBadge = hospital.uwPartner ? '<span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 8px;">★ UW PARTNER</span>' : '';
+
             const marker = L.marker([hospital.lat, hospital.lng], { icon: customIcon })
                 .bindPopup(`
                     <div style="min-width: 250px;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold;">${hospital.name}</h3>
+                        <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold;">${hospital.name}${uwPartnerBadge}</h3>
                         <table style="width: 100%; font-size: 13px;">
                             <tr><td style="padding: 3px 10px 3px 0;"><strong>Type:</strong></td><td style="padding: 3px 0;">${hospital.type}</td></tr>
                             <tr><td style="padding: 3px 10px 3px 0;"><strong>Location:</strong></td><td style="padding: 3px 0;">${hospital.city}, ${hospital.state}</td></tr>
                             <tr><td style="padding: 3px 10px 3px 0;"><strong>Distance to HMC:</strong></td><td style="padding: 3px 0;">${hospital.distanceToHMC} miles</td></tr>
-                            <tr><td style="padding: 3px 10px 3px 0;"><strong>Telestroke Partner:</strong></td><td style="padding: 3px 0;">${hospital.partner}</td></tr>
+                            ${hospital.uwPartner ? '<tr><td style="padding: 3px 10px 3px 0;"><strong>Network:</strong></td><td style="padding: 3px 0; color: #f59e0b; font-weight: bold;">UW Medicine Telestroke Partner</td></tr>' : ''}
                             <tr><td style="padding: 3px 10px 3px 0;"><strong>Affiliation:</strong></td><td style="padding: 3px 0;">${hospital.affiliation}</td></tr>
                             <tr><td style="padding: 3px 10px 3px 0;"><strong>State Stroke Level:</strong></td><td style="padding: 3px 0;">${hospital.strokeLevel}</td></tr>
                             <tr><td style="padding: 3px 10px 3px 0;"><strong>Annual ED Volume:</strong></td><td style="padding: 3px 0;">${hospital.edVolume.toLocaleString()}</td></tr>
@@ -581,38 +587,30 @@
                 return layer && map.hasLayer(layer.marker);
             });
 
-            const uwCount = visibleHospitals.filter(h => h.affiliation === 'UW Medicine').length;
-            const tbdCount = visibleHospitals.filter(h => h.affiliation === 'TBD').length;
-            const competitorCount = visibleHospitals.filter(h => h.affiliation === 'Competitor').length;
-
             const cahCount = visibleHospitals.filter(h => h.type === 'CAH').length;
             const acuteCount = visibleHospitals.filter(h => h.type === 'Acute').length;
             const pscCount = visibleHospitals.filter(h => h.type === 'PSC').length;
             const cscCount = visibleHospitals.filter(h => h.type === 'CSC').length;
+            const uwPartnerCount = visibleHospitals.filter(h => h.uwPartner).length;
 
             document.getElementById('total-count').textContent = visibleHospitals.length;
-            document.getElementById('uw-count').textContent = uwCount;
-            document.getElementById('tbd-count').textContent = tbdCount;
-            document.getElementById('competitor-count').textContent = competitorCount;
             document.getElementById('cah-count').textContent = cahCount;
             document.getElementById('acute-count').textContent = acuteCount;
             document.getElementById('psc-count').textContent = pscCount;
             document.getElementById('csc-count').textContent = cscCount;
+            document.getElementById('uw-partner-count').textContent = uwPartnerCount;
         }
 
         // Filter function
         function applyFilters() {
+            const uwPartnerFilter = document.getElementById('filter-uw-partners').checked;
+            const nonPartnerFilter = document.getElementById('filter-non-partners').checked;
+
             const typeFilters = {
                 CAH: document.getElementById('filter-cah').checked,
                 Acute: document.getElementById('filter-acute').checked,
                 PSC: document.getElementById('filter-psc').checked,
                 CSC: document.getElementById('filter-csc').checked
-            };
-
-            const affiliationFilters = {
-                'UW Medicine': document.getElementById('filter-uw').checked,
-                'TBD': document.getElementById('filter-tbd').checked,
-                'Competitor': document.getElementById('filter-competitor').checked
             };
 
             const distanceFilters = {
@@ -630,13 +628,16 @@
 
                 let show = true;
 
-                // Type filter
-                if (!typeFilters[hospital.type]) {
+                // UW Partner filter
+                if (hospital.uwPartner && !uwPartnerFilter) {
+                    show = false;
+                }
+                if (!hospital.uwPartner && !nonPartnerFilter) {
                     show = false;
                 }
 
-                // Affiliation filter
-                if (!affiliationFilters[hospital.affiliation]) {
+                // Type filter
+                if (!typeFilters[hospital.type]) {
                     show = false;
                 }
 
@@ -675,13 +676,12 @@
 
         // Reset filters function
         function resetFilters() {
+            document.getElementById('filter-uw-partners').checked = true;
+            document.getElementById('filter-non-partners').checked = true;
             document.getElementById('filter-cah').checked = true;
             document.getElementById('filter-acute').checked = true;
             document.getElementById('filter-psc').checked = true;
             document.getElementById('filter-csc').checked = true;
-            document.getElementById('filter-uw').checked = true;
-            document.getElementById('filter-tbd').checked = true;
-            document.getElementById('filter-competitor').checked = true;
             document.getElementById('filter-0-50').checked = true;
             document.getElementById('filter-50-100').checked = true;
             document.getElementById('filter-100-150').checked = true;
