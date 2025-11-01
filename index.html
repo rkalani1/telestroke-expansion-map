@@ -50,17 +50,26 @@
 
         /* Permanent label styling */
         .leaflet-tooltip.hospital-label {
-            background-color: rgba(255, 255, 255, 0.95);
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 6px;
-            white-space: nowrap;
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid #333 !important;
+            border-radius: 4px !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            padding: 3px 7px !important;
+            white-space: nowrap !important;
+            color: #333 !important;
+            opacity: 1 !important;
+            pointer-events: none !important;
         }
         .leaflet-tooltip.hospital-label::before {
-            border: none;
+            display: none !important;
+        }
+        .leaflet-tooltip-left.hospital-label::before {
+            display: none !important;
+        }
+        .leaflet-tooltip-right.hospital-label::before {
+            display: none !important;
         }
     </style>
 </head>
@@ -319,12 +328,15 @@
             marker.bindPopup(formatPopup(hospital));
 
             // Add permanent label with hospital name
-            marker.bindTooltip(hospital.name, {
+            const tooltip = L.tooltip({
                 permanent: true,
                 direction: 'right',
                 className: 'hospital-label',
-                offset: [10, 0]
-            });
+                offset: [10, 0],
+                opacity: 1
+            }).setContent(hospital.name);
+
+            marker.bindTooltip(tooltip);
 
             marker.hospitalData = hospital; // Attach data to marker
             layer.addLayer(marker);
