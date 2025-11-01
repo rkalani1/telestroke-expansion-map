@@ -98,20 +98,34 @@
 
         /* Custom hospital label styles */
         .hospital-label {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border: 1px solid #333;
             border-radius: 3px;
             padding: 2px 6px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             white-space: nowrap;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            pointer-events: none;
+            transition: opacity 0.2s;
         }
 
         .hospital-label-cah { border-color: #3b82f6; color: #3b82f6; }
         .hospital-label-acute { border-color: #6b7280; color: #6b7280; }
         .hospital-label-psc { border-color: #ef4444; color: #ef4444; }
         .hospital-label-csc { border-color: #9333ea; color: #9333ea; }
+
+        /* Zoom-based label visibility */
+        .label-priority-high { display: block; }
+        .label-priority-medium { display: none; }
+        .label-priority-low { display: none; }
+
+        /* Show labels on hover */
+        .custom-div-icon:hover .hospital-label {
+            display: block !important;
+            opacity: 1 !important;
+            z-index: 1000;
+        }
 
         /* Print styles */
         @media print {
@@ -239,10 +253,16 @@
         <!-- Display Options -->
         <div class="filter-section">
             <h4 class="font-semibold mb-2 text-sm">Display Options</h4>
-            <label class="checkbox-label">
-                <input type="checkbox" id="toggle-labels" checked>
-                <span>Show Hospital Labels</span>
-            </label>
+            <div class="mb-3">
+                <label class="text-xs font-semibold text-gray-700 mb-1 block">Label Display Mode</label>
+                <select id="label-mode" class="w-full p-2 border border-gray-300 rounded text-sm">
+                    <option value="hover">Show on Hover Only</option>
+                    <option value="zoom">Zoom-Based (Smart)</option>
+                    <option value="always">Always Show All</option>
+                    <option value="partners">UW Partners Only</option>
+                    <option value="none">Hide All Labels</option>
+                </select>
+            </div>
             <label class="checkbox-label">
                 <input type="checkbox" id="toggle-rings" checked>
                 <span>Show Distance Rings</span>
@@ -535,6 +555,17 @@
             const borderWidth = hospital.uwPartner ? '3px' : '2px';
             const partnerStar = hospital.uwPartner ? '<span style="position: absolute; top: -8px; right: -8px; color: #f59e0b; font-size: 14px;">★</span>' : '';
 
+            // Assign label priority for zoom-based visibility
+            // High priority: CSC, PSC, UW Partners
+            // Medium priority: Acute Care
+            // Low priority: CAH
+            let labelPriority = 'label-priority-low';
+            if (hospital.type === 'CSC' || hospital.type === 'PSC' || hospital.uwPartner) {
+                labelPriority = 'label-priority-high';
+            } else if (hospital.type === 'Acute') {
+                labelPriority = 'label-priority-medium';
+            }
+
             // Create custom divIcon with label
             const customIcon = L.divIcon({
                 html: `
@@ -542,7 +573,7 @@
                         <div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: ${borderWidth} solid ${borderColor}; position: relative;">
                             ${partnerStar}
                         </div>
-                        <div class="hospital-label ${labelClass}" style="position: absolute; left: 16px; top: -6px; ${hospital.uwPartner ? 'font-weight: 700; color: #f59e0b; border-color: #f59e0b;' : ''}">${hospital.name}</div>
+                        <div class="hospital-label ${labelClass} ${labelPriority} ${hospital.uwPartner ? 'uw-partner-label' : ''}" data-hospital-id="${hospital.name}" style="position: absolute; left: 16px; top: -6px; ${hospital.uwPartner ? 'font-weight: 700; color: #f59e0b; border-color: #f59e0b;' : ''}">${hospital.name}</div>
                     </div>
                 `,
                 className: 'custom-div-icon',
@@ -601,6 +632,77 @@
             document.getElementById('uw-partner-count').textContent = uwPartnerCount;
         }
 
+        // Label display mode handler
+        function updateLabelDisplay() {
+            const mode = document.getElementById('label-mode').value;
+            const zoom = map.getZoom();
+            const labels = document.querySelectorAll('.hospital-label');
+
+            labels.forEach(label => {
+                const isUWPartner = label.classList.contains('uw-partner-label');
+                const isPriorityHigh = label.classList.contains('label-priority-high');
+                const isPriorityMedium = label.classList.contains('label-priority-medium');
+
+                switch(mode) {
+                    case 'hover':
+                        // Labels only show on hover (handled by CSS)
+                        label.style.display = 'none';
+                        label.style.opacity = '0';
+                        break;
+
+                    case 'zoom':
+                        // Smart zoom-based display
+                        if (zoom >= 9) {
+                            // High zoom - show all labels
+                            label.style.display = 'block';
+                            label.style.opacity = '1';
+                        } else if (zoom >= 8) {
+                            // Medium zoom - show high and medium priority
+                            if (isPriorityHigh || isPriorityMedium) {
+                                label.style.display = 'block';
+                                label.style.opacity = '1';
+                            } else {
+                                label.style.display = 'none';
+                                label.style.opacity = '0';
+                            }
+                        } else {
+                            // Low zoom - only high priority (CSC, PSC, UW Partners)
+                            if (isPriorityHigh) {
+                                label.style.display = 'block';
+                                label.style.opacity = '1';
+                            } else {
+                                label.style.display = 'none';
+                                label.style.opacity = '0';
+                            }
+                        }
+                        break;
+
+                    case 'always':
+                        // Show all labels always
+                        label.style.display = 'block';
+                        label.style.opacity = '1';
+                        break;
+
+                    case 'partners':
+                        // Only show UW partner labels
+                        if (isUWPartner) {
+                            label.style.display = 'block';
+                            label.style.opacity = '1';
+                        } else {
+                            label.style.display = 'none';
+                            label.style.opacity = '0';
+                        }
+                        break;
+
+                    case 'none':
+                        // Hide all labels
+                        label.style.display = 'none';
+                        label.style.opacity = '0';
+                        break;
+                }
+            });
+        }
+
         // Filter function
         function applyFilters() {
             const uwPartnerFilter = document.getElementById('filter-uw-partners').checked;
@@ -619,8 +721,6 @@
                 '100-150': document.getElementById('filter-100-150').checked,
                 '150+': document.getElementById('filter-150-plus').checked
             };
-
-            const showLabels = document.getElementById('toggle-labels').checked;
 
             hospitals.forEach(hospital => {
                 const layer = markerLayers[hospital.name];
@@ -665,13 +765,8 @@
                 }
             });
 
-            // Update label visibility
-            const labels = document.querySelectorAll('.hospital-label');
-            labels.forEach(label => {
-                label.style.display = showLabels ? 'block' : 'none';
-            });
-
             updateStatistics();
+            updateLabelDisplay(); // Update labels after filtering
         }
 
         // Reset filters function
@@ -686,7 +781,7 @@
             document.getElementById('filter-50-100').checked = true;
             document.getElementById('filter-100-150').checked = true;
             document.getElementById('filter-150-plus').checked = true;
-            document.getElementById('toggle-labels').checked = true;
+            document.getElementById('label-mode').value = 'hover';
             document.getElementById('toggle-rings').checked = true;
 
             if (map.hasLayer(distanceRings)) {
@@ -713,8 +808,20 @@
             });
         });
 
-        // Initial statistics update
+        // Label mode selector event listener
+        document.getElementById('label-mode').addEventListener('change', updateLabelDisplay);
+
+        // Map zoom event listener for zoom-based labels
+        map.on('zoomend', () => {
+            const mode = document.getElementById('label-mode').value;
+            if (mode === 'zoom') {
+                updateLabelDisplay();
+            }
+        });
+
+        // Initial setup
         updateStatistics();
+        updateLabelDisplay();
 
         // Log hospital count for verification
         console.log('Total hospitals loaded:', hospitals.length);
