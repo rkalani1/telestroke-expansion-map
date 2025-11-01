@@ -53,15 +53,6 @@
             width: 320px;
         }
 
-        .footer-panel {
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 12px;
-        }
 
         .app-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -252,16 +243,6 @@
         </div>
     </div>
 
-    <!-- Footer Panel with Data Sources -->
-    <div class="panel footer-panel">
-        <strong>100% Verified Data Sources:</strong> WA State Department of Health Emergency Cardiac & Stroke System (Oct 2024),
-        CMS Hospital General Information Database (Nov 2024), Joint Commission Stroke Certification, DNV Healthcare Stroke Certification,
-        UW Medicine Telestroke Program (verified Oct 2024)
-        <div class="data-source">
-            All data verified from authoritative public sources. No unverified or estimated data included.
-            Last updated: October 31, 2024
-        </div>
-    </div>
 
     <script>
         // Load verified hospital data
@@ -377,15 +358,11 @@
                             ${hospital.county ? `<strong>County:</strong> ${hospital.county}<br>` : ''}
                             ${hospital.address ? `<strong>Address:</strong> ${hospital.address}<br>` : ''}
                             ${hospital.waStateStrokeLevel ? `<strong>WA State Stroke Level:</strong> ${hospital.waStateStrokeLevel}<br>` : ''}
-                            ${hospital.waStateCardiacLevel ? `<strong>WA State Cardiac Level:</strong> ${hospital.waStateCardiacLevel}<br>` : ''}
                             ${hospital.nationalCertification ? `<strong>National Certification:</strong> ${hospital.nationalCertification}<br>` : ''}
                             ${hospital.certifyingBody ? `<strong>Certifying Body:</strong> ${hospital.certifyingBody}<br>` : ''}
                             ${hospital.hasELVO ? `<strong>24/7 Thrombectomy:</strong> Yes<br>` : ''}
                             ${hospital.uwPartner ? `<strong>UW Telestroke Partner:</strong> Yes<br>` : ''}
                             ${hospital.isCriticalAccess ? `<strong>Critical Access Hospital:</strong> Yes<br>` : ''}
-                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #6b7280;">
-                                <strong>Data Sources:</strong> ${hospital.dataSources ? hospital.dataSources.join(', ') : 'See footer'}
-                            </div>
                         </div>
                     </div>
                 `;

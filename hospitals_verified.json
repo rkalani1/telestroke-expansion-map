@@ -1744,5 +1744,89 @@
     "longitude": -123.812473,
     "geocoded": true,
     "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "Cascade Medical Center",
+    "city": "Leavenworth",
+    "county": "Chelan",
+    "state": "WA",
+    "address": "817 COMMERCIAL STREET",
+    "zip": "98826",
+    "cmsId": "501313",
+    "isCriticalAccess": true,
+    "cmsHospitalType": "Critical Access Hospitals",
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 47.5964,
+    "longitude": -120.6612,
+    "geocoded": true,
+    "geocodeSource": "OpenStreetMap"
+  },
+  {
+    "name": "PeaceHealth Ketchikan Medical Center",
+    "city": "Ketchikan",
+    "county": "Ketchikan Gateway",
+    "state": "AK",
+    "address": "3100 TONGASS AVENUE",
+    "zip": "99901",
+    "cmsId": "021311",
+    "isCriticalAccess": true,
+    "cmsHospitalType": "Critical Access Hospitals",
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 55.3422,
+    "longitude": -131.6461,
+    "geocoded": true,
+    "geocodeSource": "OpenStreetMap"
+  },
+  {
+    "name": "Petersburg Medical Center",
+    "city": "Petersburg",
+    "county": "Petersburg Borough",
+    "state": "AK",
+    "address": "PO BOX 589",
+    "zip": "99833",
+    "cmsId": "021304",
+    "isCriticalAccess": true,
+    "cmsHospitalType": "Critical Access Hospitals",
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 56.8125,
+    "longitude": -132.9561,
+    "geocoded": true,
+    "geocodeSource": "OpenStreetMap"
+  },
+  {
+    "name": "St. Joseph Regional Medical Center",
+    "city": "Lewiston",
+    "county": "Nez Perce",
+    "state": "ID",
+    "address": "415 SIXTH STREET",
+    "zip": "83501",
+    "cmsId": "130003",
+    "isCriticalAccess": false,
+    "cmsHospitalType": "Acute Care Hospitals",
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 46.4165,
+    "longitude": -117.0262,
+    "geocoded": true,
+    "geocodeSource": "OpenStreetMap"
   }
 ]
