@@ -45,6 +45,7 @@ function getMarkerColor(hospital) {
     if (certType === 'CSC') return '#dc2626'; // Red - Comprehensive
     if (certType === 'TSC') return '#ea580c'; // Orange - Thrombectomy-Capable
     if (certType === 'PSC') return '#f59e0b'; // Amber - Primary
+    if (certType === 'ASR') return '#84cc16'; // Lime - Acute Stroke Ready
 
     // UW Partners without certification
     if (hospital.uwPartner) return '#3b82f6'; // Blue
@@ -60,6 +61,7 @@ function getMarkerSize(hospital) {
     if (certType === 'CSC') return 12;
     if (certType === 'TSC') return 11;
     if (certType === 'PSC') return 10;
+    if (certType === 'ASR') return 9;
 
     // UW Partners
     if (hospital.uwPartner) return 9;
@@ -153,6 +155,7 @@ function renderMarkers() {
             if (certType === 'CSC') certName = 'Comprehensive Stroke Center';
             if (certType === 'TSC') certName = 'Thrombectomy-Capable Stroke Center';
             if (certType === 'PSC') certName = 'Primary Stroke Center';
+            if (certType === 'ASR') certName = 'Acute Stroke Ready';
 
             popupContent += `<strong>Certification:</strong> ${certName} (${certType})<br>`;
             if (certBody) {
