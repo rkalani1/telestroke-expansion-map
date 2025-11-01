@@ -117,9 +117,9 @@
       "UW Medicine Telestroke Program"
     ],
     "verified": true,
-    "strokeCertificationType": null,
-    "certifyingBody": null,
-    "certificationDetails": null,
+    "strokeCertificationType": "PSC",
+    "certifyingBody": "Idaho DOH",
+    "certificationDetails": "Idaho TSE Level II Stroke Center - Primary Stroke Center equivalent (designated September 2024)",
     "hasELVO": false
   },
   {
@@ -137,9 +137,9 @@
       "CMS (Nov 2024)"
     ],
     "verified": true,
-    "strokeCertificationType": null,
-    "certifyingBody": null,
-    "certificationDetails": null,
+    "strokeCertificationType": "PSC",
+    "certifyingBody": "Idaho DOH",
+    "certificationDetails": "Idaho TSE Level II Stroke Center - Primary Stroke Center equivalent",
     "hasELVO": false
   },
   {
@@ -198,9 +198,9 @@
       "CMS (Nov 2024)"
     ],
     "verified": true,
-    "strokeCertificationType": null,
-    "certifyingBody": null,
-    "certificationDetails": null,
+    "strokeCertificationType": "ASR",
+    "certifyingBody": "Idaho DOH",
+    "certificationDetails": "Idaho TSE Level III Stroke Center - Acute Stroke Ready equivalent",
     "hasELVO": false
   },
   {
