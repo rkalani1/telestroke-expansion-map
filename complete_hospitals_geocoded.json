@@ -1,0 +1,3462 @@
+[
+  {
+    "name": "PROVIDENCE ALASKA MEDICAL CENTER",
+    "state": "AK",
+    "address": "3200 PROVIDENCE DRIVE",
+    "zip": "99508",
+    "cmsId": "020001",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 61.187168,
+    "longitude": -149.819439,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MAT-SU REGIONAL MEDICAL CENTER",
+    "state": "AK",
+    "address": "2500 SOUTH WOODWORTH LOOP",
+    "zip": "99645",
+    "cmsId": "020006",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 61.562764,
+    "longitude": -149.257891,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "BARTLETT REGIONAL HOSPITAL",
+    "state": "AK",
+    "address": "3260 HOSPITAL DR",
+    "zip": "99801",
+    "cmsId": "020008",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 58.329234,
+    "longitude": -134.468424,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "FAIRBANKS MEMORIAL HOSPITAL",
+    "state": "AK",
+    "address": "1650 COWLES STREET",
+    "zip": "99701",
+    "cmsId": "020012",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 64.834587,
+    "longitude": -147.739217,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ALASKA REGIONAL HOSPITAL",
+    "state": "AK",
+    "address": "2801 DEBARR ROAD",
+    "zip": "99508",
+    "cmsId": "020017",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 61.210456,
+    "longitude": -149.828632,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "YUKON KUSKOKWIM DELTA REG HOSPITAL",
+    "state": "AK",
+    "address": "PO BOX 287",
+    "zip": "99559",
+    "cmsId": "020018",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "CENTRAL PENINSULA GENERAL HOSPITAL",
+    "state": "AK",
+    "address": "250 HOSPITAL PLACE",
+    "zip": "99669",
+    "cmsId": "020024",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 60.493526,
+    "longitude": -151.078503,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ALASKA NATIVE MEDICAL CENTER",
+    "state": "AK",
+    "address": "4315 DIPLOMACY DR",
+    "zip": "99508",
+    "cmsId": "020026",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 61.182772,
+    "longitude": -149.800177,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "673rd Medical Group (Joint Base Elmendorf-Richardson)",
+    "state": "AK",
+    "address": "673 MDG 5955 Zeamer Ave",
+    "zip": "99506",
+    "cmsId": "02013F",
+    "hospitalType": "Acute Care - Department of Defense",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "Bassett ACH (FT Wainwright)",
+    "state": "AK",
+    "address": "4076 Neely Rd",
+    "zip": "99703",
+    "cmsId": "02014F",
+    "hospitalType": "Acute Care - Department of Defense",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 64.8297,
+    "longitude": -147.662229,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE VALDEZ MEDICAL CENTER",
+    "state": "AK",
+    "address": "PO BOX 550",
+    "zip": "99686",
+    "cmsId": "021301",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "PROVIDENCE SEWARD HOSPITAL",
+    "state": "AK",
+    "address": "417 FIRST AVENUE, PO BOX 365",
+    "zip": "99664",
+    "cmsId": "021302",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "PETERSBURG MEDICAL CENTER",
+    "state": "AK",
+    "address": "PO BOX 589",
+    "zip": "99833",
+    "cmsId": "021304",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true
+  },
+  {
+    "name": "SEARHC WRANGELL MEDICAL CENTER-CAH",
+    "state": "AK",
+    "address": "232 WOOD STREET",
+    "zip": "99929",
+    "cmsId": "021305",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 56.454866,
+    "longitude": -132.374065,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE KODIAK ISLAND MEDICAL CTR",
+    "state": "AK",
+    "address": "1915 EAST REZANOF DRIVE",
+    "zip": "99615",
+    "cmsId": "021306",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 57.8009,
+    "longitude": -152.375608,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "CORDOVA COMMUNITY MEDICAL CENTER",
+    "state": "AK",
+    "address": "PO BOX 160 - 602 CHASE AVENUE",
+    "zip": "99574",
+    "cmsId": "021307",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "NORTON SOUND REGIONAL HOSPITAL",
+    "state": "AK",
+    "address": "1000 GREG KRUSCHEK AVENUE (P O BOX 966)",
+    "zip": "99762",
+    "cmsId": "021308",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "BRISTOL BAY AREA HEALTH CORPORATION",
+    "state": "AK",
+    "address": "P O BOX 130",
+    "zip": "99576",
+    "cmsId": "021309",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "MANIILAQ HEALTH CENTER",
+    "state": "AK",
+    "address": "PO BOX 43",
+    "zip": "99752",
+    "cmsId": "021310",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "PEACEHEALTH KETCHIKAN MEDICAL CENTER",
+    "state": "AK",
+    "address": "3100 TONGASS AVENUE",
+    "zip": "99901",
+    "cmsId": "021311",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 55.353523,
+    "longitude": -131.687022,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SAMUEL SIMMONDS MEMORIAL HOSPITAL",
+    "state": "AK",
+    "address": "7000 UULA ST",
+    "zip": "99723",
+    "cmsId": "021312",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 71.297403,
+    "longitude": -156.729896,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SOUTH PENINSULA HOSPITAL",
+    "state": "AK",
+    "address": "4300 BARTLETT ST",
+    "zip": "99603",
+    "cmsId": "021313",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 59.65246,
+    "longitude": -151.550072,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SOUTHEAST ALASKA REGIONAL HEALTH CONSORTIUM",
+    "state": "AK",
+    "address": "222 TONGASS DR",
+    "zip": "99835",
+    "cmsId": "021314",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 57.051696,
+    "longitude": -135.355061,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "NORTH STAR HOSPITAL",
+    "state": "AK",
+    "address": "2530 DEBARR RD",
+    "zip": "99508",
+    "cmsId": "024001",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 61.208547,
+    "longitude": -149.833223,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ALASKA PSYCHIATRIC INSTITUTE",
+    "state": "AK",
+    "address": "3700 PIPER STREET",
+    "zip": "99508",
+    "cmsId": "024002",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 61.185097,
+    "longitude": -149.829802,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST LUKES MAGIC VALLEY MEDICAL CENTER",
+    "state": "ID",
+    "address": "801 POLE LINE ROAD WEST",
+    "zip": "83301",
+    "cmsId": "130002",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 42.592077,
+    "longitude": -114.464496,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST JOSEPH REGIONAL MEDICAL CENTER",
+    "state": "ID",
+    "address": "415 SIXTH STREET",
+    "zip": "83501",
+    "cmsId": "130003",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 49.210883,
+    "longitude": -122.917225,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST LUKE'S REGIONAL MEDICAL CENTER",
+    "state": "ID",
+    "address": "190 EAST BANNOCK STREET",
+    "zip": "83712",
+    "cmsId": "130006",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.613056,
+    "longitude": -116.193137,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SAINT ALPHONSUS REGIONAL MEDICAL CENTER",
+    "state": "ID",
+    "address": "1055 NORTH CURTIS ROAD",
+    "zip": "83706",
+    "cmsId": "130007",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.612648,
+    "longitude": -116.257425,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SAINT ALPHONSUS MEDICAL CENTER - NAMPA",
+    "state": "ID",
+    "address": "4300 E FLAMINGO AVE",
+    "zip": "83687",
+    "cmsId": "130013",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.597495,
+    "longitude": -116.517177,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "WEST VALLEY MEDICAL CENTER",
+    "state": "ID",
+    "address": "1717 ARLINGTON STREET",
+    "zip": "83605",
+    "cmsId": "130014",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 49.928854,
+    "longitude": -97.148953,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "EASTERN IDAHO REGIONAL MEDICAL CENTER",
+    "state": "ID",
+    "address": "3100 CHANNING WAY",
+    "zip": "83404",
+    "cmsId": "130018",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.470267,
+    "longitude": -111.992096,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MADISON MEMORIAL HOSPITAL",
+    "state": "ID",
+    "address": "450 EAST MAIN STREET",
+    "zip": "83440",
+    "cmsId": "130025",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "PORTNEUF MEDICAL CENTER",
+    "state": "ID",
+    "address": "777 HOSPITAL WAY",
+    "zip": "83201",
+    "cmsId": "130028",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 42.872511,
+    "longitude": -112.42095,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "BOISE VA MEDICAL CENTER",
+    "state": "ID",
+    "address": "500 W. FORT STREET",
+    "zip": "83702",
+    "cmsId": "13003F",
+    "hospitalType": "Acute Care - Veterans Administration",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.620845,
+    "longitude": -116.190599,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "KOOTENAI HEALTH",
+    "state": "ID",
+    "address": "2003 KOOTENAI HEALTH WAY",
+    "zip": "83814",
+    "cmsId": "130049",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.695601,
+    "longitude": -116.793869,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "TREASURE VALLEY HOSPITAL",
+    "state": "ID",
+    "address": "8800 WEST EMERALD STREET",
+    "zip": "83704",
+    "cmsId": "130063",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.612483,
+    "longitude": -116.291034,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MOUNTAIN VIEW HOSPITAL",
+    "state": "ID",
+    "address": "2325 CORONADO STREET",
+    "zip": "83404",
+    "cmsId": "130065",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.474106,
+    "longitude": -111.987634,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "NORTHWEST SPECIALTY HOSPITAL",
+    "state": "ID",
+    "address": "1593 EAST POLSTON AVENUE",
+    "zip": "83854",
+    "cmsId": "130066",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.715306,
+    "longitude": -116.923921,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST LUKE'S NAMPA MEDICAL CENTER",
+    "state": "ID",
+    "address": "9850 WEST ST LUKES DRIVE",
+    "zip": "83687",
+    "cmsId": "130071",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "GROVE CREEK MEDICAL CENTER",
+    "state": "ID",
+    "address": "350 NORTH MERIDIAN STREET",
+    "zip": "83221",
+    "cmsId": "130073",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.195952,
+    "longitude": -112.354916,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "IDAHO FALLS COMMUNITY HOSPITAL, LLC",
+    "state": "ID",
+    "address": "2327 CORONADO ST",
+    "zip": "83404",
+    "cmsId": "130074",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.472616,
+    "longitude": -111.98748,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "BOUNDARY COMMUNITY HOSPITAL",
+    "state": "ID",
+    "address": "6640 KANIKSU STREET",
+    "zip": "83805",
+    "cmsId": "131301",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 48.70191,
+    "longitude": -116.321387,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "NORTH CANYON MEDICAL CENTER",
+    "state": "ID",
+    "address": "267 NORTH CANYON DR",
+    "zip": "83330",
+    "cmsId": "131302",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 42.59176,
+    "longitude": -114.408683,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "NELL J REDFIELD MEMORIAL HOSPITAL",
+    "state": "ID",
+    "address": "150 NORTH 200 WEST",
+    "zip": "83252",
+    "cmsId": "131303",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 41.742669,
+    "longitude": -112.165251,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "POWER COUNTY HOSPITAL DISTRICT",
+    "state": "ID",
+    "address": "510 ROOSEVELT STREET",
+    "zip": "83211",
+    "cmsId": "131304",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 42.781492,
+    "longitude": -112.848526,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "STEELE MEMORIAL MEDICAL CENTER",
+    "state": "ID",
+    "address": "203 SOUTH DAISY STREET",
+    "zip": "83467",
+    "cmsId": "131305",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 45.173772,
+    "longitude": -113.891808,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "WEISER MEMORIAL HOSPITAL",
+    "state": "ID",
+    "address": "645 EAST 5TH STREET",
+    "zip": "83672",
+    "cmsId": "131307",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.870736,
+    "longitude": -116.491701,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "CASCADE MEDICAL CENTER",
+    "state": "ID",
+    "address": "402 LAKE CASCADE PARKWAY",
+    "zip": "83611",
+    "cmsId": "131308",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 44.518017,
+    "longitude": -116.049325,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "CARIBOU MEDICAL CENTER",
+    "state": "ID",
+    "address": "300 SOUTH 3RD WEST",
+    "zip": "83276",
+    "cmsId": "131309",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 42.651626,
+    "longitude": -111.614647,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST LUKE'S JEROME",
+    "state": "ID",
+    "address": "709 NORTH LINCOLN AVENUE",
+    "zip": "83338",
+    "cmsId": "131310",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 42.730103,
+    "longitude": -114.519667,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST LUKE'S ELMORE MEDICAL CENTER",
+    "state": "ID",
+    "address": "895 NORTH 6TH EAST",
+    "zip": "83647",
+    "cmsId": "131311",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.138731,
+    "longitude": -115.693435,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST LUKE'S MCCALL",
+    "state": "ID",
+    "address": "1000 STATE STREET",
+    "zip": "83638",
+    "cmsId": "131312",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 44.909315,
+    "longitude": -116.110847,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "TETON VALLEY HOSPITAL",
+    "state": "ID",
+    "address": "120 EAST HOWARD AVE",
+    "zip": "83422",
+    "cmsId": "131313",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.726536,
+    "longitude": -111.107964,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SHOSHONE MEDICAL CENTER",
+    "state": "ID",
+    "address": "25 JACOBS GULCH ROAD",
+    "zip": "83837",
+    "cmsId": "131314",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.547158,
+    "longitude": -116.130516,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SYRINGA GENERAL HOSPITAL",
+    "state": "ID",
+    "address": "607 W MAIN STREET",
+    "zip": "83530",
+    "cmsId": "131315",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "BEAR LAKE MEMORIAL HOSPITAL",
+    "state": "ID",
+    "address": "164 SOUTH FIFTH STREET",
+    "zip": "83254",
+    "cmsId": "131316",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 52.036538,
+    "longitude": -0.760357,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "BENEWAH COMMUNITY HOSPITAL",
+    "state": "ID",
+    "address": "229 SOUTH 7TH STREET",
+    "zip": "83861",
+    "cmsId": "131317",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.314556,
+    "longitude": -116.56751,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "VALOR HEALTH",
+    "state": "ID",
+    "address": "1202 EAST LOCUST STREET",
+    "zip": "83617",
+    "cmsId": "131318",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.880061,
+    "longitude": -116.484571,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MINIDOKA MEMORIAL HOSPITAL",
+    "state": "ID",
+    "address": "1224 8TH STREET",
+    "zip": "83350",
+    "cmsId": "131319",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "CLEARWATER VALLEY HOSPITAL & CLINICS",
+    "state": "ID",
+    "address": "301 CEDAR STREET",
+    "zip": "83544",
+    "cmsId": "131320",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.486775,
+    "longitude": -116.259997,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST MARY'S HOSPITAL",
+    "state": "ID",
+    "address": "701 LEWISTON ST",
+    "zip": "83522",
+    "cmsId": "131321",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.050316,
+    "longitude": -116.353118,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "FRANKLIN COUNTY MEDICAL CENTER",
+    "state": "ID",
+    "address": "44 NORTH FIRST EAST",
+    "zip": "83263",
+    "cmsId": "131322",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 41.66709,
+    "longitude": -111.18202,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST LUKE'S WOOD RIVER MEDICAL CENTER",
+    "state": "ID",
+    "address": "100 HOSPITAL DRIVE",
+    "zip": "83340",
+    "cmsId": "131323",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.649181,
+    "longitude": -114.349808,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "LOST RIVERS MEDICAL CENTER",
+    "state": "ID",
+    "address": "551 HIGHLAND DRIVE",
+    "zip": "83213",
+    "cmsId": "131324",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "BINGHAM MEMORIAL HOSPITAL",
+    "state": "ID",
+    "address": "98 POPLAR STREET",
+    "zip": "83221",
+    "cmsId": "131325",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "CASSIA REGIONAL HOSPITAL",
+    "state": "ID",
+    "address": "1501 HILAND AVENUE",
+    "zip": "83318",
+    "cmsId": "131326",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 42.534603,
+    "longitude": -113.781443,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "GRITMAN MEDICAL CENTER",
+    "state": "ID",
+    "address": "700 SOUTH MAIN STREET",
+    "zip": "83843",
+    "cmsId": "131327",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "BONNER GENERAL HOSPITAL",
+    "state": "ID",
+    "address": "520 NORTH THIRD AVENUE",
+    "zip": "83864",
+    "cmsId": "131328",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 12.418913,
+    "longitude": -69.881266,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "INTERMOUNTAIN HOSPITAL",
+    "state": "ID",
+    "address": "303 NORTH ALLUMBAUGH STREET",
+    "zip": "83704",
+    "cmsId": "134002",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.60731,
+    "longitude": -116.267901,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "LIFEWAYS HOSPITAL",
+    "state": "ID",
+    "address": "8050 WEST NORTHVIEW STREET",
+    "zip": "83704",
+    "cmsId": "134009",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.627165,
+    "longitude": -116.282311,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "STATE HOSPITAL SOUTH",
+    "state": "ID",
+    "address": "700 EAST ALICE STREET",
+    "zip": "83221",
+    "cmsId": "134010",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.187415,
+    "longitude": -112.334699,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "COTTONWOOD CREEK BEHAVIORAL HOSPITAL",
+    "state": "ID",
+    "address": "2131 s bonito way",
+    "zip": "83642",
+    "cmsId": "134017",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 43.586214,
+    "longitude": -116.359128,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE ST MARY MEDICAL CENTER",
+    "state": "WA",
+    "address": "401 W POPLAR ST",
+    "zip": "99362",
+    "cmsId": "500002",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.061695,
+    "longitude": -118.342775,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SKAGIT VALLEY HOSPITAL",
+    "state": "WA",
+    "address": "1415 KINCAID STREET",
+    "zip": "98274",
+    "cmsId": "500003",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Mt. Vernon",
+    "county": "Skagit",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "I",
+    "hasELVO": false,
+    "latitude": 48.418707,
+    "longitude": -122.324193,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "VIRGINIA MASON MEDICAL CENTER",
+    "state": "WA",
+    "address": "925 SENECA ST",
+    "zip": "98101",
+    "cmsId": "500005",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Seattle",
+    "county": "King",
+    "waStateStrokeLevel": "I",
+    "waStateCardiacLevel": "I",
+    "hasELVO": true,
+    "nationalCertification": "Joint Commission CSC",
+    "certifyingBody": "Joint Commission",
+    "certLevel": "Comprehensive Stroke Center",
+    "latitude": 47.609952,
+    "longitude": -122.327199,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ISLAND HOSPITAL",
+    "state": "WA",
+    "address": "1211  24TH STREET",
+    "zip": "98221",
+    "cmsId": "500007",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "city": "Anacortes",
+    "county": "Skagit",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.502101,
+    "longitude": -122.615097,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "UNIVERSITY OF WASHINGTON MEDICAL CTR",
+    "state": "WA",
+    "address": "1959 NE PACIFIC ST  BOX 356151",
+    "zip": "98195",
+    "cmsId": "500008",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true
+  },
+  {
+    "name": "HIGHLINE MEDICAL CENTER",
+    "state": "WA",
+    "address": "16251 SYLVESTER ROAD SW",
+    "zip": "98166",
+    "cmsId": "500011",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.457305,
+    "longitude": -122.342834,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE REGIONAL MEDICAL CENTER EVERETT",
+    "state": "WA",
+    "address": "1321 COLBY AVENUE",
+    "zip": "98201",
+    "cmsId": "500014",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Everett",
+    "county": "Snohomish",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "I",
+    "hasELVO": true,
+    "latitude": 48.000023,
+    "longitude": -122.207971,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MULTICARE AUBURN MEDICAL CENTER",
+    "state": "WA",
+    "address": "202 NORTH DIVISION STREET PLAZA ONE",
+    "zip": "98001",
+    "cmsId": "500015",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "CONFLUENCE HEALTH HOSPITAL",
+    "state": "WA",
+    "address": "1201 S MILLER STREET",
+    "zip": "98807",
+    "cmsId": "500016",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 47.406481,
+    "longitude": -120.321914,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE CENTRALIA HOSPITAL",
+    "state": "WA",
+    "address": "914 S SCHEUBER ROAD",
+    "zip": "98531",
+    "cmsId": "500019",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Centralia",
+    "county": "Lewis",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.712786,
+    "longitude": -122.985652,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST CLARE HOSPITAL",
+    "state": "WA",
+    "address": "11315 BRIDGEPORT WAY S W",
+    "zip": "98499",
+    "cmsId": "500021",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "PROVIDENCE ST PETER HOSPITAL",
+    "state": "WA",
+    "address": "413 LILLY ROAD NE",
+    "zip": "98506",
+    "cmsId": "500024",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.053181,
+    "longitude": -122.84449,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SWEDISH MEDICAL CENTER / CHERRY HILL",
+    "state": "WA",
+    "address": "500 17TH AVENUE",
+    "zip": "98122",
+    "cmsId": "500025",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.607112,
+    "longitude": -122.310904,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SWEDISH EDMONDS HOSPITAL",
+    "state": "WA",
+    "address": "21601 76TH AVENUE WEST",
+    "zip": "98026",
+    "cmsId": "500026",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.803519,
+    "longitude": -122.335581,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SWEDISH MEDICAL CENTER",
+    "state": "WA",
+    "address": "747 BROADWAY",
+    "zip": "98122",
+    "cmsId": "500027",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.60868,
+    "longitude": -122.322662,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST JOSEPH HOSPITAL",
+    "state": "WA",
+    "address": "2901 SQUALICUM PARKWAY",
+    "zip": "98225",
+    "cmsId": "500030",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 48.773595,
+    "longitude": -122.473688,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "GRAYS HARBOR COMMUNITY HOSPITAL",
+    "state": "WA",
+    "address": "915 ANDERSON DRIVE",
+    "zip": "98520",
+    "cmsId": "500031",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Aberdeen",
+    "county": "Grays Harbor",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.979488,
+    "longitude": -123.847028,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SAMARITAN HOSPITAL",
+    "state": "WA",
+    "address": "801 EAST WHEELER ROAD",
+    "zip": "98837",
+    "cmsId": "500033",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Moses Lake",
+    "county": "Grant",
+    "waStateStrokeLevel": "NP",
+    "waStateCardiacLevel": "NP",
+    "hasELVO": false,
+    "latitude": 47.128526,
+    "longitude": -119.265168,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "YAKIMA VALLEY MEMORIAL",
+    "state": "WA",
+    "address": "2811 TIETON DRIVE",
+    "zip": "98902",
+    "cmsId": "500036",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.593796,
+    "longitude": -120.546765,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ASTRIA TOPPENISH HOSPITAL",
+    "state": "WA",
+    "address": "502 W FOURTH AVE",
+    "zip": "98948",
+    "cmsId": "500037",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": -31.932364,
+    "longitude": 115.887212,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "HARRISON MEDICAL CENTER",
+    "state": "WA",
+    "address": "2520 CHERRY AVENUE",
+    "zip": "98310",
+    "cmsId": "500039",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.582312,
+    "longitude": -122.625846,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PEACEHEALTH ST JOHN MEDICAL CENTER",
+    "state": "WA",
+    "address": "1615 DELAWARE STREET",
+    "zip": "98632",
+    "cmsId": "500041",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.130183,
+    "longitude": -122.942116,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "DEACONESS MEDICAL CENTER",
+    "state": "WA",
+    "address": "W 800 FIFTH AVENUE",
+    "zip": "99210",
+    "cmsId": "500044",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "PEACEHEALTH SOUTHWEST MEDICAL CENTER",
+    "state": "WA",
+    "address": "400 NE MOTHER JOSEPH PLACE",
+    "zip": "98664",
+    "cmsId": "500050",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "nationalCertification": "DNV PSC",
+    "certifyingBody": "DNV",
+    "certLevel": "Primary Stroke Center",
+    "latitude": 45.624374,
+    "longitude": -122.581049,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "OVERLAKE HOSPITAL MEDICAL CENTER",
+    "state": "WA",
+    "address": "1035-116TH AVE NE",
+    "zip": "98004",
+    "cmsId": "500051",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Bellevue",
+    "county": "King",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "I",
+    "hasELVO": false,
+    "nationalCertification": "Joint Commission Advanced TSC",
+    "certifyingBody": "Joint Commission",
+    "certLevel": "Advanced Thrombectomy-Capable Stroke Center",
+    "latitude": 47.6197,
+    "longitude": -122.186389,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "KAISER PERMANENTE CENTRAL HOSPITAL",
+    "state": "WA",
+    "address": "201 - 16TH AVENUE EAST",
+    "zip": "98112",
+    "cmsId": "500052",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.618794,
+    "longitude": -122.312645,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "TRIOS HEALTH",
+    "state": "WA",
+    "address": "3780 PLAZA WAY",
+    "zip": "99338",
+    "cmsId": "500053",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 46.176314,
+    "longitude": -119.191467,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROV SACRED HRT MED CTR & CHILDS HOSP.",
+    "state": "WA",
+    "address": "101 WEST 8TH AVENUE",
+    "zip": "99220",
+    "cmsId": "500054",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.648315,
+    "longitude": -117.412172,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "KADLEC REGIONAL MEDICAL CENTER",
+    "state": "WA",
+    "address": "888 SWIFT BLVD",
+    "zip": "99352",
+    "cmsId": "500058",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Richland",
+    "county": "Benton",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "I",
+    "hasELVO": false,
+    "latitude": 46.281768,
+    "longitude": -119.281807,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "Madigan AMC (FT Lewis)",
+    "state": "WA",
+    "address": "9040A Jackson Ave",
+    "zip": "98431",
+    "cmsId": "50005F",
+    "hospitalType": "Acute Care - Department of Defense",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.099127,
+    "longitude": -122.560647,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "CASCADE VALLEY HOSPITAL",
+    "state": "WA",
+    "address": "330 S STILLAGUAMISH AVE",
+    "zip": "98223",
+    "cmsId": "500060",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Arlington",
+    "county": "Snohomish",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.189552,
+    "longitude": -122.118724,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "HARBORVIEW MEDICAL CENTER",
+    "state": "WA",
+    "address": "325 9TH AVENUE",
+    "zip": "98104",
+    "cmsId": "500064",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Seattle",
+    "county": "King",
+    "waStateStrokeLevel": "I",
+    "waStateCardiacLevel": "I",
+    "hasELVO": true,
+    "nationalCertification": "Joint Commission CSC",
+    "certifyingBody": "Joint Commission",
+    "certLevel": "Comprehensive Stroke Center",
+    "latitude": 47.604038,
+    "longitude": -122.323242,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "OLYMPIC MEDICAL CENTER",
+    "state": "WA",
+    "address": "939 CAROLINE ST",
+    "zip": "98362",
+    "cmsId": "500072",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Port Angeles",
+    "county": "Clallam",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.115263,
+    "longitude": -123.414303,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE HOLY FAMILY HOSPITAL",
+    "state": "WA",
+    "address": "5633 NORTH LIDGERWOOD",
+    "zip": "99208",
+    "cmsId": "500077",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Spokane",
+    "county": "Spokane",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.707991,
+    "longitude": -117.405956,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MULTICARE GOOD SAMARITAN HOSPITAL",
+    "state": "WA",
+    "address": "401 15TH AVENUE SE",
+    "zip": "98372",
+    "cmsId": "500079",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Puyallup",
+    "county": "Pierce",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "I",
+    "hasELVO": false,
+    "nationalCertification": "DNV PSC",
+    "certifyingBody": "DNV",
+    "certLevel": "Primary Stroke Center",
+    "latitude": 47.177771,
+    "longitude": -122.288642,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "EVERGREENHEALTH MONROE",
+    "state": "WA",
+    "address": "14701 179TH AVE SE",
+    "zip": "98272",
+    "cmsId": "500084",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.86422,
+    "longitude": -121.989456,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "VALLEY MEDICAL CENTER",
+    "state": "WA",
+    "address": "400 S 43RD ST",
+    "zip": "98055",
+    "cmsId": "500088",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "nationalCertification": "Joint Commission TSC",
+    "certifyingBody": "Joint Commission",
+    "certLevel": "Thrombectomy-Capable Stroke Center",
+    "latitude": 47.442694,
+    "longitude": -122.214034,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST JOSEPH MEDICAL CENTER",
+    "state": "WA",
+    "address": "1717 SOUTH J STREET",
+    "zip": "98405",
+    "cmsId": "500108",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.24548,
+    "longitude": -122.448048,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MULTICARE VALLEY HOSPITAL",
+    "state": "WA",
+    "address": "12606 EAST MISSION AVENUE",
+    "zip": "99216",
+    "cmsId": "500119",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Spokane Valle",
+    "county": "Spokane",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.670376,
+    "longitude": -117.23566,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SPOKANE VA MEDICAL CENTER",
+    "state": "WA",
+    "address": "4815 N. ASSEMBLY STREET",
+    "zip": "99205",
+    "cmsId": "50011F",
+    "hospitalType": "Acute Care - Veterans Administration",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.703514,
+    "longitude": -117.478057,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "EVERGREENHEALTH MEDICAL CENTER",
+    "state": "WA",
+    "address": "12040 NE 128TH STREET",
+    "zip": "98034",
+    "cmsId": "500124",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Kirkland",
+    "county": "King",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "I",
+    "hasELVO": false,
+    "nationalCertification": "DNV PSC+",
+    "certifyingBody": "DNV",
+    "certLevel": "Primary Plus Stroke Center",
+    "latitude": 47.715828,
+    "longitude": -122.178342,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "TACOMA GENERAL ALLENMORE HOSPITAL",
+    "state": "WA",
+    "address": "315 S MLK JR WAY",
+    "zip": "98405",
+    "cmsId": "500129",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "CAPITAL MEDICAL CENTER",
+    "state": "WA",
+    "address": "3900 CAPITAL MALL DR SW",
+    "zip": "98502",
+    "cmsId": "500139",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Olympia",
+    "county": "Thurston",
+    "waStateStrokeLevel": "NP",
+    "waStateCardiacLevel": "I",
+    "hasELVO": false,
+    "latitude": 47.041843,
+    "longitude": -122.951859,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST FRANCIS COMMUNITY HOSPITAL",
+    "state": "WA",
+    "address": "34515 9TH AVENUE SOUTH",
+    "zip": "98003",
+    "cmsId": "500141",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.292187,
+    "longitude": -122.327474,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "LEGACY SALMON CREEK MEDICAL CENTER",
+    "state": "WA",
+    "address": "2211 NE 139TH STREET",
+    "zip": "98686",
+    "cmsId": "500150",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Vancouver",
+    "county": "Clark",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 45.720329,
+    "longitude": -122.648198,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST ANTHONY HOSPITAL",
+    "state": "WA",
+    "address": "11567 CANTERWOOD BOULEVARD NW",
+    "zip": "98332",
+    "cmsId": "500151",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "SWEDISH ISSAQUAH",
+    "state": "WA",
+    "address": "751 NE BLAKELY DR",
+    "zip": "98029",
+    "cmsId": "500152",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Issaquah",
+    "county": "King",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "I",
+    "hasELVO": false,
+    "latitude": 47.535712,
+    "longitude": -122.021768,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MULTICARE COVINGTON MEDICAL CENTER",
+    "state": "WA",
+    "address": "17700 SE 272ND ST",
+    "zip": "98042",
+    "cmsId": "500154",
+    "hospitalType": "Acute Care Hospitals",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.359386,
+    "longitude": -122.10399,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SEATTLE VA MEDICAL CENTER (VA PUGET SOUND HEALTHCARE SYSTEM)",
+    "state": "WA",
+    "address": "1660 S. COLUMBIAN WAY",
+    "zip": "98108",
+    "cmsId": "50030F",
+    "hospitalType": "Acute Care - Veterans Administration",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.562685,
+    "longitude": -122.308424,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "GARFIELD COUNTY PUBLIC HOSPITAL DISTRICT #1",
+    "state": "WA",
+    "address": "66 NORTH SIXTH STREET",
+    "zip": "99347",
+    "cmsId": "501301",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 48.394591,
+    "longitude": -122.490441,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "DAYTON GENERAL HOSPITAL",
+    "state": "WA",
+    "address": "1012 SOUTH 3RD STREET",
+    "zip": "99328",
+    "cmsId": "501302",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Dayton",
+    "county": "Columbia",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.312036,
+    "longitude": -117.970518,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "WILLAPA HARBOR HOSPITAL",
+    "state": "WA",
+    "address": "800 ALDER STREET",
+    "zip": "98586",
+    "cmsId": "501303",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "South Bend",
+    "county": "Pacific",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.662729,
+    "longitude": -123.812473,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SUMMIT PACIFIC MEDICAL CENTER",
+    "state": "WA",
+    "address": "600 EAST MAIN STREET",
+    "zip": "98541",
+    "cmsId": "501304",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "McCleary",
+    "county": "Grays Harbor",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.007523,
+    "longitude": -123.392293,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "LINCOLN HOSPITAL",
+    "state": "WA",
+    "address": "10 NICHOLS STREET",
+    "zip": "99122",
+    "cmsId": "501305",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.657626,
+    "longitude": -118.14531,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ODESSA MEMORIAL HEALTHCARE CENTER",
+    "state": "WA",
+    "address": "502 E AMENDE DRIVE",
+    "zip": "99159",
+    "cmsId": "501307",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "COULEE MEDICAL CENTER",
+    "state": "WA",
+    "address": "411 FORTUYN ROAD",
+    "zip": "99133",
+    "cmsId": "501308",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Grand Coulee",
+    "county": "Grant",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.942132,
+    "longitude": -119.007573,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE ST JOSEPH HOSPITAL",
+    "state": "WA",
+    "address": "500 EAST WEBSTER",
+    "zip": "99109",
+    "cmsId": "501309",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 48.2776,
+    "longitude": -117.710708,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "NEWPORT COMMUNITY HOSPITAL",
+    "state": "WA",
+    "address": "714 WEST PINE STREET",
+    "zip": "99156",
+    "cmsId": "501310",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.56449,
+    "longitude": -117.497216,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "EAST ADAMS RURAL HOSPITAL",
+    "state": "WA",
+    "address": "903 SOUTH ADAMS",
+    "zip": "99169",
+    "cmsId": "501311",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Ritzville",
+    "county": "Adams",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.121265,
+    "longitude": -118.371832,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROSSER MEMORIAL HOSPITAL",
+    "state": "WA",
+    "address": "723 MEMORIAL STREET",
+    "zip": "99350",
+    "cmsId": "501312",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Prosser",
+    "county": "Benton",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.207915,
+    "longitude": -119.763951,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "CASCADE MEDICAL CENTER",
+    "state": "WA",
+    "address": "817 COMMERCIAL STREET",
+    "zip": "98826",
+    "cmsId": "501313",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 47.596599,
+    "longitude": -120.656262,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "OCEAN BEACH HOSPITAL",
+    "state": "WA",
+    "address": "174 FIRST AVENUE NORTH",
+    "zip": "98624",
+    "cmsId": "501314",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Ilwaco",
+    "county": "Pacific",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.579029,
+    "longitude": -119.006931,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SKYLINE HOSPITAL",
+    "state": "WA",
+    "address": "211 SKYLINE DRIVE",
+    "zip": "98672",
+    "cmsId": "501315",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "White Salmon",
+    "county": "Klickitat",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 45.723021,
+    "longitude": -121.470452,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "KLICKITAT VALLEY HOSPITAL",
+    "state": "WA",
+    "address": "310 SOUTH ROOSEVELT",
+    "zip": "98620",
+    "cmsId": "501316",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 45.81999,
+    "longitude": -120.811052,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "COLUMBIA BASIN HOSPITAL",
+    "state": "WA",
+    "address": "200 NAT WASHINGTON WAY",
+    "zip": "98823",
+    "cmsId": "501317",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "city": "Ephrata",
+    "county": "Grant",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.314266,
+    "longitude": -119.544747,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "OTHELLO COMMUNITY HOSPITAL",
+    "state": "WA",
+    "address": "315 NORTH 14TH AVENUE",
+    "zip": "99344",
+    "cmsId": "501318",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Othello",
+    "county": "Adams",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.830087,
+    "longitude": -119.155265,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ARBOR HEALTH MORTON HOSPITAL",
+    "state": "WA",
+    "address": "521 ADAMS STREET",
+    "zip": "98356",
+    "cmsId": "501319",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.100271,
+    "longitude": -122.538091,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "QUINCY VALLEY MEDICAL CENTER",
+    "state": "WA",
+    "address": "908 10TH AVENUE SOUTHWEST",
+    "zip": "98848",
+    "cmsId": "501320",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Quincy",
+    "county": "Grant",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.231046,
+    "longitude": -119.868094,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "NORTH VALLEY HOSPITAL",
+    "state": "WA",
+    "address": "203 SOUTH WESTERN",
+    "zip": "98855",
+    "cmsId": "501321",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Tonasket",
+    "county": "Okanogan",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.706953,
+    "longitude": -119.43859,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "FERRY COUNTY MEMORIAL HOSPITAL",
+    "state": "WA",
+    "address": "36 KLONDIKE ROAD",
+    "zip": "99166",
+    "cmsId": "501322",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Republic",
+    "county": "Ferry",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.65433,
+    "longitude": -118.721259,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "JEFFERSON HEALTHCARE",
+    "state": "WA",
+    "address": "834 SHERIDAN STREET",
+    "zip": "98368",
+    "cmsId": "501323",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Port Townsen",
+    "county": "Jefferson",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.106001,
+    "longitude": -122.788996,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "THREE RIVERS HOSPITAL",
+    "state": "WA",
+    "address": "507 HOSPITAL WAY",
+    "zip": "98812",
+    "cmsId": "501324",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Brewster",
+    "county": "Douglas",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.106304,
+    "longitude": -119.782569,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "FORKS COMMUNITY HOSPITAL",
+    "state": "WA",
+    "address": "530 BOGACHIEL WAY",
+    "zip": "98331",
+    "cmsId": "501325",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.946365,
+    "longitude": -124.393265,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PROVIDENCE MOUNT CARMEL HOSPITAL",
+    "state": "WA",
+    "address": "982 EAST COLUMBIA",
+    "zip": "99114",
+    "cmsId": "501326",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Colville",
+    "county": "Stevens",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 48.540661,
+    "longitude": -117.892146,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "WHITMAN HOSPITAL AND MEDICAL CENTER",
+    "state": "WA",
+    "address": "1200 WEST FAIRVIEW",
+    "zip": "99111",
+    "cmsId": "501327",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.869205,
+    "longitude": -117.376573,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MID VALLEY HOSPITAL & CLINIC",
+    "state": "WA",
+    "address": "810 JASMINE STREET",
+    "zip": "98841",
+    "cmsId": "501328",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 48.396546,
+    "longitude": -119.546314,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PEACEHEALTH UNITED GENERAL MEDICAL CENTER",
+    "state": "WA",
+    "address": "2000 HOSPITAL DRIVE",
+    "zip": "98284",
+    "cmsId": "501329",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 48.495911,
+    "longitude": -122.275966,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ASTRIA SUNNYSIDE HOSPITAL",
+    "state": "WA",
+    "address": "1016 TACOMA AVENUE",
+    "zip": "98944",
+    "cmsId": "501330",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 46.322893,
+    "longitude": -120.00729,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PULLMAN REGIONAL HOSPITAL",
+    "state": "WA",
+    "address": "835 S BISHOP BLVD",
+    "zip": "99163",
+    "cmsId": "501331",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Pullman",
+    "county": "Whitman",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.722195,
+    "longitude": -117.164579,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "TRI-STATE MEMORIAL HOSPITAL",
+    "state": "WA",
+    "address": "1221 HIGHLAND AVENUE",
+    "zip": "99403",
+    "cmsId": "501332",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.402298,
+    "longitude": -117.054674,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "KITTITAS VALLEY COMMUNITY HOSPITAL",
+    "state": "WA",
+    "address": "603 SOUTH CHESTNUT",
+    "zip": "98926",
+    "cmsId": "501333",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Ellensburg",
+    "county": "Kittitas",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.987666,
+    "longitude": -120.538064,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "LAKE CHELAN COMMUNITY HOSPITAL",
+    "state": "WA",
+    "address": "110 S APPLE BLOSSOM DR",
+    "zip": "98816",
+    "cmsId": "501334",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)"
+    ],
+    "verified": true,
+    "city": "Chelan",
+    "county": "Chelan",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.838177,
+    "longitude": -119.988894,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "ST ELIZABETH HOSPITAL",
+    "state": "WA",
+    "address": "1450 BATTERSBY AVENUE",
+    "zip": "98022",
+    "cmsId": "501335",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.208359,
+    "longitude": -121.988169,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "MASON GENERAL HOSPITAL & FAMILY OF CLINICS",
+    "state": "WA",
+    "address": "901 MT VIEW DRIVE",
+    "zip": "98584",
+    "cmsId": "501336",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "latitude": 47.732112,
+    "longitude": -122.795938,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "LOURDES MEDICAL CENTER",
+    "state": "WA",
+    "address": "520 N FOURTH AVENUE",
+    "zip": "99301",
+    "cmsId": "501337",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "city": "Pasco",
+    "county": "Franklin",
+    "waStateStrokeLevel": "II",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 46.201714,
+    "longitude": -119.014551,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SNOQUALMIE VALLEY HOSPITAL",
+    "state": "WA",
+    "address": "9801 FRONTIER AVE SE",
+    "zip": "98065",
+    "cmsId": "501338",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": true,
+    "dataSources": [
+      "CMS (Nov 2024)",
+      "WA DOH (Oct 2024)",
+      "UW Medicine Telestroke Program"
+    ],
+    "verified": true,
+    "city": "Snoqualmie",
+    "county": "King",
+    "waStateStrokeLevel": "III",
+    "waStateCardiacLevel": "II",
+    "hasELVO": false,
+    "latitude": 47.512712,
+    "longitude": -121.885816,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "WHIDBEYHEALTH MEDICAL CENTER",
+    "state": "WA",
+    "address": "101 NORTH MAIN STREET",
+    "zip": "98239",
+    "cmsId": "501339",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 48.213546,
+    "longitude": -122.686038,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "PEACEHEALTH PEACE ISLAND MEDICAL CENTER",
+    "state": "WA",
+    "address": "1117 SPRING STREET",
+    "zip": "98250",
+    "cmsId": "501340",
+    "hospitalType": "Critical Access Hospitals",
+    "isCriticalAccess": true,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 48.526651,
+    "longitude": -123.029556,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SEATTLE CHILDREN'S HOSPITAL",
+    "state": "WA",
+    "address": "4800 SAND POINT WAY NE, PO BOX C-5371",
+    "zip": "98105",
+    "cmsId": "503300",
+    "hospitalType": "Childrens",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "MARY BRIDGE CHILDREN'S HOSPITAL",
+    "state": "WA",
+    "address": "317 MARTIN LUTHER KING JR W BOX 5299",
+    "zip": "98415",
+    "cmsId": "503301",
+    "hospitalType": "Childrens",
+    "isCriticalAccess": false,
+    "emergencyServices": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "SHRINERS HOSPITAL FOR CHILDREN",
+    "state": "WA",
+    "address": "911 WEST 5TH AVENUE",
+    "zip": "99204",
+    "cmsId": "503302",
+    "hospitalType": "Childrens",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.650868,
+    "longitude": -117.425694,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "BHC FAIRFAX HOSPITAL",
+    "state": "WA",
+    "address": "10200 NE 132ND ST",
+    "zip": "98034",
+    "cmsId": "504002",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.719488,
+    "longitude": -122.204408,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "EASTERN STATE HOSPITAL",
+    "state": "WA",
+    "address": "850 MAPLE STREET - P O BOX  A",
+    "zip": "99022",
+    "cmsId": "504004",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "LOURDES COUNSELING CENTER",
+    "state": "WA",
+    "address": "1175 CARONDELET DRIVE",
+    "zip": "99352",
+    "cmsId": "504008",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 46.283925,
+    "longitude": -119.281153,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "NAVOS - INPATIENT SERVICES",
+    "state": "WA",
+    "address": "2600 SOUTHWEST HOLDEN",
+    "zip": "98126",
+    "cmsId": "504009",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.533946,
+    "longitude": -122.366193,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SMOKEY POINT BEHAVIORAL HOSPITAL",
+    "state": "WA",
+    "address": "3955 156TH ST NE",
+    "zip": "98271",
+    "cmsId": "504012",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 48.138771,
+    "longitude": -122.179498,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "RAINIER SPRINGS",
+    "state": "WA",
+    "address": "2805 NE 129TH ST",
+    "zip": "98686",
+    "cmsId": "504013",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 45.714745,
+    "longitude": -122.642202,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "INLAND NORTHWEST BEHAVIORAL HEALTH",
+    "state": "WA",
+    "address": "104 W 5TH AVE",
+    "zip": "99204",
+    "cmsId": "504014",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.651542,
+    "longitude": -117.413653,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "SOUTH SOUND BEHAVIORAL HOSPITAL",
+    "state": "WA",
+    "address": "605 WOODLAND SQUARE LOOP SE",
+    "zip": "98503",
+    "cmsId": "504015",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.042609,
+    "longitude": -122.827988,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  },
+  {
+    "name": "WELLFOUND BEHAVIORAL HEALTH HOSPITAL",
+    "state": "WA",
+    "address": "3402 S 19TH ST",
+    "zip": "98405",
+    "cmsId": "504016",
+    "hospitalType": "Psychiatric",
+    "isCriticalAccess": false,
+    "emergencyServices": false,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS (Nov 2024)"
+    ],
+    "verified": true,
+    "latitude": 47.242225,
+    "longitude": -122.481206,
+    "geocoded": true,
+    "geocodeSource": "Nominatim/OpenStreetMap"
+  }
+]

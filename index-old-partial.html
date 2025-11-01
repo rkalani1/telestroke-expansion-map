@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WA State Emergency Stroke System - 100% Verified Data</title>
+
+    <!-- Leaflet for mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .panel {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 24px;
+            z-index: 1000;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .control-panel {
+            top: 20px;
+            left: 20px;
+            width: 380px;
+        }
+
+        .stats-panel {
+            top: 20px;
+            right: 20px;
+            width: 320px;
+        }
+
+
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .app-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .app-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            border: 2px solid white;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .filter-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #374151;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkbox-label:hover {
+            background: #f3f4f6;
+        }
+
+        .checkbox-label input {
+            margin-right: 8px;
+        }
+
+        .data-source {
+            font-size: 11px;
+            color: white;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        .verified-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <!-- Control Panel -->
+    <div class="panel control-panel">
+        <div class="app-header">
+            <h1>WA State Emergency Stroke System <span class="verified-badge">100% VERIFIED</span></h1>
+            <p>Data verified from authoritative public sources</p>
+        </div>
+
+        <div class="filter-section">
+            <h3>Filter by Hospital Type</h3>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-uwPartner" checked>
+                UW Medicine Telestroke Partners
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-nationalCert" checked>
+                Nationally Certified Stroke Centers
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-waLevel1" checked>
+                WA State Level I
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-waLevel2" checked>
+                WA State Level II
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-waLevel3" checked>
+                WA State Level III
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-elvo" checked>
+                24/7 Thrombectomy (EVT) Capable
+            </label>
+        </div>
+
+        <div class="filter-section">
+            <h3>Legend</h3>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #dc2626;"></div>
+                <span>Comprehensive Stroke Center (CSC)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ea580c;"></div>
+                <span>Thrombectomy-Capable (TSC)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f59e0b;"></div>
+                <span>Primary Stroke Center Plus (PSC+)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #84cc16;"></div>
+                <span>Primary Stroke Center (PSC)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #3b82f6;"></div>
+                <span>UW Partner (No National Cert)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #6b7280;"></div>
+                <span>Other Hospitals</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Panel -->
+    <div class="panel stats-panel">
+        <div class="stat-card">
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Hospitals</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-uwPartners">0</div>
+            <div class="stat-label">UW Medicine Partners</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-nationalCert">0</div>
+            <div class="stat-label">Nationally Certified</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-elvo">0</div>
+            <div class="stat-label">24/7 Thrombectomy</div>
+        </div>
+    </div>
+
+
+    <script>
+        // Load verified hospital data
+        let HOSPITALS = [];
+
+        fetch('hospitals_verified.json')
+            .then(response => response.json())
+            .then(data => {
+                HOSPITALS = data.filter(h => h.latitude && h.longitude); // Only show geocoded hospitals
+                console.log(`Loaded ${HOSPITALS.length} verified hospitals with coordinates`);
+                initializeMap();
+                updateStats();
+                setupFilters();
+            })
+            .catch(error => {
+                console.error('Error loading hospital data:', error);
+                alert('Error loading hospital data. Please refresh the page.');
+            });
+
+        let map;
+        let markers = [];
+
+        function initializeMap() {
+            console.log('Initializing map...');
+            map = L.map('map', {
+                zoomControl: false
+            }).setView([47.6, -120.5], 7);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            L.control.zoom({ position: 'topright' }).addTo(map);
+
+            renderMarkers();
+        }
+
+        function getMarkerColor(hospital) {
+            // National certifications take precedence
+            if (hospital.nationalCertification) {
+                const cert = hospital.nationalCertification.toUpperCase();
+                if (cert.includes('CSC')) return '#dc2626'; // Red - Comprehensive
+                if (cert.includes('TSC') || cert.includes('THROMBECTOMY')) return '#ea580c'; // Orange - Thrombectomy-Capable
+                if (cert.includes('PSC+') || cert.includes('PLUS')) return '#f59e0b'; // Amber - Primary Plus
+                if (cert.includes('PSC')) return '#84cc16'; // Lime - Primary
+            }
+
+            // UW Partners without national certification
+            if (hospital.uwPartner) return '#3b82f6'; // Blue
+
+            // Other hospitals
+            return '#6b7280'; // Gray
+        }
+
+        function getMarkerSize(hospital) {
+            // National certifications and UW Partners get larger markers
+            if (hospital.nationalCertification) return 12;
+            if (hospital.uwPartner) return 10;
+            if (hospital.hasELVO) return 10;
+            return 8;
+        }
+
+        function renderMarkers() {
+            // Clear existing markers
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            // Get filter states
+            const filters = {
+                uwPartner: document.getElementById('filter-uwPartner').checked,
+                nationalCert: document.getElementById('filter-nationalCert').checked,
+                waLevel1: document.getElementById('filter-waLevel1').checked,
+                waLevel2: document.getElementById('filter-waLevel2').checked,
+                waLevel3: document.getElementById('filter-waLevel3').checked,
+                elvo: document.getElementById('filter-elvo').checked
+            };
+
+            // Filter hospitals
+            const filtered = HOSPITALS.filter(h => {
+                if (filters.uwPartner && h.uwPartner) return true;
+                if (filters.nationalCert && h.nationalCertification) return true;
+                if (filters.waLevel1 && h.waStateStrokeLevel === 'I') return true;
+                if (filters.waLevel2 && h.waStateStrokeLevel === 'II') return true;
+                if (filters.waLevel3 && h.waStateStrokeLevel === 'III') return true;
+                if (filters.elvo && h.hasELVO) return true;
+
+                // Show all if no filters selected
+                const anyFilterSelected = Object.values(filters).some(v => v);
+                return !anyFilterSelected;
+            });
+
+            // Create markers
+            filtered.forEach(hospital => {
+                const color = getMarkerColor(hospital);
+                const size = getMarkerSize(hospital);
+
+                const marker = L.circleMarker([hospital.latitude, hospital.longitude], {
+                    radius: size,
+                    fillColor: color,
+                    color: 'white',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+
+                // Popup content
+                let popupContent = `
+                    <div style="font-family: sans-serif; min-width: 250px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">${hospital.name}</h3>
+                        <div style="font-size: 13px; line-height: 1.6;">
+                            <strong>City:</strong> ${hospital.city}, ${hospital.state}<br>
+                            ${hospital.county ? `<strong>County:</strong> ${hospital.county}<br>` : ''}
+                            ${hospital.address ? `<strong>Address:</strong> ${hospital.address}<br>` : ''}
+                            ${hospital.waStateStrokeLevel ? `<strong>WA State Stroke Level:</strong> ${hospital.waStateStrokeLevel}<br>` : ''}
+                            ${hospital.nationalCertification ? `<strong>National Certification:</strong> ${hospital.nationalCertification}<br>` : ''}
+                            ${hospital.certifyingBody ? `<strong>Certifying Body:</strong> ${hospital.certifyingBody}<br>` : ''}
+                            ${hospital.hasELVO ? `<strong>24/7 Thrombectomy:</strong> Yes<br>` : ''}
+                            ${hospital.uwPartner ? `<strong>UW Telestroke Partner:</strong> Yes<br>` : ''}
+                            ${hospital.isCriticalAccess ? `<strong>Critical Access Hospital:</strong> Yes<br>` : ''}
+                        </div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent);
+                marker.addTo(map);
+                markers.push(marker);
+            });
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = HOSPITALS.length;
+            document.getElementById('stat-uwPartners').textContent = HOSPITALS.filter(h => h.uwPartner).length;
+            document.getElementById('stat-nationalCert').textContent = HOSPITALS.filter(h => h.nationalCertification).length;
+            document.getElementById('stat-elvo').textContent = HOSPITALS.filter(h => h.hasELVO).length;
+        }
+
+        function setupFilters() {
+            const filterIds = ['filter-uwPartner', 'filter-nationalCert', 'filter-waLevel1', 'filter-waLevel2', 'filter-waLevel3', 'filter-elvo'];
+            filterIds.forEach(id => {
+                document.getElementById(id).addEventListener('change', renderMarkers);
+            });
+        }
+    </script>
+</body>
+</html>
