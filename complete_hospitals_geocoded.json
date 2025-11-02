@@ -119,8 +119,8 @@
     "verified": true,
     "strokeCertificationType": "PSC",
     "certifyingBody": "Idaho DOH",
-    "certificationDetails": "Idaho TSE Level II Stroke Center - Primary Stroke Center equivalent (designated September 2024)",
-    "hasELVO": false
+    "certificationDetails": "Idaho TSE Level II Stroke Center (Primary Stroke Center equivalent) - Thrombectomy capable with interventional neuroradiology",
+    "hasELVO": true
   },
   {
     "name": "KOOTENAI HEALTH",
@@ -139,7 +139,7 @@
     "verified": true,
     "strokeCertificationType": "PSC",
     "certifyingBody": "Idaho DOH",
-    "certificationDetails": "Idaho TSE Level II Stroke Center - Primary Stroke Center equivalent",
+    "certificationDetails": "Idaho TSE Level II Stroke Center (Primary Stroke Center equivalent) - DNV Accredited",
     "hasELVO": false
   },
   {
@@ -198,9 +198,9 @@
       "CMS (Nov 2024)"
     ],
     "verified": true,
-    "strokeCertificationType": "ASR",
-    "certifyingBody": "Idaho DOH",
-    "certificationDetails": "Idaho TSE Level III Stroke Center - Acute Stroke Ready equivalent",
+    "strokeCertificationType": null,
+    "certifyingBody": null,
+    "certificationDetails": null,
     "hasELVO": false
   },
   {
@@ -2146,6 +2146,67 @@
       "CMS (Nov 2024)",
       "DNV",
       "MultiCare Health System (January 2025)"
+    ],
+    "verified": true
+  },
+  {
+    "name": "BONNER GENERAL HOSPITAL",
+    "address": "520 N THIRD AVENUE",
+    "zip": "83864",
+    "state": "ID",
+    "cmsId": "131328",
+    "latitude": 48.27741277,
+    "longitude": -116.5501,
+    "geocoded": true,
+    "geocodeSource": "Web search verification",
+    "uwPartner": false,
+    "strokeCertificationType": "ASR",
+    "certifyingBody": "Idaho DOH",
+    "certificationDetails": "Idaho TSE Level III Stroke Center (Acute Stroke Ready equivalent)",
+    "hasELVO": false,
+    "dataSources": [
+      "Idaho DOH TSE Facility Designations",
+      "Hospital website"
+    ],
+    "verified": true
+  },
+  {
+    "name": "GRITMAN MEDICAL CENTER",
+    "address": "700 SOUTH MAIN STREET",
+    "zip": "83843",
+    "state": "ID",
+    "cmsId": "131327",
+    "latitude": 46.728822,
+    "longitude": -117.0009008,
+    "geocoded": true,
+    "geocodeSource": "Web search verification",
+    "uwPartner": false,
+    "strokeCertificationType": null,
+    "certifyingBody": null,
+    "certificationDetails": null,
+    "hasELVO": false,
+    "dataSources": [
+      "CMS Provider Database"
+    ],
+    "verified": true
+  },
+  {
+    "name": "SYRINGA GENERAL HOSPITAL",
+    "address": "607 WEST MAIN STREET",
+    "zip": "83530",
+    "state": "ID",
+    "cmsId": "131315",
+    "latitude": 45.9265043,
+    "longitude": -116.1271627,
+    "geocoded": true,
+    "geocodeSource": "Web search verification",
+    "uwPartner": false,
+    "strokeCertificationType": null,
+    "certifyingBody": null,
+    "certificationDetails": null,
+    "hasELVO": false,
+    "dataSources": [
+      "CMS Provider Database"
     ],
     "verified": true
   }
