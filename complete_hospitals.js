@@ -100,6 +100,7 @@ function renderMarkers() {
         csc: document.getElementById('filter-csc').checked,
         tsc: document.getElementById('filter-tsc').checked,
         psc: document.getElementById('filter-psc').checked,
+        asr: document.getElementById('filter-asr').checked,
         uwPartner: document.getElementById('filter-uwPartner').checked,
         evt: document.getElementById('filter-evt').checked,
     };
@@ -108,7 +109,7 @@ function renderMarkers() {
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
 
     // Check if any filters are active
-    const anyFilterActive = filters.csc || filters.tsc || filters.psc || filters.uwPartner || filters.evt;
+    const anyFilterActive = filters.csc || filters.tsc || filters.psc || filters.asr || filters.uwPartner || filters.evt;
 
     // Filter hospitals
     const filtered = HOSPITALS.filter(h => {
@@ -133,6 +134,7 @@ function renderMarkers() {
         if (filters.csc && certType === 'CSC') passCert = true;
         if (filters.tsc && certType === 'TSC') passCert = true;
         if (filters.psc && certType === 'PSC') passCert = true;
+        if (filters.asr && certType === 'ASR') passCert = true;
 
         // UW Partner filter
         if (filters.uwPartner && h.uwPartner) passCert = true;
@@ -224,6 +226,7 @@ function updateStats(filtered = HOSPITALS) {
     document.getElementById('stat-csc').textContent = filtered.filter(h => h.strokeCertificationType === 'CSC').length;
     document.getElementById('stat-tsc').textContent = filtered.filter(h => h.strokeCertificationType === 'TSC').length;
     document.getElementById('stat-psc').textContent = filtered.filter(h => h.strokeCertificationType === 'PSC').length;
+    document.getElementById('stat-asr').textContent = filtered.filter(h => h.strokeCertificationType === 'ASR').length;
     document.getElementById('stat-uwPartners').textContent = filtered.filter(h => h.uwPartner).length;
     document.getElementById('stat-evt').textContent = filtered.filter(h => h.hasELVO).length;
 }
@@ -237,6 +240,7 @@ function resetFilters() {
     document.getElementById('filter-csc').checked = false;
     document.getElementById('filter-tsc').checked = false;
     document.getElementById('filter-psc').checked = false;
+    document.getElementById('filter-asr').checked = false;
     document.getElementById('filter-uwPartner').checked = false;
     document.getElementById('filter-evt').checked = false;
 
@@ -252,6 +256,7 @@ function clearCertFilters() {
     document.getElementById('filter-csc').checked = false;
     document.getElementById('filter-tsc').checked = false;
     document.getElementById('filter-psc').checked = false;
+    document.getElementById('filter-asr').checked = false;
 
     // Re-render
     renderMarkers();
@@ -280,6 +285,7 @@ function exportToCSV() {
         csc: document.getElementById('filter-csc').checked,
         tsc: document.getElementById('filter-tsc').checked,
         psc: document.getElementById('filter-psc').checked,
+        asr: document.getElementById('filter-asr').checked,
         uwPartner: document.getElementById('filter-uwPartner').checked,
         evt: document.getElementById('filter-evt').checked,
     };
@@ -287,7 +293,7 @@ function exportToCSV() {
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
 
     // Check if any filters are active
-    const anyFilterActive = filters.csc || filters.tsc || filters.psc || filters.uwPartner || filters.evt;
+    const anyFilterActive = filters.csc || filters.tsc || filters.psc || filters.asr || filters.uwPartner || filters.evt;
 
     const filtered = HOSPITALS.filter(h => {
         // Search filter
@@ -310,6 +316,7 @@ function exportToCSV() {
         if (filters.csc && certType === 'CSC') passCert = true;
         if (filters.tsc && certType === 'TSC') passCert = true;
         if (filters.psc && certType === 'PSC') passCert = true;
+        if (filters.asr && certType === 'ASR') passCert = true;
         if (filters.uwPartner && h.uwPartner) passCert = true;
         if (filters.evt && h.hasELVO) passCert = true;
 
@@ -2230,6 +2237,7 @@ function saveStateToURL() {
     if (document.getElementById('filter-csc').checked) params.append('csc', '1');
     if (document.getElementById('filter-tsc').checked) params.append('tsc', '1');
     if (document.getElementById('filter-psc').checked) params.append('psc', '1');
+    if (document.getElementById('filter-asr').checked) params.append('asr', '1');
     if (document.getElementById('filter-uwPartner').checked) params.append('uw', '1');
     if (document.getElementById('filter-evt').checked) params.append('evt', '1');
 
@@ -2257,6 +2265,7 @@ function loadStateFromURL() {
     if (params.has('csc')) document.getElementById('filter-csc').checked = true;
     if (params.has('tsc')) document.getElementById('filter-tsc').checked = true;
     if (params.has('psc')) document.getElementById('filter-psc').checked = true;
+    if (params.has('asr')) document.getElementById('filter-asr').checked = true;
     if (params.has('uw')) document.getElementById('filter-uwPartner').checked = true;
     if (params.has('evt')) document.getElementById('filter-evt').checked = true;
 

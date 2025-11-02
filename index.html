@@ -292,6 +292,10 @@
                 <input type="checkbox" id="filter-psc" onchange="renderMarkers()">
                 <strong>PSC</strong> - Primary Stroke Center
             </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="filter-asr" onchange="renderMarkers()">
+                <strong>ASR/ASRH</strong> - Acute Stroke Ready
+            </label>
         </div>
 
         <!-- Special Designations -->
@@ -335,6 +339,13 @@
                 <div class="legend-text">
                     <strong>PSC - Primary</strong>
                     <span>Basic stroke care, IV tPA</span>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #84cc16;"></div>
+                <div class="legend-text">
+                    <strong>ASR - Acute Stroke Ready</strong>
+                    <span>Stabilization, IV tPA, transfer protocols</span>
                 </div>
             </div>
             <div class="legend-item">
@@ -465,6 +476,10 @@
             <div class="stat-label">Primary (PSC)</div>
         </div>
         <div class="stat-card">
+            <div class="stat-value" id="stat-asr">0</div>
+            <div class="stat-label">Acute Stroke Ready (ASR)</div>
+        </div>
+        <div class="stat-card">
             <div class="stat-value" id="stat-uwPartners">0</div>
             <div class="stat-label">UW Medicine Partners</div>
         </div>
@@ -482,26 +497,58 @@
 
         <div class="cert-description">
             <h4>CSC - Comprehensive Stroke Center</h4>
-            <p>Highest level of stroke care. Provides complete range of services including 24/7 neurosurgical coverage, advanced imaging, endovascular thrombectomy (EVT), and comprehensive rehabilitation. Can treat the most complex stroke cases. Certified by Joint Commission or DNV.</p>
+            <p>Highest level of stroke care. Provides complete range of services including 24/7 neurosurgical coverage, advanced imaging (CT, CTA, MRI, MRA, DSA), endovascular thrombectomy (EVT), neurointensive care, and comprehensive rehabilitation. Can treat the most complex stroke cases including hemorrhagic strokes and aneurysms. Certified by Joint Commission, DNV, or ACHC.</p>
         </div>
 
         <div class="cert-description">
-            <h4>TSC - Thrombectomy-Capable Stroke Center</h4>
-            <p>Advanced stroke care with capability to perform mechanical thrombectomy (EVT) for large vessel occlusions. Has CT/CTA, neuroimaging, and interventional neuroradiology available. Can provide care for complex ischemic strokes requiring endovascular intervention.</p>
+            <h4>TSC - Thrombectomy-Capable Stroke Center (DNV calls this "PSC+")</h4>
+            <p>Advanced stroke care with 24/7 capability to perform mechanical thrombectomy (EVT) for large vessel occlusions. <strong>Must have ALL Primary Stroke Center capabilities PLUS:</strong> interventional neuroradiology team available 24/7, dedicated neurological intensive care unit (neuro-ICU), advanced imaging (CT/CTA/CTP or MRI/MRA), and minimum procedural volumes (15 mechanical thrombectomies per year per facility and per physician, or 30 per physician over 24 months). Can provide endovascular treatment for complex ischemic strokes. Certified by Joint Commission (TSC), DNV (Primary Plus/PSC+), or ACHC (TSC).</p>
         </div>
 
         <div class="cert-description">
             <h4>PSC - Primary Stroke Center</h4>
-            <p>Basic comprehensive acute stroke care with CT scanning, IV thrombolysis (tPA) capability, dedicated stroke unit, and standardized protocols. Focuses on rapid assessment and treatment with established transfer agreements for patients requiring higher-level care (EVT, neurosurgery).</p>
+            <p>Foundational stroke care certification with necessary staffing, infrastructure, and programs to stabilize and treat most emergent stroke patients. Capabilities include: rapid CT scanning, IV thrombolysis (tPA) administration, dedicated stroke unit or designated stroke beds, 24/7 stroke team availability, standardized treatment protocols, and established transfer agreements to TSC or CSC facilities for patients requiring endovascular thrombectomy or neurosurgery. Certified by Joint Commission, DNV, ACHC, or CIHQ.</p>
         </div>
 
         <div class="cert-description">
-            <h4>EVT - Endovascular Thrombectomy</h4>
-            <p>24/7 mechanical thrombectomy capability for large vessel occlusions. Requires interventional neuroradiology, advanced imaging (CTA/CTP or MRI/MRA), and specialized neurovascular team. All CSC and TSC certified hospitals have EVT capability.</p>
+            <h4>ASR/ASRH - Acute Stroke Ready (Hospital)</h4>
+            <p>Entry-level stroke certification for hospitals equipped to perform rapid stroke assessments, provide stabilization, and administer IV tPA (tissue plasminogen activator). Requirements include: neurology available 24/7 via telemedicine, neurosurgery available within 3-hour transfer, IV thrombolytics available, and established transfer protocols to higher-level stroke centers (PSC, TSC, or CSC) for patients requiring advanced care. Joint Commission uses "ASRH", while DNV uses "ASR". Also certified by ACHC or CIHQ.</p>
+        </div>
+
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px; margin-bottom: 12px; border-radius: 4px;">
+            <h4 style="font-weight: 600; margin-bottom: 4px; color: #1e40af; font-size: 13px;">Understanding EVT (Endovascular Thrombectomy)</h4>
+            <p style="font-size: 11px; color: #1e3a8a; line-height: 1.5;">
+                <strong>24/7 Thrombectomy Capability</strong> is NOT a certification level—it's a clinical capability available at TSC and CSC certified hospitals. Mechanical thrombectomy (EVT) is a procedure to remove blood clots causing large vessel occlusions. Hospitals tracked as "EVT-capable" on this map include all TSC and CSC certified facilities, plus any hospitals performing thrombectomy regardless of certification status.
+            </p>
         </div>
 
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
-            <strong>Certifying Bodies:</strong> Joint Commission and DNV are independent accrediting organizations that verify hospitals meet rigorous stroke care standards through on-site reviews and performance metrics.
+            <strong>National Certifying Bodies:</strong> Four organizations certify stroke centers:
+            <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.6;">
+                <li><strong>The Joint Commission (TJC)</strong> - Certifies all 4 levels: ASRH, PSC, TSC, CSC</li>
+                <li><strong>DNV Healthcare (DNV)</strong> - Certifies all 4 levels: ASR, PSC, PSC+ (Primary Plus, equivalent to TSC), CSC</li>
+                <li><strong>Accreditation Commission for Health Care (ACHC)</strong> - Certifies all 4 levels: ASRH, PSC, TSC, CSC</li>
+                <li><strong>Center for Improvement in Healthcare Quality (CIHQ)</strong> - Certifies 2 levels: ASRH, PSC</li>
+            </ul>
+            <p style="margin-top: 8px;"><em>Note: Certification is voluntary. Hospitals undergo rigorous on-site reviews and must meet specific performance standards.</em></p>
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 2px solid #667eea;">
+            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #374151;">Washington State Stroke Center Categorization</h3>
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 12px; border-radius: 4px;">
+                <p style="font-size: 11px; color: #92400e; line-height: 1.5;">
+                    <strong>Important:</strong> Washington State operates a SEPARATE categorization system (Level I, II, III) that is independent from national certifications. Hospitals may have both a national certification (CSC, TSC, PSC, ASR) AND a Washington State designation level. The two systems use different criteria and serve different regulatory purposes.
+                </p>
+            </div>
+            <div style="font-size: 12px; color: #6b7280; line-height: 1.6;">
+                <p><strong>Washington State Emergency Cardiac and Stroke (ECS) System:</strong></p>
+                <ul style="margin: 8px 0; padding-left: 20px;">
+                    <li><strong>Level I:</strong> Highest state designation (similar to CSC capabilities)</li>
+                    <li><strong>Level II:</strong> Intermediate designation (similar to TSC/PSC capabilities)</li>
+                    <li><strong>Level III:</strong> Basic designation (similar to ASR capabilities)</li>
+                </ul>
+                <p style="margin-top: 8px;"><em>Note: State categorization is overseen by the Washington Department of Health. Not all hospitals pursue both national certification and state designation. This map shows national certifications.</em></p>
+            </div>
         </div>
     </div>
 
