@@ -527,76 +527,6 @@
             }
         }
 
-        /* Dark Mode Styles */
-        body.dark-mode {
-            background-color: #1a202c;
-            color: #e2e8f0;
-        }
-
-        body.dark-mode .panel {
-            background: #2d3748;
-            color: #e2e8f0;
-        }
-
-        body.dark-mode .app-header {
-            background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
-        }
-
-        body.dark-mode .filter-section h3 {
-            color: #e2e8f0;
-        }
-
-        body.dark-mode .search-box input,
-        body.dark-mode select {
-            background: #1a202c;
-            color: #e2e8f0;
-            border-color: #4a5568;
-        }
-
-        body.dark-mode .action-button {
-            background: #4c51bf;
-        }
-
-        body.dark-mode .action-button:hover {
-            background: #5a67d8;
-        }
-
-        body.dark-mode .checkbox-label:hover {
-            background: #374151;
-        }
-
-        body.dark-mode .cert-description,
-        body.dark-mode .disclaimer {
-            background: #374151;
-            color: #e2e8f0;
-        }
-
-        body.dark-mode #map {
-            filter: brightness(0.8) contrast(1.1);
-        }
-
-        /* Print Styles */
-        @media print {
-            .panel, .mobile-toggle-btn, .mobile-search-bar {
-                display: none !important;
-            }
-
-            #map {
-                position: relative !important;
-                width: 100% !important;
-                height: 600px !important;
-                margin: 0 !important;
-            }
-
-            body {
-                background: white !important;
-                color: black !important;
-            }
-
-            .leaflet-control-zoom {
-                display: none !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -758,7 +688,6 @@
             <h3>Reports <span style="font-size: 11px; opacity: 0.7; font-weight: 400; cursor: help;" title="Generate summaries and export data">(?)</span></h3>
             <button class="action-button" onclick="generateExecutiveSummary()" title="Generate text summary of current map view">Generate Summary</button>
             <button class="action-button" onclick="exportMapToPNG()" title="Export current map view as PNG image">Export Map to PNG</button>
-            <button class="action-button" onclick="printFriendlyView()" title="Generate print-friendly version of current view">Print View</button>
         </div>
 
         <!-- Advanced Filter Panel (Initially Hidden) -->
@@ -801,7 +730,6 @@
         <button class="action-button" onclick="exportToCSV()" title="Export hospital data to CSV file">Export to CSV</button>
         <button class="action-button" onclick="shareCurrentView()" title="Copy shareable URL to clipboard">Share View</button>
         <button class="action-button" onclick="resetFilters()" title="Reset all filters to default (Keyboard: R)">Reset All</button>
-        <button class="action-button" onclick="toggleDarkMode()" id="dark-mode-toggle" title="Toggle dark mode (reduces eye strain)">🌙 Dark Mode</button>
     </div>
 
     <!-- Stats Panel -->
@@ -992,11 +920,6 @@
                 });
             }
 
-            // Initialize dark mode from localStorage
-            if (localStorage.getItem('darkMode') === 'enabled') {
-                enableDarkMode();
-            }
-
             // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 // Ctrl+F or / - Focus search
@@ -1021,30 +944,6 @@
             });
         });
 
-        // Dark Mode Toggle
-        function toggleDarkMode() {
-            const body = document.body;
-            if (body.classList.contains('dark-mode')) {
-                disableDarkMode();
-            } else {
-                enableDarkMode();
-            }
-        }
-
-        function enableDarkMode() {
-            document.body.classList.add('dark-mode');
-            localStorage.setItem('darkMode', 'enabled');
-            const btn = document.getElementById('dark-mode-toggle');
-            if (btn) btn.textContent = '☀️ Light Mode';
-        }
-
-        function disableDarkMode() {
-            document.body.classList.remove('dark-mode');
-            localStorage.setItem('darkMode', null);
-            const btn = document.getElementById('dark-mode-toggle');
-            if (btn) btn.textContent = '🌙 Dark Mode';
-        }
-
         // Stats Panel Toggle
         function toggleStatsPanel() {
             const panel = document.getElementById('stats-panel');
@@ -1058,12 +957,6 @@
                 panel.style.overflow = 'hidden';
                 btn.textContent = '+';
             }
-        }
-
-        // Print-Friendly View
-        function printFriendlyView() {
-            // Open print dialog
-            window.print();
         }
     </script>
     <script src="complete_hospitals.js"></script>
