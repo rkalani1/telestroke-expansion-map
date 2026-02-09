@@ -3,961 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Regional Hospital Stroke Capabilities - WA, SE AK, N ID</title>
-
-    <!-- Leaflet for mapping -->
+    <title>Regional Hospital Stroke Capabilities</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- Leaflet MarkerCluster for clustering -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-    <!-- html2canvas for PDF/image export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
+        #map { position: absolute; inset: 0; width: 100%; height: 100vh; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            overflow: hidden;
+        /* Toast Notifications */
+        #toast-container { pointer-events: none; }
+        .toast {
+            pointer-events: auto;
+            animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
+            max-width: 360px;
+        }
+        @keyframes toast-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toast-out { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+
+        /* Sidebar */
+        .sidebar { transition: transform 0.3s ease; }
+        .sidebar.collapsed { transform: translateX(-100%); }
+
+        /* Filter Pills */
+        .pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600;
+            border: 2px solid #e5e7eb; background: white; cursor: pointer; transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .pill:hover { border-color: #9ca3af; }
+        .pill.active-csc { background: #fef2f2; border-color: #dc2626; color: #dc2626; }
+        .pill.active-tsc { background: #fff7ed; border-color: #ea580c; color: #ea580c; }
+        .pill.active-psc { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
+        .pill.active-asr { background: #f7fee7; border-color: #84cc16; color: #4d7c0f; }
+        .pill.active-evt { background: #ecfdf5; border-color: #10b981; color: #047857; }
+        .pill.active-uw  { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
+
+        /* Hospital List */
+        .hospital-item {
+            padding: 8px 12px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.15s;
+            display: flex; align-items: flex-start; gap: 8px;
+        }
+        .hospital-item:hover { background: #f9fafb; }
+        .hospital-item.highlighted { background: #eff6ff; }
+        .hospital-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+        .hospital-item .name { font-size: 12px; font-weight: 600; color: #1f2937; line-height: 1.3; }
+        .hospital-item .meta { font-size: 10px; color: #6b7280; margin-top: 1px; }
+        .hospital-item .badges { display: flex; gap: 3px; margin-top: 2px; flex-wrap: wrap; }
+        .hospital-item .badge {
+            font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+            letter-spacing: 0.02em;
         }
 
-        #map {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100vh;
-        }
-
-        .panel {
-            position: absolute;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            padding: 24px;
-            z-index: 1000;
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
-        }
-
-        .control-panel {
-            top: 20px;
-            left: 20px;
-            width: 420px;
-        }
-
-        .stats-panel {
-            top: 20px;
-            right: 20px;
-            width: 320px;
-        }
-
-        .info-panel {
-            bottom: 20px;
-            left: 20px;
-            width: 500px;
-            display: none;
-        }
-
-        .info-panel.active {
-            display: block;
-        }
-
-        .app-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .app-header h1 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .app-header p {
-            font-size: 11px;
-            opacity: 0.9;
-        }
-
-        .search-box {
-            margin-bottom: 16px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .filter-section {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .filter-section h3 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
+        /* Tools Menu */
+        .tool-item {
+            display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px;
+            border: none; background: none; cursor: pointer; border-radius: 6px; transition: background 0.15s;
             color: #374151;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        }
+        .tool-item:hover { background: #f3f4f6; }
+
+        /* Dashboard */
+        .dashboard { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .dashboard.collapsed { transform: translateX(100%); opacity: 0; pointer-events: none; }
+        .metric-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+        .metric-row .label { color: #6b7280; }
+        .metric-row .value { font-weight: 700; color: #1f2937; }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; overflow: auto;
+        }
+        .modal-overlay.active { display: block; }
+        .modal-body {
+            background: white; margin: 24px auto; max-width: 900px; border-radius: 12px;
+            padding: 24px; max-height: calc(100vh - 48px); overflow: auto;
         }
 
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            padding: 6px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 13px;
+        /* Map Legend Control */
+        .map-legend {
+            background: white; border-radius: 8px; padding: 8px 12px; font-size: 11px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
         }
+        .map-legend .entry { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .map-legend .dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3); }
 
-        .checkbox-label:hover {
-            background: #f3f4f6;
+        /* Print */
+        @media print {
+            .sidebar, .dashboard, #tools-fab, #tools-menu, .modal-overlay,
+            #toast-container, .leaflet-control-zoom, .map-legend-container,
+            .mobile-search-bar, .mobile-btn { display: none !important; }
+            #map { position: relative !important; height: 600px !important; }
+            body { overflow: visible !important; }
+            .print-header { display: block !important; text-align: center; padding: 16px; font-size: 20px; font-weight: 700; }
         }
+        .print-header { display: none; }
 
-        .checkbox-label input {
-            margin-right: 8px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            font-size: 12px;
-        }
-
-        .legend-color {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            margin-right: 10px;
-            margin-top: 2px;
-            border: 2px solid white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            flex-shrink: 0;
-        }
-
-        .legend-text {
-            flex: 1;
-        }
-
-        .legend-text strong {
-            display: block;
-            color: #1f2937;
-            margin-bottom: 2px;
-        }
-
-        .legend-text span {
-            color: #6b7280;
-            font-size: 11px;
-        }
-
-        .action-button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            width: 100%;
-            margin-top: 8px;
-            font-weight: 500;
-        }
-
-        .action-button:hover {
-            background: #2563eb;
-        }
-
-        .close-button {
-            float: right;
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .cert-description {
-            background: #f9fafb;
-            border-left: 4px solid #667eea;
-            padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 4px;
-        }
-
-        .cert-description h4 {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #374151;
-            font-size: 13px;
-        }
-
-        .cert-description p {
-            font-size: 11px;
-            color: #6b7280;
-            line-height: 1.5;
-        }
-
-        .disclaimer {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 10px;
-            margin-top: 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            color: #92400e;
-        }
-
-        /* Mobile Responsive Styles */
+        /* Mobile */
         @media (max-width: 768px) {
-            .panel {
-                position: relative;
-                width: 100% !important;
-                max-width: 100%;
-                margin: 0;
-                border-radius: 0;
-                max-height: none;
-                transition: transform 0.3s ease;
+            .sidebar {
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100% !important;
+                z-index: 1001; transform: translateX(-100%);
             }
-
-            .control-panel {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                width: 100% !important;
-                padding: 0;
-                padding-bottom: 16px;
-                border-radius: 0 0 12px 12px;
-                max-height: 70vh;
-                overflow-y: auto;
-                transform: translateY(-100%);
-                z-index: 1001;
+            .sidebar.mobile-open { transform: translateX(0); }
+            .dashboard {
+                position: fixed; top: 0; right: 0; bottom: 0; width: 100% !important;
+                max-height: 100vh !important; top: 0 !important; border-radius: 0 !important;
+                z-index: 1001; transform: translateX(100%); opacity: 0;
             }
-
-            .control-panel.mobile-visible {
-                transform: translateY(0);
-            }
-
-            .stats-panel {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
-                width: 100% !important;
-                padding: 0;
-                padding-top: 12px;
-                padding-bottom: 12px;
-                border-radius: 12px 12px 0 0;
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-                max-height: 50vh;
-                overflow-y: auto;
-                transform: translateY(100%);
-                z-index: 1001;
-            }
-
-            .stats-panel.mobile-visible {
-                transform: translateY(0);
-            }
-
-            .panel-content-wrapper {
-                padding: 16px;
-            }
-
-            .info-panel {
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                bottom: 10px;
-                width: auto !important;
-                max-height: calc(100vh - 20px);
-                overflow-y: auto;
-            }
-
-            #map {
-                height: 100vh;
-                margin-top: 0;
-            }
-
-            body {
-                overflow-y: auto;
-            }
-
-            .app-header h1 {
-                font-size: 16px;
-            }
-
-            .app-header p {
-                font-size: 10px;
-            }
-
-            .stat-card {
-                padding: 10px;
-                margin-bottom: 0;
-            }
-
-            .stat-value {
-                font-size: 20px;
-            }
-
-            .stat-label {
-                font-size: 11px;
-            }
-
-            .filter-section {
-                margin-bottom: 16px;
-                padding-bottom: 16px;
-            }
-
-            .action-button {
-                padding: 8px 12px;
-                font-size: 12px;
-                margin-top: 6px;
-            }
-
-            .checkbox-label {
-                font-size: 12px;
-                padding: 4px 6px;
-            }
-
-            .legend-item {
-                margin-bottom: 8px;
-                font-size: 11px;
-            }
-
-            /* Modal adjustments for mobile */
-            #distance-matrix-modal > div,
-            #expansion-modal > div,
-            #hospital-detail-modal > div,
-            #executive-summary-modal > div {
-                margin: 10px;
-                max-width: calc(100vw - 20px);
-                padding: 16px;
-                max-height: calc(100vh - 20px);
-            }
-
-            /* Make quick filter buttons more compact on mobile */
-            .filter-section div[style*="grid-template-columns"] {
-                grid-template-columns: 1fr 1fr !important;
-            }
-
-            /* Mobile toggle buttons */
-            .mobile-toggle-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                position: fixed;
-                padding: 12px 20px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                font-weight: 600;
-                cursor: pointer;
-                font-size: 14px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                z-index: 1002;
-                border-radius: 8px;
-                transition: all 0.3s ease;
-            }
-
-            .mobile-toggle-btn:active {
-                transform: scale(0.95);
-            }
-
-            #toggle-filters-btn {
-                top: 10px;
-                left: 10px;
-            }
-
-            #toggle-stats-btn {
-                bottom: 10px;
-                right: 10px;
-            }
-
-            .mobile-toggle-icon {
-                font-size: 18px;
-                line-height: 1;
-            }
-
-            .mobile-close-btn {
-                display: block !important;
-                width: 100%;
-                padding: 10px;
-                background: #ef4444;
-                color: white;
-                border: none;
-                font-weight: 600;
-                cursor: pointer;
-                font-size: 14px;
-                text-align: center;
-                border-radius: 0;
-                margin: 0;
-                position: sticky;
-                top: 0;
-                z-index: 10;
-            }
-
-            .control-panel .mobile-close-btn {
-                border-radius: 0 0 8px 8px;
-            }
-
-            .stats-panel .mobile-close-btn {
-                border-radius: 8px 8px 0 0;
-                grid-column: 1 / -1;
-            }
-
-            .stat-card {
-                padding: 10px;
-                margin-bottom: 0;
-            }
+            .dashboard.mobile-open { transform: translateX(0); opacity: 1; pointer-events: auto; }
+            .mobile-search-bar { display: block !important; }
+            .mobile-btn { display: flex !important; }
+            #map { margin-top: 56px; height: calc(100vh - 56px); }
+            .modal-body { margin: 8px; max-height: calc(100vh - 16px); }
         }
-
-        /* Tablet adjustments */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .control-panel {
-                width: 360px;
-                padding: 20px;
-            }
-
-            .stats-panel {
-                width: 280px;
-                padding: 16px;
-            }
-
-            .info-panel {
-                width: 450px;
-            }
+        @media (min-width: 769px) {
+            .mobile-search-bar { display: none !important; }
+            .mobile-btn { display: none !important; }
+            .sidebar-close-mobile { display: none !important; }
         }
-
-        /* Hide mobile toggle buttons on desktop */
-        .mobile-toggle-btn {
-            display: none;
-        }
-
-        /* Mobile persistent search bar */
-        .mobile-search-bar {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-search-bar {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                background: white;
-                padding: 12px 16px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                z-index: 1002;
-            }
-
-            .mobile-search-bar input {
-                width: 100%;
-                padding: 12px 16px;
-                border: 2px solid #e5e7eb;
-                border-radius: 8px;
-                font-size: 16px;
-            }
-
-            .mobile-search-bar input:focus {
-                outline: none;
-                border-color: #667eea;
-            }
-
-            /* Adjust map to account for search bar */
-            #map {
-                margin-top: 64px;
-                height: calc(100vh - 64px);
-            }
-
-            /* Adjust toggle buttons to account for search bar */
-            .mobile-toggle-btn {
-                top: 74px !important;
-            }
-        }
-
     </style>
 </head>
 <body>
+    <div class="print-header">Regional Hospital Stroke Capabilities — WA, AK, ID, MT, WY</div>
     <div id="map"></div>
 
-    <!-- Mobile Persistent Search Bar -->
-    <div class="mobile-search-bar">
-        <input
-            type="text"
-            id="mobile-search-input"
-            placeholder="Search hospitals..."
-            oninput="filterHospitals()"
-        >
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[2000] flex flex-col gap-2 items-end"></div>
+
+    <!-- Mobile Search Bar -->
+    <div class="mobile-search-bar fixed top-0 left-0 right-0 bg-white shadow-md z-[1002] p-2 flex gap-2" style="display:none;">
+        <input id="mobile-search-input" class="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm" placeholder="Search hospitals..." oninput="syncSearch(this.value)">
+        <button class="mobile-btn px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold" style="display:none;" onclick="toggleMobileSidebar()">&#9776;</button>
+        <button class="mobile-btn px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold" style="display:none;" onclick="toggleMobileDashboard()">&#9776;</button>
     </div>
 
     <!-- Mobile Toggle Buttons -->
-    <button id="toggle-filters-btn" class="mobile-toggle-btn" onclick="toggleMobilePanel('control')">
-        <span class="mobile-toggle-icon">⚙️</span>
-        <span>Filters</span>
+    <button class="mobile-btn fixed top-[62px] left-2 z-[1002] px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold shadow-lg items-center gap-1" style="display:none;" onclick="toggleMobileSidebar()">
+        <span>&#9776;</span> Filters
     </button>
-    <button id="toggle-stats-btn" class="mobile-toggle-btn" onclick="toggleMobilePanel('stats')">
-        <span class="mobile-toggle-icon">📊</span>
-        <span>Stats</span>
+    <button class="mobile-btn fixed top-[62px] right-2 z-[1002] px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold shadow-lg items-center gap-1" style="display:none;" onclick="toggleMobileDashboard()">
+        <span>&#128202;</span> Stats
     </button>
 
-    <!-- Control Panel -->
-    <div class="panel control-panel">
-        <button class="mobile-close-btn" onclick="toggleMobilePanel('control')" style="display: none;">✕ Close</button>
-        <div class="app-header">
-            <h1>Regional Hospital Stroke Capabilities</h1>
-            <p>Washington, Southeast Alaska, Northern Idaho</p>
+    <!-- Left Sidebar -->
+    <div id="sidebar" class="sidebar fixed top-0 left-0 bottom-0 w-[360px] bg-white shadow-xl z-[1000] flex flex-col">
+        <!-- Mobile close -->
+        <button class="sidebar-close-mobile w-full py-2 bg-red-500 text-white font-semibold text-sm" onclick="toggleMobileSidebar()">&#10005; Close</button>
+
+        <!-- Header -->
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-4 py-3">
+            <h1 class="text-base font-bold leading-tight">Regional Hospital Stroke Capabilities</h1>
+            <p class="text-[11px] opacity-90 mt-0.5">Washington, Alaska, Idaho, Montana &amp; Wyoming</p>
         </div>
 
-        <!-- Search Box -->
-        <div class="search-box">
-            <input
-                type="text"
-                id="search-input"
-                placeholder="Search hospitals by name or city..."
-                oninput="filterHospitals()"
-            >
-        </div>
-
-        <!-- Stroke Certification Filters -->
-        <div class="filter-section">
-            <h3>
-                Stroke Certifications
-                <button onclick="clearCertFilters()" style="font-size: 11px; padding: 2px 8px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px;">Clear All</button>
-            </h3>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-csc" onchange="renderMarkers()">
-                <strong>CSC</strong> - Comprehensive Stroke Center
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-tsc" onchange="renderMarkers()">
-                <strong>TSC</strong> - Thrombectomy-Capable
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-psc" onchange="renderMarkers()">
-                <strong>PSC</strong> - Primary Stroke Center
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-asr" onchange="renderMarkers()">
-                <strong>ASR/ASRH</strong> - Acute Stroke Ready
-            </label>
-        </div>
-
-        <!-- Special Designations -->
-        <div class="filter-section">
-            <h3>
-                Special Designations
-                <button onclick="clearSpecialFilters()" style="font-size: 11px; padding: 2px 8px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px;">Clear All</button>
-            </h3>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-uwPartner" onchange="renderMarkers()">
-                UW Medicine Telestroke Partners
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-evt" onchange="renderMarkers()">
-                24/7 Thrombectomy (EVT) Capable
-            </label>
-        </div>
-
-        <!-- Map Legend -->
-        <div class="filter-section" style="border-bottom: none;">
-            <h3>
-                Map Legend
-                <button onclick="showCertInfo()" style="font-size: 11px; padding: 2px 8px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">?</button>
-            </h3>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #dc2626;"></div>
-                <div class="legend-text">
-                    <strong>CSC - Comprehensive</strong>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #ea580c;"></div>
-                <div class="legend-text">
-                    <strong>TSC - Thrombectomy-Capable</strong>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #f59e0b;"></div>
-                <div class="legend-text">
-                    <strong>PSC - Primary</strong>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #84cc16;"></div>
-                <div class="legend-text">
-                    <strong>ASR - Acute Stroke Ready</strong>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #3b82f6;"></div>
-                <div class="legend-text">
-                    <strong>UW Telestroke Partner</strong>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #6b7280;"></div>
-                <div class="legend-text">
-                    <strong>Other Hospitals</strong>
-                </div>
+        <!-- Search + Status -->
+        <div class="px-3 pt-3 pb-2 border-b border-gray-100">
+            <input id="search-input" class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500" placeholder="Search name, city, state, certification...">
+            <div class="flex items-center justify-between mt-1.5">
+                <span id="status-bar" class="text-[11px] text-gray-500">Loading...</span>
+                <button id="clear-btn" class="text-[11px] text-red-500 font-semibold hover:text-red-700 hidden" onclick="resetAllFilters()">Clear all</button>
             </div>
         </div>
 
-        <!-- Quick Filters (Moved to top for frequent use) -->
-        <div class="filter-section">
-            <h3>Filters</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px;" onclick="quickFilter('AK')">Alaska Only</button>
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px;" onclick="quickFilter('ID')">Idaho Only</button>
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px;" onclick="quickFilter('WA')">Washington Only</button>
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px;" onclick="quickFilter('NO_CERT')">No Certification</button>
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px;" onclick="quickFilter('UW_ONLY')">UW Partners Only</button>
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px;" onclick="quickFilter('EVT_DESERT')">EVT Deserts</button>
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px;" onclick="quickFilter('EXPANSION')">Expansion Targets</button>
-                <button class="action-button" style="padding: 8px 12px; font-size: 12px; background: #6b7280;" onclick="clearQuickFilters()">Clear Filters</button>
+        <!-- Filter Pills -->
+        <div class="px-3 py-2.5 border-b border-gray-100">
+            <div class="flex flex-wrap gap-1.5 mb-2" id="filter-pills">
+                <button class="pill" data-filter="CSC" onclick="toggleFilter('CSC')"><span class="w-2 h-2 rounded-full bg-red-600"></span>CSC</button>
+                <button class="pill" data-filter="TSC" onclick="toggleFilter('TSC')"><span class="w-2 h-2 rounded-full bg-orange-600"></span>TSC</button>
+                <button class="pill" data-filter="PSC" onclick="toggleFilter('PSC')"><span class="w-2 h-2 rounded-full bg-amber-500"></span>PSC</button>
+                <button class="pill" data-filter="ASR" onclick="toggleFilter('ASR')"><span class="w-2 h-2 rounded-full bg-lime-500"></span>ASR</button>
+                <button class="pill" data-filter="EVT" onclick="toggleFilter('EVT')"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>EVT</button>
+                <button class="pill" data-filter="UW" onclick="toggleFilter('UW')"><span class="w-2 h-2 rounded-full bg-blue-500"></span>UW Partner</button>
             </div>
-        </div>
-
-        <!-- Consolidated Planning Section -->
-        <div class="filter-section">
-            <h3>Planning <span style="font-size: 11px; opacity: 0.7; font-weight: 400; cursor: help;" title="Tools for strategic planning and network expansion">(?)</span></h3>
-            <button class="action-button" onclick="toggleUWPartnerNetwork()" title="Show UW Medicine telestroke partner network connections">UW Partner Network</button>
-            <button class="action-button" onclick="highlightZeroCapability()" title="Highlight hospitals with no stroke certification">No Capability</button>
-            <button class="action-button" onclick="toggleReferralPathways()" title="Show nearest CSC/TSC for each hospital">Nearest CSC/TSC</button>
-            <button class="action-button" onclick="showNearestAdvancedCenter()" title="Color-code hospitals by distance to nearest CSC/TSC">CSC/TSC Distance</button>
-            <button class="action-button" onclick="identifyEVTDeserts()" title="Hospitals >100mi from thrombectomy centers">EVT Deserts</button>
-            <button class="action-button" onclick="rankExpansionCandidates()" title="Rank hospitals by expansion priority score">Expansion Candidates</button>
-            <button class="action-button" onclick="showDistanceMatrix()" title="View comprehensive distance matrix table">Distance Matrix</button>
-            <button class="action-button" onclick="toggleAdvancedFilters()" title="Apply multiple filter criteria simultaneously">Advanced Filter</button>
-        </div>
-
-        <!-- Reports Section -->
-        <div class="filter-section">
-            <h3>Reports <span style="font-size: 11px; opacity: 0.7; font-weight: 400; cursor: help;" title="Generate summaries and export data">(?)</span></h3>
-            <button class="action-button" onclick="generateExecutiveSummary()" title="Generate text summary of current map view">Generate Summary</button>
-            <button class="action-button" onclick="exportMapToPNG()" title="Export current map view as PNG image">Export Map to PNG</button>
-        </div>
-
-        <!-- Advanced Filter Panel (Initially Hidden) -->
-        <div id="advanced-filters" style="display: none;" class="filter-section">
-            <h3>Advanced Filter Criteria</h3>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-not-uw-partner">
-                NOT a UW Partner
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-no-cert">
-                NO Stroke Certification
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="filter-zero-capability">
-                Zero-Capability (No cert AND not UW partner)
-            </label>
-            <div style="margin: 12px 0;">
-                <label style="font-size: 13px; font-weight: 600;">Distance from CSC: <span id="csc-distance-value">0</span> miles</label>
-                <input type="range" id="filter-csc-distance" min="0" max="200" value="0" style="width: 100%;" oninput="document.getElementById('csc-distance-value').textContent = this.value">
-            </div>
-            <div style="margin: 12px 0;">
-                <label style="font-size: 13px; font-weight: 600;">Distance from EVT: <span id="evt-distance-value">0</span> miles</label>
-                <input type="range" id="filter-evt-distance" min="0" max="200" value="0" style="width: 100%;" oninput="document.getElementById('evt-distance-value').textContent = this.value">
-            </div>
-            <div style="margin: 12px 0;">
-                <label style="font-size: 13px; font-weight: 600;">State:</label>
-                <select id="filter-state" style="width: 100%; padding: 8px; border-radius: 4px; border: 2px solid #e5e7eb;">
+            <div class="flex gap-2 items-center">
+                <select id="filter-state" class="flex-1 text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-indigo-400" onchange="applyFilters()">
                     <option value="ALL">All States</option>
-                    <option value="WA">Washington (WA)</option>
-                    <option value="ID">Idaho (ID)</option>
-                    <option value="AK">Alaska (AK)</option>
+                    <option value="WA">Washington</option>
+                    <option value="AK">Alaska</option>
+                    <option value="ID">Idaho</option>
+                    <option value="MT">Montana</option>
+                    <option value="WY">Wyoming</option>
                 </select>
+                <div class="flex items-center gap-1 text-[11px] text-gray-500 whitespace-nowrap">
+                    <label>EVT&gt;</label>
+                    <input type="range" id="filter-evt-distance" min="0" max="200" value="0" step="25" class="w-14 accent-indigo-500" oninput="document.getElementById('evt-dist-label').textContent=this.value; applyFilters();">
+                    <span id="evt-dist-label">0</span>mi
+                </div>
             </div>
-            <button class="action-button" onclick="applyAdvancedFilters()">Apply Advanced Filters</button>
-            <button class="action-button" style="background: #6b7280;" onclick="clearAdvancedFilters()">Clear Advanced Filters</button>
         </div>
 
-        <!-- Action Buttons -->
-        <button class="action-button" onclick="exportToCSV()" title="Export hospital data to CSV file">Export to CSV</button>
-        <button class="action-button" onclick="shareCurrentView()" title="Copy shareable URL to clipboard">Share View</button>
-        <button class="action-button" onclick="resetFilters()" title="Reset all filters to default (Keyboard: R)">Reset All</button>
+        <!-- Hospital List -->
+        <div class="flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-100">
+            <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Hospitals</span>
+            <span id="list-count" class="text-[11px] text-gray-400">0</span>
+        </div>
+        <div id="hospital-list" class="flex-1 overflow-y-auto"></div>
     </div>
 
-    <!-- Stats Panel -->
-    <div class="panel stats-panel" id="stats-panel">
-        <button class="mobile-close-btn" onclick="toggleMobilePanel('stats')" style="display: none;">✕ Close</button>
-        <button onclick="toggleStatsPanel()" style="position: absolute; top: 10px; right: 10px; background: #e5e7eb; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 11px; z-index: 10;" title="Collapse/expand stats panel">−</button>
-        <div class="stat-card">
-            <div class="stat-value" id="stat-total">0</div>
-            <div class="stat-label">Total Hospitals Shown</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="stat-csc">0</div>
-            <div class="stat-label">Comprehensive (CSC)</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="stat-tsc">0</div>
-            <div class="stat-label">Thrombectomy-Capable (TSC)</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="stat-psc">0</div>
-            <div class="stat-label">Primary (PSC)</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="stat-asr">0</div>
-            <div class="stat-label">Acute Stroke Ready (ASR)</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="stat-uwPartners">0</div>
-            <div class="stat-label">UW Medicine Partners</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="stat-evt">0</div>
-            <div class="stat-label">24/7 Thrombectomy (EVT)</div>
+    <!-- Right Dashboard -->
+    <div id="dashboard" class="dashboard fixed top-4 right-4 w-[280px] bg-white rounded-xl shadow-xl z-[1000] max-h-[calc(100vh-2rem)] overflow-y-auto">
+        <!-- Mobile close -->
+        <button class="sidebar-close-mobile w-full py-2 bg-red-500 text-white font-semibold text-sm rounded-t-xl" onclick="toggleMobileDashboard()">&#10005; Close</button>
+
+        <div class="flex items-center justify-between px-3 py-2.5 border-b">
+            <h2 class="text-sm font-bold text-gray-700">Dashboard</h2>
+            <button onclick="toggleDashboard()" class="text-gray-400 hover:text-gray-600 text-lg leading-none" title="Toggle dashboard">&times;</button>
         </div>
 
+        <!-- Donut Chart -->
+        <div class="px-3 py-3 border-b flex justify-center">
+            <canvas id="donut-chart" width="180" height="180"></canvas>
+        </div>
+
+        <!-- State Bars -->
+        <div class="px-3 py-3 border-b">
+            <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">By State</h3>
+            <div id="state-bars"></div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="px-3 py-3 border-b">
+            <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Coverage Gaps</h3>
+            <div id="gap-metrics"></div>
+        </div>
+
+        <!-- Distance Histogram -->
+        <div class="px-3 py-3">
+            <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Distance to Nearest EVT</h3>
+            <canvas id="histogram-chart" width="248" height="100"></canvas>
+        </div>
     </div>
 
-    <!-- Info Panel (Certification Explanations) -->
-    <div class="panel info-panel" id="info-panel">
-        <button class="close-button" onclick="closeInfo()">Close</button>
-        <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Stroke Certification Levels Explained</h2>
-
-        <div class="cert-description">
-            <h4>CSC - Comprehensive Stroke Center</h4>
-            <p>Highest level of stroke care. Provides complete range of services including 24/7 neurosurgical coverage, advanced imaging (CT, CTA, MRI, MRA, DSA), endovascular thrombectomy (EVT), neurointensive care, and comprehensive rehabilitation. Can treat the most complex stroke cases including hemorrhagic strokes and aneurysms. Certified by Joint Commission, DNV, or ACHC.</p>
+    <!-- Tools FAB -->
+    <button id="tools-fab" class="fixed bottom-6 right-6 w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg z-[1000] flex items-center justify-center text-xl transition-all" onclick="toggleToolsMenu()" title="Tools">
+        &#9881;
+    </button>
+    <div id="tools-menu" class="fixed bottom-20 right-4 bg-white rounded-xl shadow-2xl z-[1000] w-56 hidden border border-gray-100">
+        <div class="p-1.5">
+            <div class="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Analysis</div>
+            <button class="tool-item" onclick="toggleUWPartnerNetwork()">UW Partner Network</button>
+            <button class="tool-item" onclick="toggleReferralPathways()">Referral Pathways</button>
+            <button class="tool-item" onclick="showNearestAdvancedCenter()">CSC/TSC Distance Map</button>
+            <button class="tool-item" onclick="identifyEVTDeserts()">EVT Deserts</button>
+            <button class="tool-item" onclick="highlightZeroCapability()">Zero-Capability</button>
+            <button class="tool-item" onclick="toggleCoverageOverlay()">Coverage Overlay</button>
+            <button class="tool-item" onclick="rankExpansionCandidates()">Expansion Ranking</button>
+            <hr class="my-1 border-gray-100">
+            <div class="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Reports</div>
+            <button class="tool-item" onclick="showDistanceMatrix()">Distance Matrix</button>
+            <button class="tool-item" onclick="generateExecutiveSummary()">Executive Summary</button>
+            <button class="tool-item" onclick="exportToCSV()">Export CSV</button>
+            <button class="tool-item" onclick="exportMapToPNG()">Export Map PNG</button>
+            <button class="tool-item" onclick="shareCurrentView()">Share View</button>
+            <hr class="my-1 border-gray-100">
+            <div class="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Settings</div>
+            <button class="tool-item" onclick="toggleDarkMap()">Toggle Dark Map</button>
+            <button class="tool-item" onclick="showCertInfo()">Certification Info</button>
+            <button class="tool-item" onclick="resetAllFilters()">Reset Everything</button>
         </div>
+    </div>
 
-        <div class="cert-description">
-            <h4>TSC - Thrombectomy-Capable Stroke Center (DNV calls this "PSC+")</h4>
-            <p>Advanced stroke care with 24/7 capability to perform mechanical thrombectomy (EVT) for large vessel occlusions. <strong>Must have ALL Primary Stroke Center capabilities PLUS:</strong> interventional neuroradiology team available 24/7, dedicated neurological intensive care unit (neuro-ICU), advanced imaging (CT/CTA/CTP or MRI/MRA), and minimum procedural volumes of 15 mechanical thrombectomies in 12 months OR 30 in 24 months (both per physician and per facility). Can provide endovascular treatment for complex ischemic strokes. Certified by Joint Commission (TSC), DNV (Primary Plus/PSC+), or ACHC (TSC).</p>
-        </div>
-
-        <div class="cert-description">
-            <h4>PSC - Primary Stroke Center</h4>
-            <p>Foundational stroke care certification with necessary staffing, infrastructure, and programs to stabilize and treat most emergent stroke patients. Capabilities include: rapid CT scanning, IV thrombolysis (TNK) administration, dedicated stroke unit or designated stroke beds, 24/7 stroke team availability, standardized treatment protocols, and established transfer agreements to TSC or CSC facilities for patients requiring endovascular thrombectomy or neurosurgery. Certified by Joint Commission, DNV, ACHC, or CIHQ.</p>
-        </div>
-
-        <div class="cert-description">
-            <h4>ASR/ASRH - Acute Stroke Ready (Hospital)</h4>
-            <p>Entry-level stroke certification for hospitals equipped to perform rapid stroke assessments, provide stabilization, and administer IV TNK (tenecteplase). Requirements include: neurology available 24/7 via telemedicine, neurosurgery available within 3-hour transfer, IV thrombolytics available, and established transfer protocols to higher-level stroke centers (PSC, TSC, or CSC) for patients requiring advanced care. Joint Commission uses "ASRH", while DNV uses "ASR". Also certified by ACHC or CIHQ.</p>
-        </div>
-
-        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px; margin-bottom: 12px; border-radius: 4px;">
-            <h4 style="font-weight: 600; margin-bottom: 4px; color: #1e40af; font-size: 13px;">Understanding EVT (Endovascular Thrombectomy)</h4>
-            <p style="font-size: 11px; color: #1e3a8a; line-height: 1.5;">
-                <strong>24/7 Thrombectomy Capability</strong> is NOT a certification level—it's a clinical capability available at TSC and CSC certified hospitals. Mechanical thrombectomy (EVT) is a procedure to remove blood clots causing large vessel occlusions. Hospitals tracked as "EVT-capable" on this map include all TSC and CSC certified facilities, plus any hospitals performing thrombectomy regardless of certification status.
-            </p>
-        </div>
-
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
-            <strong>National Certifying Bodies:</strong> Four organizations certify stroke centers:
-            <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.6;">
-                <li><strong>The Joint Commission (TJC)</strong> - Certifies all 4 levels: ASRH, PSC, TSC, CSC</li>
-                <li><strong>DNV Healthcare (DNV)</strong> - Certifies all 4 levels: ASR, PSC, PSC+ (Primary Plus, equivalent to TSC), CSC</li>
-                <li><strong>Accreditation Commission for Health Care (ACHC)</strong> - Certifies all 4 levels: ASRH, PSC, TSC, CSC</li>
-                <li><strong>Center for Improvement in Healthcare Quality (CIHQ)</strong> - Certifies 2 levels: ASRH, PSC</li>
-            </ul>
-            <p style="margin-top: 8px;"><em>Note: Certification is voluntary. Hospitals undergo rigorous on-site reviews and must meet specific performance standards.</em></p>
-        </div>
-
-        <div style="margin-top: 20px; padding-top: 16px; border-top: 2px solid #667eea;">
-            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #374151;">Washington State Stroke Center Categorization</h3>
-            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 12px; border-radius: 4px;">
-                <p style="font-size: 11px; color: #92400e; line-height: 1.5;">
-                    <strong>Important:</strong> Washington State operates a SEPARATE categorization system (Level I, II, III) that is independent from national certifications. Hospitals may have both a national certification (CSC, TSC, PSC, ASR) AND a Washington State designation level. The two systems use different criteria and serve different regulatory purposes.
-                </p>
+    <!-- Cert Info Modal -->
+    <div id="cert-info-modal" class="modal-overlay">
+        <div class="modal-body max-w-[700px]">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">Stroke Certification Levels</h2>
+                <button onclick="closeCertInfo()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
             </div>
-            <div style="font-size: 12px; color: #6b7280; line-height: 1.6;">
-                <p><strong>Washington State Emergency Cardiac and Stroke (ECS) System:</strong></p>
-                <ul style="margin: 8px 0; padding-left: 20px;">
-                    <li><strong>Level I:</strong> Highest state designation (similar to CSC capabilities)</li>
-                    <li><strong>Level II:</strong> Intermediate designation (similar to TSC/PSC capabilities)</li>
-                    <li><strong>Level III:</strong> Basic designation (similar to ASR capabilities)</li>
-                </ul>
-                <p style="margin-top: 8px;"><em>Note: State categorization is overseen by the Washington Department of Health. Not all hospitals pursue both national certification and state designation. This map shows national certifications.</em></p>
+            <div class="space-y-3 text-sm">
+                <div class="bg-red-50 border-l-4 border-red-600 p-3 rounded-r">
+                    <h4 class="font-bold text-red-800">CSC &mdash; Comprehensive Stroke Center</h4>
+                    <p class="text-red-700 text-xs mt-1 leading-relaxed">Highest level. 24/7 neurosurgery, advanced imaging, EVT, neuro-ICU, rehabilitation. Handles the most complex stroke cases. Certified by Joint Commission, DNV, or ACHC.</p>
+                </div>
+                <div class="bg-orange-50 border-l-4 border-orange-600 p-3 rounded-r">
+                    <h4 class="font-bold text-orange-800">TSC &mdash; Thrombectomy-Capable Stroke Center</h4>
+                    <p class="text-orange-700 text-xs mt-1 leading-relaxed">24/7 mechanical thrombectomy (EVT) for large vessel occlusions. Must have interventional neuroradiology team 24/7, neuro-ICU, advanced imaging. Minimum 15 EVTs/year per physician. DNV calls this "PSC+".</p>
+                </div>
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r">
+                    <h4 class="font-bold text-amber-800">PSC &mdash; Primary Stroke Center</h4>
+                    <p class="text-amber-700 text-xs mt-1 leading-relaxed">Foundational stroke care: rapid CT, IV thrombolysis (TNK), dedicated stroke unit, 24/7 stroke team, transfer agreements to TSC/CSC. Certified by JC, DNV, ACHC, or CIHQ.</p>
+                </div>
+                <div class="bg-lime-50 border-l-4 border-lime-500 p-3 rounded-r">
+                    <h4 class="font-bold text-lime-800">ASR &mdash; Acute Stroke Ready</h4>
+                    <p class="text-lime-700 text-xs mt-1 leading-relaxed">Entry-level: rapid assessment, stabilization, IV TNK. Neurology via telemedicine 24/7. Transfer protocols to higher-level centers. JC uses "ASRH", DNV uses "ASR".</p>
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r">
+                    <h4 class="font-bold text-blue-800">EVT &mdash; Endovascular Thrombectomy</h4>
+                    <p class="text-blue-700 text-xs mt-1 leading-relaxed">Not a certification level but a clinical capability at TSC/CSC hospitals. Mechanical clot removal for large vessel occlusions. Available 24/7 at tracked EVT-capable facilities.</p>
+                </div>
+                <div class="bg-gray-50 border-l-4 border-gray-300 p-3 rounded-r text-xs text-gray-600">
+                    <strong>Certifying Bodies:</strong> Joint Commission (all 4 levels), DNV (ASR/PSC/PSC+/CSC), ACHC (all 4), CIHQ (ASRH/PSC).<br>
+                    <strong>WA State:</strong> Separate Level I/II/III ECS system (independent from national certs). This map shows national certifications.
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Distance Matrix Modal -->
-    <div id="distance-matrix-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; overflow: auto;">
-        <div style="background: white; margin: 20px auto; max-width: 1200px; border-radius: 12px; padding: 24px; max-height: calc(100vh - 40px); overflow: auto;">
-            <button class="close-button" onclick="closeDistanceMatrix()">Close</button>
-            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Distance Matrix - All Hospitals</h2>
-            <button class="action-button" style="margin-bottom: 12px;" onclick="exportDistanceMatrixToCSV()">Export to CSV</button>
-            <div id="distance-matrix-content" style="overflow-x: auto;">
-                <!-- Table will be inserted here -->
+    <div id="distance-matrix-modal" class="modal-overlay">
+        <div class="modal-body max-w-[1200px]">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">Distance Matrix</h2>
+                <button onclick="closeModal('distance-matrix-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
             </div>
+            <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium mb-3 hover:bg-indigo-700" onclick="exportDistanceMatrixToCSV()">Export to CSV</button>
+            <div id="distance-matrix-content" style="overflow-x:auto;"></div>
         </div>
     </div>
 
     <!-- Expansion Candidates Modal -->
-    <div id="expansion-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; overflow: auto;">
-        <div style="background: white; margin: 20px auto; max-width: 900px; border-radius: 12px; padding: 24px; max-height: calc(100vh - 40px); overflow: auto;">
-            <button class="close-button" onclick="closeExpansionRanking()">Close</button>
-            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Expansion Candidate Ranking</h2>
-            <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Scored by: No certification (+3), Not UW partner (+2), >75mi from CSC/TSC (+2), >100mi from EVT (+1), Has ASR/PSC (-1)</p>
-            <div id="expansion-candidates-content">
-                <!-- List will be inserted here -->
+    <div id="expansion-modal" class="modal-overlay">
+        <div class="modal-body">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-lg font-bold">Expansion Candidate Ranking</h2>
+                <button onclick="closeModal('expansion-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
             </div>
+            <div id="expansion-weights" class="mb-3 p-3 bg-gray-50 rounded-lg text-xs">
+                <p class="font-semibold text-gray-600 mb-2">Scoring Weights (adjustable):</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="flex items-center gap-1">No cert: <input type="number" id="w-noCert" value="3" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
+                    <label class="flex items-center gap-1">Not UW: <input type="number" id="w-notUW" value="2" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
+                    <label class="flex items-center gap-1">&gt;75mi CSC: <input type="number" id="w-farCSC" value="2" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
+                    <label class="flex items-center gap-1">&gt;100mi EVT: <input type="number" id="w-farEVT" value="1" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
+                    <label class="flex items-center gap-1">Has ASR/PSC: <input type="number" id="w-hasLow" value="-1" min="-5" max="0" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
+                </div>
+            </div>
+            <div id="expansion-candidates-content"></div>
         </div>
     </div>
 
-    <!-- Hospital Detail Card Modal -->
-    <div id="hospital-detail-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; overflow: auto;">
-        <div style="background: white; margin: 50px auto; max-width: 700px; border-radius: 12px; padding: 24px; max-height: calc(100vh - 100px); overflow: auto;">
-            <button class="close-button" onclick="closeHospitalDetail()">Close</button>
-            <div id="hospital-detail-content">
-                <!-- Content will be inserted here -->
+    <!-- Hospital Detail Modal -->
+    <div id="hospital-detail-modal" class="modal-overlay">
+        <div class="modal-body max-w-[700px]" style="margin-top:40px;">
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="detail-title" class="text-lg font-bold"></h2>
+                <button onclick="closeModal('hospital-detail-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
             </div>
+            <div id="hospital-detail-content"></div>
         </div>
     </div>
 
     <!-- Executive Summary Modal -->
-    <div id="executive-summary-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; overflow: auto;">
-        <div style="background: white; margin: 20px auto; max-width: 900px; border-radius: 12px; padding: 24px; max-height: calc(100vh - 40px); overflow: auto;">
-            <button class="close-button" onclick="closeExecutiveSummary()">Close</button>
-            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Executive Summary</h2>
-            <button class="action-button" style="margin-bottom: 12px;" onclick="copyExecutiveSummary()">Copy to Clipboard</button>
-            <button class="action-button" style="margin-bottom: 12px;" onclick="downloadExecutiveSummary()">Download as Text File</button>
-            <div id="executive-summary-content" style="font-family: monospace; font-size: 12px; white-space: pre-wrap; background: #f9fafb; padding: 16px; border-radius: 8px; max-height: 60vh; overflow-y: auto;">
-                <!-- Content will be inserted here -->
+    <div id="executive-summary-modal" class="modal-overlay">
+        <div class="modal-body">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold">Executive Summary</h2>
+                <button onclick="closeModal('executive-summary-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
             </div>
+            <div class="flex gap-2 mb-3">
+                <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700" onclick="copyExecutiveSummary()">Copy to Clipboard</button>
+                <button class="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700" onclick="downloadExecutiveSummary()">Download</button>
+            </div>
+            <div id="executive-summary-content" class="font-mono text-xs whitespace-pre-wrap bg-gray-50 p-4 rounded-lg max-h-[60vh] overflow-y-auto"></div>
         </div>
     </div>
 
-    <script>
-        // Mobile panel toggle functionality
-        function toggleMobilePanel(panelType) {
-            if (panelType === 'control') {
-                const panel = document.querySelector('.control-panel');
-                panel.classList.toggle('mobile-visible');
-            } else if (panelType === 'stats') {
-                const panel = document.querySelector('.stats-panel');
-                panel.classList.toggle('mobile-visible');
-            }
-        }
-
-        // Close panels when clicking on map (mobile only)
-        document.addEventListener('DOMContentLoaded', function() {
-            const map = document.getElementById('map');
-            map.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    const controlPanel = document.querySelector('.control-panel');
-                    const statsPanel = document.querySelector('.stats-panel');
-
-                    // Only close if clicking directly on map, not on markers
-                    if (e.target.id === 'map' || e.target.classList.contains('leaflet-container')) {
-                        controlPanel.classList.remove('mobile-visible');
-                        statsPanel.classList.remove('mobile-visible');
-                    }
-                }
-            });
-
-            // Synchronize mobile and desktop search inputs
-            const mobileSearch = document.getElementById('mobile-search-input');
-            const desktopSearch = document.getElementById('search-input');
-
-            if (mobileSearch && desktopSearch) {
-                // When mobile search changes, update desktop search
-                mobileSearch.addEventListener('input', function() {
-                    desktopSearch.value = this.value;
-                });
-
-                // When desktop search changes, update mobile search
-                desktopSearch.addEventListener('input', function() {
-                    mobileSearch.value = this.value;
-                });
-            }
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Ctrl+F or / - Focus search
-                if ((e.ctrlKey && e.key === 'f') || e.key === '/') {
-                    e.preventDefault();
-                    document.getElementById('search-input').focus();
-                }
-                // Esc - Close modals
-                else if (e.key === 'Escape') {
-                    closeInfo();
-                    closeDistanceMatrix();
-                    closeExpansionRanking();
-                    closeHospitalDetail();
-                    closeExecutiveSummary();
-                }
-                // R - Reset filters
-                else if (e.key === 'r' || e.key === 'R') {
-                    if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                        resetFilters();
-                    }
-                }
-            });
-        });
-
-        // Stats Panel Toggle
-        function toggleStatsPanel() {
-            const panel = document.getElementById('stats-panel');
-            const btn = event.target;
-            if (panel.style.height === '60px') {
-                panel.style.height = '';
-                panel.style.overflow = '';
-                btn.textContent = '−';
-            } else {
-                panel.style.height = '60px';
-                panel.style.overflow = 'hidden';
-                btn.textContent = '+';
-            }
-        }
-    </script>
     <script src="complete_hospitals.js"></script>
 </body>
 </html>

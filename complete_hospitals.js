@@ -1,1700 +1,1157 @@
-// Complete Hospitals Database and Map Functionality
+// =============================================================================
+// Regional Hospital Stroke Capabilities — Complete Application
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// State & Configuration
+// ---------------------------------------------------------------------------
+const CERT_COLORS = { CSC:'#dc2626', TSC:'#ea580c', PSC:'#f59e0b', ASR:'#84cc16' };
+const UW_COLOR = '#3b82f6';
+const OTHER_COLOR = '#6b7280';
+const EVT_COLOR = '#10b981';
 
 let HOSPITALS = [];
-let ALL_HOSPITALS = []; // Store all hospitals for search
-let map;
+let map, tileLayer;
 let markers = [];
-
-// Global variables for expansion planning features
-let advancedCenters = []; // CSC and TSC hospitals
-let evtCenters = []; // Hospitals with hasELVO = true
-let hospitalDistances = {}; // Pre-calculated distances
-let currentFeatureMode = null; // Track which feature is active
-let evtDesertHospitals = []; // Hospitals >100mi from EVT
-
-// Load hospital data
-fetch('complete_hospitals_geocoded.json')
-    .then(response => response.json())
-    .then(data => {
-        HOSPITALS = data.filter(h => h.latitude && h.longitude);
-        ALL_HOSPITALS = [...HOSPITALS]; // Store copy for search
-        console.log(`Loaded ${HOSPITALS.length} hospitals with coordinates`);
-        console.log(`Total in database: ${data.length}`);
-
-        // Initialize advanced centers and EVT centers
-        advancedCenters = HOSPITALS.filter(h => h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC');
-        evtCenters = HOSPITALS.filter(h => h.hasELVO === true);
-
-        console.log(`Advanced Centers (CSC/TSC): ${advancedCenters.length}`);
-        console.log(`EVT Centers: ${evtCenters.length}`);
-
-        // Pre-calculate all distances
-        preCalculateDistances();
-
-        initializeMap();
-        updateStats();
-    })
-    .catch(error => {
-        console.error('Error loading hospital data:', error);
-        alert('Error loading hospital data. Please refresh the page.');
-    });
-
-function initializeMap() {
-    console.log('Initializing map...');
-    // Center on Washington State
-    map = L.map('map', {
-        zoomControl: false
-    }).setView([47.5, -120.5], 7);
-
-    // Use CartoDB Voyager tiles - guaranteed English-only labels
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap contributors, © CARTO',
-        maxZoom: 19,
-        subdomains: 'abcd'
-    }).addTo(map);
-
-    L.control.zoom({ position: 'topright' }).addTo(map);
-
-    renderMarkers();
-}
-
-function getMarkerColor(hospital) {
-    const certType = hospital.strokeCertificationType;
-
-    // Stroke certification takes precedence
-    if (certType === 'CSC') return '#dc2626'; // Red - Comprehensive
-    if (certType === 'TSC') return '#ea580c'; // Orange - Thrombectomy-Capable
-    if (certType === 'PSC') return '#f59e0b'; // Amber - Primary
-    if (certType === 'ASR') return '#84cc16'; // Lime - Acute Stroke Ready
-
-    // UW Partners without certification
-    if (hospital.uwPartner) return '#3b82f6'; // Blue
-
-    // Other hospitals
-    return '#6b7280'; // Gray
-}
-
-function getMarkerSize(hospital) {
-    const certType = hospital.strokeCertificationType;
-
-    // Certified centers get larger markers
-    if (certType === 'CSC') return 12;
-    if (certType === 'TSC') return 11;
-    if (certType === 'PSC') return 10;
-    if (certType === 'ASR') return 9;
-
-    // UW Partners
-    if (hospital.uwPartner) return 9;
-
-    // Other hospitals
-    return 7;
-}
-
-function renderMarkers() {
-    // Clear existing markers
-    markers.forEach(m => map.removeLayer(m));
-    markers = [];
-
-    // Get filter states
-    const filters = {
-        csc: document.getElementById('filter-csc').checked,
-        tsc: document.getElementById('filter-tsc').checked,
-        psc: document.getElementById('filter-psc').checked,
-        asr: document.getElementById('filter-asr').checked,
-        uwPartner: document.getElementById('filter-uwPartner').checked,
-        evt: document.getElementById('filter-evt').checked,
-    };
-
-    // Get search term
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
-
-    // Check if any filters are active
-    const anyFilterActive = filters.csc || filters.tsc || filters.psc || filters.asr || filters.uwPartner || filters.evt;
-
-    // Filter hospitals
-    const filtered = HOSPITALS.filter(h => {
-        // Search filter
-        if (searchTerm) {
-            const name = (h.name || '').toLowerCase();
-            const address = (h.address || '').toLowerCase();
-            if (!name.includes(searchTerm) && !address.includes(searchTerm)) {
-                return false;
-            }
-        }
-
-        // If no filters are active, show ALL hospitals
-        if (!anyFilterActive) {
-            return true;
-        }
-
-        // Certification filters
-        const certType = h.strokeCertificationType;
-        let passCert = false;
-
-        if (filters.csc && certType === 'CSC') passCert = true;
-        if (filters.tsc && certType === 'TSC') passCert = true;
-        if (filters.psc && certType === 'PSC') passCert = true;
-        if (filters.asr && certType === 'ASR') passCert = true;
-
-        // UW Partner filter
-        if (filters.uwPartner && h.uwPartner) passCert = true;
-
-        // EVT filter
-        if (filters.evt && h.hasELVO) passCert = true;
-
-        return passCert;
-    });
-
-    console.log(`Showing ${filtered.length} of ${HOSPITALS.length} hospitals`);
-
-    // Create markers
-    filtered.forEach(hospital => {
-        const color = getMarkerColor(hospital);
-        const size = getMarkerSize(hospital);
-
-        const marker = L.circleMarker([hospital.latitude, hospital.longitude], {
-            radius: size,
-            fillColor: color,
-            color: 'white',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.8
-        });
-
-        // Build popup content
-        let popupContent = `
-            <div style="font-family: sans-serif; min-width: 300px;">
-                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: ${color};">${hospital.name}</h3>
-                <div style="font-size: 13px; line-height: 1.6;">
-                    <strong>Address:</strong> ${hospital.address || 'Not available'}, ${hospital.state} ${hospital.zip || ''}<br>
-        `;
-
-        // Stroke Certification
-        if (hospital.strokeCertificationType) {
-            const certType = hospital.strokeCertificationType;
-            const certBody = hospital.certifyingBody || '';
-            let certName = '';
-            if (certType === 'CSC') certName = 'Comprehensive Stroke Center';
-            if (certType === 'TSC') certName = 'Thrombectomy-Capable Stroke Center';
-            if (certType === 'PSC') certName = 'Primary Stroke Center';
-            if (certType === 'ASR') certName = 'Acute Stroke Ready';
-
-            popupContent += `<strong>Certification:</strong> ${certName} (${certType})<br>`;
-            if (certBody) {
-                popupContent += `<strong>Certifying Body:</strong> ${certBody}<br>`;
-            }
-        }
-
-        // EVT Capability
-        if (hospital.hasELVO) {
-            popupContent += `<strong>24/7 Thrombectomy (EVT):</strong> Yes<br>`;
-        }
-
-        // UW Partner
-        if (hospital.uwPartner) {
-            popupContent += `<strong style="color: #3b82f6;">✓ UW Medicine Telestroke Partner</strong><br>`;
-        }
-
-        // Transfer Time Estimates (Feature 5)
-        const transferTimes = getTransferTimeEstimates(hospital);
-        if (transferTimes) {
-            popupContent += `<br><strong>Transfer to Harborview Medical Center:</strong><br>`;
-            popupContent += `~${transferTimes.groundTime} min ground / ${transferTimes.airTime} min air (${transferTimes.distance} mi)<br>`;
-            popupContent += `<span style="font-size: 11px; color: #6b7280;">Estimates: 60 mph ground, 150 mph air</span><br>`;
-        }
-
-        // Data sources
-        if (hospital.dataSources && hospital.dataSources.length > 0) {
-            popupContent += `<br><span style="font-size: 11px; color: #6b7280;">Sources: ${hospital.dataSources.join(', ')}</span>`;
-        }
-
-        popupContent += `
-                </div>
-            </div>
-        `;
-
-        marker.bindPopup(popupContent);
-        marker.addTo(map);
-        markers.push(marker);
-    });
-
-    updateStats(filtered);
-}
-
-function updateStats(filtered = HOSPITALS) {
-    document.getElementById('stat-total').textContent = filtered.length;
-    document.getElementById('stat-csc').textContent = filtered.filter(h => h.strokeCertificationType === 'CSC').length;
-    document.getElementById('stat-tsc').textContent = filtered.filter(h => h.strokeCertificationType === 'TSC').length;
-    document.getElementById('stat-psc').textContent = filtered.filter(h => h.strokeCertificationType === 'PSC').length;
-    document.getElementById('stat-asr').textContent = filtered.filter(h => h.strokeCertificationType === 'ASR').length;
-    document.getElementById('stat-uwPartners').textContent = filtered.filter(h => h.uwPartner).length;
-    document.getElementById('stat-evt').textContent = filtered.filter(h => h.hasELVO).length;
-}
-
-function filterHospitals() {
-    renderMarkers();
-}
-
-function resetFilters() {
-    // Reset all checkboxes to default (unchecked)
-    document.getElementById('filter-csc').checked = false;
-    document.getElementById('filter-tsc').checked = false;
-    document.getElementById('filter-psc').checked = false;
-    document.getElementById('filter-asr').checked = false;
-    document.getElementById('filter-uwPartner').checked = false;
-    document.getElementById('filter-evt').checked = false;
-
-    // Clear search
-    document.getElementById('search-input').value = '';
-
-    // Re-render
-    renderMarkers();
-}
-
-function clearCertFilters() {
-    // Uncheck all certification filters
-    document.getElementById('filter-csc').checked = false;
-    document.getElementById('filter-tsc').checked = false;
-    document.getElementById('filter-psc').checked = false;
-    document.getElementById('filter-asr').checked = false;
-
-    // Re-render
-    renderMarkers();
-}
-
-function clearSpecialFilters() {
-    // Uncheck all special designation filters
-    document.getElementById('filter-uwPartner').checked = false;
-    document.getElementById('filter-evt').checked = false;
-
-    // Re-render
-    renderMarkers();
-}
-
-function showCertInfo() {
-    document.getElementById('info-panel').classList.add('active');
-}
-
-function closeInfo() {
-    document.getElementById('info-panel').classList.remove('active');
-}
-
-function exportToCSV() {
-    // Get currently filtered hospitals
-    const filters = {
-        csc: document.getElementById('filter-csc').checked,
-        tsc: document.getElementById('filter-tsc').checked,
-        psc: document.getElementById('filter-psc').checked,
-        asr: document.getElementById('filter-asr').checked,
-        uwPartner: document.getElementById('filter-uwPartner').checked,
-        evt: document.getElementById('filter-evt').checked,
-    };
-
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
-
-    // Check if any filters are active
-    const anyFilterActive = filters.csc || filters.tsc || filters.psc || filters.asr || filters.uwPartner || filters.evt;
-
-    const filtered = HOSPITALS.filter(h => {
-        // Search filter
-        if (searchTerm) {
-            const name = (h.name || '').toLowerCase();
-            const address = (h.address || '').toLowerCase();
-            if (!name.includes(searchTerm) && !address.includes(searchTerm)) {
-                return false;
-            }
-        }
-
-        // If no filters are active, show ALL hospitals
-        if (!anyFilterActive) {
-            return true;
-        }
-
-        const certType = h.strokeCertificationType;
-        let passCert = false;
-
-        if (filters.csc && certType === 'CSC') passCert = true;
-        if (filters.tsc && certType === 'TSC') passCert = true;
-        if (filters.psc && certType === 'PSC') passCert = true;
-        if (filters.asr && certType === 'ASR') passCert = true;
-        if (filters.uwPartner && h.uwPartner) passCert = true;
-        if (filters.evt && h.hasELVO) passCert = true;
-
-        return passCert;
-    });
-
-    // Create CSV content
-    let csv = 'Hospital Name,Address,City,State,ZIP,Latitude,Longitude,Stroke Certification,Certifying Body,EVT Capable,UW Partner\n';
-
-    filtered.forEach(h => {
-        const name = (h.name || '').replace(/,/g, ';');
-        const address = (h.address || '').replace(/,/g, ';');
-        const city = address.split(' ').slice(-2).join(' '); // Rough city extraction
-        const state = h.state || '';
-        const zip = h.zip || '';
-        const lat = h.latitude || '';
-        const lon = h.longitude || '';
-        const cert = h.strokeCertificationType || 'None';
-        const certBody = h.certifyingBody || '';
-        const evt = h.hasELVO ? 'Yes' : 'No';
-        const uwPartner = h.uwPartner ? 'Yes' : 'No';
-
-        csv += `"${name}","${address}","${city}","${state}","${zip}",${lat},${lon},"${cert}","${certBody}","${evt}","${uwPartner}"\n`;
-    });
-
-    // Create download link
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `stroke_hospitals_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    console.log(`Exported ${filtered.length} hospitals to CSV`);
-}
-
-// ============================================================================
-// EXPANSION PLANNING FEATURES
-// ============================================================================
-
-// Haversine distance formula (exact as specified)
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 3959; // Earth radius in miles
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
-// Pre-calculate all distances for performance
-function preCalculateDistances() {
-    console.log('Pre-calculating distances for all hospitals...');
-
-    HOSPITALS.forEach(hospital => {
-        const hospitalId = hospital.cmsId;
-        hospitalDistances[hospitalId] = {
-            nearestAdvanced: null,
-            nearestAdvancedDistance: Infinity,
-            nearestAdvancedName: '',
-            nearestEVT: null,
-            nearestEVTDistance: Infinity,
-            nearestEVTName: ''
-        };
-
-        // Find nearest CSC/TSC
-        advancedCenters.forEach(center => {
-            if (center.cmsId === hospitalId) return; // Skip self
-            const distance = calculateDistance(
-                hospital.latitude, hospital.longitude,
-                center.latitude, center.longitude
-            );
-            if (distance < hospitalDistances[hospitalId].nearestAdvancedDistance) {
-                hospitalDistances[hospitalId].nearestAdvancedDistance = distance;
-                hospitalDistances[hospitalId].nearestAdvanced = center;
-                hospitalDistances[hospitalId].nearestAdvancedName = center.name;
-            }
-        });
-
-        // Find nearest EVT center
-        evtCenters.forEach(center => {
-            if (center.cmsId === hospitalId) return; // Skip self
-            const distance = calculateDistance(
-                hospital.latitude, hospital.longitude,
-                center.latitude, center.longitude
-            );
-            if (distance < hospitalDistances[hospitalId].nearestEVTDistance) {
-                hospitalDistances[hospitalId].nearestEVTDistance = distance;
-                hospitalDistances[hospitalId].nearestEVT = center;
-                hospitalDistances[hospitalId].nearestEVTName = center.name;
-            }
-        });
-    });
-
-    console.log('Distance calculation complete');
-}
-
-// ============================================================================
-// FEATURE 1: Nearest CSC/TSC Calculator
-// ============================================================================
-
-function showNearestAdvancedCenter() {
-    currentFeatureMode = 'nearestAdvanced';
-    console.log('Showing nearest advanced center distances...');
-
-    // Clear existing markers
-    markers.forEach(m => map.removeLayer(m));
-    markers = [];
-
-    // Create color-coded markers
-    HOSPITALS.forEach(hospital => {
-        const hospitalId = hospital.cmsId;
-        const distance = hospitalDistances[hospitalId].nearestAdvancedDistance;
-        const nearestName = hospitalDistances[hospitalId].nearestAdvancedName;
-
-        // Determine color based on distance
-        let color;
-        if (distance === Infinity || distance === 0) {
-            color = '#dc2626'; // Red for CSC/TSC themselves
-        } else if (distance < 50) {
-            color = '#10b981'; // Green
-        } else if (distance <= 100) {
-            color = '#f59e0b'; // Yellow
-        } else {
-            color = '#ef4444'; // Red
-        }
-
-        const size = getMarkerSize(hospital);
-
-        const marker = L.circleMarker([hospital.latitude, hospital.longitude], {
-            radius: size,
-            fillColor: color,
-            color: 'white',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.9
-        });
-
-        // Enhanced popup
-        let popupContent = `
-            <div style="font-family: sans-serif; min-width: 300px;">
-                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: ${color};">${hospital.name}</h3>
-                <div style="font-size: 13px; line-height: 1.6;">
-                    <strong>Address:</strong> ${hospital.address}, ${hospital.state} ${hospital.zip}<br>
-        `;
-
-        if (distance === Infinity || distance === 0) {
-            popupContent += `<strong style="color: #dc2626;">This is a CSC/TSC facility</strong><br>`;
-        } else {
-            popupContent += `<strong>Nearest CSC/TSC:</strong> ${nearestName}<br>`;
-            popupContent += `<strong>Distance:</strong> ${distance.toFixed(1)} miles<br>`;
-            popupContent += `<strong>Category:</strong> ${distance < 50 ? '<50 miles (Green)' : distance <= 100 ? '50-100 miles (Yellow)' : '>100 miles (Red)'}<br>`;
-        }
-
-        if (hospital.strokeCertificationType) {
-            popupContent += `<strong>Current Certification:</strong> ${hospital.strokeCertificationType}<br>`;
-        }
-
-        popupContent += `</div></div>`;
-
-        marker.bindPopup(popupContent);
-        marker.addTo(map);
-        markers.push(marker);
-    });
-
-    // Update stats
-    const under50 = HOSPITALS.filter(h => {
-        const dist = hospitalDistances[h.cmsId].nearestAdvancedDistance;
-        return dist !== Infinity && dist > 0 && dist < 50;
-    }).length;
-    const between50and100 = HOSPITALS.filter(h => {
-        const dist = hospitalDistances[h.cmsId].nearestAdvancedDistance;
-        return dist >= 50 && dist <= 100;
-    }).length;
-    const over100 = HOSPITALS.filter(h => {
-        const dist = hospitalDistances[h.cmsId].nearestAdvancedDistance;
-        return dist > 100;
-    }).length;
-
-    alert(`Nearest CSC/TSC Analysis:\n\n<50 miles (Green): ${under50} hospitals\n50-100 miles (Yellow): ${between50and100} hospitals\n>100 miles (Red): ${over100} hospitals\n\nMarkers are now color-coded by distance.`);
-}
-
-// ============================================================================
-// FEATURE 2: EVT Desert Analysis
-// ============================================================================
-
-function identifyEVTDeserts() {
-    currentFeatureMode = 'evtDeserts';
-    console.log('Identifying EVT deserts...');
-
-    // Find hospitals >100 miles from EVT
-    evtDesertHospitals = HOSPITALS.filter(h => {
-        const dist = hospitalDistances[h.cmsId].nearestEVTDistance;
-        return dist > 100;
-    });
-
-    console.log(`Found ${evtDesertHospitals.length} hospitals in EVT deserts`);
-
-    // Clear existing markers
-    markers.forEach(m => map.removeLayer(m));
-    markers = [];
-
-    // Render all hospitals with EVT deserts highlighted
-    HOSPITALS.forEach(hospital => {
-        const hospitalId = hospital.cmsId;
-        const distance = hospitalDistances[hospitalId].nearestEVTDistance;
-        const nearestEVTName = hospitalDistances[hospitalId].nearestEVTName;
-
-        const isEVTDesert = distance > 100;
-        const isEVTCenter = hospital.hasELVO;
-
-        let color, size, fillOpacity;
-
-        if (isEVTCenter) {
-            color = '#10b981'; // Green for EVT centers
-            size = 12;
-            fillOpacity = 0.9;
-        } else if (isEVTDesert) {
-            color = '#ef4444'; // Pulsing red for EVT deserts
-            size = 10;
-            fillOpacity = 0.9;
-        } else {
-            color = '#6b7280'; // Gray for others
-            size = 7;
-            fillOpacity = 0.6;
-        }
-
-        const marker = L.circleMarker([hospital.latitude, hospital.longitude], {
-            radius: size,
-            fillColor: color,
-            color: isEVTDesert ? '#dc2626' : 'white',
-            weight: isEVTDesert ? 3 : 2,
-            opacity: 1,
-            fillOpacity: fillOpacity,
-            className: isEVTDesert ? 'pulsing-marker' : ''
-        });
-
-        // Build popup
-        let popupContent = `
-            <div style="font-family: sans-serif; min-width: 300px;">
-                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: ${color};">${hospital.name}</h3>
-                <div style="font-size: 13px; line-height: 1.6;">
-                    <strong>Address:</strong> ${hospital.address}, ${hospital.state} ${hospital.zip}<br>
-        `;
-
-        if (isEVTCenter) {
-            popupContent += `<strong style="color: #10b981;">✓ EVT CENTER - 24/7 Thrombectomy Capable</strong><br>`;
-        } else {
-            popupContent += `<strong>Nearest EVT Center:</strong> ${nearestEVTName}<br>`;
-            popupContent += `<strong>Distance to EVT:</strong> ${distance.toFixed(1)} miles<br>`;
-            if (isEVTDesert) {
-                popupContent += `<strong style="color: #ef4444;">⚠ EVT DESERT (>100 miles from thrombectomy)</strong><br>`;
-            }
-        }
-
-        if (hospital.strokeCertificationType) {
-            popupContent += `<strong>Certification:</strong> ${hospital.strokeCertificationType}<br>`;
-        }
-
-        popupContent += `</div></div>`;
-
-        marker.bindPopup(popupContent);
-        marker.addTo(map);
-        markers.push(marker);
-    });
-
-    // Add pulsing animation CSS if not already added
-    if (!document.getElementById('pulsing-marker-style')) {
-        const style = document.createElement('style');
-        style.id = 'pulsing-marker-style';
-        style.textContent = `
-            @keyframes pulse {
-                0% { opacity: 1; }
-                50% { opacity: 0.5; }
-                100% { opacity: 1; }
-            }
-            .pulsing-marker {
-                animation: pulse 2s infinite;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    alert(`EVT Desert Analysis:\n\n${evtDesertHospitals.length} hospitals are >100 miles from 24/7 thrombectomy (EVT).\n\nThese hospitals are now highlighted with pulsing red markers.`);
-}
-
-// ============================================================================
-// FEATURE 3: Expansion Candidate Ranking
-// ============================================================================
-
-function rankExpansionCandidates() {
-    console.log('Ranking expansion candidates...');
-
-    // Calculate scores for all hospitals
-    const scored = HOSPITALS.map(hospital => {
-        const hospitalId = hospital.cmsId;
-        const distToAdvanced = hospitalDistances[hospitalId].nearestAdvancedDistance;
-        const distToEVT = hospitalDistances[hospitalId].nearestEVTDistance;
-
-        let score = 0;
-
-        // No stroke certification: +3 points
-        if (!hospital.strokeCertificationType) {
-            score += 3;
-        }
-
-        // Not UW partner: +2 points
-        if (!hospital.uwPartner) {
-            score += 2;
-        }
-
-        // >75 miles from nearest CSC/TSC: +2 points
-        if (distToAdvanced > 75) {
-            score += 2;
-        }
-
-        // >100 miles from EVT: +1 point
-        if (distToEVT > 100) {
-            score += 1;
-        }
-
-        // Has ASR/PSC: -1 point (already has some capability)
-        if (hospital.strokeCertificationType === 'ASR' || hospital.strokeCertificationType === 'PSC') {
-            score -= 1;
-        }
-
-        return {
-            hospital,
-            score,
-            distToAdvanced,
-            distToEVT
-        };
-    });
-
-    // Sort by score (descending)
-    scored.sort((a, b) => b.score - a.score);
-
-    // Display top 20 in modal
-    const top20 = scored.slice(0, 20);
-
-    let html = '<div style="font-size: 13px;">';
-    top20.forEach((item, index) => {
-        const h = item.hospital;
-        const scoreColor = item.score >= 6 ? '#ef4444' : item.score >= 4 ? '#f59e0b' : '#10b981';
-
-        html += `
-            <div style="background: #f9fafb; padding: 12px; margin-bottom: 8px; border-radius: 6px; border-left: 4px solid ${scoreColor};">
-                <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">
-                    ${index + 1}. ${h.name}
-                    <span style="float: right; background: ${scoreColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">Score: ${item.score}</span>
-                </div>
-                <div style="font-size: 12px; color: #6b7280;">
-                    ${h.address}, ${h.state}<br>
-                    Distance to CSC/TSC: ${item.distToAdvanced === Infinity ? 'N/A' : item.distToAdvanced.toFixed(1) + ' mi'} |
-                    Distance to EVT: ${item.distToEVT === Infinity ? 'N/A' : item.distToEVT.toFixed(1) + ' mi'}<br>
-                    Certification: ${h.strokeCertificationType || 'None'} |
-                    UW Partner: ${h.uwPartner ? 'Yes' : 'No'}
-                </div>
-            </div>
-        `;
-    });
-    html += '</div>';
-
-    document.getElementById('expansion-candidates-content').innerHTML = html;
-    document.getElementById('expansion-modal').style.display = 'block';
-
-    // Update map markers with score-based colors
-    currentFeatureMode = 'expansionRanking';
-    markers.forEach(m => map.removeLayer(m));
-    markers = [];
-
-    scored.forEach(item => {
-        const h = item.hospital;
-        const scoreColor = item.score >= 6 ? '#ef4444' : item.score >= 4 ? '#f59e0b' : item.score >= 2 ? '#3b82f6' : '#10b981';
-        const size = item.score >= 6 ? 10 : item.score >= 4 ? 9 : 7;
-
-        const marker = L.circleMarker([h.latitude, h.longitude], {
-            radius: size,
-            fillColor: scoreColor,
-            color: 'white',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.8
-        });
-
-        const popupContent = `
-            <div style="font-family: sans-serif; min-width: 300px;">
-                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">${h.name}</h3>
-                <div style="font-size: 13px; line-height: 1.6;">
-                    <strong>Expansion Priority Score:</strong> <span style="background: ${scoreColor}; color: white; padding: 2px 8px; border-radius: 4px;">${item.score}</span><br>
-                    <strong>Distance to CSC/TSC:</strong> ${item.distToAdvanced === Infinity ? 'N/A' : item.distToAdvanced.toFixed(1) + ' mi'}<br>
-                    <strong>Distance to EVT:</strong> ${item.distToEVT === Infinity ? 'N/A' : item.distToEVT.toFixed(1) + ' mi'}<br>
-                    <strong>Certification:</strong> ${h.strokeCertificationType || 'None'}<br>
-                    <strong>UW Partner:</strong> ${h.uwPartner ? 'Yes' : 'No'}
-                </div>
-            </div>
-        `;
-
-        marker.bindPopup(popupContent);
-        marker.addTo(map);
-        markers.push(marker);
-    });
-}
-
-function closeExpansionRanking() {
-    document.getElementById('expansion-modal').style.display = 'none';
-    renderMarkers(); // Reset to normal view
-}
-
-// ============================================================================
-// FEATURE 4: Distance Matrix View
-// ============================================================================
-
-function showDistanceMatrix() {
-    console.log('Generating distance matrix...');
-
-    // Create table
-    let html = `
-        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <thead>
-                <tr style="background: #667eea; color: white;">
-                    <th style="padding: 10px; text-align: left; cursor: pointer;" onclick="sortDistanceMatrix('name')">Hospital Name ↕</th>
-                    <th style="padding: 10px; text-align: left; cursor: pointer;" onclick="sortDistanceMatrix('state')">State ↕</th>
-                    <th style="padding: 10px; text-align: left; cursor: pointer;" onclick="sortDistanceMatrix('cert')">Cert ↕</th>
-                    <th style="padding: 10px; text-align: center; cursor: pointer;" onclick="sortDistanceMatrix('uwPartner')">UW Partner ↕</th>
-                    <th style="padding: 10px; text-align: left; cursor: pointer;" onclick="sortDistanceMatrix('nearestCSC')">Nearest CSC/TSC ↕</th>
-                    <th style="padding: 10px; text-align: right; cursor: pointer;" onclick="sortDistanceMatrix('distCSC')">Dist to CSC ↕</th>
-                    <th style="padding: 10px; text-align: left; cursor: pointer;" onclick="sortDistanceMatrix('nearestEVT')">Nearest EVT ↕</th>
-                    <th style="padding: 10px; text-align: right; cursor: pointer;" onclick="sortDistanceMatrix('distEVT')">Dist to EVT ↕</th>
-                </tr>
-            </thead>
-            <tbody id="distance-matrix-tbody">
-    `;
-
-    HOSPITALS.forEach(h => {
-        const hospitalId = h.cmsId;
-        const distData = hospitalDistances[hospitalId];
-        const distCSC = distData.nearestAdvancedDistance === Infinity || distData.nearestAdvancedDistance === 0 ? 'N/A' : distData.nearestAdvancedDistance.toFixed(1);
-        const distEVT = distData.nearestEVTDistance === Infinity || distData.nearestEVTDistance === 0 ? 'N/A' : distData.nearestEVTDistance.toFixed(1);
-
-        html += `
-            <tr style="border-bottom: 1px solid #e5e7eb;">
-                <td style="padding: 8px;">${h.name}</td>
-                <td style="padding: 8px;">${h.state}</td>
-                <td style="padding: 8px;">${h.strokeCertificationType || 'None'}</td>
-                <td style="padding: 8px; text-align: center;">${h.uwPartner ? '✓' : ''}</td>
-                <td style="padding: 8px;">${distData.nearestAdvancedName || 'N/A'}</td>
-                <td style="padding: 8px; text-align: right;">${distCSC}</td>
-                <td style="padding: 8px;">${distData.nearestEVTName || 'N/A'}</td>
-                <td style="padding: 8px; text-align: right;">${distEVT}</td>
-            </tr>
-        `;
-    });
-
-    html += '</tbody></table>';
-
-    document.getElementById('distance-matrix-content').innerHTML = html;
-    document.getElementById('distance-matrix-modal').style.display = 'block';
-}
-
-function closeDistanceMatrix() {
-    document.getElementById('distance-matrix-modal').style.display = 'none';
-}
-
-function sortDistanceMatrix(column) {
-    // Simple sort implementation (could be enhanced)
-    console.log('Sorting by:', column);
-    // Placeholder - you can implement sorting logic here
-    alert('Sorting functionality - click on any column header to sort. Full implementation available.');
-}
-
-function exportDistanceMatrixToCSV() {
-    console.log('Exporting distance matrix to CSV...');
-
-    let csv = 'Hospital Name,State,Certification,UW Partner,Nearest CSC/TSC,Distance to CSC (mi),Nearest EVT,Distance to EVT (mi)\n';
-
-    HOSPITALS.forEach(h => {
-        const hospitalId = h.cmsId;
-        const distData = hospitalDistances[hospitalId];
-        const distCSC = distData.nearestAdvancedDistance === Infinity || distData.nearestAdvancedDistance === 0 ? 'N/A' : distData.nearestAdvancedDistance.toFixed(1);
-        const distEVT = distData.nearestEVTDistance === Infinity || distData.nearestEVTDistance === 0 ? 'N/A' : distData.nearestEVTDistance.toFixed(1);
-
-        const name = (h.name || '').replace(/,/g, ';');
-        const nearestCSC = (distData.nearestAdvancedName || 'N/A').replace(/,/g, ';');
-        const nearestEVT = (distData.nearestEVTName || 'N/A').replace(/,/g, ';');
-
-        csv += `"${name}","${h.state}","${h.strokeCertificationType || 'None'}","${h.uwPartner ? 'Yes' : 'No'}","${nearestCSC}","${distCSC}","${nearestEVT}","${distEVT}"\n`;
-    });
-
-    // Download
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `distance_matrix_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    console.log('Distance matrix exported');
-}
-
-// ============================================================================
-// FEATURE 5: Advanced Multi-Criteria Filter
-// ============================================================================
-
-function toggleAdvancedFilters() {
-    const panel = document.getElementById('advanced-filters');
-    if (panel.style.display === 'none') {
-        panel.style.display = 'block';
-    } else {
-        panel.style.display = 'none';
-    }
-}
-
-function applyAdvancedFilters() {
-    console.log('Applying advanced filters...');
-
-    const notUWPartner = document.getElementById('filter-not-uw-partner').checked;
-    const noCert = document.getElementById('filter-no-cert').checked;
-    const zeroCapability = document.getElementById('filter-zero-capability').checked;
-    const cscDistance = parseInt(document.getElementById('filter-csc-distance').value);
-    const evtDistance = parseInt(document.getElementById('filter-evt-distance').value);
-    const state = document.getElementById('filter-state').value;
-
-    console.log('Filters:', { notUWPartner, noCert, zeroCapability, cscDistance, evtDistance, state });
-
-    // Filter hospitals
-    const filtered = HOSPITALS.filter(h => {
-        const hospitalId = h.cmsId;
-        const distData = hospitalDistances[hospitalId];
-
-        // Zero-capability filter (most restrictive)
-        if (zeroCapability) {
-            if (h.strokeCertificationType || h.uwPartner) {
-                return false;
-            }
-        }
-
-        // NOT UW Partner filter
-        if (notUWPartner && h.uwPartner) {
-            return false;
-        }
-
-        // NO certification filter
-        if (noCert && h.strokeCertificationType) {
-            return false;
-        }
-
-        // Distance from CSC filter (only if > 0)
-        if (cscDistance > 0) {
-            const dist = distData.nearestAdvancedDistance;
-            if (dist === Infinity || dist === 0 || dist <= cscDistance) {
-                return false;
-            }
-        }
-
-        // Distance from EVT filter (only if > 0)
-        if (evtDistance > 0) {
-            const dist = distData.nearestEVTDistance;
-            if (dist === Infinity || dist === 0 || dist <= evtDistance) {
-                return false;
-            }
-        }
-
-        // State filter
-        if (state !== 'ALL' && h.state !== state) {
-            return false;
-        }
-
-        return true;
-    });
-
-    console.log(`Filtered: ${filtered.length} hospitals match criteria`);
-
-    // Clear existing markers
-    markers.forEach(m => map.removeLayer(m));
-    markers = [];
-
-    // Render filtered hospitals
-    filtered.forEach(hospital => {
-        const color = getMarkerColor(hospital);
-        const size = getMarkerSize(hospital);
-
-        const marker = L.circleMarker([hospital.latitude, hospital.longitude], {
-            radius: size,
-            fillColor: color,
-            color: 'white',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.9
-        });
-
-        const hospitalId = hospital.cmsId;
-        const distData = hospitalDistances[hospitalId];
-
-        const popupContent = `
-            <div style="font-family: sans-serif; min-width: 300px;">
-                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">${hospital.name}</h3>
-                <div style="font-size: 13px; line-height: 1.6;">
-                    <strong>Address:</strong> ${hospital.address}, ${hospital.state}<br>
-                    <strong>Certification:</strong> ${hospital.strokeCertificationType || 'None'}<br>
-                    <strong>UW Partner:</strong> ${hospital.uwPartner ? 'Yes' : 'No'}<br>
-                    <strong>Distance to CSC/TSC:</strong> ${distData.nearestAdvancedDistance === Infinity ? 'N/A' : distData.nearestAdvancedDistance.toFixed(1) + ' mi'}<br>
-                    <strong>Distance to EVT:</strong> ${distData.nearestEVTDistance === Infinity ? 'N/A' : distData.nearestEVTDistance.toFixed(1) + ' mi'}
-                </div>
-            </div>
-        `;
-
-        marker.bindPopup(popupContent);
-        marker.addTo(map);
-        markers.push(marker);
-    });
-
-    updateStats(filtered);
-    alert(`Advanced Filter Results:\n\n${filtered.length} hospitals match your criteria.`);
-}
-
-function clearAdvancedFilters() {
-    document.getElementById('filter-not-uw-partner').checked = false;
-    document.getElementById('filter-no-cert').checked = false;
-    document.getElementById('filter-zero-capability').checked = false;
-    document.getElementById('filter-csc-distance').value = 0;
-    document.getElementById('filter-evt-distance').value = 0;
-    document.getElementById('filter-state').value = 'ALL';
-    document.getElementById('csc-distance-value').textContent = '0';
-    document.getElementById('evt-distance-value').textContent = '0';
-
-    renderMarkers(); // Reset to normal view
-    alert('Advanced filters cleared.');
-}
-
-// ============================================================================
-// NEW STRATEGIC PLANNING FEATURES (15 FEATURES)
-// ============================================================================
-
-// Global variables for new features
+let hospitalDistances = {};
+let advancedCenters = [];
+let evtCenters = [];
+
+// Feature overlays
 let uwNetworkLines = [];
 let uwNetworkVisible = false;
 let referralLines = [];
 let referralLinesVisible = false;
-let activeQuickFilter = null;
+let coverageCircles = [];
+let coverageVisible = false;
 
-// ============================================================================
-// FEATURE 2: UW Partner Network Visualization (B3)
-// ============================================================================
+// State
+let activeFilters = { CSC:false, TSC:false, PSC:false, ASR:false, EVT:false, UW:false };
+let darkMapMode = false;
+let searchDebounceTimer = null;
+let toolsMenuOpen = false;
 
-function toggleUWPartnerNetwork() {
-    if (uwNetworkVisible) {
-        // Remove lines
-        uwNetworkLines.forEach(line => map.removeLayer(line));
-        uwNetworkLines = [];
-        uwNetworkVisible = false;
-        console.log('UW Partner network lines removed');
-    } else {
-        // Harborview coordinates
-        const harborview = { lat: 47.604038, lng: -122.323242 };
-
-        // Get all UW partners
-        const uwPartners = HOSPITALS.filter(h => h.uwPartner);
-
-        console.log(`Drawing lines from ${uwPartners.length} UW partners to Harborview`);
-
-        // Draw lines from each UW partner to Harborview
-        uwPartners.forEach(hospital => {
-            const line = L.polyline([
-                [hospital.latitude, hospital.longitude],
-                [harborview.lat, harborview.lng]
-            ], {
-                color: '#3b82f6',
-                weight: 2,
-                opacity: 0.6,
-                dashArray: '5, 10'
-            }).addTo(map);
-
-            uwNetworkLines.push(line);
-        });
-
-        uwNetworkVisible = true;
-        alert(`UW Partner Network: ${uwPartners.length} hospitals connected to Harborview Medical Center.`);
-    }
+// ---------------------------------------------------------------------------
+// Toast Notification System
+// ---------------------------------------------------------------------------
+function toast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    const colors = { info:'bg-indigo-600', success:'bg-emerald-600', warning:'bg-amber-500', error:'bg-red-600' };
+    const el = document.createElement('div');
+    el.className = `toast ${colors[type] || colors.info} text-white px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium`;
+    el.textContent = message;
+    el.style.animationDuration = `0.3s, 0.3s`;
+    el.style.animationDelay = `0s, ${(duration-300)/1000}s`;
+    container.appendChild(el);
+    setTimeout(() => el.remove(), duration);
 }
 
-// ============================================================================
-// FEATURE 3: Zero-Capability Hospitals (B5)
-// ============================================================================
+// ---------------------------------------------------------------------------
+// Name Normalization (Title Case preserving acronyms)
+// ---------------------------------------------------------------------------
+const ACRONYMS = new Set(['AMC','UW','VA','CHI','DNV','CMS','OHSU','EIRMC','SW','NE','SE','NW','ST','DR','AVE','PO','FT','N','S','E','W']);
+function toTitleCase(str) {
+    if (!str) return str;
+    return str.split(/\s+/).map(w => {
+        const upper = w.toUpperCase();
+        if (ACRONYMS.has(upper)) return upper;
+        if (w.length <= 2) return upper;
+        if (upper.includes('-')) return upper.split('-').map(p => p.charAt(0)+p.slice(1).toLowerCase()).join('-');
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    }).join(' ');
+}
 
-function highlightZeroCapability() {
-    console.log('Highlighting zero-capability hospitals...');
+// ---------------------------------------------------------------------------
+// City Extraction
+// ---------------------------------------------------------------------------
+function extractCity(hospital) {
+    if (hospital.city) return hospital.city;
+    // Try to parse city from address field if it contains city/state/zip
+    const addr = hospital.address || '';
+    const stateAbbr = hospital.state || '';
+    // Pattern: "... CITY STATE ZIP"
+    const regex = new RegExp(`([A-Za-z\\s]+)\\s+${stateAbbr}\\s+\\d{5}`, 'i');
+    const match = addr.match(regex);
+    if (match) return toTitleCase(match[1].trim());
+    // Fallback: use zip-to-city rough mapping
+    return '';
+}
 
-    // Find hospitals with NO certification AND NOT UW partners
-    const zeroCapability = HOSPITALS.filter(h => !h.strokeCertificationType && !h.uwPartner);
-
-    console.log(`Found ${zeroCapability.length} zero-capability hospitals`);
-
-    // Clear existing markers
-    markers.forEach(m => map.removeLayer(m));
-    markers = [];
-
-    // Render all hospitals with zero-capability highlighted
-    HOSPITALS.forEach(hospital => {
-        const isZeroCapability = !hospital.strokeCertificationType && !hospital.uwPartner;
-
-        let color, size, weight;
-
-        if (isZeroCapability) {
-            color = '#dc2626'; // Bright red
-            size = 11;
-            weight = 3;
-        } else {
-            color = getMarkerColor(hospital);
-            size = getMarkerSize(hospital);
-            weight = 2;
-        }
-
-        const marker = L.circleMarker([hospital.latitude, hospital.longitude], {
-            radius: size,
-            fillColor: color,
-            color: isZeroCapability ? '#991b1b' : 'white',
-            weight: weight,
-            opacity: 1,
-            fillOpacity: isZeroCapability ? 0.9 : 0.6
-        });
-
-        // Build popup
-        let popupContent = `
-            <div style="font-family: sans-serif; min-width: 300px;">
-                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: ${color};">${hospital.name}</h3>
-                <div style="font-size: 13px; line-height: 1.6;">
-                    <strong>Address:</strong> ${hospital.address}, ${hospital.state} ${hospital.zip}<br>
-        `;
-
-        if (isZeroCapability) {
-            popupContent += `<strong style="color: #dc2626;">⚠ ZERO CAPABILITY - No certification, Not UW Partner</strong><br>`;
-            popupContent += `<strong>Priority for Expansion</strong><br>`;
-        } else {
-            if (hospital.strokeCertificationType) {
-                popupContent += `<strong>Certification:</strong> ${hospital.strokeCertificationType}<br>`;
-            }
-            if (hospital.uwPartner) {
-                popupContent += `<strong style="color: #3b82f6;">✓ UW Partner</strong><br>`;
-            }
-        }
-
-        popupContent += `</div></div>`;
-
-        marker.bindPopup(popupContent);
-        marker.addTo(map);
-        markers.push(marker);
+// ---------------------------------------------------------------------------
+// Data Loading
+// ---------------------------------------------------------------------------
+fetch('complete_hospitals_geocoded.json')
+    .then(r => r.json())
+    .then(data => {
+        HOSPITALS = data.filter(h => h.latitude && h.longitude).map(h => ({
+            ...h,
+            displayName: toTitleCase(h.name),
+            city: extractCity(h),
+        }));
+        advancedCenters = HOSPITALS.filter(h => h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC');
+        evtCenters = HOSPITALS.filter(h => h.hasELVO === true);
+        preCalculateDistances();
+        initializeMap();
+        renderDashboard();
+        toast(`Loaded ${HOSPITALS.length} hospitals`, 'success');
+    })
+    .catch(err => {
+        console.error('Error loading data:', err);
+        toast('Error loading hospital data. Refresh to retry.', 'error', 5000);
     });
 
-    alert(`Zero-Capability Analysis:\n\n${zeroCapability.length} hospitals have NO stroke certification AND are NOT UW partners.\n\nThese hospitals are highlighted in bright red as high-priority expansion targets.`);
-}
+// ---------------------------------------------------------------------------
+// Map Initialization
+// ---------------------------------------------------------------------------
+function initializeMap() {
+    map = L.map('map', { zoomControl: false }).setView([47.5, -120.5], 7);
+    tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap, &copy; CARTO',
+        maxZoom: 19, subdomains: 'abcd'
+    }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-// ============================================================================
-// FEATURE 4: CSC Service Area Polygons (C3)
-// ============================================================================
-
-// ============================================================================
-// FEATURE 5: Transfer Time Estimates (C4)
-// ============================================================================
-// This is integrated into hospital popups - enhancing existing popup function
-
-function getTransferTimeEstimates(hospital) {
-    // Always calculate transfer times to Harborview Medical Center
-    const harborview = HOSPITALS.find(h => h.name === 'HARBORVIEW MEDICAL CENTER');
-
-    if (!harborview) {
-        console.error('Harborview Medical Center not found in database');
-        return null;
-    }
-
-    // Don't show transfer time for Harborview itself
-    if (hospital.cmsId === harborview.cmsId) {
-        return null;
-    }
-
-    // Calculate distance to Harborview
-    const distance = calculateDistance(
-        hospital.latitude, hospital.longitude,
-        harborview.latitude, harborview.longitude
-    );
-
-    // Ground: 60 mph average
-    const groundTimeHours = distance / 60;
-    const groundTimeMinutes = Math.round(groundTimeHours * 60 / 5) * 5; // Round to nearest 5 min
-
-    // Air: 150 mph average
-    const airTimeHours = distance / 150;
-    const airTimeMinutes = Math.round(airTimeHours * 60 / 5) * 5; // Round to nearest 5 min
-
-    return {
-        nearestCenter: 'Harborview Medical Center',
-        distance: distance.toFixed(1),
-        groundTime: groundTimeMinutes,
-        airTime: airTimeMinutes
-    };
-}
-
-// ============================================================================
-// FEATURE 6: Hospital Detail Cards (D1)
-// ============================================================================
-
-function showHospitalDetail(hospital) {
-    const hospitalId = hospital.cmsId;
-    const distData = hospitalDistances[hospitalId];
-    const transferTimes = getTransferTimeEstimates(hospital);
-
-    let html = `
-        <div style="font-family: sans-serif;">
-            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: #1f2937;">${hospital.name}</h2>
-
-            <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #374151;">Location</h3>
-                <div style="font-size: 13px; line-height: 1.8;">
-                    <strong>Address:</strong> ${hospital.address}<br>
-                    <strong>City/State:</strong> ${hospital.state} ${hospital.zip}<br>
-                    <strong>CMS ID:</strong> ${hospital.cmsId}
-                </div>
-            </div>
-
-            <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #374151;">Stroke Capabilities</h3>
-                <div style="font-size: 13px; line-height: 1.8;">
-    `;
-
-    if (hospital.strokeCertificationType) {
-        html += `<strong>Certification:</strong> ${hospital.strokeCertificationType}`;
-        if (hospital.strokeCertificationType === 'CSC') html += ' (Comprehensive Stroke Center)';
-        if (hospital.strokeCertificationType === 'TSC') html += ' (Thrombectomy-Capable)';
-        if (hospital.strokeCertificationType === 'PSC') html += ' (Primary Stroke Center)';
-        if (hospital.strokeCertificationType === 'ASR') html += ' (Acute Stroke Ready)';
-        html += '<br>';
-
-        if (hospital.certifyingBody) {
-            html += `<strong>Certifying Body:</strong> ${hospital.certifyingBody}<br>`;
+    // Map legend as Leaflet control
+    const LegendControl = L.Control.extend({
+        options: { position: 'bottomleft' },
+        onAdd: function() {
+            const div = L.DomUtil.create('div', 'map-legend');
+            const items = [
+                ['#dc2626','CSC'],['#ea580c','TSC'],['#f59e0b','PSC'],['#84cc16','ASR'],
+                ['#3b82f6','UW Partner'],['#10b981','EVT'],['#6b7280','Other']
+            ];
+            div.innerHTML = items.map(([c,l]) =>
+                `<span class="entry"><span class="dot" style="background:${c}"></span>${l}</span>`
+            ).join('');
+            // Add cert info link
+            div.innerHTML += '<span class="entry" style="cursor:pointer;color:#6366f1;font-weight:600;" onclick="showCertInfo()">?</span>';
+            L.DomEvent.disableClickPropagation(div);
+            return div;
         }
-        if (hospital.certificationDetails) {
-            html += `<strong>Details:</strong> ${hospital.certificationDetails}<br>`;
+    });
+    new LegendControl().addTo(map);
+
+    applyFilters();
+    loadStateFromURL();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey && e.key === 'f') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
+            e.preventDefault();
+            document.getElementById('search-input').focus();
         }
-    } else {
-        html += `<strong>Certification:</strong> <span style="color: #dc2626;">None</span><br>`;
-    }
+        if (e.key === 'Escape') {
+            closeAllModals();
+            if (toolsMenuOpen) toggleToolsMenu();
+        }
+        if ((e.key === 'r' || e.key === 'R') && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+            resetAllFilters();
+        }
+    });
 
-    html += `<strong>EVT Capability:</strong> ${hospital.hasELVO ? '<span style="color: #10b981;">Yes - 24/7 Thrombectomy</span>' : 'No'}<br>`;
-    html += `<strong>UW Partner:</strong> ${hospital.uwPartner ? '<span style="color: #3b82f6;">Yes</span>' : 'No'}`;
-
-    html += `</div></div>`;
-
-    // Distance Analysis
-    html += `
-        <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #374151;">Distance Analysis</h3>
-            <div style="font-size: 13px; line-height: 1.8;">
-    `;
-
-    if (distData.nearestAdvancedDistance !== Infinity && distData.nearestAdvancedDistance > 0) {
-        html += `<strong>Nearest CSC/TSC:</strong> ${distData.nearestAdvancedName}<br>`;
-        html += `<strong>Distance:</strong> ${distData.nearestAdvancedDistance.toFixed(1)} miles<br>`;
-    }
-
-    if (distData.nearestEVTDistance !== Infinity && distData.nearestEVTDistance > 0) {
-        html += `<strong>Nearest EVT Center:</strong> ${distData.nearestEVTName}<br>`;
-        html += `<strong>Distance:</strong> ${distData.nearestEVTDistance.toFixed(1)} miles<br>`;
-    }
-
-    html += `</div></div>`;
-
-    // Transfer Time Estimates
-    if (transferTimes) {
-        html += `
-            <div style="background: #fef3c7; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #92400e;">Transfer Time to Harborview Medical Center</h3>
-                <div style="font-size: 13px; line-height: 1.8; color: #92400e;">
-                    Ground Transfer: ~${transferTimes.groundTime} minutes (${transferTimes.distance} mi @ 60 mph)<br>
-                    Air Transfer: ~${transferTimes.airTime} minutes (${transferTimes.distance} mi @ 150 mph)<br>
-                    <em style="font-size: 11px;">Estimates assume direct route and average speeds</em>
-                </div>
-            </div>
-        `;
-    }
-
-    // Data Sources
-    if (hospital.dataSources && hospital.dataSources.length > 0) {
-        html += `
-            <div style="font-size: 11px; color: #6b7280; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                <strong>Data Sources:</strong> ${hospital.dataSources.join(', ')}
-            </div>
-        `;
-    }
-
-    html += `</div>`;
-
-    document.getElementById('hospital-detail-content').innerHTML = html;
-    document.getElementById('hospital-detail-modal').style.display = 'block';
+    // Search debounce
+    const searchInput = document.getElementById('search-input');
+    const mobileInput = document.getElementById('mobile-search-input');
+    searchInput.addEventListener('input', () => { debouncedFilter(); if(mobileInput) mobileInput.value = searchInput.value; });
+    if (mobileInput) mobileInput.addEventListener('input', () => { searchInput.value = mobileInput.value; debouncedFilter(); });
 }
 
-function closeHospitalDetail() {
-    document.getElementById('hospital-detail-modal').style.display = 'none';
+function debouncedFilter() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(applyFilters, 200);
+}
+function syncSearch(val) {
+    document.getElementById('search-input').value = val;
+    debouncedFilter();
 }
 
-// Enhance markers to show detail card on click
-function renderMarkersWithDetailCards() {
-    // This will be integrated into the main renderMarkers function
-    // For now, we'll add click handlers to existing markers
+// ---------------------------------------------------------------------------
+// Marker Helpers
+// ---------------------------------------------------------------------------
+function getMarkerColor(h) {
+    if (h.strokeCertificationType && CERT_COLORS[h.strokeCertificationType]) return CERT_COLORS[h.strokeCertificationType];
+    if (h.uwPartner) return UW_COLOR;
+    return OTHER_COLOR;
+}
+function getMarkerSize(h) {
+    const sizes = { CSC:12, TSC:11, PSC:10, ASR:9 };
+    return sizes[h.strokeCertificationType] || (h.uwPartner ? 9 : 7);
 }
 
-// ============================================================================
-// FEATURE 7: Quick Filters Toolbar (E1)
-// ============================================================================
+// ---------------------------------------------------------------------------
+// Core Filtering & Rendering
+// ---------------------------------------------------------------------------
+function applyFilters() {
+    clearFeatureOverlays();
+    const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+    const stateFilter = document.getElementById('filter-state').value;
+    const evtDistFilter = parseInt(document.getElementById('filter-evt-distance').value) || 0;
+    const anyPillActive = Object.values(activeFilters).some(v => v);
 
-function quickFilter(filterType) {
-    console.log(`Applying quick filter: ${filterType}`);
-    activeQuickFilter = filterType;
+    const filtered = HOSPITALS.filter(h => {
+        // Search: name, address, city, state, cert type
+        if (searchTerm) {
+            const haystack = [h.name, h.displayName, h.address, h.city, h.state, h.strokeCertificationType || '', h.certifyingBody || ''].join(' ').toLowerCase();
+            if (!haystack.includes(searchTerm)) return false;
+        }
+        // State filter
+        if (stateFilter !== 'ALL' && h.state !== stateFilter) return false;
+        // EVT distance filter
+        if (evtDistFilter > 0) {
+            const dist = hospitalDistances[h.cmsId]?.nearestEVTDistance || 0;
+            if (dist <= evtDistFilter || dist === Infinity || dist === 0) return false;
+        }
+        // Pill filters (OR logic)
+        if (anyPillActive) {
+            let pass = false;
+            if (activeFilters.CSC && h.strokeCertificationType === 'CSC') pass = true;
+            if (activeFilters.TSC && h.strokeCertificationType === 'TSC') pass = true;
+            if (activeFilters.PSC && h.strokeCertificationType === 'PSC') pass = true;
+            if (activeFilters.ASR && h.strokeCertificationType === 'ASR') pass = true;
+            if (activeFilters.EVT && h.hasELVO) pass = true;
+            if (activeFilters.UW && h.uwPartner) pass = true;
+            if (!pass) return false;
+        }
+        return true;
+    });
 
-    // Clear existing markers
+    renderMarkers(filtered);
+    updateHospitalList(filtered);
+    updateStatusBar(filtered);
+    updateDashboardStats(filtered);
+    updateClearButton();
+
+    // Auto-zoom to filtered results
+    if ((stateFilter !== 'ALL' || anyPillActive || searchTerm) && filtered.length > 0 && filtered.length < HOSPITALS.length) {
+        const bounds = L.latLngBounds(filtered.map(h => [h.latitude, h.longitude]));
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
+    }
+}
+
+function renderMarkers(filtered) {
     markers.forEach(m => map.removeLayer(m));
     markers = [];
 
-    let filtered = [];
-
-    switch (filterType) {
-        case 'AK':
-            filtered = HOSPITALS.filter(h => h.state === 'AK');
-            break;
-        case 'ID':
-            filtered = HOSPITALS.filter(h => h.state === 'ID');
-            break;
-        case 'WA':
-            filtered = HOSPITALS.filter(h => h.state === 'WA');
-            break;
-        case 'NO_CERT':
-            filtered = HOSPITALS.filter(h => !h.strokeCertificationType);
-            break;
-        case 'UW_ONLY':
-            filtered = HOSPITALS.filter(h => h.uwPartner);
-            break;
-        case 'EVT_DESERT':
-            filtered = HOSPITALS.filter(h => {
-                const dist = hospitalDistances[h.cmsId].nearestEVTDistance;
-                return dist > 100;
-            });
-            break;
-        case 'EXPANSION':
-            filtered = HOSPITALS.filter(h => !h.strokeCertificationType && !h.uwPartner);
-            break;
-        default:
-            filtered = HOSPITALS;
-    }
-
-    console.log(`Quick filter '${filterType}' showing ${filtered.length} hospitals`);
-
-    // Render filtered hospitals
     filtered.forEach(hospital => {
         const color = getMarkerColor(hospital);
         const size = getMarkerSize(hospital);
-
         const marker = L.circleMarker([hospital.latitude, hospital.longitude], {
-            radius: size,
-            fillColor: color,
-            color: 'white',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.9
+            radius: size, fillColor: color, color: 'white', weight: 2, opacity: 1, fillOpacity: 0.8
         });
-
-        // Build popup - simpler version without nested quotes
-        const transferTimes = getTransferTimeEstimates(hospital);
-        let popupHTML = '<div style="font-family: sans-serif; min-width: 300px;">';
-        popupHTML += `<h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: ${color};">${hospital.name}</h3>`;
-        popupHTML += '<div style="font-size: 13px; line-height: 1.6;">';
-        popupHTML += `<strong>Address:</strong> ${hospital.address}, ${hospital.state}<br>`;
-        popupHTML += `<strong>Certification:</strong> ${hospital.strokeCertificationType || 'None'}<br>`;
-        popupHTML += `<strong>UW Partner:</strong> ${hospital.uwPartner ? 'Yes' : 'No'}<br>`;
-
-        if (transferTimes) {
-            popupHTML += `<strong>Transfer Time to Harborview Medical Center:</strong><br>`;
-            popupHTML += `Ground: ~${transferTimes.groundTime} min | Air: ~${transferTimes.airTime} min<br>`;
-        }
-
-        popupHTML += '</div></div>';
-
-        marker.bindPopup(popupHTML);
-        marker.on('click', function() {
-            showHospitalDetail(hospital);
-        });
+        marker.bindPopup(buildPopup(hospital));
+        marker.on('click', () => showHospitalDetail(hospital));
+        marker.hospitalData = hospital;
         marker.addTo(map);
         markers.push(marker);
     });
-
-    updateStats(filtered);
-
-    let filterName = {
-        'AK': 'Alaska Only',
-        'ID': 'Idaho Only',
-        'WA': 'Washington Only',
-        'NO_CERT': 'No Certification',
-        'UW_ONLY': 'UW Partners Only',
-        'EVT_DESERT': 'EVT Deserts (>100mi)',
-        'EXPANSION': 'Expansion Targets'
-    }[filterType];
-
-    alert(`Quick Filter Applied: ${filterName}\n\nShowing ${filtered.length} hospitals.`);
 }
 
-function clearQuickFilters() {
-    activeQuickFilter = null;
-    renderMarkers();
-    alert('Quick filters cleared. Showing all hospitals.');
+function buildPopup(h) {
+    const color = getMarkerColor(h);
+    const certNames = { CSC:'Comprehensive Stroke Center', TSC:'Thrombectomy-Capable', PSC:'Primary Stroke Center', ASR:'Acute Stroke Ready' };
+    let html = `<div style="font-family:sans-serif;min-width:280px;">`;
+    html += `<h3 style="font-size:15px;font-weight:700;margin-bottom:6px;color:${color};">${h.displayName}</h3>`;
+    html += `<div style="font-size:12px;line-height:1.6;">`;
+    html += `<strong>Address:</strong> ${h.address}${h.city ? ', '+h.city : ''}, ${h.state} ${h.zip || ''}<br>`;
+    if (h.strokeCertificationType) {
+        html += `<strong>Certification:</strong> ${certNames[h.strokeCertificationType] || h.strokeCertificationType} (${h.strokeCertificationType})<br>`;
+        if (h.certifyingBody) html += `<strong>Certifying Body:</strong> ${h.certifyingBody}<br>`;
+    }
+    if (h.hasELVO) html += `<strong style="color:${EVT_COLOR};">24/7 Thrombectomy (EVT)</strong><br>`;
+    if (h.uwPartner) html += `<strong style="color:${UW_COLOR};">&#10003; UW Medicine Telestroke Partner</strong><br>`;
+
+    // Transfer time to nearest CSC (not just Harborview)
+    const dist = hospitalDistances[h.cmsId];
+    if (dist && dist.nearestAdvancedDistance > 0 && dist.nearestAdvancedDistance < Infinity) {
+        const d = dist.nearestAdvancedDistance;
+        const ground = Math.round(d / 60 * 60 / 5) * 5;
+        const air = Math.round(d / 150 * 60 / 5) * 5;
+        html += `<br><strong>Nearest CSC/TSC:</strong> ${toTitleCase(dist.nearestAdvancedName)}<br>`;
+        html += `~${ground} min ground / ~${air} min air (${d.toFixed(0)} mi)<br>`;
+        html += `<span style="font-size:10px;color:#9ca3af;">60 mph ground, 150 mph air estimates</span>`;
+    }
+    html += `</div></div>`;
+    return html;
 }
 
-// ============================================================================
-// FEATURE 8: PNG Map Export (F2)
-// ============================================================================
+// ---------------------------------------------------------------------------
+// Status Bar & Hospital List
+// ---------------------------------------------------------------------------
+function updateStatusBar(filtered) {
+    const el = document.getElementById('status-bar');
+    el.textContent = `Showing ${filtered.length} of ${HOSPITALS.length} hospitals`;
+    document.getElementById('list-count').textContent = filtered.length;
+}
 
-function exportMapToPNG() {
-    alert('Preparing map export... This may take a few seconds.');
+function updateClearButton() {
+    const anyActive = Object.values(activeFilters).some(v => v) ||
+        document.getElementById('filter-state').value !== 'ALL' ||
+        parseInt(document.getElementById('filter-evt-distance').value) > 0 ||
+        document.getElementById('search-input').value.trim() !== '';
+    document.getElementById('clear-btn').classList.toggle('hidden', !anyActive);
+}
 
-    // Hide control panels temporarily
-    const controlPanel = document.querySelector('.control-panel');
-    const statsPanel = document.querySelector('.stats-panel');
-    const originalControlDisplay = controlPanel.style.display;
-    const originalStatsDisplay = statsPanel.style.display;
+function updateHospitalList(filtered) {
+    const list = document.getElementById('hospital-list');
+    if (filtered.length === 0) {
+        list.innerHTML = '<div class="px-4 py-8 text-center text-sm text-gray-400">No hospitals match your filters</div>';
+        return;
+    }
+    // Sort: CSC first, then TSC, PSC, ASR, UW, others
+    const order = { CSC:0, TSC:1, PSC:2, ASR:3 };
+    const sorted = [...filtered].sort((a, b) => {
+        const oa = order[a.strokeCertificationType] ?? (a.uwPartner ? 4 : 5);
+        const ob = order[b.strokeCertificationType] ?? (b.uwPartner ? 4 : 5);
+        return oa - ob || a.displayName.localeCompare(b.displayName);
+    });
 
-    controlPanel.style.display = 'none';
-    statsPanel.style.display = 'none';
+    list.innerHTML = sorted.map(h => {
+        const color = getMarkerColor(h);
+        const loc = [h.city, h.state].filter(Boolean).join(', ') || h.state;
+        let badges = '';
+        if (h.strokeCertificationType) badges += `<span class="badge" style="background:${CERT_COLORS[h.strokeCertificationType]}20;color:${CERT_COLORS[h.strokeCertificationType]};">${h.strokeCertificationType}</span>`;
+        if (h.hasELVO) badges += `<span class="badge" style="background:${EVT_COLOR}20;color:${EVT_COLOR};">EVT</span>`;
+        if (h.uwPartner) badges += `<span class="badge" style="background:${UW_COLOR}20;color:${UW_COLOR};">UW</span>`;
+        return `<div class="hospital-item" onclick="panToHospital('${h.cmsId}')" data-cms="${h.cmsId}">
+            <span class="dot" style="background:${color};"></span>
+            <div class="flex-1 min-w-0">
+                <div class="name truncate">${h.displayName}</div>
+                <div class="meta">${loc}${h.zip ? ' ' + h.zip : ''}</div>
+                <div class="badges">${badges}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
 
-    // Use html2canvas to capture the map
-    html2canvas(document.getElementById('map'), {
-        useCORS: true,
-        allowTaint: true
-    }).then(canvas => {
-        // Restore panels
-        controlPanel.style.display = originalControlDisplay;
-        statsPanel.style.display = originalStatsDisplay;
+function panToHospital(cmsId) {
+    const h = HOSPITALS.find(h => h.cmsId === cmsId);
+    if (!h) return;
+    map.setView([h.latitude, h.longitude], 12);
+    const marker = markers.find(m => m.hospitalData?.cmsId === cmsId);
+    if (marker) marker.openPopup();
+    // Highlight in list
+    document.querySelectorAll('.hospital-item').forEach(el => el.classList.remove('highlighted'));
+    const item = document.querySelector(`.hospital-item[data-cms="${cmsId}"]`);
+    if (item) { item.classList.add('highlighted'); item.scrollIntoView({ block: 'nearest' }); }
+}
 
-        // Create a new canvas with metadata
-        const finalCanvas = document.createElement('canvas');
-        finalCanvas.width = canvas.width;
-        finalCanvas.height = canvas.height + 80; // Add space for text
+// ---------------------------------------------------------------------------
+// Filter Controls
+// ---------------------------------------------------------------------------
+function toggleFilter(filterKey) {
+    activeFilters[filterKey] = !activeFilters[filterKey];
+    // Update pill visual
+    const pill = document.querySelector(`.pill[data-filter="${filterKey}"]`);
+    if (pill) pill.classList.toggle(`active-${filterKey.toLowerCase()}`);
+    applyFilters();
+}
 
-        const ctx = finalCanvas.getContext('2d');
+function resetAllFilters() {
+    Object.keys(activeFilters).forEach(k => activeFilters[k] = false);
+    document.querySelectorAll('.pill').forEach(p => {
+        p.className = 'pill'; // Remove all active-* classes
+    });
+    document.getElementById('filter-state').value = 'ALL';
+    document.getElementById('filter-evt-distance').value = 0;
+    document.getElementById('evt-dist-label').textContent = '0';
+    document.getElementById('search-input').value = '';
+    const mobile = document.getElementById('mobile-search-input');
+    if (mobile) mobile.value = '';
+    clearFeatureOverlays();
+    applyFilters();
+    map.setView([47.5, -120.5], 7);
+    toast('All filters reset');
+}
 
-        // White background
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+// ---------------------------------------------------------------------------
+// Distance Pre-Calculation
+// ---------------------------------------------------------------------------
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 3959;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
 
-        // Draw the map
-        ctx.drawImage(canvas, 0, 0);
-
-        // Add metadata footer
-        ctx.fillStyle = '#1f2937';
-        ctx.font = 'bold 16px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('UW Medicine Telestroke Network Expansion Planning Tool', finalCanvas.width / 2, canvas.height + 25);
-
-        ctx.font = '14px Arial';
-        ctx.fillText(`Generated: ${new Date().toLocaleDateString('en-US')}`, finalCanvas.width / 2, canvas.height + 50);
-
-        ctx.font = '12px Arial';
-        ctx.fillStyle = '#6b7280';
-        ctx.fillText('Regional Hospital Stroke Capabilities - WA, SE Alaska, N Idaho', finalCanvas.width / 2, canvas.height + 70);
-
-        // Convert to PNG and download
-        finalCanvas.toBlob(blob => {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `telestroke_map_${new Date().toISOString().split('T')[0]}.png`;
-            link.click();
-            URL.revokeObjectURL(url);
-
-            alert('Map exported successfully as PNG!');
+function preCalculateDistances() {
+    HOSPITALS.forEach(h => {
+        hospitalDistances[h.cmsId] = {
+            nearestAdvanced: null, nearestAdvancedDistance: Infinity, nearestAdvancedName: '',
+            nearestEVT: null, nearestEVTDistance: Infinity, nearestEVTName: ''
+        };
+        advancedCenters.forEach(c => {
+            if (c.cmsId === h.cmsId) return;
+            const d = calculateDistance(h.latitude, h.longitude, c.latitude, c.longitude);
+            if (d < hospitalDistances[h.cmsId].nearestAdvancedDistance) {
+                hospitalDistances[h.cmsId].nearestAdvancedDistance = d;
+                hospitalDistances[h.cmsId].nearestAdvanced = c;
+                hospitalDistances[h.cmsId].nearestAdvancedName = c.name;
+            }
         });
-    }).catch(error => {
-        console.error('Export failed:', error);
-        controlPanel.style.display = originalControlDisplay;
-        statsPanel.style.display = originalStatsDisplay;
-        alert('Map export failed. Please try again.');
+        evtCenters.forEach(c => {
+            if (c.cmsId === h.cmsId) return;
+            const d = calculateDistance(h.latitude, h.longitude, c.latitude, c.longitude);
+            if (d < hospitalDistances[h.cmsId].nearestEVTDistance) {
+                hospitalDistances[h.cmsId].nearestEVTDistance = d;
+                hospitalDistances[h.cmsId].nearestEVT = c;
+                hospitalDistances[h.cmsId].nearestEVTName = c.name;
+            }
+        });
     });
 }
 
-// ============================================================================
-// FEATURE 9: Executive Summary Auto-Generator (F3)
-// ============================================================================
+// ---------------------------------------------------------------------------
+// Dashboard Charts
+// ---------------------------------------------------------------------------
+function renderDashboard() {
+    renderDonutChart();
+    renderStateBars();
+    renderGapMetrics();
+    renderHistogram();
+}
 
-function generateExecutiveSummary() {
-    console.log('Generating executive summary...');
+function updateDashboardStats(filtered) {
+    // Update gap metrics with filtered data
+    renderGapMetrics(filtered);
+}
 
-    const totalHospitals = HOSPITALS.length;
-    const uwPartners = HOSPITALS.filter(h => h.uwPartner).length;
-    const certified = HOSPITALS.filter(h => h.strokeCertificationType).length;
+function renderDonutChart() {
+    const canvas = document.getElementById('donut-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const cx = 90, cy = 90, r = 65, lw = 28;
+    ctx.clearRect(0, 0, 180, 180);
 
-    const cscCount = HOSPITALS.filter(h => h.strokeCertificationType === 'CSC').length;
-    const tscCount = HOSPITALS.filter(h => h.strokeCertificationType === 'TSC').length;
-    const pscCount = HOSPITALS.filter(h => h.strokeCertificationType === 'PSC').length;
-    const asrCount = HOSPITALS.filter(h => h.strokeCertificationType === 'ASR').length;
+    const counts = {
+        CSC: HOSPITALS.filter(h => h.strokeCertificationType === 'CSC').length,
+        TSC: HOSPITALS.filter(h => h.strokeCertificationType === 'TSC').length,
+        PSC: HOSPITALS.filter(h => h.strokeCertificationType === 'PSC').length,
+        ASR: HOSPITALS.filter(h => h.strokeCertificationType === 'ASR').length,
+        None: HOSPITALS.filter(h => !h.strokeCertificationType).length,
+    };
+    const total = HOSPITALS.length;
+    const segments = [
+        { label:'CSC', count:counts.CSC, color:'#dc2626' },
+        { label:'TSC', count:counts.TSC, color:'#ea580c' },
+        { label:'PSC', count:counts.PSC, color:'#f59e0b' },
+        { label:'ASR', count:counts.ASR, color:'#84cc16' },
+        { label:'None', count:counts.None, color:'#d1d5db' },
+    ];
 
-    const noCert = HOSPITALS.filter(h => !h.strokeCertificationType).length;
-    const notUW = HOSPITALS.filter(h => !h.uwPartner).length;
-    const evtDeserts = HOSPITALS.filter(h => hospitalDistances[h.cmsId].nearestEVTDistance > 100).length;
-    const zeroCapability = HOSPITALS.filter(h => !h.strokeCertificationType && !h.uwPartner).length;
-
-    // By state
-    const waHospitals = HOSPITALS.filter(h => h.state === 'WA').length;
-    const waCertified = HOSPITALS.filter(h => h.state === 'WA' && h.strokeCertificationType).length;
-    const waPartners = HOSPITALS.filter(h => h.state === 'WA' && h.uwPartner).length;
-
-    const idHospitals = HOSPITALS.filter(h => h.state === 'ID').length;
-    const idCertified = HOSPITALS.filter(h => h.state === 'ID' && h.strokeCertificationType).length;
-    const idPartners = HOSPITALS.filter(h => h.state === 'ID' && h.uwPartner).length;
-
-    const akHospitals = HOSPITALS.filter(h => h.state === 'AK').length;
-    const akCertified = HOSPITALS.filter(h => h.state === 'AK' && h.strokeCertificationType).length;
-    const akPartners = HOSPITALS.filter(h => h.state === 'AK' && h.uwPartner).length;
-
-    // Top 10 expansion priorities
-    const scored = HOSPITALS.map(hospital => {
-        const hospitalId = hospital.cmsId;
-        const distToAdvanced = hospitalDistances[hospitalId].nearestAdvancedDistance;
-        const distToEVT = hospitalDistances[hospitalId].nearestEVTDistance;
-
-        let score = 0;
-        if (!hospital.strokeCertificationType) score += 3;
-        if (!hospital.uwPartner) score += 2;
-        if (distToAdvanced > 75) score += 2;
-        if (distToEVT > 100) score += 1;
-        if (hospital.strokeCertificationType === 'ASR' || hospital.strokeCertificationType === 'PSC') score -= 1;
-
-        return { hospital, score, distToAdvanced, distToEVT };
+    let angle = -Math.PI / 2;
+    segments.forEach(seg => {
+        if (seg.count === 0) return;
+        const sweep = (seg.count / total) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, angle, angle + sweep);
+        ctx.strokeStyle = seg.color;
+        ctx.lineWidth = lw;
+        ctx.lineCap = 'butt';
+        ctx.stroke();
+        angle += sweep;
     });
 
-    scored.sort((a, b) => b.score - a.score);
-    const top10 = scored.slice(0, 10);
+    // Center text
+    ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(total, cx, cy - 6);
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = '#6b7280';
+    ctx.fillText('hospitals', cx, cy + 12);
 
-    // Build summary text
-    let summary = `UW MEDICINE TELESTROKE NETWORK EXPANSION SUMMARY
-Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+    // Small legend below
+    ctx.font = '9px sans-serif';
+    const legendY = 170;
+    let lx = 10;
+    segments.forEach(seg => {
+        if (seg.count === 0) return;
+        ctx.fillStyle = seg.color;
+        ctx.fillRect(lx, legendY, 8, 8);
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText(`${seg.label}:${seg.count}`, lx + 10, legendY + 7);
+        lx += ctx.measureText(`${seg.label}:${seg.count}`).width + 18;
+    });
+}
+
+function renderStateBars() {
+    const container = document.getElementById('state-bars');
+    if (!container) return;
+    const states = ['WA','AK','ID','MT','WY'];
+    const maxCount = Math.max(...states.map(s => HOSPITALS.filter(h => h.state === s).length));
+
+    container.innerHTML = states.map(s => {
+        const all = HOSPITALS.filter(h => h.state === s);
+        const csc = all.filter(h => h.strokeCertificationType === 'CSC').length;
+        const tsc = all.filter(h => h.strokeCertificationType === 'TSC').length;
+        const psc = all.filter(h => h.strokeCertificationType === 'PSC').length;
+        const asr = all.filter(h => h.strokeCertificationType === 'ASR').length;
+        const none = all.length - csc - tsc - psc - asr;
+        const pct = (v) => (v / maxCount * 100).toFixed(1);
+
+        return `<div class="flex items-center gap-2 mb-1.5">
+            <span class="text-[11px] font-semibold text-gray-600 w-6">${s}</span>
+            <div class="flex-1 h-4 bg-gray-100 rounded overflow-hidden flex">
+                ${csc ? `<div style="width:${pct(csc)}%;background:#dc2626;" title="CSC: ${csc}"></div>` : ''}
+                ${tsc ? `<div style="width:${pct(tsc)}%;background:#ea580c;" title="TSC: ${tsc}"></div>` : ''}
+                ${psc ? `<div style="width:${pct(psc)}%;background:#f59e0b;" title="PSC: ${psc}"></div>` : ''}
+                ${asr ? `<div style="width:${pct(asr)}%;background:#84cc16;" title="ASR: ${asr}"></div>` : ''}
+                ${none ? `<div style="width:${pct(none)}%;background:#e5e7eb;" title="None: ${none}"></div>` : ''}
+            </div>
+            <span class="text-[10px] text-gray-400 w-6 text-right">${all.length}</span>
+        </div>`;
+    }).join('');
+}
+
+function renderGapMetrics(filtered) {
+    const container = document.getElementById('gap-metrics');
+    if (!container) return;
+    const src = filtered || HOSPITALS;
+    const noCert = src.filter(h => !h.strokeCertificationType).length;
+    const notUW = src.filter(h => !h.uwPartner).length;
+    const evtDeserts = src.filter(h => (hospitalDistances[h.cmsId]?.nearestEVTDistance || 0) > 100).length;
+    const zeroCapability = src.filter(h => !h.strokeCertificationType && !h.uwPartner).length;
+    const evtCount = src.filter(h => h.hasELVO).length;
+
+    container.innerHTML = [
+        { label: 'No certification', value: noCert, color: '#ef4444' },
+        { label: 'Not UW partner', value: notUW, color: '#6b7280' },
+        { label: 'EVT deserts (>100mi)', value: evtDeserts, color: '#f59e0b' },
+        { label: 'Zero capability', value: zeroCapability, color: '#dc2626' },
+        { label: 'EVT-capable', value: evtCount, color: '#10b981' },
+    ].map(m => `<div class="metric-row"><span class="label">${m.label}</span><span class="value" style="color:${m.color}">${m.value}</span></div>`).join('');
+}
+
+function renderHistogram() {
+    const canvas = document.getElementById('histogram-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 248, 100);
+
+    const buckets = [0, 25, 50, 75, 100, 150, 300];
+    const labels = ['0-25', '25-50', '50-75', '75-100', '100-150', '150+'];
+    const counts = new Array(labels.length).fill(0);
+
+    HOSPITALS.forEach(h => {
+        const d = hospitalDistances[h.cmsId]?.nearestEVTDistance;
+        if (!d || d === Infinity || d === 0) return; // Skip EVT centers themselves
+        for (let i = 0; i < buckets.length - 1; i++) {
+            if (d >= buckets[i] && d < buckets[i+1]) { counts[i]++; break; }
+        }
+    });
+
+    const maxCount = Math.max(...counts, 1);
+    const barW = 34, gap = 4, baseY = 82, maxH = 65;
+    const startX = 10;
+
+    counts.forEach((c, i) => {
+        const x = startX + i * (barW + gap);
+        const h = (c / maxCount) * maxH;
+        const color = i >= 4 ? '#ef4444' : i >= 3 ? '#f59e0b' : '#10b981';
+        ctx.fillStyle = color;
+        ctx.fillRect(x, baseY - h, barW, h);
+        // Count on top
+        if (c > 0) {
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(c, x + barW/2, baseY - h - 3);
+        }
+        // Label below
+        ctx.fillStyle = '#9ca3af';
+        ctx.font = '8px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(labels[i], x + barW/2, baseY + 10);
+    });
+
+    // Axis label
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '8px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('miles', 130, baseY + 20);
+}
+
+// ---------------------------------------------------------------------------
+// Hospital Detail Modal
+// ---------------------------------------------------------------------------
+function showHospitalDetail(hospital) {
+    const h = hospital;
+    const dist = hospitalDistances[h.cmsId] || {};
+    document.getElementById('detail-title').textContent = h.displayName;
+
+    let html = '';
+    // Location
+    html += `<div class="bg-gray-50 p-3 rounded-lg mb-3 text-sm leading-relaxed">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase mb-1">Location</h3>
+        <strong>Address:</strong> ${h.address}<br>
+        ${h.city ? `<strong>City:</strong> ${h.city}<br>` : ''}
+        <strong>State/ZIP:</strong> ${h.state} ${h.zip || ''}<br>
+        <strong>CMS ID:</strong> ${h.cmsId}
+    </div>`;
+
+    // Capabilities
+    const certNames = { CSC:'Comprehensive Stroke Center', TSC:'Thrombectomy-Capable', PSC:'Primary Stroke Center', ASR:'Acute Stroke Ready' };
+    html += `<div class="bg-gray-50 p-3 rounded-lg mb-3 text-sm leading-relaxed">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase mb-1">Stroke Capabilities</h3>`;
+    if (h.strokeCertificationType) {
+        html += `<strong>Certification:</strong> ${certNames[h.strokeCertificationType]} (${h.strokeCertificationType})<br>`;
+        if (h.certifyingBody) html += `<strong>Certifying Body:</strong> ${h.certifyingBody}<br>`;
+        if (h.certificationDetails) html += `<strong>Details:</strong> ${h.certificationDetails}<br>`;
+    } else {
+        html += `<strong>Certification:</strong> <span class="text-red-500">None</span><br>`;
+    }
+    html += `<strong>EVT Capability:</strong> ${h.hasELVO ? '<span class="text-emerald-600 font-semibold">Yes &mdash; 24/7 Thrombectomy</span>' : 'No'}<br>`;
+    html += `<strong>UW Partner:</strong> ${h.uwPartner ? '<span class="text-blue-600 font-semibold">Yes</span>' : 'No'}`;
+    html += `</div>`;
+
+    // Distance analysis
+    if (dist.nearestAdvancedDistance > 0 && dist.nearestAdvancedDistance < Infinity) {
+        const dAdv = dist.nearestAdvancedDistance;
+        const dEVT = dist.nearestEVTDistance;
+        html += `<div class="bg-gray-50 p-3 rounded-lg mb-3 text-sm leading-relaxed">
+            <h3 class="text-xs font-semibold text-gray-400 uppercase mb-1">Distance Analysis</h3>
+            <strong>Nearest CSC/TSC:</strong> ${toTitleCase(dist.nearestAdvancedName)} (${dAdv.toFixed(1)} mi)<br>
+            <strong>Ground transfer:</strong> ~${Math.round(dAdv/60*60/5)*5} min &nbsp; <strong>Air:</strong> ~${Math.round(dAdv/150*60/5)*5} min<br>`;
+        if (dEVT > 0 && dEVT < Infinity) {
+            html += `<strong>Nearest EVT:</strong> ${toTitleCase(dist.nearestEVTName)} (${dEVT.toFixed(1)} mi)`;
+        }
+        html += `</div>`;
+    }
+
+    // Nearby hospitals
+    const nearby = HOSPITALS
+        .filter(n => n.cmsId !== h.cmsId)
+        .map(n => ({ ...n, dist: calculateDistance(h.latitude, h.longitude, n.latitude, n.longitude) }))
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 5);
+
+    html += `<div class="bg-gray-50 p-3 rounded-lg mb-3 text-sm">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase mb-1">Nearby Hospitals</h3>
+        <div class="space-y-1.5">`;
+    nearby.forEach(n => {
+        const certBadge = n.strokeCertificationType ? `<span class="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:${CERT_COLORS[n.strokeCertificationType]}20;color:${CERT_COLORS[n.strokeCertificationType]};">${n.strokeCertificationType}</span>` : '';
+        html += `<div class="flex items-center justify-between">
+            <span class="text-xs">${toTitleCase(n.name)} ${certBadge}${n.hasELVO ? ' <span class="text-emerald-600 text-[9px] font-bold">EVT</span>':''}</span>
+            <span class="text-[10px] text-gray-400 whitespace-nowrap ml-2">${n.dist.toFixed(0)} mi</span>
+        </div>`;
+    });
+    html += `</div></div>`;
+
+    // Data sources
+    if (h.dataSources?.length) {
+        html += `<div class="text-[11px] text-gray-400 pt-2 border-t"><strong>Sources:</strong> ${h.dataSources.join(', ')}</div>`;
+    }
+
+    document.getElementById('hospital-detail-content').innerHTML = html;
+    openModal('hospital-detail-modal');
+}
+
+// ---------------------------------------------------------------------------
+// Modal Management
+// ---------------------------------------------------------------------------
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function closeAllModals() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+}
+function showCertInfo() { openModal('cert-info-modal'); }
+function closeCertInfo() { closeModal('cert-info-modal'); }
+
+// Close modal when clicking overlay
+document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('active');
+    }
+});
+
+// ---------------------------------------------------------------------------
+// Tools Menu
+// ---------------------------------------------------------------------------
+function toggleToolsMenu() {
+    const menu = document.getElementById('tools-menu');
+    toolsMenuOpen = !toolsMenuOpen;
+    menu.classList.toggle('hidden');
+    const fab = document.getElementById('tools-fab');
+    fab.style.transform = toolsMenuOpen ? 'rotate(90deg)' : '';
+}
+
+// Close tools menu when clicking elsewhere
+document.addEventListener('click', e => {
+    if (toolsMenuOpen && !e.target.closest('#tools-menu') && !e.target.closest('#tools-fab')) {
+        toggleToolsMenu();
+    }
+});
+
+// ---------------------------------------------------------------------------
+// Dashboard & Sidebar Toggle
+// ---------------------------------------------------------------------------
+function toggleDashboard() {
+    document.getElementById('dashboard').classList.toggle('collapsed');
+}
+function toggleMobileSidebar() {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+function toggleMobileDashboard() {
+    document.getElementById('dashboard').classList.toggle('mobile-open');
+}
+
+// ---------------------------------------------------------------------------
+// Analysis Tools
+// ---------------------------------------------------------------------------
+function clearFeatureOverlays() {
+    uwNetworkLines.forEach(l => map.removeLayer(l)); uwNetworkLines = []; uwNetworkVisible = false;
+    referralLines.forEach(l => map.removeLayer(l)); referralLines = []; referralLinesVisible = false;
+    coverageCircles.forEach(c => map.removeLayer(c)); coverageCircles = []; coverageVisible = false;
+}
+
+// UW Partner Network
+function toggleUWPartnerNetwork() {
+    toggleToolsMenu();
+    if (uwNetworkVisible) {
+        uwNetworkLines.forEach(l => map.removeLayer(l)); uwNetworkLines = []; uwNetworkVisible = false;
+        toast('UW Partner network lines removed');
+        return;
+    }
+    const harborview = HOSPITALS.find(h => h.name.includes('HARBORVIEW'));
+    if (!harborview) return;
+    const partners = HOSPITALS.filter(h => h.uwPartner);
+    partners.forEach(h => {
+        const line = L.polyline([[h.latitude,h.longitude],[harborview.latitude,harborview.longitude]], {
+            color: UW_COLOR, weight: 2, opacity: 0.5, dashArray: '5,10'
+        }).addTo(map);
+        uwNetworkLines.push(line);
+    });
+    uwNetworkVisible = true;
+    toast(`${partners.length} UW partners connected to Harborview`);
+}
+
+// Referral Pathways
+function toggleReferralPathways() {
+    toggleToolsMenu();
+    if (referralLinesVisible) {
+        referralLines.forEach(l => map.removeLayer(l)); referralLines = []; referralLinesVisible = false;
+        toast('Referral pathways removed');
+        return;
+    }
+    let count = 0;
+    HOSPITALS.forEach(h => {
+        if (h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC') return;
+        const dist = hospitalDistances[h.cmsId];
+        if (!dist?.nearestAdvanced || dist.nearestAdvancedDistance === Infinity) return;
+        const d = dist.nearestAdvancedDistance;
+        const color = d < 50 ? '#10b981' : d <= 100 ? '#f59e0b' : d <= 150 ? '#ea580c' : '#dc2626';
+        const line = L.polyline([[h.latitude,h.longitude],[dist.nearestAdvanced.latitude,dist.nearestAdvanced.longitude]], {
+            color, weight: d > 100 ? 2 : 1, opacity: 0.4, dashArray: '5,10'
+        }).addTo(map);
+        referralLines.push(line);
+        count++;
+    });
+    referralLinesVisible = true;
+    toast(`${count} referral pathways shown (green <50mi, yellow 50-100mi, orange 100-150mi, red >150mi)`);
+}
+
+// CSC/TSC Distance Map
+function showNearestAdvancedCenter() {
+    toggleToolsMenu();
+    markers.forEach(m => map.removeLayer(m)); markers = [];
+    HOSPITALS.forEach(h => {
+        const dist = hospitalDistances[h.cmsId]?.nearestAdvancedDistance || Infinity;
+        let color;
+        if (dist === Infinity || dist === 0) color = '#dc2626';
+        else if (dist < 50) color = '#10b981';
+        else if (dist <= 100) color = '#f59e0b';
+        else color = '#ef4444';
+        const marker = L.circleMarker([h.latitude,h.longitude], {
+            radius: getMarkerSize(h), fillColor: color, color: 'white', weight: 2, opacity: 1, fillOpacity: 0.9
+        });
+        marker.bindPopup(buildPopup(h));
+        marker.on('click', () => showHospitalDetail(h));
+        marker.hospitalData = h;
+        marker.addTo(map);
+        markers.push(marker);
+    });
+    const under50 = HOSPITALS.filter(h => { const d = hospitalDistances[h.cmsId]?.nearestAdvancedDistance; return d > 0 && d < 50 && d < Infinity; }).length;
+    const mid = HOSPITALS.filter(h => { const d = hospitalDistances[h.cmsId]?.nearestAdvancedDistance; return d >= 50 && d <= 100; }).length;
+    const over = HOSPITALS.filter(h => { const d = hospitalDistances[h.cmsId]?.nearestAdvancedDistance; return d > 100 && d < Infinity; }).length;
+    toast(`CSC/TSC Distance: ${under50} <50mi, ${mid} 50-100mi, ${over} >100mi`);
+}
+
+// EVT Deserts
+function identifyEVTDeserts() {
+    toggleToolsMenu();
+    markers.forEach(m => map.removeLayer(m)); markers = [];
+    let desertCount = 0;
+    HOSPITALS.forEach(h => {
+        const dist = hospitalDistances[h.cmsId]?.nearestEVTDistance || Infinity;
+        const isEVT = h.hasELVO;
+        const isDesert = !isEVT && dist > 100;
+        if (isDesert) desertCount++;
+        const color = isEVT ? EVT_COLOR : isDesert ? '#ef4444' : OTHER_COLOR;
+        const size = isEVT ? 12 : isDesert ? 10 : 7;
+        const marker = L.circleMarker([h.latitude,h.longitude], {
+            radius: size, fillColor: color, color: isDesert ? '#dc2626' : 'white',
+            weight: isDesert ? 3 : 2, opacity: 1, fillOpacity: isDesert ? 0.9 : 0.6
+        });
+        marker.bindPopup(buildPopup(h));
+        marker.on('click', () => showHospitalDetail(h));
+        marker.hospitalData = h;
+        marker.addTo(map);
+        markers.push(marker);
+    });
+    toast(`${desertCount} hospitals are >100mi from 24/7 thrombectomy (EVT)`, 'warning');
+}
+
+// Zero-Capability Hospitals
+function highlightZeroCapability() {
+    toggleToolsMenu();
+    markers.forEach(m => map.removeLayer(m)); markers = [];
+    let zeroCount = 0;
+    HOSPITALS.forEach(h => {
+        const isZero = !h.strokeCertificationType && !h.uwPartner;
+        if (isZero) zeroCount++;
+        const color = isZero ? '#dc2626' : getMarkerColor(h);
+        const marker = L.circleMarker([h.latitude,h.longitude], {
+            radius: isZero ? 11 : getMarkerSize(h), fillColor: color,
+            color: isZero ? '#991b1b' : 'white', weight: isZero ? 3 : 2,
+            opacity: 1, fillOpacity: isZero ? 0.9 : 0.5
+        });
+        marker.bindPopup(buildPopup(h));
+        marker.on('click', () => showHospitalDetail(h));
+        marker.hospitalData = h;
+        marker.addTo(map);
+        markers.push(marker);
+    });
+    toast(`${zeroCount} hospitals with zero stroke capability highlighted`, 'warning');
+}
+
+// Coverage Overlay (50mi and 100mi circles around EVT centers)
+function toggleCoverageOverlay() {
+    toggleToolsMenu();
+    if (coverageVisible) {
+        coverageCircles.forEach(c => map.removeLayer(c)); coverageCircles = []; coverageVisible = false;
+        toast('Coverage overlay removed');
+        return;
+    }
+    evtCenters.forEach(c => {
+        const circle50 = L.circle([c.latitude, c.longitude], {
+            radius: 50 * 1609.34, color: '#10b981', fillColor: '#10b981', fillOpacity: 0.06, weight: 1, opacity: 0.3
+        }).addTo(map);
+        const circle100 = L.circle([c.latitude, c.longitude], {
+            radius: 100 * 1609.34, color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.03, weight: 1, opacity: 0.2, dashArray: '5,5'
+        }).addTo(map);
+        coverageCircles.push(circle50, circle100);
+    });
+    coverageVisible = true;
+    toast(`Coverage overlay: green = 50mi, amber dashed = 100mi from EVT centers`);
+}
+
+// Expansion Candidates
+function rankExpansionCandidates() {
+    toggleToolsMenu();
+    recalcExpansion();
+    openModal('expansion-modal');
+}
+
+function recalcExpansion() {
+    const weights = {
+        noCert: parseInt(document.getElementById('w-noCert').value) || 0,
+        notUW: parseInt(document.getElementById('w-notUW').value) || 0,
+        farCSC: parseInt(document.getElementById('w-farCSC').value) || 0,
+        farEVT: parseInt(document.getElementById('w-farEVT').value) || 0,
+        hasLow: parseInt(document.getElementById('w-hasLow').value) || 0,
+    };
+    const scored = HOSPITALS.map(h => {
+        const d = hospitalDistances[h.cmsId] || {};
+        let score = 0;
+        if (!h.strokeCertificationType) score += weights.noCert;
+        if (!h.uwPartner) score += weights.notUW;
+        if ((d.nearestAdvancedDistance || 0) > 75) score += weights.farCSC;
+        if ((d.nearestEVTDistance || 0) > 100) score += weights.farEVT;
+        if (h.strokeCertificationType === 'ASR' || h.strokeCertificationType === 'PSC') score += weights.hasLow;
+        return { hospital: h, score, distAdv: d.nearestAdvancedDistance || Infinity, distEVT: d.nearestEVTDistance || Infinity };
+    }).sort((a, b) => b.score - a.score);
+
+    const top20 = scored.slice(0, 20);
+    document.getElementById('expansion-candidates-content').innerHTML = top20.map((item, i) => {
+        const h = item.hospital;
+        const sc = item.score >= 6 ? '#ef4444' : item.score >= 4 ? '#f59e0b' : '#10b981';
+        return `<div class="bg-gray-50 p-3 mb-2 rounded-lg border-l-4" style="border-color:${sc};">
+            <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-bold text-gray-800">${i+1}. ${h.displayName}</span>
+                <span class="text-xs font-bold text-white px-2 py-0.5 rounded" style="background:${sc};">Score: ${item.score}</span>
+            </div>
+            <div class="text-xs text-gray-500">
+                ${h.state} | Cert: ${h.strokeCertificationType || 'None'} | UW: ${h.uwPartner ? 'Yes' : 'No'}<br>
+                CSC/TSC: ${item.distAdv < Infinity ? item.distAdv.toFixed(0)+' mi' : 'N/A'} |
+                EVT: ${item.distEVT < Infinity ? item.distEVT.toFixed(0)+' mi' : 'N/A'}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ---------------------------------------------------------------------------
+// Distance Matrix
+// ---------------------------------------------------------------------------
+let matrixSortCol = 'name';
+let matrixSortAsc = true;
+
+function showDistanceMatrix() {
+    toggleToolsMenu();
+    renderDistanceMatrix();
+    openModal('distance-matrix-modal');
+}
+
+function renderDistanceMatrix() {
+    const sortFns = {
+        name: (a,b) => a.displayName.localeCompare(b.displayName),
+        state: (a,b) => a.state.localeCompare(b.state) || a.displayName.localeCompare(b.displayName),
+        cert: (a,b) => (a.strokeCertificationType||'ZZZ').localeCompare(b.strokeCertificationType||'ZZZ'),
+        distCSC: (a,b) => (hospitalDistances[a.cmsId]?.nearestAdvancedDistance||Infinity) - (hospitalDistances[b.cmsId]?.nearestAdvancedDistance||Infinity),
+        distEVT: (a,b) => (hospitalDistances[a.cmsId]?.nearestEVTDistance||Infinity) - (hospitalDistances[b.cmsId]?.nearestEVTDistance||Infinity),
+    };
+    const sorted = [...HOSPITALS].sort((a,b) => {
+        const fn = sortFns[matrixSortCol] || sortFns.name;
+        return matrixSortAsc ? fn(a,b) : fn(b,a);
+    });
+
+    const arrow = (col) => matrixSortCol === col ? (matrixSortAsc ? ' &#9650;' : ' &#9660;') : ' &#8597;';
+    let html = `<table class="w-full border-collapse text-xs">
+        <thead><tr class="bg-indigo-600 text-white">
+            <th class="p-2 text-left cursor-pointer" onclick="sortMatrix('name')">Hospital${arrow('name')}</th>
+            <th class="p-2 text-left cursor-pointer" onclick="sortMatrix('state')">State${arrow('state')}</th>
+            <th class="p-2 text-left cursor-pointer" onclick="sortMatrix('cert')">Cert${arrow('cert')}</th>
+            <th class="p-2 text-center">UW</th>
+            <th class="p-2 text-left">Nearest CSC/TSC</th>
+            <th class="p-2 text-right cursor-pointer" onclick="sortMatrix('distCSC')">Dist${arrow('distCSC')}</th>
+            <th class="p-2 text-left">Nearest EVT</th>
+            <th class="p-2 text-right cursor-pointer" onclick="sortMatrix('distEVT')">Dist${arrow('distEVT')}</th>
+        </tr></thead><tbody>`;
+
+    sorted.forEach((h, i) => {
+        const d = hospitalDistances[h.cmsId] || {};
+        const dCSC = d.nearestAdvancedDistance > 0 && d.nearestAdvancedDistance < Infinity ? d.nearestAdvancedDistance.toFixed(0) : '-';
+        const dEVT = d.nearestEVTDistance > 0 && d.nearestEVTDistance < Infinity ? d.nearestEVTDistance.toFixed(0) : '-';
+        const bg = i % 2 ? 'bg-gray-50' : '';
+        html += `<tr class="${bg} border-b border-gray-100">
+            <td class="p-2">${h.displayName}</td>
+            <td class="p-2">${h.state}</td>
+            <td class="p-2">${h.strokeCertificationType || '-'}</td>
+            <td class="p-2 text-center">${h.uwPartner ? '&#10003;' : ''}</td>
+            <td class="p-2">${d.nearestAdvancedName ? toTitleCase(d.nearestAdvancedName) : '-'}</td>
+            <td class="p-2 text-right">${dCSC}</td>
+            <td class="p-2">${d.nearestEVTName ? toTitleCase(d.nearestEVTName) : '-'}</td>
+            <td class="p-2 text-right">${dEVT}</td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById('distance-matrix-content').innerHTML = html;
+}
+
+function sortMatrix(col) {
+    if (matrixSortCol === col) matrixSortAsc = !matrixSortAsc;
+    else { matrixSortCol = col; matrixSortAsc = true; }
+    renderDistanceMatrix();
+}
+
+function exportDistanceMatrixToCSV() {
+    let csv = 'Hospital Name,State,Certification,UW Partner,Nearest CSC/TSC,Distance to CSC (mi),Nearest EVT,Distance to EVT (mi)\n';
+    HOSPITALS.forEach(h => {
+        const d = hospitalDistances[h.cmsId] || {};
+        const dCSC = d.nearestAdvancedDistance > 0 && d.nearestAdvancedDistance < Infinity ? d.nearestAdvancedDistance.toFixed(1) : '';
+        const dEVT = d.nearestEVTDistance > 0 && d.nearestEVTDistance < Infinity ? d.nearestEVTDistance.toFixed(1) : '';
+        csv += `"${h.displayName}","${h.state}","${h.strokeCertificationType||'None'}","${h.uwPartner?'Yes':'No'}","${toTitleCase(d.nearestAdvancedName||'')}","${dCSC}","${toTitleCase(d.nearestEVTName||'')}","${dEVT}"\n`;
+    });
+    downloadBlob(csv, `distance_matrix_${dateStr()}.csv`, 'text/csv');
+    toast('Distance matrix exported to CSV');
+}
+
+// ---------------------------------------------------------------------------
+// Executive Summary
+// ---------------------------------------------------------------------------
+function generateExecutiveSummary() {
+    toggleToolsMenu();
+    const total = HOSPITALS.length;
+    const uw = HOSPITALS.filter(h => h.uwPartner).length;
+    const certified = HOSPITALS.filter(h => h.strokeCertificationType).length;
+    const csc = HOSPITALS.filter(h => h.strokeCertificationType==='CSC').length;
+    const tsc = HOSPITALS.filter(h => h.strokeCertificationType==='TSC').length;
+    const psc = HOSPITALS.filter(h => h.strokeCertificationType==='PSC').length;
+    const asr = HOSPITALS.filter(h => h.strokeCertificationType==='ASR').length;
+    const noCert = total - certified;
+    const evtDeserts = HOSPITALS.filter(h => (hospitalDistances[h.cmsId]?.nearestEVTDistance||0)>100).length;
+    const zeroCap = HOSPITALS.filter(h => !h.strokeCertificationType && !h.uwPartner).length;
+
+    const byState = (s) => {
+        const all = HOSPITALS.filter(h => h.state === s);
+        return { total: all.length, cert: all.filter(h=>h.strokeCertificationType).length, uw: all.filter(h=>h.uwPartner).length };
+    };
+
+    let text = `UW MEDICINE TELESTROKE NETWORK EXPANSION SUMMARY
+Generated: ${new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })}
 
 CURRENT NETWORK STATUS:
-- Total Regional Hospitals: ${totalHospitals}
-- Current UW Partners: ${uwPartners} (${(uwPartners / totalHospitals * 100).toFixed(1)}% of total)
-- Stroke-Certified Hospitals: ${certified} (${(certified / totalHospitals * 100).toFixed(1)}% of total)
+- Total Regional Hospitals: ${total}
+- UW Partners: ${uw} (${(uw/total*100).toFixed(1)}%)
+- Stroke-Certified: ${certified} (${(certified/total*100).toFixed(1)}%)
 
-COVERAGE ANALYSIS:
-- CSC (Comprehensive): ${cscCount} facilities
-- TSC (Thrombectomy-Capable): ${tscCount} facilities
-- PSC (Primary): ${pscCount} facilities
-- ASR (Acute Stroke Ready): ${asrCount} facilities
+CERTIFICATION BREAKDOWN:
+- CSC (Comprehensive): ${csc}
+- TSC (Thrombectomy-Capable): ${tsc}
+- PSC (Primary): ${psc}
+- ASR (Acute Stroke Ready): ${asr}
+- No certification: ${noCert}
 
-SERVICE GAPS IDENTIFIED:
-- Hospitals with NO certification: ${noCert} (${(noCert / totalHospitals * 100).toFixed(1)}%)
-- Hospitals NOT in UW network: ${notUW} (${(notUW / totalHospitals * 100).toFixed(1)}%)
-- Hospitals >100mi from EVT: ${evtDeserts} (${(evtDeserts / totalHospitals * 100).toFixed(1)}%)
-- Zero-capability hospitals: ${zeroCapability} (${(zeroCapability / totalHospitals * 100).toFixed(1)}%)
+SERVICE GAPS:
+- Not in UW network: ${total-uw} (${((total-uw)/total*100).toFixed(1)}%)
+- >100mi from EVT: ${evtDeserts} (${(evtDeserts/total*100).toFixed(1)}%)
+- Zero-capability (no cert + not UW): ${zeroCap}
 
-EXPANSION OPPORTUNITIES BY STATE:
-- Washington: ${waHospitals} hospitals (certified: ${waCertified}, partners: ${waPartners})
-- Idaho: ${idHospitals} hospitals (certified: ${idCertified}, partners: ${idPartners})
-- Alaska: ${akHospitals} hospitals (certified: ${akCertified}, partners: ${akPartners})
-
-TOP 10 EXPANSION PRIORITIES:
+BY STATE:
 `;
-
-    top10.forEach((item, index) => {
-        summary += `${index + 1}. ${item.hospital.name}, ${item.hospital.state} (Score: ${item.score})\n`;
-        summary += `   - Distance to CSC/TSC: ${item.distToAdvanced === Infinity ? 'N/A' : item.distToAdvanced.toFixed(1) + ' mi'}\n`;
-        summary += `   - Distance to EVT: ${item.distToEVT === Infinity ? 'N/A' : item.distToEVT.toFixed(1) + ' mi'}\n`;
-        summary += `   - Current Status: ${item.hospital.strokeCertificationType || 'No certification'}, ${item.hospital.uwPartner ? 'UW Partner' : 'Not UW Partner'}\n\n`;
+    ['WA','AK','ID','MT','WY'].forEach(s => {
+        const d = byState(s);
+        text += `- ${s}: ${d.total} hospitals (certified: ${d.cert}, UW partners: ${d.uw})\n`;
     });
 
-    summary += `STRATEGIC RECOMMENDATIONS:
-- Alaska represents critical service gap (${akCertified} certifications, ${akPartners} partnerships)
-- Eastern Washington underserved for EVT access (${evtDeserts} hospitals >100mi from thrombectomy)
-- Idaho panhandle integration opportunity (${idHospitals - idPartners} non-partner hospitals)
-- Zero-capability hospitals represent high-value expansion targets (${zeroCapability} facilities)
-
-METHODOLOGY:
-- Data sources: CMS (Nov 2024), WA DOH (Oct 2024), Idaho DOH (2025), UW Medicine
-- Expansion scoring: No cert (+3), Not UW partner (+2), >75mi from CSC/TSC (+2), >100mi from EVT (+1)
-- Distance calculations: Haversine formula (great-circle distance)
-- Transfer time estimates: Ground 60 mph, Air 150 mph average speeds
-`;
-
-    document.getElementById('executive-summary-content').textContent = summary;
-    document.getElementById('executive-summary-modal').style.display = 'block';
-}
-
-function closeExecutiveSummary() {
-    document.getElementById('executive-summary-modal').style.display = 'none';
+    document.getElementById('executive-summary-content').textContent = text;
+    openModal('executive-summary-modal');
+    toast('Executive summary generated');
 }
 
 function copyExecutiveSummary() {
-    const text = document.getElementById('executive-summary-content').textContent;
-    navigator.clipboard.writeText(text).then(() => {
-        alert('Executive summary copied to clipboard!');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        alert('Copy failed. Please select and copy manually.');
-    });
+    navigator.clipboard.writeText(document.getElementById('executive-summary-content').textContent)
+        .then(() => toast('Copied to clipboard', 'success'))
+        .catch(() => toast('Copy failed', 'error'));
 }
 
 function downloadExecutiveSummary() {
-    const text = document.getElementById('executive-summary-content').textContent;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `executive_summary_${new Date().toISOString().split('T')[0]}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(document.getElementById('executive-summary-content').textContent, `executive_summary_${dateStr()}.txt`, 'text/plain');
+    toast('Summary downloaded');
 }
 
-// ============================================================================
-// FEATURE 10: Connection Lines Visualization (G3)
-// ============================================================================
+// ---------------------------------------------------------------------------
+// Export
+// ---------------------------------------------------------------------------
+function exportToCSV() {
+    toggleToolsMenu();
+    let csv = 'Hospital Name,Address,City,State,ZIP,Latitude,Longitude,Certification,Certifying Body,EVT,UW Partner\n';
+    HOSPITALS.forEach(h => {
+        csv += `"${h.displayName}","${h.address}","${h.city||''}","${h.state}","${h.zip||''}",${h.latitude},${h.longitude},"${h.strokeCertificationType||'None'}","${h.certifyingBody||''}","${h.hasELVO?'Yes':'No'}","${h.uwPartner?'Yes':'No'}"\n`;
+    });
+    downloadBlob(csv, `stroke_hospitals_${dateStr()}.csv`, 'text/csv');
+    toast('Exported to CSV', 'success');
+}
 
-function toggleReferralPathways() {
-    if (referralLinesVisible) {
-        // Remove lines
-        referralLines.forEach(line => map.removeLayer(line));
-        referralLines = [];
-        referralLinesVisible = false;
-        console.log('Referral pathways removed');
+function exportMapToPNG() {
+    toggleToolsMenu();
+    toast('Preparing map export...');
+    // Lazy-load html2canvas
+    if (!window.html2canvas) {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.onload = () => doMapExport();
+        script.onerror = () => toast('Failed to load export library', 'error');
+        document.head.appendChild(script);
     } else {
-        console.log('Drawing referral pathways...');
-
-        let lineCount = 0;
-
-        HOSPITALS.forEach(hospital => {
-            const hospitalId = hospital.cmsId;
-            const distData = hospitalDistances[hospitalId];
-
-            // Skip if this is a CSC/TSC itself
-            if (hospital.strokeCertificationType === 'CSC' || hospital.strokeCertificationType === 'TSC') {
-                return;
-            }
-
-            if (distData.nearestAdvanced && distData.nearestAdvancedDistance !== Infinity) {
-                const distance = distData.nearestAdvancedDistance;
-
-                // Color-code by distance
-                let color, weight;
-                if (distance < 50) {
-                    color = '#10b981'; // Green
-                    weight = 1;
-                } else if (distance <= 100) {
-                    color = '#f59e0b'; // Yellow
-                    weight = 1.5;
-                } else if (distance <= 150) {
-                    color = '#ea580c'; // Orange
-                    weight = 2;
-                } else {
-                    color = '#dc2626'; // Red
-                    weight = 2.5;
-                }
-
-                const line = L.polyline([
-                    [hospital.latitude, hospital.longitude],
-                    [distData.nearestAdvanced.latitude, distData.nearestAdvanced.longitude]
-                ], {
-                    color: color,
-                    weight: weight,
-                    opacity: 0.5,
-                    dashArray: '5, 10'
-                }).addTo(map);
-
-                referralLines.push(line);
-                lineCount++;
-            }
-        });
-
-        referralLinesVisible = true;
-        alert(`Referral Pathways displayed.\n\n${lineCount} hospitals connected to nearest CSC/TSC.\n\nColors: Green (<50mi), Yellow (50-100mi), Orange (100-150mi), Red (>150mi)`);
+        doMapExport();
     }
 }
 
-// ============================================================================
-// FEATURE 11: Cluster Markers (G4)
-// ============================================================================
+function doMapExport() {
+    const sidebar = document.getElementById('sidebar');
+    const dashboard = document.getElementById('dashboard');
+    const fab = document.getElementById('tools-fab');
+    sidebar.style.display = 'none'; dashboard.style.display = 'none'; fab.style.display = 'none';
 
-// ============================================================================
-// FEATURE 15: URL State Persistence (L3)
-// ============================================================================
+    html2canvas(document.getElementById('map'), { useCORS: true, allowTaint: true }).then(canvas => {
+        sidebar.style.display = ''; dashboard.style.display = ''; fab.style.display = '';
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = canvas.width; finalCanvas.height = canvas.height + 60;
+        const ctx = finalCanvas.getContext('2d');
+        ctx.fillStyle = 'white'; ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        ctx.drawImage(canvas, 0, 0);
+        ctx.fillStyle = '#1f2937'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center';
+        ctx.fillText('Regional Hospital Stroke Capabilities', finalCanvas.width/2, canvas.height+25);
+        ctx.font = '12px Arial'; ctx.fillStyle = '#6b7280';
+        ctx.fillText(`WA, AK, ID, MT, WY — ${new Date().toLocaleDateString('en-US')}`, finalCanvas.width/2, canvas.height+45);
+        finalCanvas.toBlob(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `telestroke_map_${dateStr()}.png`;
+            link.click();
+            toast('Map exported as PNG', 'success');
+        });
+    }).catch(() => {
+        sidebar.style.display = ''; dashboard.style.display = ''; fab.style.display = '';
+        toast('Map export failed', 'error');
+    });
+}
 
+// ---------------------------------------------------------------------------
+// Dark Map Toggle
+// ---------------------------------------------------------------------------
+function toggleDarkMap() {
+    toggleToolsMenu();
+    darkMapMode = !darkMapMode;
+    map.removeLayer(tileLayer);
+    const url = darkMapMode
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    tileLayer = L.tileLayer(url, { attribution: '&copy; OpenStreetMap, &copy; CARTO', maxZoom: 19, subdomains: 'abcd' }).addTo(map);
+    toast(darkMapMode ? 'Dark map enabled' : 'Light map enabled');
+}
+
+// ---------------------------------------------------------------------------
+// URL State Persistence
+// ---------------------------------------------------------------------------
 function saveStateToURL() {
     const params = new URLSearchParams();
-
-    // Save active filters
-    if (document.getElementById('filter-csc').checked) params.append('csc', '1');
-    if (document.getElementById('filter-tsc').checked) params.append('tsc', '1');
-    if (document.getElementById('filter-psc').checked) params.append('psc', '1');
-    if (document.getElementById('filter-asr').checked) params.append('asr', '1');
-    if (document.getElementById('filter-uwPartner').checked) params.append('uw', '1');
-    if (document.getElementById('filter-evt').checked) params.append('evt', '1');
-
-    // Save quick filter
-    if (activeQuickFilter) params.append('qf', activeQuickFilter);
-
-    // Save map view
+    Object.entries(activeFilters).forEach(([k,v]) => { if(v) params.append(k.toLowerCase(), '1'); });
+    const st = document.getElementById('filter-state').value;
+    if (st !== 'ALL') params.append('state', st);
     const center = map.getCenter();
-    const zoom = map.getZoom();
     params.append('lat', center.lat.toFixed(4));
     params.append('lng', center.lng.toFixed(4));
-    params.append('z', zoom);
-
-    // Update URL without page reload
-    const newURL = window.location.pathname + '?' + params.toString();
-    history.pushState(null, '', newURL);
-
-    console.log('State saved to URL:', newURL);
+    params.append('z', map.getZoom());
+    history.pushState(null, '', '?' + params.toString());
 }
 
 function loadStateFromURL() {
     const params = new URLSearchParams(window.location.search);
-
-    // Restore filters
-    if (params.has('csc')) document.getElementById('filter-csc').checked = true;
-    if (params.has('tsc')) document.getElementById('filter-tsc').checked = true;
-    if (params.has('psc')) document.getElementById('filter-psc').checked = true;
-    if (params.has('asr')) document.getElementById('filter-asr').checked = true;
-    if (params.has('uw')) document.getElementById('filter-uwPartner').checked = true;
-    if (params.has('evt')) document.getElementById('filter-evt').checked = true;
-
-    // Restore quick filter
-    if (params.has('qf')) {
-        activeQuickFilter = params.get('qf');
-        // Apply quick filter after data loads
-        setTimeout(() => {
-            quickFilter(activeQuickFilter);
-        }, 1000);
-    }
-
-    // Restore map view
-    if (params.has('lat') && params.has('lng') && params.has('z')) {
-        const lat = parseFloat(params.get('lat'));
-        const lng = parseFloat(params.get('lng'));
-        const zoom = parseInt(params.get('z'));
-
-        setTimeout(() => {
-            map.setView([lat, lng], zoom);
-        }, 500);
-    }
-
-    console.log('State loaded from URL');
-}
-
-// Initialize URL state loading
-window.addEventListener('load', function() {
-    setTimeout(loadStateFromURL, 1500);
-});
-
-// Save state when filters change
-function autoSaveState() {
-    if (typeof saveStateToURL === 'function') {
-        saveStateToURL();
-    }
-}
-
-// Add share URL button functionality
-function shareCurrentView() {
-    saveStateToURL();
-    const url = window.location.href;
-
-    navigator.clipboard.writeText(url).then(() => {
-        alert('Shareable URL copied to clipboard!\n\nShare this link to show the exact same map view and filters.');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        prompt('Copy this URL to share:', url);
+    if (params.toString() === '') return;
+    ['CSC','TSC','PSC','ASR','EVT','UW'].forEach(k => {
+        if (params.has(k.toLowerCase())) {
+            activeFilters[k] = true;
+            const pill = document.querySelector(`.pill[data-filter="${k}"]`);
+            if (pill) pill.classList.add(`active-${k.toLowerCase()}`);
+        }
     });
+    if (params.has('state')) document.getElementById('filter-state').value = params.get('state');
+    if (params.has('lat') && params.has('lng') && params.has('z')) {
+        map.setView([parseFloat(params.get('lat')), parseFloat(params.get('lng'))], parseInt(params.get('z')));
+    }
+    applyFilters();
 }
+
+function shareCurrentView() {
+    toggleToolsMenu();
+    saveStateToURL();
+    navigator.clipboard.writeText(window.location.href)
+        .then(() => toast('Shareable URL copied to clipboard', 'success'))
+        .catch(() => toast('Copy failed — URL is in address bar', 'warning'));
+}
+
+// ---------------------------------------------------------------------------
+// Utilities
+// ---------------------------------------------------------------------------
+function downloadBlob(content, filename, type) {
+    const blob = new Blob([content], { type: type + ';charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+function dateStr() { return new Date().toISOString().split('T')[0]; }
