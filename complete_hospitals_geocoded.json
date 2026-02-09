@@ -114,13 +114,14 @@
     "uwPartner": true,
     "dataSources": [
       "CMS (Nov 2024)",
-      "UW Medicine Telestroke Program"
+      "UW Medicine Telestroke Program",
+      "Idaho TSE (Feb 2026)"
     ],
     "verified": true,
     "strokeCertificationType": "PSC",
-    "certifyingBody": "Idaho DOH",
-    "certificationDetails": "Idaho TSE Level II Stroke Center (Primary Stroke Center equivalent) - Thrombectomy capable with interventional neuroradiology",
-    "hasELVO": true
+    "certifyingBody": "Idaho TSE",
+    "certificationDetails": "Idaho TSE Level II Stroke Center (Primary Stroke Center equivalent); no thrombectomy capability per Level II designation",
+    "hasELVO": false
   },
   {
     "name": "KOOTENAI HEALTH",
@@ -461,15 +462,16 @@
     "geocoded": true,
     "geocodeSource": "Nominatim/OpenStreetMap",
     "uwPartner": false,
-    "hasELVO": false,
+    "hasELVO": true,
     "dataSources": [
       "CMS (Nov 2024)",
-      "WA DOH (Oct 2024)"
+      "WA DOH (Oct 2024)",
+      "Joint Commission (Feb 2026)"
     ],
     "verified": true,
-    "strokeCertificationType": "PSC",
+    "strokeCertificationType": "TSC",
     "certifyingBody": "Joint Commission",
-    "certificationDetails": "Joint Commission Advanced Primary Stroke Center"
+    "certificationDetails": "Joint Commission Thrombectomy-Capable Stroke Center; WA DOH Level I Cardiac and Stroke Center; 24/7 EVT since 2021"
   },
   {
     "name": "MULTICARE AUBURN MEDICAL CENTER",
@@ -891,13 +893,14 @@
     "geocodeSource": "Nominatim/OpenStreetMap",
     "uwPartner": false,
     "dataSources": [
-      "CMS (Nov 2024)"
+      "CMS (Nov 2024)",
+      "Verification (Feb 2026)"
     ],
     "verified": true,
-    "strokeCertificationType": "TSC",
-    "certifyingBody": "Joint Commission",
-    "certificationDetails": null,
-    "hasELVO": true
+    "strokeCertificationType": null,
+    "certifyingBody": null,
+    "certificationDetails": "Military hospital; no Joint Commission stroke certification found; limited neurointerventional capability but no 24/7 EVT program",
+    "hasELVO": false
   },
   {
     "name": "CASCADE VALLEY HOSPITAL",
@@ -2313,8 +2316,9 @@
     "zip": "83404",
     "cmsId": "130004",
     "strokeCertificationType": "PSC",
-    "certifyingBody": "Joint Commission",
-    "hasELVO": false,
+    "certifyingBody": "Joint Commission / Idaho TSE",
+    "certificationDetails": "Idaho TSE Level II+ Stroke Center (Primary with Thrombectomy); Joint Commission Primary Stroke Center",
+    "hasELVO": true,
     "uwPartner": false,
     "latitude": 43.4702675,
     "longitude": -111.9920955
@@ -2340,9 +2344,10 @@
     "state": "ID",
     "zip": "83712",
     "cmsId": "130001",
-    "strokeCertificationType": "PSC",
-    "certifyingBody": "Joint Commission",
-    "hasELVO": false,
+    "strokeCertificationType": "CSC",
+    "certifyingBody": "Joint Commission / Idaho TSE",
+    "certificationDetails": "Idaho TSE Level I Stroke Center (Comprehensive); Joint Commission Advanced Primary Stroke Center of Excellence",
+    "hasELVO": true,
     "uwPartner": false,
     "latitude": 43.6130555,
     "longitude": -116.1931367
@@ -2416,5 +2421,47 @@
     "uwPartner": false,
     "latitude": 46.0086447,
     "longitude": -112.5449069
+  },
+  {
+    "name": "ALASKA REGIONAL HOSPITAL",
+    "address": "2801 DEBARR ROAD ANCHORAGE AK 99508",
+    "city": "Anchorage",
+    "state": "AK",
+    "zip": "99508",
+    "cmsId": "020017",
+    "strokeCertificationType": "CSC",
+    "certifyingBody": "DNV",
+    "certificationDetails": "DNV Comprehensive Stroke Center (first in Alaska, 2021); AHA Get With The Guidelines-Stroke Gold Plus Honor Roll Elite Plus",
+    "hasELVO": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS Provider Database",
+      "DNV (Feb 2026)",
+      "Alaska Regional Hospital website"
+    ],
+    "verified": true,
+    "latitude": 61.2048,
+    "longitude": -149.8097
+  },
+  {
+    "name": "SAINT ALPHONSUS REGIONAL MEDICAL CENTER",
+    "address": "1055 N CURTIS ROAD BOISE ID 83706",
+    "city": "Boise",
+    "state": "ID",
+    "zip": "83706",
+    "cmsId": "130007",
+    "strokeCertificationType": "CSC",
+    "certifyingBody": "Idaho TSE",
+    "certificationDetails": "Idaho TSE Level I Comprehensive Stroke Center (first in Idaho); redesignated August 2024; 24/7 neurointerventional and neurosurgical capability",
+    "hasELVO": true,
+    "uwPartner": false,
+    "dataSources": [
+      "CMS Provider Database",
+      "Idaho TSE (Feb 2026)",
+      "Saint Alphonsus website"
+    ],
+    "verified": true,
+    "latitude": 43.6007,
+    "longitude": -116.2468
   }
 ]
