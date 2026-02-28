@@ -176,7 +176,7 @@
                 <button class="pill" data-filter="PSC" onclick="toggleFilter('PSC')"><span class="w-2 h-2 rounded-full bg-amber-500"></span>PSC</button>
                 <button class="pill" data-filter="ASR" onclick="toggleFilter('ASR')"><span class="w-2 h-2 rounded-full bg-lime-500"></span>ASR</button>
                 <button class="pill" data-filter="EVT" onclick="toggleFilter('EVT')"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>EVT</button>
-                <button class="pill" data-filter="UW" onclick="toggleFilter('UW')"><span class="w-2 h-2 rounded-full bg-blue-500"></span>UW Partner</button>
+                <button class="pill" data-filter="UW" onclick="toggleFilter('UW')"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Partner</button>
             </div>
             <div class="flex gap-2 items-center">
                 <select id="filter-state" class="flex-1 text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-indigo-400" onchange="applyFilters()">
@@ -244,7 +244,7 @@
     <div id="tools-menu" class="fixed bottom-20 right-4 bg-white rounded-xl shadow-2xl z-[1000] w-56 hidden border border-gray-100">
         <div class="p-1.5">
             <div class="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Analysis</div>
-            <button class="tool-item" onclick="toggleUWPartnerNetwork()">UW Partner Network</button>
+            <button class="tool-item" onclick="toggleUWPartnerNetwork()">Partner Network</button>
             <button class="tool-item" onclick="toggleReferralPathways()">Referral Pathways</button>
             <button class="tool-item" onclick="showNearestAdvancedCenter()">CSC/TSC Distance Map</button>
             <button class="tool-item" onclick="identifyEVTDeserts()">EVT Deserts</button>
@@ -325,7 +325,7 @@
                 <p class="font-semibold text-gray-600 mb-2">Scoring Weights (adjustable):</p>
                 <div class="grid grid-cols-2 gap-2">
                     <label class="flex items-center gap-1">No cert: <input type="number" id="w-noCert" value="3" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
-                    <label class="flex items-center gap-1">Not UW: <input type="number" id="w-notUW" value="2" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
+                    <label class="flex items-center gap-1">Not partner: <input type="number" id="w-notUW" value="2" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
                     <label class="flex items-center gap-1">&gt;75mi CSC: <input type="number" id="w-farCSC" value="2" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
                     <label class="flex items-center gap-1">&gt;100mi EVT: <input type="number" id="w-farEVT" value="1" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
                     <label class="flex items-center gap-1">Has ASR/PSC: <input type="number" id="w-hasLow" value="-1" min="-5" max="0" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>

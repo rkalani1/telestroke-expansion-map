@@ -118,7 +118,7 @@ function initializeMap() {
             const div = L.DomUtil.create('div', 'map-legend');
             const items = [
                 ['#dc2626','CSC'],['#ea580c','TSC'],['#f59e0b','PSC'],['#84cc16','ASR'],
-                ['#3b82f6','UW Partner'],['#10b981','EVT'],['#6b7280','Other']
+                ['#3b82f6','Partner'],['#10b981','EVT'],['#6b7280','Other']
             ];
             div.innerHTML = items.map(([c,l]) =>
                 `<span class="entry"><span class="dot" style="background:${c}"></span>${l}</span>`
@@ -258,7 +258,7 @@ function buildPopup(h) {
         if (h.certifyingBody) html += `<strong>Certifying Body:</strong> ${h.certifyingBody}<br>`;
     }
     if (h.hasELVO) html += `<strong style="color:${EVT_COLOR};">24/7 Thrombectomy (EVT)</strong><br>`;
-    if (h.uwPartner) html += `<strong style="color:${UW_COLOR};">&#10003; UW Medicine Telestroke Partner</strong><br>`;
+    if (h.uwPartner) html += `<strong style="color:${UW_COLOR};">&#10003; Telestroke Partner</strong><br>`;
 
     // Transfer time to nearest CSC (not just Harborview)
     const dist = hospitalDistances[h.cmsId];
@@ -311,7 +311,7 @@ function updateHospitalList(filtered) {
         let badges = '';
         if (h.strokeCertificationType) badges += `<span class="badge" style="background:${CERT_COLORS[h.strokeCertificationType]}20;color:${CERT_COLORS[h.strokeCertificationType]};">${h.strokeCertificationType}</span>`;
         if (h.hasELVO) badges += `<span class="badge" style="background:${EVT_COLOR}20;color:${EVT_COLOR};">EVT</span>`;
-        if (h.uwPartner) badges += `<span class="badge" style="background:${UW_COLOR}20;color:${UW_COLOR};">UW</span>`;
+        if (h.uwPartner) badges += `<span class="badge" style="background:${UW_COLOR}20;color:${UW_COLOR};">Partner</span>`;
         return `<div class="hospital-item" onclick="panToHospital('${h.cmsId}')" data-cms="${h.cmsId}">
             <span class="dot" style="background:${color};"></span>
             <div class="flex-1 min-w-0">
@@ -517,7 +517,7 @@ function renderGapMetrics(filtered) {
 
     container.innerHTML = [
         { label: 'No certification', value: noCert, color: '#ef4444' },
-        { label: 'Not UW partner', value: notUW, color: '#6b7280' },
+        { label: 'Not partner', value: notUW, color: '#6b7280' },
         { label: 'EVT deserts (>100mi)', value: evtDeserts, color: '#f59e0b' },
         { label: 'Zero capability', value: zeroCapability, color: '#dc2626' },
         { label: 'EVT-capable', value: evtCount, color: '#10b981' },
@@ -603,7 +603,7 @@ function showHospitalDetail(hospital) {
         html += `<strong>Certification:</strong> <span class="text-red-500">None</span><br>`;
     }
     html += `<strong>EVT Capability:</strong> ${h.hasELVO ? '<span class="text-emerald-600 font-semibold">Yes &mdash; 24/7 Thrombectomy</span>' : 'No'}<br>`;
-    html += `<strong>UW Partner:</strong> ${h.uwPartner ? '<span class="text-blue-600 font-semibold">Yes</span>' : 'No'}`;
+    html += `<strong>Partner:</strong> ${h.uwPartner ? '<span class="text-blue-600 font-semibold">Yes</span>' : 'No'}`;
     html += `</div>`;
 
     // Distance analysis
@@ -706,12 +706,12 @@ function clearFeatureOverlays() {
     coverageCircles.forEach(c => map.removeLayer(c)); coverageCircles = []; coverageVisible = false;
 }
 
-// UW Partner Network
+// Partner Network
 function toggleUWPartnerNetwork() {
     toggleToolsMenu();
     if (uwNetworkVisible) {
         uwNetworkLines.forEach(l => map.removeLayer(l)); uwNetworkLines = []; uwNetworkVisible = false;
-        toast('UW Partner network lines removed');
+        toast('Partner network lines removed');
         return;
     }
     const harborview = HOSPITALS.find(h => h.name.includes('HARBORVIEW'));
@@ -724,7 +724,7 @@ function toggleUWPartnerNetwork() {
         uwNetworkLines.push(line);
     });
     uwNetworkVisible = true;
-    toast(`${partners.length} UW partners connected to Harborview`);
+    toast(`${partners.length} partners connected to hub`);
 }
 
 // Referral Pathways
@@ -883,7 +883,7 @@ function recalcExpansion() {
                 <span class="text-xs font-bold text-white px-2 py-0.5 rounded" style="background:${sc};">Score: ${item.score}</span>
             </div>
             <div class="text-xs text-gray-500">
-                ${h.state} | Cert: ${h.strokeCertificationType || 'None'} | UW: ${h.uwPartner ? 'Yes' : 'No'}<br>
+                ${h.state} | Cert: ${h.strokeCertificationType || 'None'} | Partner: ${h.uwPartner ? 'Yes' : 'No'}<br>
                 CSC/TSC: ${item.distAdv < Infinity ? item.distAdv.toFixed(0)+' mi' : 'N/A'} |
                 EVT: ${item.distEVT < Infinity ? item.distEVT.toFixed(0)+' mi' : 'N/A'}
             </div>
@@ -956,7 +956,7 @@ function sortMatrix(col) {
 }
 
 function exportDistanceMatrixToCSV() {
-    let csv = 'Hospital Name,State,Certification,UW Partner,Nearest CSC/TSC,Distance to CSC (mi),Nearest EVT,Distance to EVT (mi)\n';
+    let csv = 'Hospital Name,State,Certification,Partner,Nearest CSC/TSC,Distance to CSC (mi),Nearest EVT,Distance to EVT (mi)\n';
     HOSPITALS.forEach(h => {
         const d = hospitalDistances[h.cmsId] || {};
         const dCSC = d.nearestAdvancedDistance > 0 && d.nearestAdvancedDistance < Infinity ? d.nearestAdvancedDistance.toFixed(1) : '';
@@ -988,12 +988,12 @@ function generateExecutiveSummary() {
         return { total: all.length, cert: all.filter(h=>h.strokeCertificationType).length, uw: all.filter(h=>h.uwPartner).length };
     };
 
-    let text = `UW MEDICINE TELESTROKE NETWORK EXPANSION SUMMARY
+    let text = `TELESTROKE NETWORK EXPANSION SUMMARY
 Generated: ${new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })}
 
 CURRENT NETWORK STATUS:
 - Total Regional Hospitals: ${total}
-- UW Partners: ${uw} (${(uw/total*100).toFixed(1)}%)
+- Partners: ${uw} (${(uw/total*100).toFixed(1)}%)
 - Stroke-Certified: ${certified} (${(certified/total*100).toFixed(1)}%)
 
 CERTIFICATION BREAKDOWN:
@@ -1004,15 +1004,15 @@ CERTIFICATION BREAKDOWN:
 - No certification: ${noCert}
 
 SERVICE GAPS:
-- Not in UW network: ${total-uw} (${((total-uw)/total*100).toFixed(1)}%)
+- Not in network: ${total-uw} (${((total-uw)/total*100).toFixed(1)}%)
 - >100mi from EVT: ${evtDeserts} (${(evtDeserts/total*100).toFixed(1)}%)
-- Zero-capability (no cert + not UW): ${zeroCap}
+- Zero-capability (no cert + not partner): ${zeroCap}
 
 BY STATE:
 `;
     ['WA','AK','ID','MT','WY'].forEach(s => {
         const d = byState(s);
-        text += `- ${s}: ${d.total} hospitals (certified: ${d.cert}, UW partners: ${d.uw})\n`;
+        text += `- ${s}: ${d.total} hospitals (certified: ${d.cert}, partners: ${d.uw})\n`;
     });
 
     document.getElementById('executive-summary-content').textContent = text;
@@ -1036,7 +1036,7 @@ function downloadExecutiveSummary() {
 // ---------------------------------------------------------------------------
 function exportToCSV() {
     toggleToolsMenu();
-    let csv = 'Hospital Name,Address,City,State,ZIP,Latitude,Longitude,Certification,Certifying Body,EVT,UW Partner\n';
+    let csv = 'Hospital Name,Address,City,State,ZIP,Latitude,Longitude,Certification,Certifying Body,EVT,Partner\n';
     HOSPITALS.forEach(h => {
         csv += `"${h.displayName}","${h.address}","${h.city||''}","${h.state}","${h.zip||''}",${h.latitude},${h.longitude},"${h.strokeCertificationType||'None'}","${h.certifyingBody||''}","${h.hasELVO?'Yes':'No'}","${h.uwPartner?'Yes':'No'}"\n`;
     });
