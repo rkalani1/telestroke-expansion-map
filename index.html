@@ -1,366 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Regional Hospital Stroke Capabilities</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
-        #map { position: absolute; inset: 0; width: 100%; height: 100vh; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive map of stroke-center certifications and telestroke partnerships across Washington, Alaska, Idaho, Montana, and Wyoming. Plans telestroke expansion by mapping EVT deserts, referral pathways, and coverage gaps." />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta property="og:title" content="Regional Hospital Stroke Capabilities" />
+  <meta property="og:description" content="Interactive stroke-certification and telestroke-network map for the WWAMI region." />
+  <meta property="og:type" content="website" />
+  <title>Regional Hospital Stroke Capabilities — WA · AK · ID · MT · WY</title>
 
-        /* Toast Notifications */
-        #toast-container { pointer-events: none; }
-        .toast {
-            pointer-events: auto;
-            animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
-            max-width: 360px;
-        }
-        @keyframes toast-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes toast-out { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%234f46e5'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='system-ui' font-size='28' font-weight='700' fill='white'%3E%E2%9A%95%3C/text%3E%3C/svg%3E" />
 
-        /* Sidebar */
-        .sidebar { transition: transform 0.3s ease; }
-        .sidebar.collapsed { transform: translateX(-100%); }
-
-        /* Filter Pills */
-        .pill {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600;
-            border: 2px solid #e5e7eb; background: white; cursor: pointer; transition: all 0.15s;
-            white-space: nowrap;
-        }
-        .pill:hover { border-color: #9ca3af; }
-        .pill.active-csc { background: #fef2f2; border-color: #dc2626; color: #dc2626; }
-        .pill.active-tsc { background: #fff7ed; border-color: #ea580c; color: #ea580c; }
-        .pill.active-psc { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
-        .pill.active-asr { background: #f7fee7; border-color: #84cc16; color: #4d7c0f; }
-        .pill.active-evt { background: #ecfdf5; border-color: #10b981; color: #047857; }
-        .pill.active-uw  { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
-
-        /* Hospital List */
-        .hospital-item {
-            padding: 8px 12px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.15s;
-            display: flex; align-items: flex-start; gap: 8px;
-        }
-        .hospital-item:hover { background: #f9fafb; }
-        .hospital-item.highlighted { background: #eff6ff; }
-        .hospital-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-        .hospital-item .name { font-size: 12px; font-weight: 600; color: #1f2937; line-height: 1.3; }
-        .hospital-item .meta { font-size: 10px; color: #6b7280; margin-top: 1px; }
-        .hospital-item .badges { display: flex; gap: 3px; margin-top: 2px; flex-wrap: wrap; }
-        .hospital-item .badge {
-            font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
-            letter-spacing: 0.02em;
-        }
-
-        /* Tools Menu */
-        .tool-item {
-            display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px;
-            border: none; background: none; cursor: pointer; border-radius: 6px; transition: background 0.15s;
-            color: #374151;
-        }
-        .tool-item:hover { background: #f3f4f6; }
-
-        /* Dashboard */
-        .dashboard { transition: transform 0.3s ease, opacity 0.3s ease; }
-        .dashboard.collapsed { transform: translateX(100%); opacity: 0; pointer-events: none; }
-        .metric-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
-        .metric-row .label { color: #6b7280; }
-        .metric-row .value { font-weight: 700; color: #1f2937; }
-
-        /* Modal Overlay */
-        .modal-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; overflow: auto;
-        }
-        .modal-overlay.active { display: block; }
-        .modal-body {
-            background: white; margin: 24px auto; max-width: 900px; border-radius: 12px;
-            padding: 24px; max-height: calc(100vh - 48px); overflow: auto;
-        }
-
-        /* Map Legend Control */
-        .map-legend {
-            background: white; border-radius: 8px; padding: 8px 12px; font-size: 11px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-        }
-        .map-legend .entry { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
-        .map-legend .dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3); }
-
-        /* Print */
-        @media print {
-            .sidebar, .dashboard, #tools-fab, #tools-menu, .modal-overlay,
-            #toast-container, .leaflet-control-zoom, .map-legend-container,
-            .mobile-search-bar, .mobile-btn { display: none !important; }
-            #map { position: relative !important; height: 600px !important; }
-            body { overflow: visible !important; }
-            .print-header { display: block !important; text-align: center; padding: 16px; font-size: 20px; font-weight: 700; }
-        }
-        .print-header { display: none; }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100% !important;
-                z-index: 1001; transform: translateX(-100%);
-            }
-            .sidebar.mobile-open { transform: translateX(0); }
-            .dashboard {
-                position: fixed; top: 0; right: 0; bottom: 0; width: 100% !important;
-                max-height: 100vh !important; top: 0 !important; border-radius: 0 !important;
-                z-index: 1001; transform: translateX(100%); opacity: 0;
-            }
-            .dashboard.mobile-open { transform: translateX(0); opacity: 1; pointer-events: auto; }
-            .mobile-search-bar { display: block !important; }
-            .mobile-btn { display: flex !important; }
-            #map { margin-top: 56px; height: calc(100vh - 56px); }
-            .modal-body { margin: 8px; max-height: calc(100vh - 16px); }
-        }
-        @media (min-width: 769px) {
-            .mobile-search-bar { display: none !important; }
-            .mobile-btn { display: none !important; }
-            .sidebar-close-mobile { display: none !important; }
-        }
-    </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="anonymous" />
+  <link rel="stylesheet" href="app.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin="anonymous"></script>
+  <script defer src="app.js"></script>
 </head>
 <body>
-    <div class="print-header">Regional Hospital Stroke Capabilities — WA, AK, ID, MT, WY</div>
-    <div id="map"></div>
+  <a class="sr-skip" href="#map">Skip to map</a>
+  <div class="print-only">
+    <h1>Regional Hospital Stroke Capabilities</h1>
+    <p>Washington · Alaska · Idaho · Montana · Wyoming</p>
+  </div>
 
-    <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-4 right-4 z-[2000] flex flex-col gap-2 items-end"></div>
+  <!-- Map -->
+  <main id="map" role="application" aria-label="Regional hospital stroke capabilities map"></main>
 
-    <!-- Mobile Search Bar -->
-    <div class="mobile-search-bar fixed top-0 left-0 right-0 bg-white shadow-md z-[1002] p-2 flex gap-2" style="display:none;">
-        <input id="mobile-search-input" class="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm" placeholder="Search hospitals..." oninput="syncSearch(this.value)">
-        <button class="mobile-btn px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold" style="display:none;" onclick="toggleMobileSidebar()">&#9776;</button>
-        <button class="mobile-btn px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold" style="display:none;" onclick="toggleMobileDashboard()">&#9776;</button>
+  <!-- Toasts -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Mobile top bar -->
+  <div class="mobile-bar" role="toolbar" aria-label="Mobile controls">
+    <button id="mobile-sidebar-btn" class="icon-btn" aria-label="Open filters sidebar" title="Filters">☰</button>
+    <input id="mobile-search-input" type="search" placeholder="Search hospitals…" aria-label="Search hospitals" />
+    <button id="mobile-dash-btn" class="icon-btn" aria-label="Open dashboard" title="Dashboard">📊</button>
+  </div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar" aria-label="Hospital filters and list">
+    <button id="sidebar-close-mobile" class="mobile-close" type="button" aria-label="Close sidebar">✕ Close</button>
+    <header class="sidebar-header">
+      <h1>Regional Hospital Stroke Capabilities</h1>
+      <p>Washington · Alaska · Idaho · Montana · Wyoming</p>
+    </header>
+
+    <section class="sidebar-search">
+      <label for="search-input" class="visually-hidden">Search hospitals</label>
+      <input id="search-input" type="search" placeholder="Search name, city, state, certification…" aria-label="Search hospitals" />
+      <div class="sidebar-status">
+        <span id="status-bar">Loading…</span>
+        <button id="clear-btn" type="button" class="clear-btn hidden">Clear all</button>
+      </div>
+    </section>
+
+    <section class="filter-row" aria-label="Certification filters">
+      <div class="pill-row" role="group" aria-label="Certification type filters">
+        <button class="pill" type="button" data-filter="CSC" aria-pressed="false">
+          <span class="pill-dot" style="background:var(--c-csc)"></span>CSC
+        </button>
+        <button class="pill" type="button" data-filter="TSC" aria-pressed="false">
+          <span class="pill-dot" style="background:var(--c-tsc)"></span>TSC
+        </button>
+        <button class="pill" type="button" data-filter="PSC" aria-pressed="false">
+          <span class="pill-dot" style="background:var(--c-psc)"></span>PSC
+        </button>
+        <button class="pill" type="button" data-filter="ASR" aria-pressed="false">
+          <span class="pill-dot" style="background:var(--c-asr)"></span>ASR
+        </button>
+        <button class="pill" type="button" data-filter="EVT" aria-pressed="false">
+          <span class="pill-dot" style="background:var(--c-evt)"></span>EVT
+        </button>
+        <button class="pill" type="button" data-filter="UW" aria-pressed="false">
+          <span class="pill-dot" style="background:var(--c-partner)"></span>Partner
+        </button>
+      </div>
+      <div class="secondary-filters">
+        <label class="visually-hidden" for="filter-state">Filter by state</label>
+        <select id="filter-state" aria-label="State filter">
+          <option value="ALL">All states</option>
+          <option value="WA">Washington</option>
+          <option value="AK">Alaska</option>
+          <option value="ID">Idaho</option>
+          <option value="MT">Montana</option>
+          <option value="WY">Wyoming</option>
+        </select>
+        <div class="range-group">
+          <label for="filter-evt-distance" title="Minimum distance to nearest EVT center">EVT&gt;</label>
+          <input id="filter-evt-distance" type="range" min="0" max="200" step="25" value="0" aria-label="Minimum miles to nearest EVT center" />
+          <span id="evt-dist-label" aria-hidden="true">0</span><span aria-hidden="true">mi</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="list-header">
+      <span>Hospitals</span>
+      <span id="list-count" aria-live="polite">0</span>
     </div>
+    <div id="hospital-list" class="hospital-list" role="list" aria-label="Hospital list (click to focus on map)"></div>
+  </aside>
 
-    <!-- Mobile Toggle Buttons -->
-    <button class="mobile-btn fixed top-[62px] left-2 z-[1002] px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold shadow-lg items-center gap-1" style="display:none;" onclick="toggleMobileSidebar()">
-        <span>&#9776;</span> Filters
-    </button>
-    <button class="mobile-btn fixed top-[62px] right-2 z-[1002] px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold shadow-lg items-center gap-1" style="display:none;" onclick="toggleMobileDashboard()">
-        <span>&#128202;</span> Stats
-    </button>
-
-    <!-- Left Sidebar -->
-    <div id="sidebar" class="sidebar fixed top-0 left-0 bottom-0 w-[360px] bg-white shadow-xl z-[1000] flex flex-col">
-        <!-- Mobile close -->
-        <button class="sidebar-close-mobile w-full py-2 bg-red-500 text-white font-semibold text-sm" onclick="toggleMobileSidebar()">&#10005; Close</button>
-
-        <!-- Header -->
-        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-4 py-3">
-            <h1 class="text-base font-bold leading-tight">Regional Hospital Stroke Capabilities</h1>
-            <p class="text-[11px] opacity-90 mt-0.5">Washington, Alaska, Idaho, Montana &amp; Wyoming</p>
-        </div>
-
-        <!-- Search + Status -->
-        <div class="px-3 pt-3 pb-2 border-b border-gray-100">
-            <input id="search-input" class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500" placeholder="Search name, city, state, certification...">
-            <div class="flex items-center justify-between mt-1.5">
-                <span id="status-bar" class="text-[11px] text-gray-500">Loading...</span>
-                <button id="clear-btn" class="text-[11px] text-red-500 font-semibold hover:text-red-700 hidden" onclick="resetAllFilters()">Clear all</button>
-            </div>
-        </div>
-
-        <!-- Filter Pills -->
-        <div class="px-3 py-2.5 border-b border-gray-100">
-            <div class="flex flex-wrap gap-1.5 mb-2" id="filter-pills">
-                <button class="pill" data-filter="CSC" onclick="toggleFilter('CSC')"><span class="w-2 h-2 rounded-full bg-red-600"></span>CSC</button>
-                <button class="pill" data-filter="TSC" onclick="toggleFilter('TSC')"><span class="w-2 h-2 rounded-full bg-orange-600"></span>TSC</button>
-                <button class="pill" data-filter="PSC" onclick="toggleFilter('PSC')"><span class="w-2 h-2 rounded-full bg-amber-500"></span>PSC</button>
-                <button class="pill" data-filter="ASR" onclick="toggleFilter('ASR')"><span class="w-2 h-2 rounded-full bg-lime-500"></span>ASR</button>
-                <button class="pill" data-filter="EVT" onclick="toggleFilter('EVT')"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>EVT</button>
-                <button class="pill" data-filter="UW" onclick="toggleFilter('UW')"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Partner</button>
-            </div>
-            <div class="flex gap-2 items-center">
-                <select id="filter-state" class="flex-1 text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:border-indigo-400" onchange="applyFilters()">
-                    <option value="ALL">All States</option>
-                    <option value="WA">Washington</option>
-                    <option value="AK">Alaska</option>
-                    <option value="ID">Idaho</option>
-                    <option value="MT">Montana</option>
-                    <option value="WY">Wyoming</option>
-                </select>
-                <div class="flex items-center gap-1 text-[11px] text-gray-500 whitespace-nowrap">
-                    <label>EVT&gt;</label>
-                    <input type="range" id="filter-evt-distance" min="0" max="200" value="0" step="25" class="w-14 accent-indigo-500" oninput="document.getElementById('evt-dist-label').textContent=this.value; applyFilters();">
-                    <span id="evt-dist-label">0</span>mi
-                </div>
-            </div>
-        </div>
-
-        <!-- Hospital List -->
-        <div class="flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-100">
-            <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Hospitals</span>
-            <span id="list-count" class="text-[11px] text-gray-400">0</span>
-        </div>
-        <div id="hospital-list" class="flex-1 overflow-y-auto"></div>
+  <!-- Dashboard -->
+  <aside id="dashboard" class="dashboard" aria-label="Statistics dashboard">
+    <button id="dashboard-close-mobile" class="mobile-close" type="button" aria-label="Close dashboard">✕ Close</button>
+    <div class="dash-header">
+      <h2>Dashboard</h2>
+      <button id="dash-close" class="icon-btn" type="button" aria-label="Collapse dashboard" title="Collapse">×</button>
     </div>
-
-    <!-- Right Dashboard -->
-    <div id="dashboard" class="dashboard fixed top-4 right-4 w-[280px] bg-white rounded-xl shadow-xl z-[1000] max-h-[calc(100vh-2rem)] overflow-y-auto">
-        <!-- Mobile close -->
-        <button class="sidebar-close-mobile w-full py-2 bg-red-500 text-white font-semibold text-sm rounded-t-xl" onclick="toggleMobileDashboard()">&#10005; Close</button>
-
-        <div class="flex items-center justify-between px-3 py-2.5 border-b">
-            <h2 class="text-sm font-bold text-gray-700">Dashboard</h2>
-            <button onclick="toggleDashboard()" class="text-gray-400 hover:text-gray-600 text-lg leading-none" title="Toggle dashboard">&times;</button>
-        </div>
-
-        <!-- Donut Chart -->
-        <div class="px-3 py-3 border-b flex justify-center">
-            <canvas id="donut-chart" width="180" height="180"></canvas>
-        </div>
-
-        <!-- State Bars -->
-        <div class="px-3 py-3 border-b">
-            <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">By State</h3>
-            <div id="state-bars"></div>
-        </div>
-
-        <!-- Key Metrics -->
-        <div class="px-3 py-3 border-b">
-            <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Coverage Gaps</h3>
-            <div id="gap-metrics"></div>
-        </div>
-
-        <!-- Distance Histogram -->
-        <div class="px-3 py-3">
-            <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Distance to Nearest EVT</h3>
-            <canvas id="histogram-chart" width="248" height="100"></canvas>
-        </div>
+    <div class="dash-section" aria-label="Certification donut">
+      <canvas id="donut-chart" class="chart" width="180" height="180" aria-label="Certification distribution donut chart" role="img"></canvas>
     </div>
-
-    <!-- Tools FAB -->
-    <button id="tools-fab" class="fixed bottom-6 right-6 w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg z-[1000] flex items-center justify-center text-xl transition-all" onclick="toggleToolsMenu()" title="Tools">
-        &#9881;
-    </button>
-    <div id="tools-menu" class="fixed bottom-20 right-4 bg-white rounded-xl shadow-2xl z-[1000] w-56 hidden border border-gray-100">
-        <div class="p-1.5">
-            <div class="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Analysis</div>
-            <button class="tool-item" onclick="toggleUWPartnerNetwork()">Partner Network</button>
-            <button class="tool-item" onclick="toggleReferralPathways()">Referral Pathways</button>
-            <button class="tool-item" onclick="showNearestAdvancedCenter()">CSC/TSC Distance Map</button>
-            <button class="tool-item" onclick="identifyEVTDeserts()">EVT Deserts</button>
-            <button class="tool-item" onclick="highlightZeroCapability()">Zero-Capability</button>
-            <button class="tool-item" onclick="toggleCoverageOverlay()">Coverage Overlay</button>
-            <button class="tool-item" onclick="rankExpansionCandidates()">Expansion Ranking</button>
-            <hr class="my-1 border-gray-100">
-            <div class="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Reports</div>
-            <button class="tool-item" onclick="showDistanceMatrix()">Distance Matrix</button>
-            <button class="tool-item" onclick="generateExecutiveSummary()">Executive Summary</button>
-            <button class="tool-item" onclick="exportToCSV()">Export CSV</button>
-            <button class="tool-item" onclick="exportMapToPNG()">Export Map PNG</button>
-            <button class="tool-item" onclick="shareCurrentView()">Share View</button>
-            <hr class="my-1 border-gray-100">
-            <div class="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Settings</div>
-            <button class="tool-item" onclick="toggleDarkMap()">Toggle Dark Map</button>
-            <button class="tool-item" onclick="showCertInfo()">Certification Info</button>
-            <button class="tool-item" onclick="resetAllFilters()">Reset Everything</button>
-        </div>
+    <div class="dash-section" aria-label="State bars">
+      <h3>By state</h3>
+      <div id="state-bars"></div>
     </div>
-
-    <!-- Cert Info Modal -->
-    <div id="cert-info-modal" class="modal-overlay">
-        <div class="modal-body max-w-[700px]">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold">Stroke Certification Levels</h2>
-                <button onclick="closeCertInfo()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-            </div>
-            <div class="space-y-3 text-sm">
-                <div class="bg-red-50 border-l-4 border-red-600 p-3 rounded-r">
-                    <h4 class="font-bold text-red-800">CSC &mdash; Comprehensive Stroke Center</h4>
-                    <p class="text-red-700 text-xs mt-1 leading-relaxed">Highest level. 24/7 neurosurgery, advanced imaging, EVT, neuro-ICU, rehabilitation. Handles the most complex stroke cases. Certified by Joint Commission, DNV, or ACHC.</p>
-                </div>
-                <div class="bg-orange-50 border-l-4 border-orange-600 p-3 rounded-r">
-                    <h4 class="font-bold text-orange-800">TSC &mdash; Thrombectomy-Capable Stroke Center</h4>
-                    <p class="text-orange-700 text-xs mt-1 leading-relaxed">24/7 mechanical thrombectomy (EVT) for large vessel occlusions. Must have interventional neuroradiology team 24/7, neuro-ICU, advanced imaging. Minimum 15 EVTs/year per physician. DNV calls this "PSC+".</p>
-                </div>
-                <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r">
-                    <h4 class="font-bold text-amber-800">PSC &mdash; Primary Stroke Center</h4>
-                    <p class="text-amber-700 text-xs mt-1 leading-relaxed">Foundational stroke care: rapid CT, IV thrombolysis (TNK), dedicated stroke unit, 24/7 stroke team, transfer agreements to TSC/CSC. Certified by JC, DNV, ACHC, or CIHQ.</p>
-                </div>
-                <div class="bg-lime-50 border-l-4 border-lime-500 p-3 rounded-r">
-                    <h4 class="font-bold text-lime-800">ASR &mdash; Acute Stroke Ready</h4>
-                    <p class="text-lime-700 text-xs mt-1 leading-relaxed">Entry-level: rapid assessment, stabilization, IV TNK. Neurology via telemedicine 24/7. Transfer protocols to higher-level centers. JC uses "ASRH", DNV uses "ASR".</p>
-                </div>
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r">
-                    <h4 class="font-bold text-blue-800">EVT &mdash; Endovascular Thrombectomy</h4>
-                    <p class="text-blue-700 text-xs mt-1 leading-relaxed">Not a certification level but a clinical capability at TSC/CSC hospitals. Mechanical clot removal for large vessel occlusions. Available 24/7 at tracked EVT-capable facilities.</p>
-                </div>
-                <div class="bg-gray-50 border-l-4 border-gray-300 p-3 rounded-r text-xs text-gray-600">
-                    <strong>Certifying Bodies:</strong> Joint Commission (all 4 levels), DNV (ASR/PSC/PSC+/CSC), ACHC (all 4), CIHQ (ASRH/PSC).<br>
-                    <strong>WA State:</strong> Separate Level I/II/III ECS system (independent from national certs). This map shows national certifications.
-                </div>
-            </div>
-        </div>
+    <div class="dash-section" aria-label="Coverage gaps">
+      <h3>Coverage gaps</h3>
+      <div id="gap-metrics"></div>
     </div>
-
-    <!-- Distance Matrix Modal -->
-    <div id="distance-matrix-modal" class="modal-overlay">
-        <div class="modal-body max-w-[1200px]">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold">Distance Matrix</h2>
-                <button onclick="closeModal('distance-matrix-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-            </div>
-            <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium mb-3 hover:bg-indigo-700" onclick="exportDistanceMatrixToCSV()">Export to CSV</button>
-            <div id="distance-matrix-content" style="overflow-x:auto;"></div>
-        </div>
+    <div class="dash-section" aria-label="Distance histogram">
+      <h3>Distance to nearest EVT</h3>
+      <canvas id="histogram-chart" class="chart" width="248" height="110" aria-label="Histogram of distances to nearest EVT center" role="img"></canvas>
     </div>
+  </aside>
 
-    <!-- Expansion Candidates Modal -->
-    <div id="expansion-modal" class="modal-overlay">
-        <div class="modal-body">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-lg font-bold">Expansion Candidate Ranking</h2>
-                <button onclick="closeModal('expansion-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-            </div>
-            <div id="expansion-weights" class="mb-3 p-3 bg-gray-50 rounded-lg text-xs">
-                <p class="font-semibold text-gray-600 mb-2">Scoring Weights (adjustable):</p>
-                <div class="grid grid-cols-2 gap-2">
-                    <label class="flex items-center gap-1">No cert: <input type="number" id="w-noCert" value="3" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
-                    <label class="flex items-center gap-1">Not partner: <input type="number" id="w-notUW" value="2" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
-                    <label class="flex items-center gap-1">&gt;75mi CSC: <input type="number" id="w-farCSC" value="2" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
-                    <label class="flex items-center gap-1">&gt;100mi EVT: <input type="number" id="w-farEVT" value="1" min="0" max="10" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
-                    <label class="flex items-center gap-1">Has ASR/PSC: <input type="number" id="w-hasLow" value="-1" min="-5" max="0" class="w-12 border rounded px-1 py-0.5 text-center" onchange="recalcExpansion()"></label>
-                </div>
-            </div>
-            <div id="expansion-candidates-content"></div>
-        </div>
+  <!-- Tools FAB + menu -->
+  <button id="tools-fab" class="tools-fab" type="button" aria-expanded="false" aria-controls="tools-menu" aria-label="Open tools menu" title="Tools &amp; analysis">⚙</button>
+  <nav id="tools-menu" class="tools-menu" hidden aria-label="Analysis tools">
+    <h4>Analysis</h4>
+    <button id="tool-partner" class="tool-item" type="button">Telestroke partner network</button>
+    <button id="tool-referral" class="tool-item" type="button">Referral pathways</button>
+    <button id="tool-distance-map" class="tool-item" type="button">CSC/TSC distance map</button>
+    <button id="tool-evt-deserts" class="tool-item" type="button">EVT deserts (&gt;100 mi)</button>
+    <button id="tool-zero-cap" class="tool-item" type="button">Zero-capability hospitals</button>
+    <button id="tool-coverage" class="tool-item" type="button">Coverage overlay</button>
+    <button id="tool-expansion" class="tool-item" type="button">Expansion candidate ranking</button>
+    <hr>
+    <h4>Reports &amp; exports</h4>
+    <button id="tool-matrix" class="tool-item" type="button">Distance matrix</button>
+    <button id="tool-exec-summary" class="tool-item" type="button">Executive summary</button>
+    <button id="tool-export-csv" class="tool-item" type="button">Export hospitals CSV</button>
+    <button id="tool-export-png" class="tool-item" type="button">Export map as PNG</button>
+    <button id="tool-share" class="tool-item" type="button">Share current view</button>
+    <hr>
+    <h4>Display</h4>
+    <button id="tool-dark-ui" class="tool-item" type="button">Toggle dark mode (D)</button>
+    <button id="tool-dark-map" class="tool-item" type="button">Toggle dark map tiles</button>
+    <button id="tool-palette" class="tool-item" type="button">Toggle colour-blind palette</button>
+    <button id="tool-cert-info" class="tool-item" type="button">Certification info (?)</button>
+    <button id="tool-reset" class="tool-item" type="button">Reset everything (R)</button>
+  </nav>
+
+  <!-- Provenance bar -->
+  <div id="provenance-bar" class="provenance-bar" aria-label="Data provenance"></div>
+
+  <!-- Modal: Certification info -->
+  <div id="cert-info-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cert-info-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="cert-info-title">Methods &amp; Certification Reference</h2>
+        <button class="icon-btn" type="button" data-close-modal="cert-info-modal" aria-label="Close">×</button>
+      </div>
+      <div id="cert-info-body"></div>
     </div>
+  </div>
 
-    <!-- Hospital Detail Modal -->
-    <div id="hospital-detail-modal" class="modal-overlay">
-        <div class="modal-body max-w-[700px]" style="margin-top:40px;">
-            <div class="flex items-center justify-between mb-4">
-                <h2 id="detail-title" class="text-lg font-bold"></h2>
-                <button onclick="closeModal('hospital-detail-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-            </div>
-            <div id="hospital-detail-content"></div>
-        </div>
+  <!-- Modal: Distance matrix -->
+  <div id="distance-matrix-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="matrix-title">
+    <div class="modal wide">
+      <div class="modal-header">
+        <h2 id="matrix-title">Distance Matrix</h2>
+        <button class="icon-btn" type="button" data-close-modal="distance-matrix-modal" aria-label="Close">×</button>
+      </div>
+      <button id="matrix-export-csv" class="btn btn-primary" type="button" style="margin-bottom:12px">Export CSV</button>
+      <div id="distance-matrix-content"></div>
     </div>
+  </div>
 
-    <!-- Executive Summary Modal -->
-    <div id="executive-summary-modal" class="modal-overlay">
-        <div class="modal-body">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold">Executive Summary</h2>
-                <button onclick="closeModal('executive-summary-modal')" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-            </div>
-            <div class="flex gap-2 mb-3">
-                <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700" onclick="copyExecutiveSummary()">Copy to Clipboard</button>
-                <button class="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700" onclick="downloadExecutiveSummary()">Download</button>
-            </div>
-            <div id="executive-summary-content" class="font-mono text-xs whitespace-pre-wrap bg-gray-50 p-4 rounded-lg max-h-[60vh] overflow-y-auto"></div>
-        </div>
+  <!-- Modal: Expansion candidates -->
+  <div id="expansion-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="expansion-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="expansion-title">Expansion Candidate Ranking</h2>
+        <button class="icon-btn" type="button" data-close-modal="expansion-modal" aria-label="Close">×</button>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">
+        Scoring: higher score = higher priority for expansion. Adjust weights to reflect strategic priorities. Click a candidate to focus it on the map.
+      </p>
+      <div class="weights-grid">
+        <label>No certification <input id="w-noCert" type="number" value="3" min="0" max="10" /></label>
+        <label>Not a partner <input id="w-notUW" type="number" value="2" min="0" max="10" /></label>
+        <label>&gt;75 mi to CSC/TSC <input id="w-farCSC" type="number" value="2" min="0" max="10" /></label>
+        <label>&gt;100 mi to EVT <input id="w-farEVT" type="number" value="1" min="0" max="10" /></label>
+        <label>Has ASR/PSC <input id="w-hasLow" type="number" value="-1" min="-5" max="0" /></label>
+      </div>
+      <div id="expansion-candidates-content"></div>
     </div>
+  </div>
 
-    <script src="complete_hospitals.js"></script>
+  <!-- Modal: Hospital detail -->
+  <div id="hospital-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="detail-title"></h2>
+        <button class="icon-btn" type="button" data-close-modal="hospital-detail-modal" aria-label="Close">×</button>
+      </div>
+      <div id="hospital-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Executive summary -->
+  <div id="executive-summary-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="exec-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="exec-title">Executive Summary</h2>
+        <button class="icon-btn" type="button" data-close-modal="executive-summary-modal" aria-label="Close">×</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button id="exec-copy" class="btn btn-primary" type="button">Copy to clipboard</button>
+        <button id="exec-download" class="btn btn-secondary" type="button">Download .txt</button>
+      </div>
+      <pre id="executive-summary-content" class="exec-summary"></pre>
+    </div>
+  </div>
+
 </body>
 </html>
