@@ -2,6 +2,27 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities map.
 
+## [2.0.1] — 2026-04-23 (accuracy pass)
+
+Post-ship comprehensive verification pass. Four additional data fixes caught:
+
+- **Added Portneuf Medical Center** (Pocatello, ID — CMS 130006) — TSC-equivalent via DNV Primary Plus (PSC+) certification, with 24/7 EVT capability. Verified via hospital website (777 Hospital Way), DNV press release (2022-05-20), AHA Target Advanced Therapy 2025 recognition. Its absence was a significant gap for southeastern Idaho telestroke planning (previously no TSC-equivalent in the region).
+- **Consolidated Swedish First Hill duplicate**: merged `CMS 500029 SWEDISH MEDICAL CENTER - FIRST HILL (PSC)` into the canonical `CMS 500027 SWEDISH MEDICAL CENTER` record at 747 Broadway. CMS 500029 is not a valid Swedish CCN; both entries referenced the same First Hill campus. Kept name as "Swedish Medical Center - First Hill" and PSC (Joint Commission) on the canonical record. (Swedish Cherry Hill, the DNV CSC + EVT site, is a separate valid record at CMS 500025 and unchanged.)
+- **Cleared Madigan AMC certification metadata**: military hospital at Joint Base Lewis-McChord has no Joint Commission stroke certification; previously had explanatory text in `certificationDetails` despite null cert — now null consistently, with the context preserved in `dataSources`.
+- **Re-verified ambiguous entries** (8 additional hospitals) against Joint Commission Quality Check, DNV directory, and hospital websites. Confirmed accurate as-is: EIRMC (PSC + EVT), Kadlec (PSC), Providence St. Peter (PSC), MultiCare Good Samaritan (PSC/DNV), St. Joseph Tacoma (PSC). Confirmed conservative stance on Yakima Valley Memorial and Swedish Edmonds (both uncertified in dataset; post-2023 MultiCare acquisitions have uncertain national certification status — not claiming PSC without evidence).
+
+Integrity checks (all passing after this pass):
+
+- 123 unique CMS IDs (0 duplicates)
+- WA 89 / AK 8 / ID 19 / MT 5 / WY 2 (total 123)
+- 11 CSC / 6 TSC / 23 PSC / 11 ASR / 18 EVT-capable
+- Every CSC/TSC has `hasELVO=true`
+- Every certified hospital has `certifyingBody`
+- Every uncertified hospital has null `certifyingBody` and `certificationDetails`
+- Every hospital has valid coordinates (within state bounds) and a populated `city`
+
+Live Playwright functional test (10/10 passing): hospitals render, filters compose (CSC→11, CSC+TSC→17), clear resets, search finds Portneuf, detail modal shows Portneuf TSC/EVT, all 17 tool buttons wire up, palette toggle works, executive summary generates with state breakdown.
+
 ## [2.0.0] — 2026-04-23
 
 **Comprehensive end-to-end overhaul.** Code rewrite + repo cleanup + data fixes + 2026 certification refresh.

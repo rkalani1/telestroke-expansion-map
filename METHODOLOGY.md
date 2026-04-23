@@ -17,7 +17,7 @@ The dataset covers acute-care hospitals in the WWAMI region (Washington, Alaska,
 
 This is **not** a complete census of every acute-care hospital in the five states. Montana and Wyoming in particular have many additional critical-access hospitals not currently in scope. The coverage model is intentionally telestroke-planning oriented.
 
-As of 2026-04-23, the dataset contains **123 hospitals**: WA 90, AK 8, ID 18, MT 5, WY 2.
+As of 2026-04-23, the dataset contains **123 hospitals**: WA 89, AK 8, ID 19, MT 5, WY 2.
 
 ## 2. Data sources
 

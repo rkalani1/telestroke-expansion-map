@@ -30,7 +30,7 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 
 ## Data
 
-- **Coverage:** 123 hospitals across WA (90), AK (8), ID (18), MT (5), WY (2). Scoped to UW Medicine telestroke planning; includes all verified national-stroke-certified hospitals and all current UW telestroke partners in the five-state region.
+- **Coverage:** 123 hospitals across WA (89), AK (8), ID (19), MT (5), WY (2). Scoped to UW Medicine telestroke planning; includes all verified national-stroke-certified hospitals and all current UW telestroke partners in the five-state region.
 - **Last verified:** 2026-04-23
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
 - **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
