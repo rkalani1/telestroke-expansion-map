@@ -1,0 +1,2674 @@
+{
+  "schema_version": "2.0.0",
+  "data_version": "2026.05.27.synthetic",
+  "last_verified": "2026-05-27",
+  "generated_at": "2026-05-27T00:00:00.000Z",
+  "primary_sources": [
+    "Synthetic public demo seed data"
+  ],
+  "coverage_note": "Synthetic demonstration dataset. Named facilities, addresses, exact coordinates, private network fields, candidate lists, and strategy annotations are not included.",
+  "certification_definitions": {
+    "CSC": "Comprehensive Stroke Center — highest level. 24/7 neurosurgery, advanced imaging (CT/CTA/CTP/MRI/DSA), endovascular thrombectomy (EVT), neuro-ICU, stroke research program.",
+    "TSC": "Thrombectomy-Capable Stroke Center — 24/7 mechanical thrombectomy for large vessel occlusion, interventional neuroradiology team, neuro-ICU, ≥15 EVTs/year per physician. DNV uses \"PSC+\" for equivalent.",
+    "PSC": "Primary Stroke Center — rapid CT imaging, IV thrombolysis (alteplase/tenecteplase), dedicated stroke unit, 24/7 stroke team, transfer protocols.",
+    "ASR": "Acute Stroke Ready — rapid assessment, stabilization, IV thrombolysis, teleneurology 24/7, transfer protocols to higher-level centers. JC calls this \"ASRH\"; DNV calls it \"ASR\".",
+    "EVT": "Endovascular Thrombectomy — not a certification tier but a clinical capability. All CSCs and TSCs have EVT; some PSCs have EVT without full TSC certification."
+  },
+  "certifying_bodies": {
+    "Joint Commission": "Most common U.S. stroke certifier; four-level system (ASRH/PSC/TSC/CSC).",
+    "DNV": "Second-largest stroke certifier; uses ASR/PSC/PSC+/CSC nomenclature. \"Integrated Stroke Program Requirements 25-0\" effective 2025-08-01 consolidated all DNV tiers.",
+    "ACHC": "Accreditation Commission for Health Care — all four levels.",
+    "CIHQ": "Center for Improvement in Healthcare Quality — ASRH and PSC.",
+    "Idaho TSE": "Idaho state Time-Sensitive Emergency system — Level I/II/III stroke designations; not a national accreditation."
+  },
+  "facilities": [
+    {
+      "name": "Demo Facility 001",
+      "address": "Synthetic location 001",
+      "city": "Region AK-01",
+      "state": "AK",
+      "zip": "00000",
+      "cmsId": "DEMO001",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "latitude": 56.0705,
+      "longitude": -142.2269,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 002",
+      "address": "Synthetic location 002",
+      "zip": "00000",
+      "state": "AK",
+      "cmsId": "DEMO002",
+      "latitude": 58.3223,
+      "longitude": -135.1287,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region AK-02",
+      "airOnly": true
+    },
+    {
+      "name": "Demo Facility 003",
+      "address": "Synthetic location 003",
+      "city": "Region AK-03",
+      "state": "AK",
+      "zip": "00000",
+      "cmsId": "DEMO003",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": false,
+      "latitude": 55.7333,
+      "longitude": -136.3381,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 004",
+      "address": "Synthetic location 004",
+      "zip": "00000",
+      "state": "AK",
+      "cmsId": "DEMO004",
+      "latitude": 63.4423,
+      "longitude": -153.1397,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region AK-04",
+      "airOnly": true
+    },
+    {
+      "name": "Demo Facility 005",
+      "address": "Synthetic location 005",
+      "zip": "00000",
+      "state": "AK",
+      "cmsId": "DEMO005",
+      "latitude": 56.2072,
+      "longitude": -136.5698,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region AK-05",
+      "airOnly": true
+    },
+    {
+      "name": "Demo Facility 006",
+      "address": "Synthetic location 006",
+      "city": "Region AK-06",
+      "state": "AK",
+      "zip": "00000",
+      "cmsId": "DEMO006",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": true,
+      "latitude": 59.7406,
+      "longitude": -140.8855,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 007",
+      "address": "Synthetic location 007",
+      "zip": "00000",
+      "state": "AK",
+      "cmsId": "DEMO007",
+      "latitude": 59.3994,
+      "longitude": -156.918,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region AK-07",
+      "airOnly": true
+    },
+    {
+      "name": "Demo Facility 008",
+      "address": "Synthetic location 008",
+      "zip": "00000",
+      "state": "AK",
+      "cmsId": "DEMO008",
+      "latitude": 55.2729,
+      "longitude": -158.1003,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region AK-08",
+      "airOnly": true
+    },
+    {
+      "name": "Demo Facility 009",
+      "address": "Synthetic location 009",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO009",
+      "latitude": 42.235,
+      "longitude": -113.7819,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region ID-09"
+    },
+    {
+      "name": "Demo Facility 010",
+      "address": "Synthetic location 010",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO010",
+      "latitude": 46.9721,
+      "longitude": -111.437,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region ID-10"
+    },
+    {
+      "name": "Demo Facility 011",
+      "address": "Synthetic location 011",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO011",
+      "latitude": 47.7575,
+      "longitude": -114.1726,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region ID-11"
+    },
+    {
+      "name": "Demo Facility 012",
+      "address": "Synthetic location 012",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO012",
+      "latitude": 48.2326,
+      "longitude": -113.2003,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region ID-12"
+    },
+    {
+      "name": "Demo Facility 013",
+      "address": "Synthetic location 013",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO013",
+      "latitude": 45.8225,
+      "longitude": -113.6005,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region ID-13"
+    },
+    {
+      "name": "Demo Facility 014",
+      "address": "Synthetic location 014",
+      "city": "Region ID-14",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO014",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "latitude": 46.5296,
+      "longitude": -114.8255,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 015",
+      "address": "Synthetic location 015",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO015",
+      "latitude": 46.7206,
+      "longitude": -112.6762,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region ID-15"
+    },
+    {
+      "name": "Demo Facility 016",
+      "address": "Synthetic location 016",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO016",
+      "latitude": 48.527,
+      "longitude": -111.4932,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region ID-16"
+    },
+    {
+      "name": "Demo Facility 017",
+      "address": "Synthetic location 017",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO017",
+      "latitude": 46.0421,
+      "longitude": -111.7485,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region ID-17"
+    },
+    {
+      "name": "Demo Facility 018",
+      "address": "Synthetic location 018",
+      "city": "Region ID-18",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO018",
+      "latitude": 43.7826,
+      "longitude": -115.5515,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "TSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "TSC capability profile for demonstration only.",
+      "hasELVO": true
+    },
+    {
+      "name": "Demo Facility 019",
+      "address": "Synthetic location 019",
+      "city": "Region ID-19",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO019",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "latitude": 42.3827,
+      "longitude": -116.5715,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 020",
+      "address": "Synthetic location 020",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO020",
+      "latitude": 46.61,
+      "longitude": -115.6671,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region ID-20"
+    },
+    {
+      "name": "Demo Facility 021",
+      "address": "Synthetic location 021",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO021",
+      "latitude": 43.1261,
+      "longitude": -116.1835,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region ID-21"
+    },
+    {
+      "name": "Demo Facility 022",
+      "address": "Synthetic location 022",
+      "city": "Region ID-22",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO022",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "latitude": 42.6565,
+      "longitude": -114.7752,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "geocodeSource": "Synthetic demo coordinates",
+      "geocoded": true
+    },
+    {
+      "name": "Demo Facility 023",
+      "address": "Synthetic location 023",
+      "city": "Region ID-23",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO023",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": false,
+      "latitude": 45.8227,
+      "longitude": -113.8899,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 024",
+      "address": "Synthetic location 024",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO024",
+      "latitude": 47.637,
+      "longitude": -116.1039,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region ID-24"
+    },
+    {
+      "name": "Demo Facility 025",
+      "address": "Synthetic location 025",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO025",
+      "latitude": 43.6008,
+      "longitude": -115.5467,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region ID-01"
+    },
+    {
+      "name": "Demo Facility 026",
+      "address": "Synthetic location 026",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO026",
+      "latitude": 47.8345,
+      "longitude": -114.7119,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region ID-02"
+    },
+    {
+      "name": "Demo Facility 027",
+      "address": "Synthetic location 027",
+      "zip": "00000",
+      "state": "ID",
+      "cmsId": "DEMO027",
+      "latitude": 42.2749,
+      "longitude": -113.2675,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region ID-03"
+    },
+    {
+      "name": "Demo Facility 028",
+      "address": "Synthetic location 028",
+      "city": "Region MT-04",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO028",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": true,
+      "latitude": 45.0398,
+      "longitude": -114.2725,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 029",
+      "address": "Synthetic location 029",
+      "city": "Region MT-05",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO029",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": false,
+      "latitude": 47.8842,
+      "longitude": -104.1429,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "geocodeSource": "Synthetic demo coordinates",
+      "geocoded": true
+    },
+    {
+      "name": "Demo Facility 030",
+      "address": "Synthetic location 030",
+      "city": "Region MT-06",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO030",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": false,
+      "latitude": 47.3636,
+      "longitude": -105.338,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 031",
+      "address": "Synthetic location 031",
+      "city": "Region MT-07",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO031",
+      "strokeCertificationType": "TSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": true,
+      "latitude": 45.0793,
+      "longitude": -109.8111,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "TSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 032",
+      "address": "Synthetic location 032",
+      "city": "Region MT-08",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO032",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": false,
+      "latitude": 45.0905,
+      "longitude": -114.1677,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 033",
+      "address": "Synthetic location 033",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO033",
+      "latitude": 45.8527,
+      "longitude": -118.6712,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-09"
+    },
+    {
+      "name": "Demo Facility 034",
+      "address": "Synthetic location 034",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO034",
+      "latitude": 46.538,
+      "longitude": -120.6753,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-10"
+    },
+    {
+      "name": "Demo Facility 035",
+      "address": "Synthetic location 035",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO035",
+      "latitude": 48.347,
+      "longitude": -121.5385,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-11"
+    },
+    {
+      "name": "Demo Facility 036",
+      "address": "Synthetic location 036",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO036",
+      "latitude": 46.4883,
+      "longitude": -122.9549,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "city": "Region WA-12"
+    },
+    {
+      "name": "Demo Facility 037",
+      "address": "Synthetic location 037",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO037",
+      "latitude": 47.9453,
+      "longitude": -122.1524,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-13"
+    },
+    {
+      "name": "Demo Facility 038",
+      "address": "Synthetic location 038",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO038",
+      "latitude": 46.5755,
+      "longitude": -119.3005,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-14"
+    },
+    {
+      "name": "Demo Facility 039",
+      "address": "Synthetic location 039",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO039",
+      "latitude": 46.3143,
+      "longitude": -121.4997,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-15"
+    },
+    {
+      "name": "Demo Facility 040",
+      "address": "Synthetic location 040",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO040",
+      "latitude": 47.168,
+      "longitude": -117.5049,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-16"
+    },
+    {
+      "name": "Demo Facility 041",
+      "address": "Synthetic location 041",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO041",
+      "latitude": 46.8106,
+      "longitude": -120.7231,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-17"
+    },
+    {
+      "name": "Demo Facility 042",
+      "address": "Synthetic location 042",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO042",
+      "latitude": 48.2587,
+      "longitude": -124.0718,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-18"
+    },
+    {
+      "name": "Demo Facility 043",
+      "address": "Synthetic location 043",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO043",
+      "latitude": 45.7782,
+      "longitude": -121.1492,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "city": "Region WA-19"
+    },
+    {
+      "name": "Demo Facility 044",
+      "address": "Synthetic location 044",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO044",
+      "latitude": 48.5344,
+      "longitude": -121.982,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "city": "Region WA-20"
+    },
+    {
+      "name": "Demo Facility 045",
+      "address": "Synthetic location 045",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO045",
+      "latitude": 47.4463,
+      "longitude": -123.3819,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-21"
+    },
+    {
+      "name": "Demo Facility 046",
+      "address": "Synthetic location 046",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO046",
+      "latitude": 46.3614,
+      "longitude": -121.0775,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-22"
+    },
+    {
+      "name": "Demo Facility 047",
+      "address": "Synthetic location 047",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO047",
+      "latitude": 47.1689,
+      "longitude": -118.175,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-23"
+    },
+    {
+      "name": "Demo Facility 048",
+      "address": "Synthetic location 048",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO048",
+      "latitude": 45.8908,
+      "longitude": -118.4518,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-24"
+    },
+    {
+      "name": "Demo Facility 049",
+      "address": "Synthetic location 049",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO049",
+      "latitude": 47.3578,
+      "longitude": -121.5865,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-01"
+    },
+    {
+      "name": "Demo Facility 050",
+      "address": "Synthetic location 050",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO050",
+      "latitude": 46.1795,
+      "longitude": -121.3869,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-02"
+    },
+    {
+      "name": "Demo Facility 051",
+      "address": "Synthetic location 051",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO051",
+      "latitude": 45.9729,
+      "longitude": -117.3451,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-03"
+    },
+    {
+      "name": "Demo Facility 052",
+      "address": "Synthetic location 052",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO052",
+      "latitude": 47.417,
+      "longitude": -123.8584,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-04"
+    },
+    {
+      "name": "Demo Facility 053",
+      "address": "Synthetic location 053",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO053",
+      "latitude": 47.2125,
+      "longitude": -120.2249,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-05"
+    },
+    {
+      "name": "Demo Facility 054",
+      "address": "Synthetic location 054",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO054",
+      "latitude": 47.567,
+      "longitude": -120.6878,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-06"
+    },
+    {
+      "name": "Demo Facility 055",
+      "address": "Synthetic location 055",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO055",
+      "latitude": 47.1855,
+      "longitude": -121.0029,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "city": "Region WA-07"
+    },
+    {
+      "name": "Demo Facility 056",
+      "address": "Synthetic location 056",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO056",
+      "latitude": 48.2094,
+      "longitude": -122.3073,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-08"
+    },
+    {
+      "name": "Demo Facility 057",
+      "address": "Synthetic location 057",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO057",
+      "latitude": 46.3387,
+      "longitude": -122.677,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-09"
+    },
+    {
+      "name": "Demo Facility 058",
+      "address": "Synthetic location 058",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO058",
+      "latitude": 46.9169,
+      "longitude": -121.292,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-10"
+    },
+    {
+      "name": "Demo Facility 059",
+      "address": "Synthetic location 059",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO059",
+      "latitude": 48.333,
+      "longitude": -123.9019,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-11"
+    },
+    {
+      "name": "Demo Facility 060",
+      "address": "Synthetic location 060",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO060",
+      "latitude": 47.6276,
+      "longitude": -122.2354,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-12"
+    },
+    {
+      "name": "Demo Facility 061",
+      "address": "Synthetic location 061",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO061",
+      "latitude": 46.269,
+      "longitude": -118.467,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-13"
+    },
+    {
+      "name": "Demo Facility 062",
+      "address": "Synthetic location 062",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO062",
+      "latitude": 46.8091,
+      "longitude": -122.1693,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-14"
+    },
+    {
+      "name": "Demo Facility 063",
+      "address": "Synthetic location 063",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO063",
+      "latitude": 46.9158,
+      "longitude": -122.5264,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-15"
+    },
+    {
+      "name": "Demo Facility 064",
+      "address": "Synthetic location 064",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO064",
+      "latitude": 46.5004,
+      "longitude": -117.538,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-16"
+    },
+    {
+      "name": "Demo Facility 065",
+      "address": "Synthetic location 065",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO065",
+      "latitude": 47.8123,
+      "longitude": -121.7116,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-17"
+    },
+    {
+      "name": "Demo Facility 066",
+      "address": "Synthetic location 066",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO066",
+      "latitude": 45.8144,
+      "longitude": -118.6303,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-18"
+    },
+    {
+      "name": "Demo Facility 067",
+      "address": "Synthetic location 067",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO067",
+      "latitude": 48.2945,
+      "longitude": -121.6525,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-19"
+    },
+    {
+      "name": "Demo Facility 068",
+      "address": "Synthetic location 068",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO068",
+      "latitude": 46.495,
+      "longitude": -121.1907,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-20"
+    },
+    {
+      "name": "Demo Facility 069",
+      "address": "Synthetic location 069",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO069",
+      "latitude": 46.3745,
+      "longitude": -120.4989,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-21"
+    },
+    {
+      "name": "Demo Facility 070",
+      "address": "Synthetic location 070",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO070",
+      "latitude": 48.0635,
+      "longitude": -119.9434,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-22"
+    },
+    {
+      "name": "Demo Facility 071",
+      "address": "Synthetic location 071",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO071",
+      "latitude": 47.5181,
+      "longitude": -117.7022,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-23"
+    },
+    {
+      "name": "Demo Facility 072",
+      "address": "Synthetic location 072",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO072",
+      "latitude": 46.7956,
+      "longitude": -118.6075,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-24"
+    },
+    {
+      "name": "Demo Facility 073",
+      "address": "Synthetic location 073",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO073",
+      "latitude": 48.0453,
+      "longitude": -120.2862,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-01"
+    },
+    {
+      "name": "Demo Facility 074",
+      "address": "Synthetic location 074",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO074",
+      "latitude": 48.2006,
+      "longitude": -120.4812,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-02"
+    },
+    {
+      "name": "Demo Facility 075",
+      "address": "Synthetic location 075",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO075",
+      "latitude": 46.3763,
+      "longitude": -118.4118,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "city": "Region WA-03"
+    },
+    {
+      "name": "Demo Facility 076",
+      "address": "Synthetic location 076",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO076",
+      "latitude": 45.7557,
+      "longitude": -123.6339,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-04"
+    },
+    {
+      "name": "Demo Facility 077",
+      "address": "Synthetic location 077",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO077",
+      "latitude": 46.2755,
+      "longitude": -122.7012,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "TSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "TSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-05"
+    },
+    {
+      "name": "Demo Facility 078",
+      "address": "Synthetic location 078",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO078",
+      "latitude": 47.8692,
+      "longitude": -118.713,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-06",
+      "airOnly": true
+    },
+    {
+      "name": "Demo Facility 079",
+      "address": "Synthetic location 079",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO079",
+      "latitude": 48.2158,
+      "longitude": -117.8277,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "hasELVO": true,
+      "city": "Region WA-07"
+    },
+    {
+      "name": "Demo Facility 080",
+      "address": "Synthetic location 080",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO080",
+      "latitude": 47.2366,
+      "longitude": -121.6106,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-08"
+    },
+    {
+      "name": "Demo Facility 081",
+      "address": "Synthetic location 081",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO081",
+      "latitude": 46.3422,
+      "longitude": -123.0627,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-09"
+    },
+    {
+      "name": "Demo Facility 082",
+      "address": "Synthetic location 082",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO082",
+      "latitude": 47.7375,
+      "longitude": -119.9705,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-10"
+    },
+    {
+      "name": "Demo Facility 083",
+      "address": "Synthetic location 083",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO083",
+      "latitude": 47.3555,
+      "longitude": -120.1418,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-11"
+    },
+    {
+      "name": "Demo Facility 084",
+      "address": "Synthetic location 084",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO084",
+      "latitude": 45.9348,
+      "longitude": -123.0685,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-12"
+    },
+    {
+      "name": "Demo Facility 085",
+      "address": "Synthetic location 085",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO085",
+      "latitude": 46.3293,
+      "longitude": -118.4007,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "city": "Region WA-13"
+    },
+    {
+      "name": "Demo Facility 086",
+      "address": "Synthetic location 086",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO086",
+      "latitude": 48.2101,
+      "longitude": -122.1067,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-14"
+    },
+    {
+      "name": "Demo Facility 087",
+      "address": "Synthetic location 087",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO087",
+      "latitude": 46.3203,
+      "longitude": -119.0286,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "TSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "TSC capability profile for demonstration only.",
+      "city": "Region WA-15"
+    },
+    {
+      "name": "Demo Facility 088",
+      "address": "Synthetic location 088",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO088",
+      "latitude": 47.8866,
+      "longitude": -121.619,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-16"
+    },
+    {
+      "name": "Demo Facility 089",
+      "address": "Synthetic location 089",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO089",
+      "latitude": 47.789,
+      "longitude": -122.3358,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-17"
+    },
+    {
+      "name": "Demo Facility 090",
+      "address": "Synthetic location 090",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO090",
+      "latitude": 48.0941,
+      "longitude": -119.9429,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "city": "Region WA-18"
+    },
+    {
+      "name": "Demo Facility 091",
+      "address": "Synthetic location 091",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO091",
+      "latitude": 45.7657,
+      "longitude": -120.9591,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "city": "Region WA-19"
+    },
+    {
+      "name": "Demo Facility 092",
+      "address": "Synthetic location 092",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO092",
+      "latitude": 46.7964,
+      "longitude": -118.65,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "city": "Region WA-20"
+    },
+    {
+      "name": "Demo Facility 093",
+      "address": "Synthetic location 093",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO093",
+      "latitude": 47.998,
+      "longitude": -121.5353,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-21"
+    },
+    {
+      "name": "Demo Facility 094",
+      "address": "Synthetic location 094",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO094",
+      "latitude": 45.7714,
+      "longitude": -118.8538,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-22"
+    },
+    {
+      "name": "Demo Facility 095",
+      "address": "Synthetic location 095",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO095",
+      "latitude": 47.9252,
+      "longitude": -121.7691,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "city": "Region WA-23"
+    },
+    {
+      "name": "Demo Facility 096",
+      "address": "Synthetic location 096",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO096",
+      "latitude": 46.952,
+      "longitude": -120.4386,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-24"
+    },
+    {
+      "name": "Demo Facility 097",
+      "address": "Synthetic location 097",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO097",
+      "latitude": 48.0671,
+      "longitude": -118.2458,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-01"
+    },
+    {
+      "name": "Demo Facility 098",
+      "address": "Synthetic location 098",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO098",
+      "latitude": 46.5971,
+      "longitude": -123.2641,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-02"
+    },
+    {
+      "name": "Demo Facility 099",
+      "address": "Synthetic location 099",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO099",
+      "latitude": 48.6251,
+      "longitude": -118.868,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-03"
+    },
+    {
+      "name": "Demo Facility 100",
+      "address": "Synthetic location 100",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO100",
+      "latitude": 47.1809,
+      "longitude": -122.0529,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-04"
+    },
+    {
+      "name": "Demo Facility 101",
+      "address": "Synthetic location 101",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO101",
+      "latitude": 48.8154,
+      "longitude": -119.401,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-05"
+    },
+    {
+      "name": "Demo Facility 102",
+      "address": "Synthetic location 102",
+      "city": "Region WA-06",
+      "state": "WA",
+      "zip": "00000",
+      "cmsId": "DEMO102",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "notes": "Synthetic demonstration record.",
+      "latitude": 47.5345,
+      "longitude": -121.4318,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 103",
+      "address": "Synthetic location 103",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO103",
+      "latitude": 46.7213,
+      "longitude": -123.914,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-07"
+    },
+    {
+      "name": "Demo Facility 104",
+      "address": "Synthetic location 104",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO104",
+      "latitude": 47.3801,
+      "longitude": -122.9936,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-08"
+    },
+    {
+      "name": "Demo Facility 105",
+      "address": "Synthetic location 105",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO105",
+      "latitude": 48.2199,
+      "longitude": -121.401,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-09"
+    },
+    {
+      "name": "Demo Facility 106",
+      "address": "Synthetic location 106",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO106",
+      "latitude": 48.5532,
+      "longitude": -117.821,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "strokeCertificationDetails": "PSC capability profile for demonstration only.",
+      "city": "Region WA-10"
+    },
+    {
+      "name": "Demo Facility 107",
+      "address": "Synthetic location 107",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO107",
+      "latitude": 47.9534,
+      "longitude": -120.7697,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-11"
+    },
+    {
+      "name": "Demo Facility 108",
+      "address": "Synthetic location 108",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO108",
+      "latitude": 47.2535,
+      "longitude": -124.1988,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "city": "Region WA-12"
+    },
+    {
+      "name": "Demo Facility 109",
+      "address": "Synthetic location 109",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO109",
+      "latitude": 47.8539,
+      "longitude": -121.0664,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-13"
+    },
+    {
+      "name": "Demo Facility 110",
+      "address": "Synthetic location 110",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO110",
+      "latitude": 47.4401,
+      "longitude": -120.6596,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-14"
+    },
+    {
+      "name": "Demo Facility 111",
+      "address": "Synthetic location 111",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO111",
+      "latitude": 45.7211,
+      "longitude": -119.1963,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-15"
+    },
+    {
+      "name": "Demo Facility 112",
+      "address": "Synthetic location 112",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO112",
+      "latitude": 47.1144,
+      "longitude": -120.6965,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "city": "Region WA-16"
+    },
+    {
+      "name": "Demo Facility 113",
+      "address": "Synthetic location 113",
+      "city": "Region WA-17",
+      "state": "WA",
+      "zip": "00000",
+      "cmsId": "DEMO113",
+      "strokeCertificationType": "ASR",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": false,
+      "latitude": 46.6713,
+      "longitude": -119.5296,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "ASR capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 114",
+      "address": "Synthetic location 114",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO114",
+      "latitude": 47.2318,
+      "longitude": -121.8471,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-18"
+    },
+    {
+      "name": "Demo Facility 115",
+      "address": "Synthetic location 115",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO115",
+      "latitude": 47.4715,
+      "longitude": -117.3743,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "TSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "TSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-19"
+    },
+    {
+      "name": "Demo Facility 116",
+      "address": "Synthetic location 116",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO116",
+      "latitude": 46.7826,
+      "longitude": -120.6464,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "strokeCertificationType": "CSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "CSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "city": "Region WA-20"
+    },
+    {
+      "name": "Demo Facility 117",
+      "address": "Synthetic location 117",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO117",
+      "latitude": 48.8165,
+      "longitude": -119.8228,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-21"
+    },
+    {
+      "name": "Demo Facility 118",
+      "address": "Synthetic location 118",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO118",
+      "latitude": 46.7114,
+      "longitude": -117.7686,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "city": "Region WA-22"
+    },
+    {
+      "name": "Demo Facility 119",
+      "address": "Synthetic location 119",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO119",
+      "latitude": 45.8037,
+      "longitude": -120.9705,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "hasELVO": false,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "city": "Region WA-23"
+    },
+    {
+      "name": "Demo Facility 120",
+      "address": "Synthetic location 120",
+      "zip": "00000",
+      "state": "WA",
+      "cmsId": "DEMO120",
+      "latitude": 48.6126,
+      "longitude": -122.8886,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "city": "Region WA-24"
+    },
+    {
+      "name": "Demo Facility 121",
+      "address": "Synthetic location 121",
+      "city": "Region WY-01",
+      "state": "WY",
+      "zip": "00000",
+      "cmsId": "DEMO121",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": false,
+      "latitude": 41.2618,
+      "longitude": -107.9391,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 122",
+      "address": "Synthetic location 122",
+      "city": "Region WY-02",
+      "state": "WY",
+      "zip": "00000",
+      "cmsId": "DEMO122",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "hasELVO": true,
+      "latitude": 41.2428,
+      "longitude": -109.9488,
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ],
+      "verified": false,
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates"
+    },
+    {
+      "name": "Demo Facility 123",
+      "address": "Synthetic location 123",
+      "city": "Region MT-03",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO123",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": true,
+      "verified": false,
+      "latitude": 47.5484,
+      "longitude": -112.5651,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 124",
+      "address": "Synthetic location 124",
+      "city": "Region ID-04",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO124",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": true,
+      "verified": false,
+      "latitude": 47.3878,
+      "longitude": -116.2301,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 125",
+      "address": "Synthetic location 125",
+      "city": "Region ID-05",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO125",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Demo Registry",
+      "certificationDetails": "PSC capability profile for demonstration only.",
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 42.518,
+      "longitude": -116.8834,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 126",
+      "address": "Synthetic location 126",
+      "city": "Region ID-06",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO126",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 47.4058,
+      "longitude": -114.1741,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 127",
+      "address": "Synthetic location 127",
+      "city": "Region ID-07",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO127",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 45.0035,
+      "longitude": -115.9441,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 128",
+      "address": "Synthetic location 128",
+      "city": "Region ID-08",
+      "state": "ID",
+      "zip": "00000",
+      "cmsId": "DEMO128",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 47.4537,
+      "longitude": -112.512,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 129",
+      "address": "Synthetic location 129",
+      "city": "Region MT-09",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO129",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 45.3676,
+      "longitude": -105.1956,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 130",
+      "address": "Synthetic location 130",
+      "city": "Region MT-10",
+      "state": "MT",
+      "zip": "00000",
+      "cmsId": "DEMO130",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 46.8734,
+      "longitude": -111.2863,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 131",
+      "address": "Synthetic location 131",
+      "city": "Region AK-11",
+      "state": "AK",
+      "zip": "00000",
+      "cmsId": "DEMO131",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 56.1628,
+      "longitude": -138.892,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    },
+    {
+      "name": "Demo Facility 132",
+      "address": "Synthetic location 132",
+      "city": "Region AK-12",
+      "state": "AK",
+      "zip": "00000",
+      "cmsId": "DEMO132",
+      "strokeCertificationType": null,
+      "certifyingBody": null,
+      "certificationDetails": null,
+      "hasELVO": false,
+      "verified": false,
+      "latitude": 60.2931,
+      "longitude": -148.5966,
+      "geocoded": true,
+      "geocodeSource": "Synthetic demo coordinates",
+      "dataSources": [
+        "Synthetic public demo seed data"
+      ]
+    }
+  ]
+}
