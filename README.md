@@ -1,4 +1,4 @@
-# Regional Facility Stroke Capability Demo
+# Telestroke Expansion Map — regional facility stroke-capability access demo
 
 Interactive synthetic map of stroke-center capability tiers and EVT access across a five-state sample region. Named sites, street addresses, exact coordinates, health-network relationships, and operational strategy fields are not included.
 
