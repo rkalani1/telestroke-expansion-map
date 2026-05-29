@@ -1,7 +1,7 @@
 /* ========================================================================
-   Regional Facility Stroke Capabilities — Application
+   Regional Hospital Stroke Capabilities — Application
    ------------------------------------------------------------------------
-   Pure static SPA. Loads facilities.json, renders Leaflet map + sidebar
+   Pure static SPA. Loads hospitals.json, renders Leaflet map + sidebar
    list + dashboard + analysis tools. Safe DOM construction (no innerHTML
    with raw data), accessible, keyboard-friendly, responsive.
    ======================================================================== */
@@ -11,7 +11,7 @@
 // ------------------------------------------------------------------
 // Constants
 // ------------------------------------------------------------------
-const DATA_URL = 'facilities.json';
+const DATA_URL = 'hospitals.json';
 const MAP_CENTER = [47.5, -120.5];
 const MAP_ZOOM = 7;
 
@@ -41,7 +41,7 @@ function cssVar(name) {
 // ------------------------------------------------------------------
 const state = {
   meta: null,
-  facilities: [],
+  hospitals: [],
   distances: {},   // keyed by cmsId -> {nearestAdvanced, nearestEVT, ...}
   filtered: [],    // latest filter output
   activeFilters: { CSC: false, TSC: false, PSC: false, ASR: false, EVT: false },
@@ -51,8 +51,8 @@ const state = {
   map: null,
   tileLayer: null,
   markers: [],
-  overlays: { partner: [], referral: [], coverage: [] },
-  overlayVisible: { partner: false, referral: false, coverage: false },
+  overlays: { referral: [], coverage: [] },
+  overlayVisible: { referral: false, coverage: false },
   darkMap: false,
   darkUI: false,
   cbPalette: false,
@@ -97,7 +97,7 @@ function clear(node) { while (node.firstChild) node.removeChild(node.firstChild)
 
 function titleCase(str) {
   if (!str) return '';
-  const ACR = new Set(['AMC','private','VA','CHI','DNV','CMS','OHSU','EIRMC','MT','ER','ICU','NICU','ECU','ED','USA','US']);
+  const ACR = new Set(['AMC','UW','VA','CHI','DNV','CMS','OHSU','EIRMC','MT','ER','ICU','NICU','ECU','ED','USA','US']);
   return str.split(/\s+/).map(w => {
     const upper = w.toUpperCase();
     if (ACR.has(upper)) return upper;
@@ -172,7 +172,7 @@ async function loadData() {
     payload = await resp.json();
   } catch (err) {
     console.error('Data load failed:', err);
-    toast('Failed to load facility data. Check console.', 'error', 5000);
+    toast('Failed to load hospital data. Check console.', 'error', 5000);
     throw err;
   }
   state.meta = {
@@ -184,20 +184,20 @@ async function loadData() {
     certDefs: payload.certification_definitions,
     bodies: payload.certifying_bodies,
   };
-  state.facilities = (payload.facilities || [])
+  state.hospitals = (payload.hospitals || [])
     .filter(h => h.latitude && h.longitude)
     .map(h => ({
       ...h,
       displayName: titleCase(h.name),
     }));
-  advancedCenters = state.facilities.filter(h => h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC');
-  evtCenters = state.facilities.filter(h => h.hasELVO === true);
+  advancedCenters = state.hospitals.filter(h => h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC');
+  evtCenters = state.hospitals.filter(h => h.hasELVO === true);
   preCalculateDistances();
   updateProvenance();
 }
 
 function preCalculateDistances() {
-  for (const h of state.facilities) {
+  for (const h of state.hospitals) {
     const d = {
       nearestAdvanced: null, nearestAdvancedDistance: Infinity, nearestAdvancedName: '',
       nearestEVT: null, nearestEVTDistance: Infinity, nearestEVTName: '',
@@ -274,7 +274,7 @@ function initMap() {
 
     if (nearestAdvanced) {
       const pathCSC = L.polyline([[lat, lng], [nearestAdvanced.latitude, nearestAdvanced.longitude]], {
-        color: cssVar('--c-other') || '#4f46e5',
+        color: '#4f46e5',
         weight: 2,
         opacity: 0.75,
         dashArray: '4,6'
@@ -306,8 +306,8 @@ function initMap() {
         text: nearestAdvanced.displayName,
         onclick: () => {
           state.map.closePopup();
-          panToFacility(nearestAdvanced.cmsId);
-          showFacilityDetail(nearestAdvanced);
+          panToHospital(nearestAdvanced.cmsId);
+          showHospitalDetail(nearestAdvanced);
         }
       });
       advBox.appendChild(hopLink);
@@ -327,8 +327,8 @@ function initMap() {
         text: nearestEVT.displayName,
         onclick: () => {
           state.map.closePopup();
-          panToFacility(nearestEVT.cmsId);
-          showFacilityDetail(nearestEVT);
+          panToHospital(nearestEVT.cmsId);
+          showHospitalDetail(nearestEVT);
         }
       });
       evtBox.appendChild(hopEVTLink);
@@ -441,10 +441,10 @@ function markerSize(h) {
   return sizes[h.strokeCertificationType] || 7;
 }
 
-function renderMarkers(facilities) {
+function renderMarkers(hospitals) {
   for (const m of state.markers) state.map.removeLayer(m);
   state.markers = [];
-  for (const h of facilities) {
+  for (const h of hospitals) {
     const marker = L.circleMarker([h.latitude, h.longitude], {
       radius: markerSize(h),
       fillColor: markerColor(h),
@@ -456,20 +456,20 @@ function renderMarkers(facilities) {
     marker.bindPopup(buildPopupContent(h), { maxWidth: 320 });
     marker.on('click', (e) => {
       if (e.originalEvent) e.originalEvent.stopPropagation();
-      panToFacility(h.cmsId);
-      showFacilityDetail(h);
+      panToHospital(h.cmsId);
+      showHospitalDetail(h);
     });
     marker.on('mouseover', () => {
-      const item = document.querySelector(`.facility-item[data-cms="${h.cmsId}"]`);
+      const item = document.querySelector(`.hospital-item[data-cms="${h.cmsId}"]`);
       if (item) item.classList.add('hover-highlight');
       highlightMarker(h.cmsId, true);
     });
     marker.on('mouseout', () => {
-      const item = document.querySelector(`.facility-item[data-cms="${h.cmsId}"]`);
+      const item = document.querySelector(`.hospital-item[data-cms="${h.cmsId}"]`);
       if (item) item.classList.remove('hover-highlight');
       highlightMarker(h.cmsId, false);
     });
-    marker.facilityId = h.cmsId;
+    marker.hospitalId = h.cmsId;
     marker.addTo(state.map);
     state.markers.push(marker);
   }
@@ -498,6 +498,7 @@ function buildPopupContent(h) {
     const s = el('strong', { style: { color: cssVar('--c-evt') }, text: '24/7 Thrombectomy (EVT)' });
     meta.appendChild(s); meta.appendChild(document.createElement('br'));
   }
+
   const d = state.distances[h.cmsId];
   if (d && d.nearestAdvancedDistance > 0 && Number.isFinite(d.nearestAdvancedDistance)) {
     meta.appendChild(document.createElement('br'));
@@ -520,7 +521,7 @@ function applyFilters(opts = {}) {
   const anyPill = Object.values(state.activeFilters).some(v => v);
   const search = state.searchTerm.toLowerCase().trim();
 
-  const filtered = state.facilities.filter(h => {
+  const filtered = state.hospitals.filter(h => {
     if (search) {
       const hay = [
         h.name, h.displayName, h.address, h.city, h.state, h.zip,
@@ -554,7 +555,7 @@ function applyFilters(opts = {}) {
 
   // Zoom to fit when a meaningful subset is active
   const meaningful = anyPill || state.stateFilter !== 'ALL' || search || state.evtDistMin > 0;
-  if (!skipZoom && meaningful && filtered.length > 0 && filtered.length < state.facilities.length) {
+  if (!skipZoom && meaningful && filtered.length > 0 && filtered.length < state.hospitals.length) {
     const bounds = L.latLngBounds(filtered.map(h => [h.latitude, h.longitude]));
     state.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 10 });
   }
@@ -594,21 +595,21 @@ function renderClearButton() {
 // Sidebar list
 // ------------------------------------------------------------------
 function renderStatus(filtered) {
-  $('#status-bar').textContent = `Showing ${filtered.length} of ${state.facilities.length} facilities`;
+  $('#status-bar').textContent = `Showing ${filtered.length} of ${state.hospitals.length} hospitals`;
   $('#list-count').textContent = filtered.length;
 }
 
 function renderList(filtered) {
-  const list = $('#facility-list');
+  const list = $('#hospital-list');
   clear(list);
   if (filtered.length === 0) {
-    list.appendChild(el('div', { class: 'empty-state', text: 'No facilities match your filters. Try clearing filters.' }));
+    list.appendChild(el('div', { class: 'empty-state', text: 'No hospitals match your filters. Try clearing filters.' }));
     return;
   }
   const order = { CSC: 0, TSC: 1, PSC: 2, ASR: 3 };
   const sorted = [...filtered].sort((a, b) => {
-    const oa = order[a.strokeCertificationType] ?? 5;
-    const ob = order[b.strokeCertificationType] ?? 5;
+    const oa = order[a.strokeCertificationType] ?? 4;
+    const ob = order[b.strokeCertificationType] ?? 4;
     return oa - ob || a.displayName.localeCompare(b.displayName);
   });
   for (const h of sorted) {
@@ -620,32 +621,33 @@ function renderList(filtered) {
     }
     if (h.hasELVO) badges.appendChild(el('span', { class: 'badge badge-EVT', text: 'EVT' }));
 
+
     const content = el('div', { style: { flex: 1, minWidth: 0 } }, [
       el('div', { class: 'name', text: h.displayName }),
       el('div', { class: 'meta', text: location + (h.zip ? ' ' + h.zip : '') }),
       badges,
     ]);
     const item = el('button', {
-      class: 'facility-item', type: 'button', 'aria-label': `Focus ${h.displayName}`, dataset: { cms: h.cmsId },
+      class: 'hospital-item', type: 'button', 'aria-label': `Focus ${h.displayName}`, dataset: { cms: h.cmsId },
     }, [
       el('span', { class: 'dot', style: { background: color } }),
       content,
     ]);
-    item.addEventListener('click', () => panToFacility(h.cmsId));
+    item.addEventListener('click', () => panToHospital(h.cmsId));
     item.addEventListener('mouseenter', () => highlightMarker(h.cmsId, true));
     item.addEventListener('mouseleave', () => highlightMarker(h.cmsId, false));
     list.appendChild(item);
   }
 }
 
-function panToFacility(cmsId) {
-  const h = state.facilities.find(x => x.cmsId === cmsId);
+function panToHospital(cmsId) {
+  const h = state.hospitals.find(x => x.cmsId === cmsId);
   if (!h) return;
   state.map.setView([h.latitude, h.longitude], 12);
-  const marker = state.markers.find(m => m.facilityId === cmsId);
+  const marker = state.markers.find(m => m.hospitalId === cmsId);
   if (marker) marker.openPopup();
-  $$('.facility-item').forEach(e => e.classList.remove('highlighted'));
-  const item = document.querySelector(`.facility-item[data-cms="${cmsId}"]`);
+  $$('.hospital-item').forEach(e => e.classList.remove('highlighted'));
+  const item = document.querySelector(`.hospital-item[data-cms="${cmsId}"]`);
   if (item) { item.classList.add('highlighted'); item.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
   // Auto-close mobile sidebar on selection
   if (window.innerWidth <= 768) {
@@ -674,13 +676,13 @@ function drawDonut() {
   ctx.clearRect(0, 0, 180, 180);
 
   const counts = {
-    CSC: state.facilities.filter(h => h.strokeCertificationType === 'CSC').length,
-    TSC: state.facilities.filter(h => h.strokeCertificationType === 'TSC').length,
-    PSC: state.facilities.filter(h => h.strokeCertificationType === 'PSC').length,
-    ASR: state.facilities.filter(h => h.strokeCertificationType === 'ASR').length,
+    CSC: state.hospitals.filter(h => h.strokeCertificationType === 'CSC').length,
+    TSC: state.hospitals.filter(h => h.strokeCertificationType === 'TSC').length,
+    PSC: state.hospitals.filter(h => h.strokeCertificationType === 'PSC').length,
+    ASR: state.hospitals.filter(h => h.strokeCertificationType === 'ASR').length,
   };
-  const none = state.facilities.length - counts.CSC - counts.TSC - counts.PSC - counts.ASR;
-  const total = state.facilities.length;
+  const none = state.hospitals.length - counts.CSC - counts.TSC - counts.PSC - counts.ASR;
+  const total = state.hospitals.length;
   const segs = [
     { label: 'CSC', count: counts.CSC, color: cssVar('--c-csc') },
     { label: 'TSC', count: counts.TSC, color: cssVar('--c-tsc') },
@@ -704,16 +706,16 @@ function drawDonut() {
   ctx.fillText(String(total), cx, cy - 6);
   ctx.font = '11px system-ui, sans-serif';
   ctx.fillStyle = cssVar('--text-muted') || '#6b7280';
-  ctx.fillText('facilities', cx, cy + 14);
+  ctx.fillText('hospitals', cx, cy + 14);
 }
 function drawStateBars() {
   const container = $('#state-bars');
   if (!container) return;
   clear(container);
   const states = ['WA', 'AK', 'ID', 'MT', 'WY'];
-  const maxCount = Math.max(...states.map(s => state.facilities.filter(h => h.state === s).length), 1);
+  const maxCount = Math.max(...states.map(s => state.hospitals.filter(h => h.state === s).length), 1);
   for (const s of states) {
-    const hs = state.facilities.filter(h => h.state === s);
+    const hs = state.hospitals.filter(h => h.state === s);
     const buckets = {
       CSC: hs.filter(h => h.strokeCertificationType === 'CSC').length,
       TSC: hs.filter(h => h.strokeCertificationType === 'TSC').length,
@@ -744,11 +746,10 @@ function renderGapMetrics(filtered) {
   const container = $('#gap-metrics');
   if (!container) return;
   clear(container);
-  const src = filtered || state.facilities;
+  const src = filtered || state.hospitals;
   const metrics = [
     { label: 'No certification', value: src.filter(h => !h.strokeCertificationType).length, color: '#ef4444' },
     { label: 'EVT desert (>100 mi)', value: src.filter(h => (state.distances[h.cmsId]?.nearestEVTDistance || 0) > 100).length, color: '#f59e0b' },
-    { label: 'No certification + no EVT', value: src.filter(h => !h.strokeCertificationType && !h.hasELVO).length, color: '#dc2626' },
     { label: 'EVT-capable', value: src.filter(h => h.hasELVO).length, color: '#10b981' },
   ];
   for (const m of metrics) {
@@ -771,7 +772,7 @@ function drawHistogram() {
   const buckets = [0, 25, 50, 75, 100, 150, 300];
   const labels = ['0-25', '25-50', '50-75', '75-100', '100-150', '150+'];
   const counts = new Array(labels.length).fill(0);
-  for (const h of state.facilities) {
+  for (const h of state.hospitals) {
     const d = state.distances[h.cmsId]?.nearestEVTDistance;
     if (!d || !Number.isFinite(d) || d === 0) continue;
     for (let i = 0; i < buckets.length - 1; i++) {
@@ -803,7 +804,7 @@ function drawHistogram() {
 }
 
 // ------------------------------------------------------------------
-// Facility detail modal
+// Hospital detail modal
 // ------------------------------------------------------------------
 function buildTargetProgressBar(totalTime) {
   const maxMin = 150;
@@ -848,7 +849,7 @@ function clearFocusedPath() {
 }
 
 function highlightMarker(cmsId, highlight) {
-  const marker = state.markers.find(m => m.facilityId === cmsId);
+  const marker = state.markers.find(m => m.hospitalId === cmsId);
   if (!marker) return;
   if (highlight) {
     if (!marker._originalStyle) {
@@ -899,9 +900,9 @@ function toggleQueryMode() {
   }
 }
 
-function showFacilityDetail(h) {
+function showHospitalDetail(h) {
   $('#detail-title').textContent = h.displayName;
-  const content = $('#facility-detail-content');
+  const content = $('#hospital-detail-content');
   clear(content);
 
   const certNames = { CSC: 'Comprehensive Stroke Center', TSC: 'Thrombectomy-Capable Stroke Center', PSC: 'Primary Stroke Center', ASR: 'Acute Stroke Ready' };
@@ -946,7 +947,6 @@ function showFacilityDetail(h) {
   } else {
     row('Certification:', 'None', '#dc2626');
   }
-  row('EVT (24/7 thrombectomy):', h.hasELVO ? 'Yes' : 'No', h.hasELVO ? cssVar('--c-evt') : undefined);
   cap.appendChild(capKV);
   content.appendChild(cap);
 
@@ -955,7 +955,7 @@ function showFacilityDetail(h) {
   const d = state.distances[h.cmsId] || {};
   if (d.nearestAdvancedDistance > 0 && Number.isFinite(d.nearestAdvancedDistance)) {
     const target = d.nearestAdvanced;
-    const pathColor = h.airOnly ? cssVar('--c-evt') : cssVar('--c-other');
+    const pathColor = h.airOnly ? cssVar('--c-evt') : '#4f46e5';
     state.focusedPath = L.polyline(
       [[h.latitude, h.longitude], [target.latitude, target.longitude]],
       {
@@ -980,7 +980,7 @@ function showFacilityDetail(h) {
       type: 'button',
       text: '🔍 Fit View',
       onclick: () => {
-        closeModal('facility-detail-modal');
+        closeModal('hospital-detail-modal');
         if (state.focusedPath) {
           state.map.fitBounds(state.focusedPath.getBounds(), { padding: [50, 50] });
         } else {
@@ -994,8 +994,8 @@ function showFacilityDetail(h) {
       type: 'button',
       text: d.nearestAdvancedName,
       onclick: () => {
-        panToFacility(target.cmsId);
-        showFacilityDetail(target);
+        panToHospital(target.cmsId);
+        showHospitalDetail(target);
       }
     });
 
@@ -1025,9 +1025,9 @@ function showFacilityDetail(h) {
         type: 'button',
         text: '🔍 Fit View',
         onclick: () => {
-          closeModal('facility-detail-modal');
+          closeModal('hospital-detail-modal');
           clearFocusedPath();
-          const color = h.airOnly ? cssVar('--c-evt') : cssVar('--c-other');
+          const color = h.airOnly ? cssVar('--c-evt') : '#4f46e5';
           state.focusedPath = L.polyline(
             [[h.latitude, h.longitude], [evtTarget.latitude, evtTarget.longitude]],
             {
@@ -1050,8 +1050,8 @@ function showFacilityDetail(h) {
         type: 'button',
         text: d.nearestEVTName,
         onclick: () => {
-          panToFacility(evtTarget.cmsId);
-          showFacilityDetail(evtTarget);
+          panToHospital(evtTarget.cmsId);
+          showHospitalDetail(evtTarget);
         }
       });
 
@@ -1085,10 +1085,10 @@ function showFacilityDetail(h) {
     content.appendChild(dist);
   }
 
-  // Nearby facilities
+  // Nearby hospitals
   const nearbySect = el('div', { class: 'detail-section' });
-  nearbySect.appendChild(el('h3', { text: 'Nearby Facilities (5 closest)' }));
-  const nearby = state.facilities
+  nearbySect.appendChild(el('h3', { text: 'Nearby Hospitals (5 closest)' }));
+  const nearby = state.hospitals
     .filter(n => n.cmsId !== h.cmsId)
     .map(n => ({ ...n, dist: haversineMi(h.latitude, h.longitude, n.latitude, n.longitude) }))
     .sort((a, b) => a.dist - b.dist)
@@ -1109,8 +1109,8 @@ function showFacilityDetail(h) {
       type: 'button',
       'aria-label': `View details for ${n.displayName}`,
       onclick: () => {
-        panToFacility(n.cmsId);
-        showFacilityDetail(n);
+        panToHospital(n.cmsId);
+        showHospitalDetail(n);
       }
     }, [
       left,
@@ -1133,7 +1133,7 @@ function showFacilityDetail(h) {
     content.appendChild(srcSect);
   }
 
-  openModal('facility-detail-modal');
+  openModal('hospital-detail-modal');
 }
 
 // ------------------------------------------------------------------
@@ -1191,7 +1191,7 @@ function closeModal(id) {
   const m = id ? $('#' + id) : document.querySelector('.modal-overlay.active');
   if (!m) return;
   m.classList.remove('active');
-  if (m.id === 'facility-detail-modal') {
+  if (m.id === 'hospital-detail-modal') {
     clearFocusedPath();
   }
   if (m._focusTrapHandler) {
@@ -1207,7 +1207,7 @@ function closeModal(id) {
 
 function closeAllModals() {
   $$('.modal-overlay.active').forEach(m => {
-    if (m.id === 'facility-detail-modal') {
+    if (m.id === 'hospital-detail-modal') {
       clearFocusedPath();
     }
     if (m._focusTrapHandler) {
@@ -1239,16 +1239,10 @@ function toggleToolsMenu() {
 // ------------------------------------------------------------------
 function clearOverlays() {
   clearFocusedPath();
-  for (const l of state.overlays.partner) state.map.removeLayer(l);
   for (const l of state.overlays.referral) state.map.removeLayer(l);
   for (const l of state.overlays.coverage) state.map.removeLayer(l);
-  state.overlays = { partner: [], referral: [], coverage: [] };
-  state.overlayVisible = { partner: false, referral: false, coverage: false };
-}
-
-function togglePartnerNetwork() {
-  toggleToolsMenu();
-  toast('Private network overlay is disabled in the public demo.', 'info');
+  state.overlays = { referral: [], coverage: [] };
+  state.overlayVisible = { referral: false, coverage: false };
 }
 
 function toggleReferralPathways() {
@@ -1260,7 +1254,7 @@ function toggleReferralPathways() {
     return;
   }
   let n = 0;
-  for (const h of state.facilities) {
+  for (const h of state.hospitals) {
     if (h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC') continue;
     const d = state.distances[h.cmsId];
     if (!d?.nearestAdvanced || !Number.isFinite(d.nearestAdvancedDistance)) continue;
@@ -1312,7 +1306,7 @@ function showDistanceMap() {
   toggleToolsMenu();
   for (const m of state.markers) state.map.removeLayer(m);
   state.markers = [];
-  for (const h of state.facilities) {
+  for (const h of state.hospitals) {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance ?? Infinity;
     let color;
     if (!Number.isFinite(d) || d === 0) color = markerColor(h);
@@ -1323,20 +1317,20 @@ function showDistanceMap() {
       radius: markerSize(h), fillColor: color, color: 'white', weight: 2, opacity: 1, fillOpacity: 0.85,
     });
     marker.bindPopup(buildPopupContent(h));
-    marker.on('click', () => showFacilityDetail(h));
-    marker.facilityId = h.cmsId;
+    marker.on('click', () => showHospitalDetail(h));
+    marker.hospitalId = h.cmsId;
     marker.addTo(state.map);
     state.markers.push(marker);
   }
-  const under = state.facilities.filter(h => {
+  const under = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
     return d > 0 && d < 50 && Number.isFinite(d);
   }).length;
-  const mid = state.facilities.filter(h => {
+  const mid = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
     return d >= 50 && d <= 100;
   }).length;
-  const over = state.facilities.filter(h => {
+  const over = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
     return d > 100 && Number.isFinite(d);
   }).length;
@@ -1348,7 +1342,7 @@ function showEVTDeserts() {
   for (const m of state.markers) state.map.removeLayer(m);
   state.markers = [];
   let desertCount = 0;
-  for (const h of state.facilities) {
+  for (const h of state.hospitals) {
     const d = state.distances[h.cmsId]?.nearestEVTDistance ?? Infinity;
     const isEVT = h.hasELVO;
     const isDesert = !isEVT && d > 100 && Number.isFinite(d);
@@ -1361,12 +1355,12 @@ function showEVTDeserts() {
       weight: isDesert ? 3 : 2, opacity: 1, fillOpacity: isDesert ? 0.9 : (isEVT ? 0.85 : 0.55),
     });
     marker.bindPopup(buildPopupContent(h));
-    marker.on('click', () => showFacilityDetail(h));
-    marker.facilityId = h.cmsId;
+    marker.on('click', () => showHospitalDetail(h));
+    marker.hospitalId = h.cmsId;
     marker.addTo(state.map);
     state.markers.push(marker);
   }
-  toast(`${desertCount} facilities >100 mi from 24/7 thrombectomy`, 'warning', 4000);
+  toast(`${desertCount} hospitals >100 mi from 24/7 thrombectomy`, 'warning', 4000);
 }
 
 function showZeroCapability() {
@@ -1374,8 +1368,8 @@ function showZeroCapability() {
   for (const m of state.markers) state.map.removeLayer(m);
   state.markers = [];
   let n = 0;
-  for (const h of state.facilities) {
-    const zero = !h.strokeCertificationType && !h.hasELVO;
+  for (const h of state.hospitals) {
+    const zero = !h.strokeCertificationType;
     if (zero) n++;
     const color = zero ? cssVar('--c-csc') : markerColor(h);
     const marker = L.circleMarker([h.latitude, h.longitude], {
@@ -1384,66 +1378,12 @@ function showZeroCapability() {
       opacity: 1, fillOpacity: zero ? 0.9 : 0.55,
     });
     marker.bindPopup(buildPopupContent(h));
-    marker.on('click', () => showFacilityDetail(h));
-    marker.facilityId = h.cmsId;
+    marker.on('click', () => showHospitalDetail(h));
+    marker.hospitalId = h.cmsId;
     marker.addTo(state.map);
     state.markers.push(marker);
   }
-  toast(`${n} zero-capability facilities highlighted`, 'warning');
-}
-
-// ------------------------------------------------------------------
-// Public capability-gap scoring
-// ------------------------------------------------------------------
-function openExpansionModal() {
-  toggleToolsMenu();
-  recalcExpansion();
-  openModal('expansion-modal');
-}
-function recalcExpansion() {
-  const w = {
-    noCert: +$('#w-noCert').value || 0,
-    farCSC: +$('#w-farCSC').value || 0,
-    farEVT: +$('#w-farEVT').value || 0,
-    hasLow: +$('#w-hasLow').value || 0,
-  };
-  const scored = state.facilities.map(h => {
-    const d = state.distances[h.cmsId] || {};
-    let s = 0;
-    if (!h.strokeCertificationType) s += w.noCert;
-    if ((d.nearestAdvancedDistance || 0) > 75) s += w.farCSC;
-    if ((d.nearestEVTDistance || 0) > 100) s += w.farEVT;
-    if (h.strokeCertificationType === 'ASR' || h.strokeCertificationType === 'PSC') s += w.hasLow;
-    return { h, s, dA: d.nearestAdvancedDistance || Infinity, dE: d.nearestEVTDistance || Infinity };
-  }).sort((a, b) => b.s - a.s);
-
-  const top = scored.slice(0, 25);
-  const container = $('#expansion-candidates-content');
-  clear(container);
-  if (top.length === 0) {
-    container.appendChild(el('div', { class: 'empty-state', text: 'No candidates.' }));
-    return;
-  }
-  top.forEach((item, i) => {
-    const tier = item.s >= 6 ? 'sc-high' : item.s >= 3 ? 'sc-mid' : 'sc-low';
-    const bg = item.s >= 6 ? '#dc2626' : item.s >= 3 ? '#f59e0b' : '#10b981';
-    const card = el('div', { class: `candidate ${tier}` }, [
-      el('div', { class: 'candidate-head' }, [
-        el('span', { class: 'candidate-name', text: `${i + 1}. ${item.h.displayName}` }),
-        el('span', { class: 'candidate-score', style: { background: bg }, text: `Score: ${item.s}` }),
-      ]),
-      el('div', { class: 'candidate-meta', text:
-        `${item.h.state}  ·  ${item.h.city || '—'}  ·  Cert: ${item.h.strokeCertificationType || 'None'}  ·  ` +
-        `CSC/TSC: ${Number.isFinite(item.dA) ? formatMiles(item.dA) + ' mi' : 'N/A'}  ·  EVT: ${Number.isFinite(item.dE) ? formatMiles(item.dE) + ' mi' : 'N/A'}`
-      }),
-    ]);
-    card.addEventListener('click', () => {
-      closeModal('expansion-modal');
-      panToFacility(item.h.cmsId);
-    });
-    card.style.cursor = 'pointer';
-    container.appendChild(card);
-  });
+  toast(`${n} uncertified hospitals highlighted`, 'warning');
 }
 
 // ------------------------------------------------------------------
@@ -1464,7 +1404,7 @@ function renderDistanceMatrix() {
     distEVT: (a, b) => (state.distances[a.cmsId]?.nearestEVTDistance ?? Infinity) - (state.distances[b.cmsId]?.nearestEVTDistance ?? Infinity),
   };
   const fn = sortFns[state.matrixSort.col] || sortFns.name;
-  const sorted = [...state.facilities].sort((a, b) => state.matrixSort.asc ? fn(a, b) : fn(b, a));
+  const sorted = [...state.hospitals].sort((a, b) => state.matrixSort.asc ? fn(a, b) : fn(b, a));
   const container = $('#distance-matrix-content');
   clear(container);
   const wrap = el('div', { class: 'matrix-wrap' });
@@ -1472,7 +1412,7 @@ function renderDistanceMatrix() {
   const thead = el('thead');
   const headerRow = el('tr');
   const cols = [
-    ['name', 'Facility'], ['state', 'State'], ['cert', 'Cert'],
+    ['name', 'Hospital'], ['state', 'State'], ['cert', 'Cert'],
     [null, 'Nearest CSC/TSC'], ['distCSC', 'mi'], [null, 'Nearest EVT'], ['distEVT', 'mi'],
   ];
   for (const [key, label] of cols) {
@@ -1500,6 +1440,7 @@ function renderDistanceMatrix() {
     tr.appendChild(el('td', { text: h.displayName }));
     tr.appendChild(el('td', { text: h.state }));
     tr.appendChild(el('td', { text: h.strokeCertificationType || '—' }));
+
     tr.appendChild(el('td', { text: d.nearestAdvancedName || '—' }));
     tr.appendChild(el('td', { class: 'num', text: dCSC }));
     tr.appendChild(el('td', { text: d.nearestEVTName || '—' }));
@@ -1511,8 +1452,8 @@ function renderDistanceMatrix() {
 }
 
 function exportDistanceMatrixCSV() {
-  const rows = [['Facility', 'State', 'City', 'Certification', 'Certifying Body', 'Nearest CSC/TSC', 'Distance CSC/TSC (mi)', 'Ground min', 'Air min', 'Nearest EVT', 'Distance EVT (mi)']];
-  for (const h of state.facilities) {
+  const rows = [['Hospital', 'State', 'City', 'Certification', 'Certifying Body', 'Nearest CSC/TSC', 'Distance CSC/TSC (mi)', 'Ground min', 'Air min', 'Nearest EVT', 'Distance EVT (mi)']];
+  for (const h of state.hospitals) {
     const d = state.distances[h.cmsId] || {};
     const dA = Number.isFinite(d.nearestAdvancedDistance) && d.nearestAdvancedDistance > 0 ? d.nearestAdvancedDistance : '';
     const dE = Number.isFinite(d.nearestEVTDistance) && d.nearestEVTDistance > 0 ? d.nearestEVTDistance : '';
@@ -1536,29 +1477,27 @@ function exportDistanceMatrixCSV() {
 // ------------------------------------------------------------------
 function generateExecutiveSummary() {
   toggleToolsMenu();
-  const total = state.facilities.length;
+  const total = state.hospitals.length;
   const by = {
-    CSC: state.facilities.filter(h => h.strokeCertificationType === 'CSC').length,
-    TSC: state.facilities.filter(h => h.strokeCertificationType === 'TSC').length,
-    PSC: state.facilities.filter(h => h.strokeCertificationType === 'PSC').length,
-    ASR: state.facilities.filter(h => h.strokeCertificationType === 'ASR').length,
+    CSC: state.hospitals.filter(h => h.strokeCertificationType === 'CSC').length,
+    TSC: state.hospitals.filter(h => h.strokeCertificationType === 'TSC').length,
+    PSC: state.hospitals.filter(h => h.strokeCertificationType === 'PSC').length,
+    ASR: state.hospitals.filter(h => h.strokeCertificationType === 'ASR').length,
   };
   const certified = by.CSC + by.TSC + by.PSC + by.ASR;
   const noCert = total - certified;
-  const evt = state.facilities.filter(h => h.hasELVO).length;
-  const deserts = state.facilities.filter(h => (state.distances[h.cmsId]?.nearestEVTDistance || 0) > 100).length;
-  const zero = state.facilities.filter(h => !h.strokeCertificationType).length;
-  const ground60 = state.facilities.filter(h => {
+  const zero = state.hospitals.filter(h => !h.strokeCertificationType).length;
+  const ground60 = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
     return !h.airOnly && Number.isFinite(d) && d > 0 && groundMinutes(d) <= 60;
   }).length;
-  const air60 = state.facilities.filter(h => {
+  const air60 = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
     return Number.isFinite(d) && d > 0 && airMinutes(d) <= 60;
   }).length;
 
   const byState = (s) => {
-    const hs = state.facilities.filter(h => h.state === s);
+    const hs = state.hospitals.filter(h => h.state === s);
     return {
       total: hs.length,
       cert: hs.filter(h => h.strokeCertificationType).length,
@@ -1567,14 +1506,14 @@ function generateExecutiveSummary() {
   };
 
   const lines = [
-    'REGIONAL FACILITY STROKE CAPABILITIES — EXECUTIVE SUMMARY',
+    'REGIONAL HOSPITAL STROKE CAPABILITIES — EXECUTIVE SUMMARY',
     `Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
     `Data last verified: ${state.meta?.verified || 'unknown'}  ·  Schema ${state.meta?.schema}  ·  Version ${state.meta?.version}`,
     '',
     'DATASET SCOPE',
-    `  Coverage: synthetic five-state sample region (WA, AK, ID, MT, WY)`,
-    `  Facilities tracked: ${total}`,
-    `  Note: Public build includes synthetic capability, EVT, location, and transport-estimate fields only. Private network and strategy annotations are removed.`,
+    `  Coverage: WWAMI region (WA, AK, ID, MT, WY)`,
+    `  Hospitals tracked: ${total}`,
+    `  Note: Dataset tracks stroke capabilities of regional acute-care hospitals.`,
     '',
     'CERTIFICATION DISTRIBUTION',
     `  CSC (Comprehensive):      ${by.CSC}`,
@@ -1584,18 +1523,15 @@ function generateExecutiveSummary() {
     `  No national certification: ${noCert} (${(noCert/total*100).toFixed(1)}%)`,
     `  EVT-capable (24/7 thrombectomy): ${evt}`,
     '',
-    'PUBLIC CAPABILITY GAPS',
-    `  Zero-capability facilities (no certification in public dataset): ${zero}`,
-    '',
     'TRANSPORT & ACCESS',
-    `  Facilities within 60-min ground transfer of CSC/TSC: ${ground60} (${(ground60/total*100).toFixed(1)}%)`,
-    `  Facilities within 60-min air transfer of CSC/TSC:    ${air60} (${(air60/total*100).toFixed(1)}%)`,
+    `  Hospitals within 60-min ground transfer of CSC/TSC: ${ground60} (${(ground60/total*100).toFixed(1)}%)`,
+    `  Hospitals within 60-min air transfer of CSC/TSC:    ${air60} (${(air60/total*100).toFixed(1)}%)`,
     `  EVT deserts (>100 mi to nearest 24/7 thrombectomy): ${deserts} (${(deserts/total*100).toFixed(1)}%)`,
     '',
     'BY STATE',
     ...['WA','AK','ID','MT','WY'].map(s => {
       const r = byState(s);
-      return `  ${s}: ${r.total} facilities  ·  certified: ${r.cert}  ·  EVT: ${r.evt}`;
+      return `  ${s}: ${r.total} hospitals  ·  certified: ${r.cert}  ·  EVT: ${r.evt}`;
     }),
     '',
     'METHODS — TRANSPORT ESTIMATES',
@@ -1627,10 +1563,10 @@ function downloadExecutiveSummary() {
 // ------------------------------------------------------------------
 // Exports
 // ------------------------------------------------------------------
-function exportFacilitiesCSV() {
+function exportHospitalsCSV() {
   toggleToolsMenu();
   const rows = [['Name', 'Address', 'City', 'State', 'ZIP', 'Latitude', 'Longitude', 'Cert', 'Certifying Body', 'Certification Details', 'EVT (24/7)', 'CMS ID', 'Sources']];
-  for (const h of state.facilities) {
+  for (const h of state.hospitals) {
     rows.push([
       h.displayName, titleCase(h.address), h.city || '', h.state, h.zip || '',
       h.latitude, h.longitude,
@@ -1640,8 +1576,8 @@ function exportFacilitiesCSV() {
     ]);
   }
   const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
-  downloadBlob(csv, `stroke_facilities_${dateStr()}.csv`, 'text/csv');
-  toast('Facility data exported', 'success');
+  downloadBlob(csv, `stroke_hospitals_${dateStr()}.csv`, 'text/csv');
+  toast('Hospital data exported', 'success');
 }
 
 async function exportMapPNG() {
@@ -1672,10 +1608,10 @@ async function exportMapPNG() {
     ctx.drawImage(canvas, 0, 0);
     ctx.fillStyle = '#111827'; ctx.font = `bold ${16 * (out.width/960).toFixed(2)}px system-ui, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('Regional Facility Stroke Capabilities — WA · AK · ID · MT · WY', out.width / 2, canvas.height + 28);
+    ctx.fillText('Regional Hospital Stroke Capabilities — WA · AK · ID · MT · WY', out.width / 2, canvas.height + 28);
     ctx.fillStyle = '#6b7280';
     ctx.font = `${12 * (out.width/960).toFixed(2)}px system-ui, sans-serif`;
-    ctx.fillText(`${new Date().toLocaleDateString('en-US')}  ·  Data verified ${state.meta?.verified || ''}  ·  github.com/example/telestroke-expansion-map`, out.width / 2, canvas.height + 54);
+    ctx.fillText(`${new Date().toLocaleDateString('en-US')}  ·  Data verified ${state.meta?.verified || ''}  ·  github.com/rkalani1/telestroke-expansion-map`, out.width / 2, canvas.height + 54);
     out.toBlob(blob => {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -1738,7 +1674,7 @@ function saveStateToURL() {
 function loadStateFromURL() {
   const p = new URLSearchParams(window.location.search);
   if (!p.toString()) return;
-  for (const k of ['CSC','TSC','PSC','ASR','EVT']) {
+  for (const k of ['CSC','TSC','PSC','ASR','EVT','UW']) {
     if (p.has(k.toLowerCase())) {
       state.activeFilters[k] = true;
       const pill = document.querySelector(`.pill[data-filter="${k}"]`);
@@ -1776,7 +1712,7 @@ function updateProvenance() {
   link.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') openModal('cert-info-modal'); });
   bar.appendChild(link);
   bar.appendChild(document.createTextNode(' · '));
-  const counts = `${state.facilities.length} facilities across WA · AK · ID · MT · WY`;
+  const counts = `${state.hospitals.length} hospitals across WA · AK · ID · MT · WY`;
   bar.appendChild(document.createTextNode(counts));
 }
 
@@ -1820,8 +1756,8 @@ function bindEvents() {
       e.preventDefault();
       if (state.filtered && state.filtered.length === 1) {
         const h = state.filtered[0];
-        panToFacility(h.cmsId);
-        showFacilityDetail(h);
+        panToHospital(h.cmsId);
+        showHospitalDetail(h);
       }
     }
   });
@@ -1835,8 +1771,8 @@ function bindEvents() {
         e.preventDefault();
         if (state.filtered && state.filtered.length === 1) {
           const h = state.filtered[0];
-          panToFacility(h.cmsId);
-          showFacilityDetail(h);
+          panToHospital(h.cmsId);
+          showHospitalDetail(h);
         }
       }
     });
@@ -1849,17 +1785,15 @@ function bindEvents() {
   $('#tools-fab').addEventListener('click', toggleToolsMenu);
 
   // Tool buttons
-  $('#tool-partner').addEventListener('click', togglePartnerNetwork);
-  $('#tool-referral').addEventListener('click', toggleReferralPathways);
-  $('#tool-distance-map').addEventListener('click', showDistanceMap);
-  $('#tool-evt-deserts').addEventListener('click', showEVTDeserts);
-  $('#tool-zero-cap').addEventListener('click', showZeroCapability);
-  $('#tool-coverage').addEventListener('click', toggleCoverageOverlay);
-  $('#tool-expansion').addEventListener('click', openExpansionModal);
-  $('#tool-query-location').addEventListener('click', toggleQueryMode);
+    $('#tool-referral').addEventListener('click', toggleReferralPathways);
+    $('#tool-distance-map').addEventListener('click', showDistanceMap);
+    $('#tool-evt-deserts').addEventListener('click', showEVTDeserts);
+    $('#tool-zero-cap').addEventListener('click', showZeroCapability);
+    $('#tool-coverage').addEventListener('click', toggleCoverageOverlay);
+    $('#tool-query-location').addEventListener('click', toggleQueryMode);
   $('#tool-matrix').addEventListener('click', openDistanceMatrix);
   $('#tool-exec-summary').addEventListener('click', generateExecutiveSummary);
-  $('#tool-export-csv').addEventListener('click', exportFacilitiesCSV);
+  $('#tool-export-csv').addEventListener('click', exportHospitalsCSV);
   $('#tool-export-png').addEventListener('click', exportMapPNG);
   $('#tool-share').addEventListener('click', shareCurrentView);
   $('#tool-dark-map').addEventListener('click', toggleDarkMap);
@@ -1886,11 +1820,7 @@ function bindEvents() {
     if (state.toolsMenuOpen && !e.target.closest('#tools-menu') && !e.target.closest('#tools-fab')) toggleToolsMenu();
   });
 
-  // Expansion recalc
-  for (const id of ['w-noCert','w-farCSC','w-farEVT','w-hasLow']) {
-    $('#' + id).addEventListener('change', recalcExpansion);
-    $('#' + id).addEventListener('input', recalcExpansion);
-  }
+
 
   // Export buttons inside modals
   $('#matrix-export-csv').addEventListener('click', exportDistanceMatrixCSV);
@@ -1994,7 +1924,7 @@ async function boot() {
     loadStateFromURL();
     applyFilters({ skipZoom: true });
     state.initialized = true;
-    toast(`Loaded ${state.facilities.length} facilities`, 'success');
+    toast(`Loaded ${state.hospitals.length} hospitals`, 'success');
   } catch (err) {
     console.error('Boot failed:', err);
     toast('Boot error — check console', 'error', 6000);

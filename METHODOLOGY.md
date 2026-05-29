@@ -1,92 +1,130 @@
 # Methodology
 
-*Last updated: 2026-05-27 · synthetic data version 2026.05.27.synthetic*
+*Last updated: 2026-05-21 · data version 2026.05.21.3*
 
-This document describes the synthetic facility dataset, capability tiers, EVT flag, and transport-time estimates used in the public demo.
+This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
 
 ---
 
 ## 1. Scope
 
-The public dataset contains 132 synthetic facilities spread across five sample state buckets: WA, AK, ID, MT, and WY. The records are not real site records. Names, street addresses, exact coordinates, source links, and operational relationship fields have been removed or replaced with synthetic values.
+The dataset covers acute-care hospitals in the WWAMI region (Washington, Alaska, Idaho, Montana, Wyoming) that meet at least one of the following criteria:
 
-## 2. Synthetic data construction
+1. Currently hold a **national stroke certification** (CSC, TSC, PSC, or ASR) from Joint Commission, DNV, ACHC, or CIHQ.
+2. Hold a state-level stroke designation equivalent to one of the above (e.g., Idaho TSE Level I/II/III).
 
-The demo keeps the shape needed to test the application:
+This is **not** a complete census of every acute-care hospital in the five states. Montana and Wyoming in particular have many additional critical-access hospitals not currently in scope. The coverage model is focused on hospitals with known stroke capabilities.
 
-- a unique synthetic ID for each record;
-- a generic display name;
-- a synthetic region label;
-- approximate, non-site-specific coordinates within broad state bounds;
-- stroke capability tier;
-- EVT capability flag;
-- optional air-only routing flag for transfer-model testing.
+As of 2026-05-21, the dataset contains **132 hospitals**: WA 88, AK 10, ID 24, MT 8, WY 2.
 
-The data should be treated as sample data for UI, accessibility, export, and transport-model demonstrations only.
+## 2. Data sources
 
-## 3. Capability nomenclature
+Each hospital record is derived from, and cross-checked against, these primary sources:
 
-| Tier | Meaning in this demo |
-|------|----------------------|
-| CSC | Highest demonstration capability tier. |
-| TSC | Demonstration thrombectomy-capable tier. |
-| PSC | Demonstration primary stroke tier. |
-| ASR | Demonstration acute stroke-ready tier. |
-| EVT | Demonstration thrombectomy capability flag. |
+| Source | Purpose |
+|--------|---------|
+| **CMS Hospital General Information** (Nov 2024) | Provider identity (CMS CCN), official name, street address |
+| **The Joint Commission Quality Check** | CSC, TSC, PSC, ASRH certifications |
+| **DNV Healthcare Accredited Organizations Directory** | CSC, PSC+ (TSC-equivalent), PSC, ASR certifications |
+| **Idaho TSE System** | Idaho state Level I / II / III designations |
+| **Washington State DOH** | ECS facility list, state stroke designations |
+| **Hospital websites & press releases** | Recent certification changes, thrombectomy capability |
 
-The labels are capability abstractions for the demo. They are not assertions about any real site.
+Geocoding: addresses were forward-geocoded via the [Nominatim / OpenStreetMap](https://nominatim.openstreetmap.org/) service; each record includes the resulting latitude/longitude.
 
-## 4. Transport-time estimates
+## 3. Certification nomenclature
 
-Transport times shown in popups, detail modals, and exports are order-of-magnitude demo estimates using this model:
+| Tier | Joint Commission | DNV | ACHC | CIHQ | Common name in this app |
+|------|------------------|-----|------|------|-------------------------|
+| CSC | ✓ ("Comprehensive Stroke Center") | ✓ ("Comprehensive Stroke Center") | ✓ | — | **CSC** |
+| TSC | ✓ ("Thrombectomy-Capable") | **"PSC+" / "Primary Plus"** | ✓ | — | **TSC** |
+| PSC | ✓ | ✓ | ✓ | ✓ | **PSC** |
+| ASR | **"ASRH"** | ✓ | ✓ | ✓ | **ASR** |
+
+**EVT** ("endovascular thrombectomy") is not a separate tier but a clinical capability. All CSCs and TSCs provide 24/7 EVT; some PSCs provide EVT as well without holding full TSC certification. In this app, the `hasELVO` flag tracks 24/7 EVT capability independently of the written certification tier, because what matters for stroke-system planning is whether the facility can perform thrombectomy — not which tier label is attached.
+
+### DNV 2025 update
+
+Effective 2025-08-01, DNV consolidated its stroke certification standards into a single **"Integrated Stroke Program Requirements 25-0"** manual, replacing separate ASR, PSC, PSC+, and CSC manuals. The tier names and clinical requirements are unchanged.
+
+## 4. Recent verified changes (2025–2026)
+
+| Hospital | Change | Evidence |
+|----------|--------|----------|
+| **Providence Alaska Medical Center** | Upgraded from DNV PSC → DNV CSC (2025-03-06) | Providence press release, Mar 2025 |
+| **Kootenai Health** (Coeur d'Alene, ID) | Dataset corrected: only holds Idaho TSE Level II state designation, not national JC/DNV PSC | `kh.org/neurology/stroke/` |
+
+Verification methodology: each certification was cross-checked against at least two of (Joint Commission Quality Check, DNV directory, Idaho TSE registry, hospital website, hospital press release).
+
+## 5. Transport-time estimates
+
+Transport times shown in popups, detail modals, and exports are **order-of-magnitude planning estimates** using this model:
 
 ```
-great_circle_mi = haversine(A, B)
+great_circle_mi = haversine(A, B)             # earth radius 3959 mi
 
-ground_minutes = (great_circle_mi x 1.25) / 55 mph x 60 + 8
-air_minutes    =  great_circle_mi / 150 mph x 60 + 25
-best_minutes   = min(ground_minutes, air_minutes)
+ground_minutes  = (great_circle_mi × 1.25) / 55 mph × 60 + 8   # road factor + overhead
+air_minutes     =  great_circle_mi / 150 mph × 60 + 25          # dispatch + takeoff/land
+best_minutes    = min(ground_minutes, air_minutes)
 ```
 
 Assumptions:
 
-- Road factor 1.25 converts great-circle distance to an approximate road-distance proxy.
-- Ground speed 55 mph is a blended effective transport speed.
-- Air speed 150 mph is a blended fixed-wing/helicopter proxy.
-- Overhead values represent dispatch, loading, takeoff/landing, and handoff time.
+- **Road factor 1.25** converts great-circle to approximate road distance in varied western terrain. This is conservative for urban corridors and may underestimate mountain routes in MT/ID/WY.
+- **Ground speed 55 mph** is a blended rural/urban ambulance speed with lights; 8-minute overhead covers dispatch, onsite load, and hospital unload.
+- **Air speed 150 mph** is a blended helicopter (LifeFlight / Airlift NW) and fixed-wing speed; 25-minute overhead covers dispatch, preflight, takeoff, landing, and bedside handoff.
+- **Best transport** is the min of both modes — real decisions depend on weather, asset availability, crew duty cycles, and patient stability.
 
-These numbers are not a substitute for live dispatch, routing, or operational decision-making.
+For the **door-to-puncture window**, the detail modal adds a ~30-minute **door-in-door-out (DIDO)** estimate to the transport time. AHA Get-With-The-Guidelines-Stroke target for transferred patients is ≤90 min door-to-puncture; ≤120 min is the "acceptable" stretch target.
 
-## 5. Capability-gap scoring
-
-The public capability-gap ranking tool scores each synthetic facility using demo fields only:
-
-```
-score =   w_noCert · [no certification]
-        + w_farCSC · [> 75 mi from CSC/TSC]
-        + w_farEVT · [> 100 mi from EVT]
-        + w_hasLow · [ASR or PSC]
-```
-
-Default weights are illustrative. Higher score means a larger synthetic capability gap in the demo dataset.
+**These numbers are not a substitute for live dispatch.** They exist to inform network-planning decisions, not patient-care decisions.
 
 ## 6. Data integrity
 
-The `facilities.json` file includes metadata plus 132 synthetic records. Integrity checks expected by the app:
+The `hospitals.json` file includes provenance metadata:
 
-- every synthetic ID is unique;
-- every record has latitude and longitude;
-- every record has a synthetic region label;
-- every CSC and TSC record has `hasELVO = true`;
-- every certified record has a capability body label.
+```json
+{
+  "schema_version": "2.0.0",
+  "data_version": "2026.05.21.3",
+  "last_verified": "2026-05-21",
+  "generated_at": "2026-05-21T09:37:20.505663Z",
+  "primary_sources": [ … ],
+  "coverage_note": "…",
+  "certification_definitions": { … },
+  "certifying_bodies": { … },
+  "hospitals": [ … 132 records … ]
+}
+```
+
+Each hospital record includes:
+
+- `cmsId` (CMS Certification Number — unique across all 132)
+- `name`, `address`, `city`, `state`, `zip`
+- `latitude`, `longitude`, `geocoded`, `geocodeSource`
+- `strokeCertificationType` (CSC/TSC/PSC/ASR/null)
+- `certifyingBody`, `certificationDetails`
+- `hasELVO` (24/7 thrombectomy capability)
+- `dataSources[]`, `verified`
+
+Integrity checks enforced at build time:
+
+- Every CMS ID is unique (no duplicates).
+- Every hospital has valid `latitude`/`longitude`.
+- Every hospital has a populated `city`.
+- Every CSC and TSC has `hasELVO = true`.
+- Every certified hospital has a `certifyingBody`.
 
 ## 7. Limitations
 
-- The dataset is synthetic and should not be compared to real-world site coverage.
-- Coordinates are broad demo placements, not exact locations.
-- No road-network routing, traffic, weather, staffing, or asset availability is modeled.
-- Exports are for demonstration only.
+- **Not a live feed.** Certifications change on 2-3 year cycles; we do periodic refresh, not real-time tracking.
+- **Scope-limited.** Does not include every acute-care hospital in the five states; see §1.
+- **Straight-line geometry.** No road-network routing, no real-time traffic, no weather-adjusted air transport.
+- **No population weighting.** EVT-desert analysis does not account for population density; a 100-mile gap in western MT affects far fewer people than a 100-mile gap in suburban WA.
+- **State designations vs. national.** Idaho TSE Level II and JC PSC are clinically similar but not legally equivalent; the app labels both as "PSC"-tier in certification type and notes the state designation in the `certifyingBody` / `certificationDetails` fields.
 
-## 8. Contributions
+## 8. How to contribute
 
-Public contributions should preserve the synthetic boundary. Do not add named site data, exact addresses, operational relationships, or restricted data to this public repository.
+- **Data corrections:** open an issue with the hospital CMS ID, the proposed change, and the source URL.
+- **Code improvements:** open a PR. The app is pure static JS/CSS; no build step required.
+- **New features:** feature proposals should serve that workflow.
