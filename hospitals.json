@@ -889,9 +889,9 @@
         "MultiCare website"
       ],
       "verified": true,
-      "strokeCertificationType": "CSC",
+      "strokeCertificationType": "PSC",
       "certifyingBody": "DNV",
-      "certificationDetails": "DNV Comprehensive Stroke Center",
+      "certificationDetails": "DNV Primary Stroke Center (with mechanical thrombectomy capability)",
       "hasELVO": true,
       "city": "Spokane"
     },
@@ -1439,7 +1439,7 @@
       "verified": true,
       "strokeCertificationType": "ASR",
       "certifyingBody": "WA DOH",
-      "certificationDetails": "Washington State-designated Level II Stroke Center (no national stroke certification)",
+      "certificationDetails": "Washington State-designated Level III Stroke Center (no national stroke certification)",
       "city": "Spokane Valley"
     },
     {
@@ -1640,9 +1640,9 @@
       "longitude": -122.581049,
       "geocoded": true,
       "geocodeSource": "Nominatim/OpenStreetMap",
-      "strokeCertificationType": "CSC",
+      "strokeCertificationType": "PSC",
       "certifyingBody": "DNV",
-      "certificationDetails": "DNV Primary Stroke Center and state Level II Stroke Center; performs 24/7 mechanical thrombectomy (EVT/ELVO)",
+      "certificationDetails": "DNV Primary Stroke Center and Washington State Level I Stroke Center; performs 24/7 mechanical thrombectomy (EVT/ELVO)",
       "dataSources": [
         "CMS (Nov 2024)",
         "PeaceHealth website",
@@ -1882,8 +1882,8 @@
       "verified": true,
       "strokeCertificationType": "PSC",
       "certifyingBody": "Joint Commission",
-      "certificationDetails": "Joint Commission Primary Stroke Center and state Level II Stroke Center; performs 24/7 mechanical thrombectomy (EVT/ELVO)",
-      "hasELVO": true,
+      "certificationDetails": "Joint Commission Primary Stroke Center and state Level II Stroke Center",
+      "hasELVO": false,
       "city": "Walla Walla"
     },
     {
@@ -2418,8 +2418,8 @@
       "geocoded": true,
       "geocodeSource": "Nominatim/OpenStreetMap",
       "strokeCertificationType": "CSC",
-      "certifyingBody": "Joint Commission",
-      "certificationDetails": "Joint Commission Comprehensive Stroke Center",
+      "certifyingBody": "DNV",
+      "certificationDetails": "DNV Comprehensive Stroke Center",
       "hasELVO": true,
       "dataSources": [
         "CMS (Nov 2024)",
@@ -2507,8 +2507,8 @@
       "verified": true,
       "strokeCertificationType": "PSC",
       "certifyingBody": "Washington State DOH",
-      "certificationDetails": "Washington State-designated Level II Stroke Center with 24/7 Emergent Large Vessel Occlusion (ELVO/thrombectomy) capability (no national stroke certification)",
-      "hasELVO": true,
+      "certificationDetails": "Washington State-designated Level II Stroke Center (no national stroke certification)",
+      "hasELVO": false,
       "city": "Yakima"
     },
     {
