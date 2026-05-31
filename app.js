@@ -1487,6 +1487,8 @@ function generateExecutiveSummary() {
   const certified = by.CSC + by.TSC + by.PSC + by.ASR;
   const noCert = total - certified;
   const zero = state.hospitals.filter(h => !h.strokeCertificationType).length;
+  const evt = state.hospitals.filter(h => h.hasELVO).length;
+  const deserts = state.hospitals.filter(h => (state.distances[h.cmsId]?.nearestEVTDistance || 0) > 100).length;
   const ground60 = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
     return !h.airOnly && Number.isFinite(d) && d > 0 && groundMinutes(d) <= 60;
