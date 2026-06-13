@@ -107,11 +107,11 @@ Each hospital record includes:
 - `hasELVO` (24/7 thrombectomy capability)
 - `dataSources[]`, `verified`
 
-Integrity checks enforced at build time:
+Integrity checks (run `node tools/validate-data.mjs`; exits non-zero on any violation):
 
 - Every CMS ID is unique (no duplicates).
-- Every hospital has valid `latitude`/`longitude`.
-- Every hospital has a populated `city`.
+- Every hospital has valid `latitude`/`longitude` (within the WWAMI bounding box).
+- Every hospital has a populated `city` (and `name`, `state`, `address`).
 - Every CSC and TSC has `hasELVO = true`.
 - Every certified hospital has a `certifyingBody`.
 

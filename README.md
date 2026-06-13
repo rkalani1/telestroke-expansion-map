@@ -34,6 +34,7 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 - **Last verified:** 2026-05-21
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
 - **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
+- **Validate:** `node tools/validate-data.mjs` checks every record against the integrity rules in METHODOLOGY §6 (no dependencies; exits non-zero on any violation).
 
 ## Transport-time model
 
@@ -76,7 +77,7 @@ app.js                Application logic (data load, map, filters, tools, exports
 hospitals.json        Data + metadata (schema, sources, cert definitions)
 METHODOLOGY.md        Data sourcing + certification standards
 CHANGELOG.md          Release history
-archive/              Prior code, reports, and scripts (historical)
+tools/                Dependency-free data-integrity validator (run with Node)
 ```
 
 ## License
