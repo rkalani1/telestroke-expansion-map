@@ -17,7 +17,7 @@ const MAP_ZOOM = 7;
 
 // Transport speed assumptions (for door-to-door estimates)
 // Ground ambulance: ~55 mph rural, use ~60 mph blended effective
-// Air (fixed-wing / helicopter LifeFlight): ~150 mph blended
+// Air (fixed-wing / rotor-wing air-medical): ~150 mph blended
 // Road factor: haversine distance * 1.25 to approximate road network
 const ROAD_FACTOR = 1.25;
 const GROUND_MPH = 55;
@@ -44,10 +44,15 @@ const state = {
   hospitals: [],
   distances: {},   // keyed by cmsId -> {nearestAdvanced, nearestEVT, ...}
   filtered: [],    // latest filter output
-  activeFilters: { CSC: false, TSC: false, PSC: false, ASR: false, EVT: false },
+  activeFilters: { CSC: false, TSC: false, PSC: false, ASR: false, EVT: false, NONE: false },
   searchTerm: '',
   stateFilter: 'ALL',
   evtDistMin: 0,
+  // Scenario-mode parameters for expansion-candidate scoring.
+  // Weights are relative (normalized at compute time); thresholds in miles.
+  // Adjusting these NEVER modifies hospitals.json — display-layer only.
+  scenario: { wCert: 40, wEvt: 40, wAdv: 20, desertMi: 100, capMi: 200 },
+  candidateSort: { col: 'score', asc: false },
   map: null,
   tileLayer: null,
   markers: [],
@@ -239,6 +244,7 @@ function initMap() {
   }).setView(MAP_CENTER, MAP_ZOOM);
 
   setTileLayer(state.darkMap);
+  state.markerLayer = L.layerGroup().addTo(state.map);
   L.control.zoom({ position: 'bottomright' }).addTo(state.map);
 
   state.map.on('click', (e) => {
@@ -441,19 +447,26 @@ function markerSize(h) {
   return sizes[h.strokeCertificationType] || 7;
 }
 
-function renderMarkers(hospitals) {
-  for (const m of state.markers) state.map.removeLayer(m);
-  state.markers = [];
-  for (const h of hospitals) {
+function defaultMarkerStyle(h) {
+  return {
+    fillColor: markerColor(h),
+    color: 'white',
+    weight: 2,
+    opacity: 1,
+    fillOpacity: 0.85,
+  };
+}
+
+// Markers are created once per hospital and reused across every filter
+// change / analysis view — only style + layer membership change afterwards.
+// Popup content builds lazily on open instead of 132× per re-render.
+function buildMarkerCache() {
+  state.markerCache = new Map();
+  for (const h of state.hospitals) {
     const marker = L.circleMarker([h.latitude, h.longitude], {
-      radius: markerSize(h),
-      fillColor: markerColor(h),
-      color: 'white',
-      weight: 2,
-      opacity: 1,
-      fillOpacity: 0.85,
+      radius: markerSize(h), ...defaultMarkerStyle(h),
     });
-    marker.bindPopup(buildPopupContent(h), { maxWidth: 320 });
+    marker.bindPopup(() => buildPopupContent(h), { maxWidth: 320 });
     marker.on('click', (e) => {
       if (e.originalEvent) e.originalEvent.stopPropagation();
       panToHospital(h.cmsId);
@@ -470,8 +483,25 @@ function renderMarkers(hospitals) {
       highlightMarker(h.cmsId, false);
     });
     marker.hospitalId = h.cmsId;
-    marker.addTo(state.map);
-    state.markers.push(marker);
+    state.markerCache.set(h.cmsId, marker);
+  }
+}
+
+function showMarker(h, style, radius) {
+  const marker = state.markerCache.get(h.cmsId);
+  if (!marker) return;
+  delete marker._originalStyle; // reset hover-highlight baseline
+  marker.setStyle(style);
+  marker.setRadius(radius);
+  state.markerLayer.addLayer(marker);
+  state.markers.push(marker);
+}
+
+function renderMarkers(hospitals) {
+  state.markerLayer.clearLayers();
+  state.markers = [];
+  for (const h of hospitals) {
+    showMarker(h, defaultMarkerStyle(h), markerSize(h));
   }
 }
 
@@ -541,6 +571,7 @@ function applyFilters(opts = {}) {
       if (state.activeFilters.PSC && h.strokeCertificationType === 'PSC') pass = true;
       if (state.activeFilters.ASR && h.strokeCertificationType === 'ASR') pass = true;
       if (state.activeFilters.EVT && h.hasELVO) pass = true;
+      if (state.activeFilters.NONE && !h.strokeCertificationType) pass = true;
       if (!pass) return false;
     }
     return true;
@@ -552,6 +583,7 @@ function applyFilters(opts = {}) {
   renderStatus(filtered);
   renderDashboard(filtered);
   renderClearButton();
+  scheduleURLSave();
 
   // Zoom to fit when a meaningful subset is active
   const meaningful = anyPill || state.stateFilter !== 'ALL' || search || state.evtDistMin > 0;
@@ -579,6 +611,9 @@ function resetAll() {
   $('#filter-state').value = 'ALL';
   $('#filter-evt-distance').value = '0';
   $('#evt-dist-label').textContent = '0';
+  state.scenario = { ...SCENARIO_DEFAULTS };
+  syncScenarioControls();
+  if ($('#candidates-modal')?.classList.contains('active')) renderCandidates();
   clearOverlays();
   state.map.setView(MAP_CENTER, MAP_ZOOM);
   applyFilters({ skipZoom: true });
@@ -747,9 +782,10 @@ function renderGapMetrics(filtered) {
   if (!container) return;
   clear(container);
   const src = filtered || state.hospitals;
+  const desertMi = state.scenario.desertMi;
   const metrics = [
     { label: 'No certification', value: src.filter(h => !h.strokeCertificationType).length, color: '#ef4444' },
-    { label: 'EVT desert (>100 mi)', value: src.filter(h => (state.distances[h.cmsId]?.nearestEVTDistance || 0) > 100).length, color: '#f59e0b' },
+    { label: `EVT desert (>${desertMi} mi)`, value: src.filter(h => (state.distances[h.cmsId]?.nearestEVTDistance || 0) > desertMi).length, color: '#f59e0b' },
     { label: 'EVT-capable', value: src.filter(h => h.hasELVO).length, color: '#10b981' },
   ];
   for (const m of metrics) {
@@ -1167,6 +1203,7 @@ function handleModalTab(e, modalNode) {
 function openModal(id) {
   const m = $('#' + id);
   if (!m) return;
+  if (m.classList.contains('active')) return; // re-opening would stack focus traps and orphan focus restore
   m.classList.add('active');
   m._previousActive = document.activeElement;
   const focusables = Array.from(m.querySelectorAll(
@@ -1187,6 +1224,24 @@ function openModal(id) {
   document.body.style.overflow = 'hidden';
 }
 
+// Restore focus after a modal closes. When the modal was opened from the page
+// body (keyboard shortcut), there is nothing meaningful to restore to — park
+// focus on the tools FAB rather than stranding it inside the hidden overlay.
+function restoreModalFocus(m) {
+  const prev = m._previousActive;
+  m._previousActive = null;
+  if (prev && typeof prev.focus === 'function' && prev !== document.body
+      && document.contains(prev) && !m.contains(prev)) {
+    prev.focus();
+    return;
+  }
+  if (m.contains(document.activeElement)) {
+    const fab = $('#tools-fab');
+    if (fab) fab.focus();
+    else document.activeElement.blur();
+  }
+}
+
 function closeModal(id) {
   const m = id ? $('#' + id) : document.querySelector('.modal-overlay.active');
   if (!m) return;
@@ -1198,10 +1253,7 @@ function closeModal(id) {
     m.removeEventListener('keydown', m._focusTrapHandler);
     m._focusTrapHandler = null;
   }
-  if (m._previousActive && typeof m._previousActive.focus === 'function') {
-    m._previousActive.focus();
-    m._previousActive = null;
-  }
+  restoreModalFocus(m);
   if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = '';
 }
 
@@ -1214,11 +1266,8 @@ function closeAllModals() {
       m.removeEventListener('keydown', m._focusTrapHandler);
       m._focusTrapHandler = null;
     }
-    if (m._previousActive && typeof m._previousActive.focus === 'function') {
-      m._previousActive.focus();
-      m._previousActive = null;
-    }
     m.classList.remove('active');
+    restoreModalFocus(m);
   });
   document.body.style.overflow = '';
 }
@@ -1304,7 +1353,7 @@ function toggleCoverageOverlay() {
 
 function showDistanceMap() {
   toggleToolsMenu();
-  for (const m of state.markers) state.map.removeLayer(m);
+  state.markerLayer.clearLayers();
   state.markers = [];
   for (const h of state.hospitals) {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance ?? Infinity;
@@ -1313,14 +1362,7 @@ function showDistanceMap() {
     else if (d < 50) color = cssVar('--c-evt');
     else if (d <= 100) color = cssVar('--c-psc');
     else color = cssVar('--c-csc');
-    const marker = L.circleMarker([h.latitude, h.longitude], {
-      radius: markerSize(h), fillColor: color, color: 'white', weight: 2, opacity: 1, fillOpacity: 0.85,
-    });
-    marker.bindPopup(buildPopupContent(h));
-    marker.on('click', () => showHospitalDetail(h));
-    marker.hospitalId = h.cmsId;
-    marker.addTo(state.map);
-    state.markers.push(marker);
+    showMarker(h, { fillColor: color, color: 'white', weight: 2, opacity: 1, fillOpacity: 0.85 }, markerSize(h));
   }
   const under = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
@@ -1339,49 +1381,40 @@ function showDistanceMap() {
 
 function showEVTDeserts() {
   toggleToolsMenu();
-  for (const m of state.markers) state.map.removeLayer(m);
+  state.markerLayer.clearLayers();
   state.markers = [];
+  const desertMi = state.scenario.desertMi;
   let desertCount = 0;
   for (const h of state.hospitals) {
     const d = state.distances[h.cmsId]?.nearestEVTDistance ?? Infinity;
     const isEVT = h.hasELVO;
-    const isDesert = !isEVT && d > 100 && Number.isFinite(d);
+    const isDesert = !isEVT && d > desertMi && Number.isFinite(d);
     if (isDesert) desertCount++;
     const color = isEVT ? cssVar('--c-evt') : isDesert ? cssVar('--c-csc') : cssVar('--c-other');
     const size = isEVT ? 12 : isDesert ? 10 : 6;
-    const marker = L.circleMarker([h.latitude, h.longitude], {
-      radius: size, fillColor: color,
+    showMarker(h, {
+      fillColor: color,
       color: isDesert ? '#991b1b' : 'white',
       weight: isDesert ? 3 : 2, opacity: 1, fillOpacity: isDesert ? 0.9 : (isEVT ? 0.85 : 0.55),
-    });
-    marker.bindPopup(buildPopupContent(h));
-    marker.on('click', () => showHospitalDetail(h));
-    marker.hospitalId = h.cmsId;
-    marker.addTo(state.map);
-    state.markers.push(marker);
+    }, size);
   }
-  toast(`${desertCount} hospitals >100 mi from 24/7 thrombectomy`, 'warning', 4000);
+  toast(`${desertCount} hospitals >${desertMi} mi from 24/7 thrombectomy`, 'warning', 4000);
 }
 
 function showZeroCapability() {
   toggleToolsMenu();
-  for (const m of state.markers) state.map.removeLayer(m);
+  state.markerLayer.clearLayers();
   state.markers = [];
   let n = 0;
   for (const h of state.hospitals) {
     const zero = !h.strokeCertificationType;
     if (zero) n++;
     const color = zero ? cssVar('--c-csc') : markerColor(h);
-    const marker = L.circleMarker([h.latitude, h.longitude], {
-      radius: zero ? 11 : markerSize(h), fillColor: color,
+    showMarker(h, {
+      fillColor: color,
       color: zero ? '#991b1b' : 'white', weight: zero ? 3 : 2,
       opacity: 1, fillOpacity: zero ? 0.9 : 0.55,
-    });
-    marker.bindPopup(buildPopupContent(h));
-    marker.on('click', () => showHospitalDetail(h));
-    marker.hospitalId = h.cmsId;
-    marker.addTo(state.map);
-    state.markers.push(marker);
+    }, zero ? 11 : markerSize(h));
   }
   toast(`${n} uncertified hospitals highlighted`, 'warning');
 }
@@ -1473,10 +1506,422 @@ function exportDistanceMatrixCSV() {
 }
 
 // ------------------------------------------------------------------
+// Expansion-candidate scoring (planning heuristic — display layer only)
+// ------------------------------------------------------------------
+// The score NEVER asserts anything about a hospital beyond what the
+// public dataset records. It combines three transparent need signals,
+// each normalized 0–1, under user-adjustable scenario weights:
+//   certGap — certification tier on record (None 1.0 · ASR 0.65 · PSC 0.35)
+//   evtGap  — miles to nearest 24/7 EVT center, capped at scenario.capMi
+//   advGap  — miles to nearest CSC/TSC, capped at scenario.capMi
+// Records flagged air-only get a flat +8 for transport fragility.
+// Hospitals that are themselves EVT-capable or CSC/TSC are hubs, not
+// telestroke spoke candidates, and are excluded from the ranking.
+const SCENARIO_DEFAULTS = { wCert: 40, wEvt: 40, wAdv: 20, desertMi: 100, capMi: 200 };
+// Valid ranges match the sliders in index.html — URL params are clamped to
+// these so a hand-edited link can never poison the math (e.g. capMi 0 → NaN)
+// or desync the slider knob from the label.
+const SCENARIO_RANGES = { wCert: [0, 100], wEvt: [0, 100], wAdv: [0, 100], desertMi: [50, 200], capMi: [100, 300] };
+const CERT_GAP_WEIGHT = { ASR: 0.65, PSC: 0.35 };
+const AIR_ONLY_BONUS = 8;
+
+function certGapValue(h) {
+  if (!h.strokeCertificationType) return 1.0;
+  return CERT_GAP_WEIGHT[h.strokeCertificationType] ?? 0;
+}
+
+function computeCandidates() {
+  const { wCert, wEvt, wAdv } = state.scenario;
+  const capMi = Math.max(1, state.scenario.capMi); // belt-and-suspenders vs division by zero
+  const wSum = (wCert + wEvt + wAdv) || 1;
+  const out = [];
+  for (const h of state.hospitals) {
+    if (h.hasELVO) continue;
+    if (h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC') continue;
+    const d = state.distances[h.cmsId] || {};
+    const evtMi = Number.isFinite(d.nearestEVTDistance) ? d.nearestEVTDistance : capMi;
+    const advMi = Number.isFinite(d.nearestAdvancedDistance) ? d.nearestAdvancedDistance : capMi;
+    const certGap = certGapValue(h);
+    const evtGap = Math.min(evtMi, capMi) / capMi;
+    const advGap = Math.min(advMi, capMi) / capMi;
+    const pts = {
+      cert: (wCert * certGap) / wSum * 100,
+      evt: (wEvt * evtGap) / wSum * 100,
+      adv: (wAdv * advGap) / wSum * 100,
+      air: h.airOnly ? AIR_ONLY_BONUS : 0,
+    };
+    const score = Math.min(100, pts.cert + pts.evt + pts.adv + pts.air);
+    out.push({ h, d, score, pts, evtMi, advMi });
+  }
+  out.sort((a, b) => b.score - a.score || a.h.displayName.localeCompare(b.h.displayName));
+  out.forEach((c, i) => { c.rank = i + 1; });
+  return out;
+}
+
+function candidateReasons(c) {
+  const { h, d, pts, evtMi, advMi } = c;
+  const reasons = [];
+  if (!h.strokeCertificationType) {
+    reasons.push(`No national stroke certification on record (+${pts.cert.toFixed(0)} pts)`);
+  } else {
+    const tierNames = { ASR: 'Acute Stroke Ready', PSC: 'Primary Stroke Center' };
+    reasons.push(`Certification tier on record: ${h.strokeCertificationType} — ${tierNames[h.strokeCertificationType] || ''} (+${pts.cert.toFixed(0)} pts)`);
+  }
+  if (Number.isFinite(evtMi) && evtMi > 0) {
+    const gTxt = h.airOnly ? 'ground not feasible' : `~${groundMinutes(evtMi)} min ground`;
+    reasons.push(`${formatMiles(evtMi)} mi to nearest 24/7 EVT (${d.nearestEVTName || 'n/a'}) — ${gTxt} / ~${airMinutes(evtMi)} min air (+${pts.evt.toFixed(0)} pts)`);
+  }
+  if (Number.isFinite(advMi) && advMi > 0) {
+    reasons.push(`${formatMiles(advMi)} mi to nearest CSC/TSC (${d.nearestAdvancedName || 'n/a'}) (+${pts.adv.toFixed(0)} pts)`);
+  }
+  if (h.airOnly) {
+    reasons.push(`Air-only access flagged in dataset (+${AIR_ONLY_BONUS} pts)`);
+  }
+  if (evtMi > state.scenario.desertMi) {
+    reasons.push(`Beyond the ${state.scenario.desertMi}-mi EVT-desert threshold for this scenario`);
+  }
+  return reasons;
+}
+
+function openExpansionCandidates() {
+  if (state.toolsMenuOpen) toggleToolsMenu();
+  syncScenarioControls();
+  renderCandidates();
+  openModal('candidates-modal');
+}
+
+function syncScenarioControls() {
+  const s = state.scenario;
+  const set = (id, v) => {
+    const input = $('#' + id);
+    if (input) input.value = String(v);
+    const label = $('#' + id + '-val');
+    if (label) label.textContent = String(v);
+  };
+  set('w-cert', s.wCert); set('w-evt', s.wEvt); set('w-adv', s.wAdv);
+  set('desert-mi', s.desertMi); set('cap-mi', s.capMi);
+  updateDesertLabel();
+}
+
+function scenarioIsDefault() {
+  return Object.keys(SCENARIO_DEFAULTS).every(k => state.scenario[k] === SCENARIO_DEFAULTS[k]);
+}
+
+let candidatesLiveTimer = null;
+function announceCandidatesSummary(text) {
+  const live = $('#candidates-live');
+  if (!live) return;
+  clearTimeout(candidatesLiveTimer);
+  candidatesLiveTimer = setTimeout(() => { live.textContent = text; }, 500);
+}
+
+// The static tools-menu label must track the scenario threshold
+function updateDesertLabel() {
+  const btn = $('#tool-evt-deserts');
+  if (btn) btn.textContent = `EVT deserts (>${state.scenario.desertMi} mi)`;
+}
+
+function renderCandidates() {
+  const container = $('#candidates-content');
+  if (!container) return;
+  const candidates = computeCandidates();
+
+  // Column sort (rank order is always score-descending; sorting re-orders rows only)
+  const sortFns = {
+    rank: (a, b) => a.rank - b.rank,
+    name: (a, b) => a.h.displayName.localeCompare(b.h.displayName),
+    state: (a, b) => a.h.state.localeCompare(b.h.state) || a.rank - b.rank,
+    cert: (a, b) => (a.h.strokeCertificationType || 'ZZ').localeCompare(b.h.strokeCertificationType || 'ZZ') || a.rank - b.rank,
+    evtMi: (a, b) => a.evtMi - b.evtMi,
+    advMi: (a, b) => a.advMi - b.advMi,
+    score: (a, b) => a.score - b.score,
+  };
+  const { col, asc } = state.candidateSort;
+  const fn = sortFns[col] || sortFns.score;
+  const rows = [...candidates].sort((a, b) => asc ? fn(a, b) : fn(b, a));
+
+  const summary = $('#candidates-summary');
+  if (summary) {
+    const deserts = candidates.filter(c => c.evtMi > state.scenario.desertMi).length;
+    const text =
+      `${candidates.length} candidate sites (non-EVT, non-CSC/TSC) · ${deserts} beyond ${state.scenario.desertMi} mi of 24/7 EVT` +
+      (scenarioIsDefault() ? ' · default scenario' : ' · custom scenario');
+    summary.textContent = text; // visible summary updates immediately
+    announceCandidatesSummary(text); // screen-reader announcement debounced (slider drags fire dozens of updates)
+  }
+
+  clear(container);
+  const wrap = el('div', { class: 'matrix-wrap' });
+  const table = el('table', { class: 'matrix-table candidates-table' });
+  const thead = el('thead');
+  const headerRow = el('tr');
+  const cols = [
+    ['rank', '#'], ['name', 'Hospital'], ['state', 'ST'], ['cert', 'Cert'],
+    ['evtMi', 'EVT mi'], ['advMi', 'CSC/TSC mi'], ['score', 'Score'], [null, ''],
+  ];
+  for (const [key, label] of cols) {
+    const th = el('th');
+    if (key) {
+      const active = col === key;
+      th.setAttribute('aria-sort', active ? (asc ? 'ascending' : 'descending') : 'none');
+      // Native <button> inside the th: keyboard-activatable, announced as
+      // interactive by screen readers, and refocusable after the re-render.
+      const btn = el('button', {
+        class: 'th-sort-btn', type: 'button',
+        text: label + (active ? (asc ? ' ▲' : ' ▼') : ''),
+        'aria-label': `Sort by ${label}`,
+        dataset: { sortKey: key },
+      });
+      btn.addEventListener('click', () => {
+        if (state.candidateSort.col === key) state.candidateSort.asc = !state.candidateSort.asc;
+        else state.candidateSort = { col: key, asc: key === 'name' || key === 'state' || key === 'cert' || key === 'rank' };
+        renderCandidates();
+        // The table was rebuilt — put keyboard focus back on this column's button
+        const fresh = document.querySelector(`#candidates-content .th-sort-btn[data-sort-key="${key}"]`);
+        if (fresh) fresh.focus();
+      });
+      th.appendChild(btn);
+    } else {
+      th.textContent = label;
+    }
+    headerRow.appendChild(th);
+  }
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  const tbody = el('tbody');
+  for (const c of rows) {
+    const { h } = c;
+    const tr = el('tr');
+    tr.appendChild(el('td', { class: 'num', text: String(c.rank) }));
+    tr.appendChild(el('td', { text: h.displayName }));
+    tr.appendChild(el('td', { text: h.state }));
+    tr.appendChild(el('td', { text: h.strokeCertificationType || '—' }));
+    tr.appendChild(el('td', { class: 'num', text: formatMiles(c.evtMi) }));
+    tr.appendChild(el('td', { class: 'num', text: formatMiles(c.advMi) }));
+    const scoreTd = el('td', { class: 'num score-cell' });
+    const bar = el('span', { class: 'score-bar', 'aria-hidden': 'true' });
+    bar.appendChild(el('span', { class: 'score-bar-fill', style: { width: `${c.score.toFixed(0)}%` } }));
+    scoreTd.appendChild(bar);
+    scoreTd.appendChild(el('span', { text: c.score.toFixed(0) }));
+    tr.appendChild(scoreTd);
+
+    const actionTd = el('td');
+    const whyBtn = el('button', {
+      class: 'btn-inline-link', type: 'button', text: 'Why?',
+      'aria-expanded': 'false', 'aria-label': `Why ${h.displayName} ranks #${c.rank}`,
+    });
+    actionTd.appendChild(whyBtn);
+    tr.appendChild(actionTd);
+    tbody.appendChild(tr);
+
+    const whyTr = el('tr', { class: 'why-row', hidden: true });
+    const whyTd = el('td', { colSpan: cols.length });
+    const ul = el('ul', { class: 'why-list' });
+    for (const r of candidateReasons(c)) ul.appendChild(el('li', { text: r }));
+    whyTd.appendChild(ul);
+    const showBtn = el('button', {
+      class: 'btn btn-secondary btn-small', type: 'button', text: 'Show on map',
+      onclick: () => {
+        closeModal('candidates-modal');
+        panToHospital(h.cmsId);
+        showHospitalDetail(h);
+        // Candidates are ranked from the full dataset; active filters may hide this marker
+        if (!state.filtered.some(x => x.cmsId === h.cmsId)) {
+          toast(`${h.displayName} is hidden by the current filters — showing details without a marker`, 'warning', 4500);
+        }
+      },
+    });
+    whyTd.appendChild(showBtn);
+    whyTr.appendChild(whyTd);
+    tbody.appendChild(whyTr);
+
+    whyBtn.addEventListener('click', () => {
+      const open = !whyTr.hidden;
+      whyTr.hidden = open;
+      whyBtn.setAttribute('aria-expanded', String(!open));
+    });
+  }
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  container.appendChild(wrap);
+}
+
+function exportCandidatesCSV() {
+  const candidates = computeCandidates();
+  const s = state.scenario;
+  const rows = [[
+    'Rank', 'Hospital', 'City', 'State', 'Certification', 'Certifying Body',
+    'Nearest EVT', 'EVT mi', 'EVT ground min', 'EVT air min',
+    'Nearest CSC/TSC', 'CSC/TSC mi', 'Air-only', 'Cert pts', 'EVT-dist pts', 'CSC/TSC-dist pts', 'Score',
+  ]];
+  for (const c of candidates) {
+    const { h, d } = c;
+    rows.push([
+      c.rank, h.displayName, h.city || '', h.state,
+      h.strokeCertificationType || 'None', h.certifyingBody || '',
+      d.nearestEVTName || '', c.evtMi.toFixed(1),
+      h.airOnly ? 'N/A' : groundMinutes(c.evtMi), airMinutes(c.evtMi),
+      d.nearestAdvancedName || '', c.advMi.toFixed(1),
+      h.airOnly ? 'Yes' : 'No',
+      c.pts.cert.toFixed(1), c.pts.evt.toFixed(1), c.pts.adv.toFixed(1), c.score.toFixed(1),
+    ]);
+  }
+  const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
+  downloadBlob(csv, `expansion_candidates_w${s.wCert}-${s.wEvt}-${s.wAdv}_cap${s.capMi}_${dateStr()}.csv`, 'text/csv');
+  toast(`${candidates.length} candidates exported (weights ${s.wCert}/${s.wEvt}/${s.wAdv})`, 'success');
+}
+
+function resetScenario() {
+  state.scenario = { ...SCENARIO_DEFAULTS };
+  syncScenarioControls();
+  renderCandidates();
+  saveStateToURL();
+  toast('Scenario reset to defaults');
+}
+
+function bindScenarioControls() {
+  const bind = (id, key) => {
+    const input = $('#' + id);
+    if (!input) return;
+    input.addEventListener('input', () => {
+      state.scenario[key] = parseInt(input.value, 10) || 0;
+      const label = $('#' + id + '-val');
+      if (label) label.textContent = input.value;
+      renderCandidates();
+      if (key === 'desertMi') {
+        updateDesertLabel();
+        renderGapMetrics(state.filtered); // dashboard "EVT desert" metric tracks the threshold
+      }
+      scheduleURLSave();
+    });
+  };
+  bind('w-cert', 'wCert'); bind('w-evt', 'wEvt'); bind('w-adv', 'wAdv');
+  bind('desert-mi', 'desertMi'); bind('cap-mi', 'capMi');
+  const resetBtn = $('#scenario-reset');
+  if (resetBtn) resetBtn.addEventListener('click', resetScenario);
+  const exportBtn = $('#candidates-export-csv');
+  if (exportBtn) exportBtn.addEventListener('click', exportCandidatesCSV);
+}
+
+// ------------------------------------------------------------------
+// Data QA panel (computed live from the loaded dataset)
+// ------------------------------------------------------------------
+function buildDataQA() {
+  const container = $('#data-qa-body');
+  if (!container) return;
+  clear(container);
+  const hs = state.hospitals;
+  const total = hs.length;
+
+  // Provenance
+  const prov = el('div', { class: 'cert-card neutral' });
+  prov.appendChild(el('h4', { text: 'Provenance' }));
+  const provList = el('div', { class: 'qa-kv' });
+  const kvRow = (label, val) => {
+    const row = el('div', { class: 'metric-row' });
+    row.appendChild(el('span', { class: 'label', text: label }));
+    row.appendChild(el('span', { class: 'value', text: val }));
+    provList.appendChild(row);
+  };
+  kvRow('Data version', state.meta?.version || '—');
+  kvRow('Last verified', state.meta?.verified || '—');
+  kvRow('Schema', state.meta?.schema || '—');
+  kvRow('Records', String(total));
+  prov.appendChild(provList);
+  container.appendChild(prov);
+
+  // Completeness
+  const comp = el('div', { class: 'cert-card neutral' });
+  comp.appendChild(el('h4', { text: 'Field completeness' }));
+  const compTable = el('table', { class: 'qa-table' });
+  const headTr = el('tr');
+  for (const t of ['Field', 'Populated', 'Missing']) headTr.appendChild(el('th', { text: t }));
+  compTable.appendChild(headTr);
+  const fields = [
+    ['strokeCertificationType', 'National certification tier'],
+    ['certifyingBody', 'Certifying body'],
+    ['certificationDetails', 'Certification details'],
+    ['latitude', 'Coordinates'],
+    ['cmsId', 'CMS ID'],
+  ];
+  for (const [f, label] of fields) {
+    const missing = hs.filter(h => h[f] == null || h[f] === '').length;
+    const tr = el('tr');
+    tr.appendChild(el('td', { text: label }));
+    tr.appendChild(el('td', { class: 'num', text: String(total - missing) }));
+    const missTd = el('td', { class: missing > 0 ? 'num qa-warn' : 'num', text: String(missing) });
+    tr.appendChild(missTd);
+    compTable.appendChild(tr);
+  }
+  comp.appendChild(compTable);
+  comp.appendChild(el('p', { style: { marginTop: '6px', fontSize: '11px' }, text:
+    'Missing certification tier means no national certification is on record for that hospital — it is a real data point, not a data error. hasELVO is recorded for all hospitals (true/false).' }));
+  container.appendChild(comp);
+
+  // Integrity checks (mirrors METHODOLOGY.md §7 / scripts/verify-data.py)
+  const integ = el('div', { class: 'cert-card neutral' });
+  integ.appendChild(el('h4', { text: 'Integrity checks (run live in your browser)' }));
+  const ids = new Set(hs.map(h => h.cmsId));
+  const checks = [
+    ['Every CMS ID unique', ids.size === total, `${ids.size}/${total}`],
+    ['Every record geocoded', hs.every(h => Number.isFinite(h.latitude) && Number.isFinite(h.longitude)), ''],
+    ['Every CSC/TSC has 24/7 EVT', hs.filter(h => h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC').every(h => h.hasELVO === true), ''],
+    ['Every certified hospital has a certifying body', hs.filter(h => h.strokeCertificationType).every(h => h.certifyingBody), ''],
+    ['Every hospital has a populated city', hs.every(h => h.city), ''],
+  ];
+  for (const [label, pass, detail] of checks) {
+    const row = el('div', { class: 'metric-row' });
+    row.appendChild(el('span', { class: 'label', text: label + (detail ? ` (${detail})` : '') }));
+    row.appendChild(el('span', { class: pass ? 'value qa-pass' : 'value qa-fail', text: pass ? '✓ pass' : '✗ FAIL' }));
+    integ.appendChild(row);
+  }
+  container.appendChild(integ);
+
+  // Assumptions
+  const assume = el('div', { class: 'cert-card neutral' });
+  assume.appendChild(el('h4', { text: 'Model assumptions' }));
+  const ul = el('ul', { style: { paddingLeft: '16px', fontSize: '12px', lineHeight: '1.6' } });
+  for (const t of [
+    `Distances are great-circle (haversine); road distance approximated as haversine × ${ROAD_FACTOR}.`,
+    `Ground transfer: ${GROUND_MPH} mph blended + ${GROUND_OVERHEAD_MIN} min dispatch/load overhead.`,
+    `Air transfer: ${AIR_MPH} mph blended + ${AIR_OVERHEAD_MIN} min dispatch/takeoff/landing overhead.`,
+    'Expansion-candidate scores are planning heuristics computed in the browser from the fields above; they do not assess clinical operations, staffing, case volume, or telestroke contract status, and never modify the source dataset.',
+    'No population weighting: a coverage gap in a sparsely populated area affects fewer people than the same gap near a metro area.',
+  ]) ul.appendChild(el('li', { text: t }));
+  assume.appendChild(ul);
+  container.appendChild(assume);
+
+  // Sources
+  const src = el('div', { class: 'cert-card neutral' });
+  src.appendChild(el('h4', { text: `Primary sources (verified ${state.meta?.verified || '—'})` }));
+  const srcUl = el('ul', { style: { paddingLeft: '16px', fontSize: '12px', lineHeight: '1.6' } });
+  for (const s of (state.meta?.sources || [])) srcUl.appendChild(el('li', { text: s }));
+  src.appendChild(srcUl);
+  const links = el('p', { style: { marginTop: '8px', fontSize: '12px' } });
+  const mLink = el('a', { href: 'https://github.com/rkalani1/telestroke-expansion-map/blob/main/METHODOLOGY.md', target: '_blank', rel: 'noopener', text: 'Full methodology' });
+  links.appendChild(mLink);
+  links.appendChild(document.createTextNode(' · '));
+  const rLink = el('a', { href: 'https://github.com/rkalani1/telestroke-expansion-map', target: '_blank', rel: 'noopener', text: 'Source repository' });
+  links.appendChild(rLink);
+  src.appendChild(links);
+  if (state.meta?.coverage) {
+    src.appendChild(el('p', { style: { marginTop: '6px', fontSize: '12px', fontStyle: 'italic' }, text: state.meta.coverage }));
+  }
+  container.appendChild(src);
+}
+
+function openDataQA() {
+  if (state.toolsMenuOpen) toggleToolsMenu();
+  buildDataQA();
+  openModal('data-qa-modal');
+}
+
+// ------------------------------------------------------------------
 // Executive summary
 // ------------------------------------------------------------------
 function generateExecutiveSummary() {
-  toggleToolsMenu();
+  if (state.toolsMenuOpen) toggleToolsMenu();
   const total = state.hospitals.length;
   const by = {
     CSC: state.hospitals.filter(h => h.strokeCertificationType === 'CSC').length,
@@ -1488,7 +1933,8 @@ function generateExecutiveSummary() {
   const noCert = total - certified;
   const zero = state.hospitals.filter(h => !h.strokeCertificationType).length;
   const evt = state.hospitals.filter(h => h.hasELVO).length;
-  const deserts = state.hospitals.filter(h => (state.distances[h.cmsId]?.nearestEVTDistance || 0) > 100).length;
+  const desertMi = state.scenario.desertMi;
+  const deserts = state.hospitals.filter(h => (state.distances[h.cmsId]?.nearestEVTDistance || 0) > desertMi).length;
   const ground60 = state.hospitals.filter(h => {
     const d = state.distances[h.cmsId]?.nearestAdvancedDistance;
     return !h.airOnly && Number.isFinite(d) && d > 0 && groundMinutes(d) <= 60;
@@ -1506,6 +1952,18 @@ function generateExecutiveSummary() {
       evt: hs.filter(h => h.hasELVO).length,
     };
   };
+
+  // Active-view context (filters) — only included when a filter is applied
+  const activeFilterParts = [];
+  const pillsOn = Object.entries(state.activeFilters).filter(([, v]) => v).map(([k]) => k);
+  if (pillsOn.length) activeFilterParts.push(`tiers: ${pillsOn.join('/')}`);
+  if (state.stateFilter !== 'ALL') activeFilterParts.push(`state: ${state.stateFilter}`);
+  if (state.evtDistMin > 0) activeFilterParts.push(`≥${state.evtDistMin} mi from EVT`);
+  if (state.searchTerm) activeFilterParts.push(`search: "${state.searchTerm}"`);
+
+  // Top expansion candidates under the current scenario
+  const sc = state.scenario;
+  const topCandidates = computeCandidates().slice(0, 10);
 
   const lines = [
     'REGIONAL HOSPITAL STROKE CAPABILITIES — EXECUTIVE SUMMARY',
@@ -1528,7 +1986,19 @@ function generateExecutiveSummary() {
     'TRANSPORT & ACCESS',
     `  Hospitals within 60-min ground transfer of CSC/TSC: ${ground60} (${(ground60/total*100).toFixed(1)}%)`,
     `  Hospitals within 60-min air transfer of CSC/TSC:    ${air60} (${(air60/total*100).toFixed(1)}%)`,
-    `  EVT deserts (>100 mi to nearest 24/7 thrombectomy): ${deserts} (${(deserts/total*100).toFixed(1)}%)`,
+    `  EVT deserts (>${desertMi} mi to nearest 24/7 thrombectomy): ${deserts} (${(deserts/total*100).toFixed(1)}%)`,
+    ...(activeFilterParts.length ? [
+      '',
+      'ACTIVE VIEW',
+      `  Filters: ${activeFilterParts.join('  ·  ')}`,
+      `  Hospitals shown: ${state.filtered.length} of ${total}`,
+    ] : []),
+    '',
+    `TOP EXPANSION CANDIDATES (planning heuristic — weights cert ${sc.wCert} / EVT-dist ${sc.wEvt} / CSC-TSC-dist ${sc.wAdv}, cap ${sc.capMi} mi)`,
+    ...topCandidates.map(c =>
+      `  ${String(c.rank).padStart(2)}. ${c.h.displayName} (${c.h.state})  ·  ${c.h.strokeCertificationType || 'no cert'}  ·  ${formatMiles(c.evtMi)} mi to EVT  ·  score ${c.score.toFixed(0)}`),
+    `  Scores rank need signals from the public dataset (certification tier on record,`,
+    `  distance to EVT and CSC/TSC). They do not assess clinical operations or staffing.`,
     '',
     'BY STATE',
     ...['WA','AK','ID','MT','WY'].map(s => {
@@ -1540,7 +2010,7 @@ function generateExecutiveSummary() {
     `  Distances: great-circle (haversine). Road-distance approximated as haversine × ${ROAD_FACTOR}.`,
     `  Ground transfer time: road distance ÷ ${GROUND_MPH} mph + ${GROUND_OVERHEAD_MIN} min dispatch/load overhead.`,
     `  Air transfer time: great-circle ÷ ${AIR_MPH} mph + ${AIR_OVERHEAD_MIN} min dispatch/takeoff/landing overhead.`,
-    `  These are order-of-magnitude estimates for planning only — not a substitute for live dispatch or OHSU/LifeFlight protocols.`,
+    `  These are order-of-magnitude estimates for planning only — not a substitute for live dispatch or regional air-medical protocols.`,
     '',
     'DATA SOURCES',
     ...(state.meta?.sources || []).map(s => `  • ${s}`),
@@ -1561,25 +2031,46 @@ function downloadExecutiveSummary() {
   downloadBlob($('#executive-summary-content').textContent, `stroke_executive_summary_${dateStr()}.txt`, 'text/plain');
   toast('Summary downloaded', 'success');
 }
+function printExecutiveSummary() {
+  // Print stylesheet swaps from map-print to a one-page summary layout.
+  // Cleanup only on afterprint — a timer could strip the class while the
+  // dialog is still open on browsers where window.print() returns immediately
+  // (iOS Safari). If afterprint never fires the class is inert on screen.
+  document.body.classList.add('printing-exec');
+  const cleanup = () => {
+    document.body.classList.remove('printing-exec');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  window.print();
+}
 
 // ------------------------------------------------------------------
 // Exports
 // ------------------------------------------------------------------
 function exportHospitalsCSV() {
   toggleToolsMenu();
-  const rows = [['Name', 'Address', 'City', 'State', 'ZIP', 'Latitude', 'Longitude', 'Cert', 'Certifying Body', 'Certification Details', 'EVT (24/7)', 'CMS ID', 'Sources']];
-  for (const h of state.hospitals) {
+  // Export respects the active filters — what you see is what you get
+  const src = state.filtered;
+  const isSubset = src.length < state.hospitals.length;
+  if (src.length === 0) { toast('No hospitals match the current filters — nothing to export', 'warning'); return; }
+  const rows = [['Name', 'Address', 'City', 'State', 'ZIP', 'Latitude', 'Longitude', 'Cert', 'Certifying Body', 'Certification Details', 'EVT (24/7)', 'Nearest EVT (mi)', 'Nearest CSC/TSC (mi)', 'CMS ID', 'Sources']];
+  for (const h of src) {
+    const d = state.distances[h.cmsId] || {};
     rows.push([
       h.displayName, titleCase(h.address), h.city || '', h.state, h.zip || '',
       h.latitude, h.longitude,
       h.strokeCertificationType || 'None', h.certifyingBody || '', h.certificationDetails || '',
-      h.hasELVO ? 'Yes' : 'No', h.cmsId,
+      h.hasELVO ? 'Yes' : 'No',
+      Number.isFinite(d.nearestEVTDistance) ? d.nearestEVTDistance.toFixed(1) : '',
+      Number.isFinite(d.nearestAdvancedDistance) ? d.nearestAdvancedDistance.toFixed(1) : '',
+      h.cmsId,
       (h.dataSources || []).join('; '),
     ]);
   }
   const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
-  downloadBlob(csv, `stroke_hospitals_${dateStr()}.csv`, 'text/csv');
-  toast('Hospital data exported', 'success');
+  downloadBlob(csv, `stroke_hospitals${isSubset ? '_filtered' : ''}_${dateStr()}.csv`, 'text/csv');
+  toast(`${src.length} of ${state.hospitals.length} hospitals exported${isSubset ? ' (filtered view)' : ''}`, 'success');
 }
 
 async function exportMapPNG() {
@@ -1659,7 +2150,16 @@ function togglePalette() {
 // ------------------------------------------------------------------
 // URL state
 // ------------------------------------------------------------------
+// Debounced wrapper — Safari throttles history.replaceState, and slider
+// drags / search keystrokes can fire dozens of state changes per second.
+let urlSaveTimer = null;
+function scheduleURLSave() {
+  clearTimeout(urlSaveTimer);
+  urlSaveTimer = setTimeout(saveStateToURL, 300);
+}
+
 function saveStateToURL() {
+  if (!state.map) return;
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(state.activeFilters)) if (v) params.append(k.toLowerCase(), '1');
   if (state.stateFilter !== 'ALL') params.append('state', state.stateFilter);
@@ -1671,12 +2171,17 @@ function saveStateToURL() {
   params.append('z', state.map.getZoom());
   if (state.darkUI) params.append('dark', '1');
   if (state.cbPalette) params.append('cb', '1');
+  // Scenario parameters (only when they differ from defaults)
+  const scenarioKeys = [['wCert', 'wc'], ['wEvt', 'we'], ['wAdv', 'wa'], ['desertMi', 'dm'], ['capMi', 'cap']];
+  for (const [k, short] of scenarioKeys) {
+    if (state.scenario[k] !== SCENARIO_DEFAULTS[k]) params.append(short, String(state.scenario[k]));
+  }
   history.replaceState(null, '', '?' + params.toString());
 }
 function loadStateFromURL() {
   const p = new URLSearchParams(window.location.search);
   if (!p.toString()) return;
-  for (const k of ['CSC','TSC','PSC','ASR','EVT','UW']) {
+  for (const k of ['CSC','TSC','PSC','ASR','EVT','NONE']) {
     if (p.has(k.toLowerCase())) {
       state.activeFilters[k] = true;
       const pill = document.querySelector(`.pill[data-filter="${k}"]`);
@@ -1688,6 +2193,14 @@ function loadStateFromURL() {
   if (p.has('q')) { state.searchTerm = p.get('q'); $('#search-input').value = state.searchTerm; }
   if (p.has('dark')) { state.darkUI = true; document.documentElement.classList.add('dark'); }
   if (p.has('cb')) { state.cbPalette = true; document.documentElement.classList.add('cb'); }
+  for (const [k, short] of [['wCert', 'wc'], ['wEvt', 'we'], ['wAdv', 'wa'], ['desertMi', 'dm'], ['capMi', 'cap']]) {
+    if (p.has(short)) {
+      const v = parseInt(p.get(short), 10);
+      const [lo, hi] = SCENARIO_RANGES[k];
+      if (Number.isFinite(v)) state.scenario[k] = Math.min(hi, Math.max(lo, v));
+    }
+  }
+  syncScenarioControls();
   if (p.has('lat') && p.has('lng') && p.has('z')) {
     state.map.setView([parseFloat(p.get('lat')), parseFloat(p.get('lng'))], parseInt(p.get('z'), 10));
   }
@@ -1787,6 +2300,8 @@ function bindEvents() {
   $('#tools-fab').addEventListener('click', toggleToolsMenu);
 
   // Tool buttons
+    $('#tool-candidates').addEventListener('click', openExpansionCandidates);
+    $('#tool-data-qa').addEventListener('click', openDataQA);
     $('#tool-referral').addEventListener('click', toggleReferralPathways);
     $('#tool-distance-map').addEventListener('click', showDistanceMap);
     $('#tool-evt-deserts').addEventListener('click', showEVTDeserts);
@@ -1828,6 +2343,10 @@ function bindEvents() {
   $('#matrix-export-csv').addEventListener('click', exportDistanceMatrixCSV);
   $('#exec-copy').addEventListener('click', copyExecutiveSummary);
   $('#exec-download').addEventListener('click', downloadExecutiveSummary);
+  $('#exec-print').addEventListener('click', printExecutiveSummary);
+
+  // Scenario controls in the candidates modal
+  bindScenarioControls();
 
   // Keyboard shortcuts (when focus is NOT in an input)
   document.addEventListener('keydown', (e) => {
@@ -1843,16 +2362,14 @@ function bindEvents() {
     if (e.key === '/' || (e.ctrlKey && e.key === 'f')) { e.preventDefault(); $('#search-input').focus(); }
     if (e.key === 'r' || e.key === 'R') resetAll();
     if (e.key === 'd' || e.key === 'D') toggleDarkUI();
+    if (e.key === 'e' || e.key === 'E') openExpansionCandidates();
+    if (e.key === 'q' || e.key === 'Q') openDataQA();
     if (e.key === '?') openModal('cert-info-modal');
   });
 
   // Map moveend -> update URL
-  let urlTimer = null;
   if (state.map) {
-    state.map.on('moveend zoomend', () => {
-      clearTimeout(urlTimer);
-      urlTimer = setTimeout(saveStateToURL, 400);
-    });
+    state.map.on('moveend zoomend', scheduleURLSave);
   }
 }
 
@@ -1921,6 +2438,7 @@ async function boot() {
   try {
     await loadData();
     initMap();
+    buildMarkerCache();
     bindEvents();
     buildCertInfo();
     loadStateFromURL();
