@@ -4,7 +4,14 @@ All notable changes to the Regional Facility Stroke Capabilities demo.
 
 ## [2.3.0] - 2026-07-03
 
-Planning-product v1 pass. Dataset unchanged (2026.05.21.3).
+Planning-product v1 pass + dataset currency re-verification (data 2026.05.21.3 → 2026.07.03.1).
+
+**Data refresh (2026.07.03.1, all changes two-source verified):** PeaceHealth Peace Island Medical Center
+gained a Washington State Level III Stroke Center designation (announced 2026-06-08) → ASR; added three
+Idaho TSE Level III hospitals missing from prior editions (Cassia Regional Burley, Minidoka Memorial
+Rupert, Teton Valley Driggs) → 135 records; corrected three misassigned CMS CCNs (EIRMC, St Luke's Magic
+Valley, St Luke's McCall) against the live CMS API; filled verified certification details for Providence
+Alaska (DNV CSC, 2025-03-06) and St Luke's Magic Valley (Idaho TSE Level II).
 
 - **Expansion Candidates view** (`E`): ranks non-EVT, non-CSC/TSC hospitals by a transparent, user-adjustable planning heuristic (certification gap · EVT distance · CSC/TSC distance · air-only bonus), with sortable columns, per-site "Why?" score breakdowns, nearest-center names, ground/air estimates, and a scenario-stamped CSV export.
 - **Scenario mode**: weight/threshold sliders re-rank candidates live; settings are display-layer only (source data never modified) and encoded in the shareable URL (`wc`/`we`/`wa`/`dm`/`cap`). The EVT-desert threshold now drives the deserts overlay, dashboard gap metric, and executive summary.

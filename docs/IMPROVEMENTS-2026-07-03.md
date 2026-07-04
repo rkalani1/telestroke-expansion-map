@@ -133,3 +133,22 @@ in the browser:
   by the app; kept for history, could be archived.
 - Candidate table could offer per-state grouping and a map-linked hover.
 - PNG export still loads html2canvas from a CDN at click time.
+
+## Data currency sweep (2026-07-03, pre-deploy)
+
+46-agent verification workflow (6 sweep lenses + two-source adjudication). Applied
+(all two-source confirmed): Peace Island ASR (new June 2026 WA designation), 3 Idaho
+TSE Level III additions, 3 CMS CCN corrections, 2 certification-detail fills.
+last_verified → 2026-07-03; data_version → 2026.07.03.1.
+
+**Pending verification (NOT applied — adjudication incomplete or single-source; carry
+into next data pass):**
+- hasELVO doubts from WA DOH asterisk absence (single source, hospitals still advertise
+  EVT): PeaceHealth Southwest, Kadlec, MultiCare Deaconess, Providence St Peter.
+- Samaritan Moses Lake possible WA Level II (rejected on adjudication — likely column
+  ambiguity in DOH list; recheck).
+- East Adams Rural possibly dropped from WA ECS participating list.
+- Idaho Falls Community possible TSE III→II upgrade (registry shows II; needs 2nd source).
+- Cheyenne Regional JC recert detail (single source); Portneuf/Nampa TSE detail appends.
+- Possible additions outside current dataset: Swedish Ballard campus (WA Level III),
+  Intermountain St James Butte MT (PSC).

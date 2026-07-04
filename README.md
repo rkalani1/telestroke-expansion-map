@@ -4,7 +4,7 @@ Interactive map of stroke-center certifications across the WWAMI region (Washing
 
 **Live site:** https://rkalani1.github.io/telestroke-expansion-map/
 
-![Map screenshot](https://img.shields.io/badge/status-live-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Data](https://img.shields.io/badge/data-verified%20May%202026-informational)
+![Map screenshot](https://img.shields.io/badge/status-live-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Data](https://img.shields.io/badge/data-verified%20July%202026-informational)
 
 ---
 
@@ -33,8 +33,8 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 
 ## Data
 
-- **Coverage:** 132 hospitals across WA (88), AK (10), ID (24), MT (8), WY (2). Includes all verified national-stroke-certified hospitals in the five-state region.
-- **Last verified:** 2026-05-21
+- **Coverage:** 135 hospitals across WA (88), AK (10), ID (27), MT (8), WY (2). Includes all verified national-stroke-certified hospitals in the five-state region plus state-designated (WA ECS / Idaho TSE) facilities.
+- **Last verified:** 2026-07-03
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
 - **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
 

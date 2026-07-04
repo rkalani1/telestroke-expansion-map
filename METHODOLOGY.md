@@ -1,6 +1,6 @@
 # Methodology
 
-*Last updated: 2026-07-03 (app scoring layer) · data version 2026.05.21.3 (dataset unchanged, verified 2026-05-21)*
+*Last updated: 2026-07-03 · data version 2026.07.03.1 (verified 2026-07-03)*
 
 This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
 
@@ -15,7 +15,7 @@ The dataset covers acute-care hospitals in the WWAMI region (Washington, Alaska,
 
 This is **not** a complete census of every acute-care hospital in the five states. Montana and Wyoming in particular have many additional critical-access hospitals not currently in scope. The coverage model is focused on hospitals with known stroke capabilities.
 
-As of 2026-05-21, the dataset contains **132 hospitals**: WA 88, AK 10, ID 24, MT 8, WY 2.
+As of 2026-07-03, the dataset contains **135 hospitals**: WA 88, AK 10, ID 27, MT 8, WY 2.
 
 ## 2. Data sources
 
@@ -51,8 +51,21 @@ Effective 2025-08-01, DNV consolidated its stroke certification standards into a
 
 | Hospital | Change | Evidence |
 |----------|--------|----------|
+| **PeaceHealth Peace Island Medical Center** (Friday Harbor, WA) | New Washington State Level III Stroke Center designation (announced 2026-06-08) | WA DOH ECS list DOH 345-299 (May 2026 rev.); PeaceHealth announcement |
+| **Cassia Regional** (Burley), **Minidoka Memorial** (Rupert), **Teton Valley** (Driggs) | Added — Idaho TSE Level III Stroke Centers (registry updated 2026-06-10) missing from prior editions | Idaho TSE Facility Designations registry; hospital websites |
+| **EIRMC / St Luke's Magic Valley / St Luke's McCall** | CMS CCN corrections (130004→130018, 131312→130002, 131326→131312) — prior IDs misassigned | Live CMS Hospital General Information API (2026-07-03) |
 | **Providence Alaska Medical Center** | Upgraded from DNV PSC → DNV CSC (2025-03-06) | Providence press release, Mar 2025 |
 | **Kootenai Health** (Coeur d'Alene, ID) | Dataset corrected: only holds Idaho TSE Level II state designation, not national JC/DNV PSC | `kh.org/neurology/stroke/` |
+
+### 2026-07-03 currency re-verification
+
+The full dataset was re-verified on 2026-07-03: all 88 WA records diffed against the WA DOH ECS list
+(DOH 345-299, May 2026 revision), all Idaho records diffed against the Idaho TSE Facility Designations
+registry (updated 2026-06-10), all certified AK/MT/WY records checked against certifier directories,
+hospital sites, and press coverage, and a five-state press sweep (2026-05-01 → 2026-07-03) found no
+additional certification changes. Every applied change required two independent public sources. Where
+independent sources conflicted on a capability flag, the value from the prior verified edition was
+retained pending confirmation.
 
 Verification methodology: each certification was cross-checked against at least two of (Joint Commission Quality Check, DNV directory, Idaho TSE registry, hospital website, hospital press release).
 
