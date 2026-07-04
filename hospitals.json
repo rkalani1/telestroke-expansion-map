@@ -1,8 +1,8 @@
 {
   "schema_version": "2.0.0",
-  "data_version": "2026.07.03.1",
-  "last_verified": "2026-07-03",
-  "generated_at": "2026-07-04T05:28:58.567516+00:00",
+  "data_version": "2026.07.04.1",
+  "last_verified": "2026-07-04",
+  "generated_at": "2026-07-04T09:02:57.355878+00:00",
   "primary_sources": [
     "The Joint Commission Quality Check (qualitycheck.org) — national CSC/TSC/PSC/ASR certifications",
     "DNV Healthcare Accredited Organizations Directory — national CSC/PSC+/PSC/ASR certifications",
@@ -891,13 +891,14 @@
       "dataSources": [
         "CMS (Nov 2024)",
         "DNV Healthcare Directory",
-        "MultiCare website"
+        "MultiCare website",
+        "WA DOH ECS list DOH 345-299 (May 2026 rev.) + hospital website review (2026-07-04)"
       ],
       "verified": true,
       "strokeCertificationType": "PSC",
       "certifyingBody": "DNV",
-      "certificationDetails": "DNV Primary Stroke Center (with mechanical thrombectomy capability)",
-      "hasELVO": true,
+      "certificationDetails": "DNV Primary Stroke Center and state Level II Stroke Center",
+      "hasELVO": false,
       "city": "Spokane"
     },
     {
@@ -1140,17 +1141,18 @@
       "longitude": -119.281807,
       "geocoded": true,
       "geocodeSource": "Nominatim/OpenStreetMap",
-      "hasELVO": true,
+      "hasELVO": false,
       "dataSources": [
         "CMS (Nov 2024)",
         "WA DOH (Oct 2024)",
         "Kadlec website",
-        "WA DOH ECS Facility List"
+        "WA DOH ECS Facility List",
+        "WA DOH ECS list DOH 345-299 (May 2026 rev.) + hospital website review (2026-07-04)"
       ],
       "verified": true,
       "strokeCertificationType": "PSC",
       "certifyingBody": "Joint Commission",
-      "certificationDetails": "Joint Commission Primary Stroke Center and state Level II Stroke Center; performs 24/7 mechanical thrombectomy (EVT/ELVO)",
+      "certificationDetails": "Joint Commission Primary Stroke Center and state Level II Stroke Center",
       "city": "Richland"
     },
     {
@@ -1648,14 +1650,15 @@
       "geocodeSource": "Nominatim/OpenStreetMap",
       "strokeCertificationType": "PSC",
       "certifyingBody": "DNV",
-      "certificationDetails": "DNV Primary Stroke Center and Washington State Level I Stroke Center; performs 24/7 mechanical thrombectomy (EVT/ELVO)",
+      "certificationDetails": "DNV Primary Stroke Center and Washington State Level I Stroke Center",
       "dataSources": [
         "CMS (Nov 2024)",
         "PeaceHealth website",
-        "WA DOH ECS Facility List"
+        "WA DOH ECS Facility List",
+        "WA DOH ECS list DOH 345-299 (May 2026 rev.) + hospital website review (2026-07-04)"
       ],
       "verified": true,
-      "hasELVO": true,
+      "hasELVO": false,
       "city": "Vancouver"
     },
     {
@@ -1905,13 +1908,14 @@
       "dataSources": [
         "CMS (Nov 2024)",
         "Providence website",
-        "WA DOH ECS Facility List"
+        "WA DOH ECS Facility List",
+        "WA DOH ECS list DOH 345-299 (May 2026 rev.) + hospital website review (2026-07-04)"
       ],
       "verified": true,
       "strokeCertificationType": "PSC",
       "certifyingBody": "Joint Commission",
-      "certificationDetails": "Joint Commission Primary Stroke Center and state Level II Stroke Center; re-established its 24/7 mechanical thrombectomy (EVT/ELVO) program in mid-2025",
-      "hasELVO": true,
+      "certificationDetails": "Joint Commission Primary Stroke Center and state Level II Stroke Center; mechanical thrombectomy program re-established spring 2025 with partial (non-24/7) neurointerventional coverage",
+      "hasELVO": false,
       "city": "Olympia"
     },
     {
@@ -2530,10 +2534,11 @@
       "latitude": 41.1404366,
       "longitude": -104.8161912,
       "dataSources": [
-        "CMS Hospital General Information (Nov 2024)"
+        "CMS Hospital General Information (Nov 2024)",
+        "Joint Commission Find Accredited Organizations directory + hospital press release (verified 2026-07-04)"
       ],
       "verified": true,
-      "certificationDetails": null
+      "certificationDetails": "Joint Commission Advanced Primary Stroke Center (recertified June 2025)"
     },
     {
       "name": "BANNER WYOMING MEDICAL CENTER",

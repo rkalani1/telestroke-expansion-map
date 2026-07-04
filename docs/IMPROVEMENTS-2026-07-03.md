@@ -152,3 +152,23 @@ into next data pass):**
 - Cheyenne Regional JC recert detail (single source); Portneuf/Nampa TSE detail appends.
 - Possible additions outside current dataset: Swedish Ballard campus (WA Level III),
   Intermountain St James Butte MT (PSC).
+
+## Pending-items resolution (2026-07-04)
+
+All nine pending items adjudicated (9 independent verifiers, two-source bar):
+
+**Applied:** 4 hasELVO corrections (PeaceHealth SW, Kadlec, Deaconess, Providence
+St Peter → false; DOH asterisk semantics + hospitals' own pages, both affirmative);
+Cheyenne JC recert detail. Data → 2026.07.04.1, verified 2026-07-04, EVT count 26→22.
+
+**Rejected / retained (watch list for next pass):**
+- Samaritan Moses Lake: DOH May 2026 list clearly shows Stroke Level II (new since
+  Oct 2024, coincides with new hospital opening 2026-03), but no second source yet.
+- East Adams Rural: absent from DOH May 2026 list but hospital site still claims
+  Level III; mid-conversion to Rural Emergency Hospital status — recheck after.
+- Idaho Falls Community: TSE registry shows Level II; hospital site still says III.
+- Swedish Ballard: CONFIRMED Level III on DOH list but has no distinct CMS CCN
+  (bills under Swedish First Hill 500027) — cannot be a dataset record; optionally
+  note in the 500027 record someday.
+- New single-source flag: ahd.com lists Cheyenne Regional as CCN 530014 vs dataset
+  530001 — needs a two-source CCN check next pass.

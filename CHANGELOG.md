@@ -2,6 +2,20 @@
 
 All notable changes to the Regional Facility Stroke Capabilities demo.
 
+## [2.3.1] - 2026-07-04
+
+Data 2026.07.04.1 — completed the two-source adjudication of items left pending by the 2026-07-03 sweep:
+
+- Corrected `hasELVO` to false for PeaceHealth Southwest, Kadlec Regional, MultiCare Deaconess, and
+  Providence St Peter: the WA DOH ECS list (May 2026 rev.) marks 24/7 ELVO capability with an explicit
+  asterisk that these hospitals lack, and each hospital's own current pages make no 24/7 thrombectomy
+  claim (Providence's own announcement documents St Peter's re-established program as partial-coverage).
+  EVT-capable count 26 → 22; certification details corrected to remove unsupported 24/7 claims.
+- Cheyenne Regional: certification detail verified and filled (JC Advanced PSC, recertified June 2025).
+- Deliberately NOT changed (registry vs hospital-site conflicts; retained pending second source):
+  Samaritan Moses Lake, East Adams Rural, Idaho Falls Community. Swedish Ballard cannot be added
+  (no distinct CMS CCN — bills under Swedish First Hill 500027).
+
 ## [2.3.0] - 2026-07-03
 
 Planning-product v1 pass + dataset currency re-verification (data 2026.05.21.3 → 2026.07.03.1).

@@ -1,6 +1,6 @@
 # Methodology
 
-*Last updated: 2026-07-03 · data version 2026.07.03.1 (verified 2026-07-03)*
+*Last updated: 2026-07-04 · data version 2026.07.04.1 (verified 2026-07-04)*
 
 This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
 
@@ -51,6 +51,8 @@ Effective 2025-08-01, DNV consolidated its stroke certification standards into a
 
 | Hospital | Change | Evidence |
 |----------|--------|----------|
+| **PeaceHealth Southwest, Kadlec, MultiCare Deaconess, Providence St Peter** (WA) | `hasELVO` corrected to false — no 24/7-ELVO asterisk on the WA DOH ECS list (May 2026 rev.) and each hospital's current pages make no 24/7 thrombectomy claim (St Peter's program re-established spring 2025 with explicitly partial coverage per Providence) | WA DOH 345-299 (May 2026); hospital/system websites; Providence blog 2025-04-09 |
+| **Cheyenne Regional Medical Center** (WY) | Certification detail verified: JC Advanced Primary Stroke Center recertified June 2025 | Joint Commission directory; hospital press release |
 | **PeaceHealth Peace Island Medical Center** (Friday Harbor, WA) | New Washington State Level III Stroke Center designation (announced 2026-06-08) | WA DOH ECS list DOH 345-299 (May 2026 rev.); PeaceHealth announcement |
 | **Cassia Regional** (Burley), **Minidoka Memorial** (Rupert), **Teton Valley** (Driggs) | Added — Idaho TSE Level III Stroke Centers (registry updated 2026-06-10) missing from prior editions | Idaho TSE Facility Designations registry; hospital websites |
 | **EIRMC / St Luke's Magic Valley / St Luke's McCall** | CMS CCN corrections (130004→130018, 131312→130002, 131326→131312) — prior IDs misassigned | Live CMS Hospital General Information API (2026-07-03) |
@@ -63,9 +65,12 @@ The full dataset was re-verified on 2026-07-03: all 88 WA records diffed against
 (DOH 345-299, May 2026 revision), all Idaho records diffed against the Idaho TSE Facility Designations
 registry (updated 2026-06-10), all certified AK/MT/WY records checked against certifier directories,
 hospital sites, and press coverage, and a five-state press sweep (2026-05-01 → 2026-07-03) found no
-additional certification changes. Every applied change required two independent public sources. Where
-independent sources conflicted on a capability flag, the value from the prior verified edition was
-retained pending confirmation.
+additional certification changes. Every applied change required two independent public sources. On 2026-07-04 the remaining open items
+were adjudicated: four WA `hasELVO` flags were corrected (see table), and three registry-vs-hospital-site
+conflicts (Samaritan Moses Lake possible WA Stroke Level II, East Adams possible ECS list removal,
+Idaho Falls Community possible TSE Level III→II upgrade) were deliberately retained at their prior
+verified values pending a second confirming source — state registries typically lead hospital-site
+updates, so these are re-check candidates for the next data pass.
 
 Verification methodology: each certification was cross-checked against at least two of (Joint Commission Quality Check, DNV directory, Idaho TSE registry, hospital website, hospital press release).
 
