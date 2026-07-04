@@ -22,7 +22,7 @@
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin="anonymous"></script>
-  <script defer src="app.js?v=2.2.1"></script>
+  <script defer src="app.js?v=2.3.0"></script>
 </head>
 <body>
   <a class="sr-skip" href="#map">Skip to map</a>
@@ -81,6 +81,9 @@
         <button class="pill" type="button" data-filter="EVT" aria-pressed="false">
           <span class="pill-dot" style="background:var(--c-evt)"></span>EVT
         </button>
+        <button class="pill" type="button" data-filter="NONE" aria-pressed="false" title="Hospitals with no national stroke certification">
+          <span class="pill-dot" style="background:var(--c-other)"></span>None
+        </button>
       </div>
       <div class="secondary-filters">
         <label class="visually-hidden" for="filter-state">Filter by state</label>
@@ -135,6 +138,7 @@
   <button id="tools-fab" class="tools-fab" type="button" aria-expanded="false" aria-controls="tools-menu" aria-label="Open tools menu" title="Tools &amp; analysis">⚙</button>
   <nav id="tools-menu" class="tools-menu" hidden aria-label="Analysis tools">
     <h4>Analysis</h4>
+    <button id="tool-candidates" class="tool-item" type="button"><strong>Expansion candidates (E)</strong></button>
     <button id="tool-referral" class="tool-item" type="button">Referral pathways</button>
     <button id="tool-distance-map" class="tool-item" type="button">CSC/TSC distance map</button>
     <button id="tool-evt-deserts" class="tool-item" type="button">EVT deserts (&gt;100 mi)</button>
@@ -145,7 +149,8 @@
     <h4>Reports &amp; exports</h4>
     <button id="tool-matrix" class="tool-item" type="button">Distance matrix</button>
     <button id="tool-exec-summary" class="tool-item" type="button">Executive summary</button>
-    <button id="tool-export-csv" class="tool-item" type="button">Export hospitals CSV</button>
+    <button id="tool-data-qa" class="tool-item" type="button">Data quality &amp; sources (Q)</button>
+    <button id="tool-export-csv" class="tool-item" type="button">Export filtered CSV</button>
     <button id="tool-export-png" class="tool-item" type="button">Export map as PNG</button>
     <button id="tool-share" class="tool-item" type="button">Share current view</button>
     <hr>
@@ -184,6 +189,70 @@
   </div>
 
 
+  <!-- Modal: Expansion candidates + scenario mode -->
+  <div id="candidates-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="candidates-title">
+    <div class="modal wide">
+      <div class="modal-header">
+        <h2 id="candidates-title">Expansion Candidates</h2>
+        <button class="icon-btn" type="button" data-close-modal="candidates-modal" aria-label="Close">×</button>
+      </div>
+      <p class="candidates-note">
+        Ranks non-EVT, non-CSC/TSC hospitals by a transparent planning heuristic computed in your browser
+        from the public dataset: certification tier on record, distance to 24/7 EVT, and distance to CSC/TSC.
+        Scores do not assess clinical operations, staffing, case volume, or telestroke contract status — and
+        adjusting the scenario never changes the source data.
+      </p>
+      <fieldset class="scenario-controls" aria-label="Scenario weights and thresholds">
+        <legend>Scenario mode</legend>
+        <div class="scenario-grid">
+          <div class="scenario-row">
+            <label for="w-cert">Certification-gap weight</label>
+            <input id="w-cert" type="range" min="0" max="100" step="5" value="40" />
+            <span class="scenario-val" id="w-cert-val" aria-hidden="true">40</span>
+          </div>
+          <div class="scenario-row">
+            <label for="w-evt">EVT-distance weight</label>
+            <input id="w-evt" type="range" min="0" max="100" step="5" value="40" />
+            <span class="scenario-val" id="w-evt-val" aria-hidden="true">40</span>
+          </div>
+          <div class="scenario-row">
+            <label for="w-adv">CSC/TSC-distance weight</label>
+            <input id="w-adv" type="range" min="0" max="100" step="5" value="20" />
+            <span class="scenario-val" id="w-adv-val" aria-hidden="true">20</span>
+          </div>
+          <div class="scenario-row">
+            <label for="desert-mi">EVT-desert threshold (mi)</label>
+            <input id="desert-mi" type="range" min="50" max="200" step="10" value="100" />
+            <span class="scenario-val" id="desert-mi-val" aria-hidden="true">100</span>
+          </div>
+          <div class="scenario-row">
+            <label for="cap-mi">Distance cap (mi)</label>
+            <input id="cap-mi" type="range" min="100" max="300" step="25" value="200" />
+            <span class="scenario-val" id="cap-mi-val" aria-hidden="true">200</span>
+          </div>
+        </div>
+        <div class="scenario-actions">
+          <button id="scenario-reset" class="btn btn-secondary" type="button">Reset scenario</button>
+          <button id="candidates-export-csv" class="btn btn-primary" type="button">Export candidates CSV</button>
+        </div>
+      </fieldset>
+      <div id="candidates-summary" class="candidates-summary"></div>
+      <div id="candidates-live" class="visually-hidden" aria-live="polite"></div>
+      <div id="candidates-content"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Data quality & sources -->
+  <div id="data-qa-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="data-qa-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="data-qa-title">Data Quality &amp; Sources</h2>
+        <button class="icon-btn" type="button" data-close-modal="data-qa-modal" aria-label="Close">×</button>
+      </div>
+      <div id="data-qa-body"></div>
+    </div>
+  </div>
+
   <!-- Modal: Hospital detail -->
   <div id="hospital-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="detail-title">
     <div class="modal">
@@ -202,20 +271,17 @@
         <h2 id="exec-title">Executive Summary</h2>
         <button class="icon-btn" type="button" data-close-modal="executive-summary-modal" aria-label="Close">×</button>
       </div>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
         <button id="exec-copy" class="btn btn-primary" type="button">Copy to clipboard</button>
         <button id="exec-download" class="btn btn-secondary" type="button">Download .txt</button>
+        <button id="exec-print" class="btn btn-secondary" type="button">Print one-pager</button>
       </div>
       <pre id="executive-summary-content" class="exec-summary"></pre>
     </div>
   </div>
 
   <footer style="margin-top: 40px; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb;">
-    <p>This is a synthetic public demo site for educational and reference purposes only. Not for clinical decision-making or real patient care.</p>
-  <p style="margin-top: 8px;">
-    <a href="https://www.washington.edu/online/terms/" target="_blank" rel="noopener noreferrer" style="color: #4f46e5; text-decoration: underline; margin-right: 15px;">University Website Terms</a>
-    <a href="https://www.washington.edu/online/privacy/" target="_blank" rel="noopener noreferrer" style="color: #4f46e5; text-decoration: underline;">University Online Privacy Policy</a>
-  </p>
+    <p>Public-reference planning tool built from public data sources (CMS, Joint Commission, DNV, state registries). Not for clinical decision-making or real patient care.</p>
   </footer>
 </body>
 </html>

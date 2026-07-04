@@ -1,6 +1,6 @@
 # Methodology
 
-*Last updated: 2026-05-21 · data version 2026.05.21.3*
+*Last updated: 2026-07-03 · data version 2026.07.03.1 (verified 2026-07-03)*
 
 This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
 
@@ -15,7 +15,7 @@ The dataset covers acute-care hospitals in the WWAMI region (Washington, Alaska,
 
 This is **not** a complete census of every acute-care hospital in the five states. Montana and Wyoming in particular have many additional critical-access hospitals not currently in scope. The coverage model is focused on hospitals with known stroke capabilities.
 
-As of 2026-05-21, the dataset contains **132 hospitals**: WA 88, AK 10, ID 24, MT 8, WY 2.
+As of 2026-07-03, the dataset contains **135 hospitals**: WA 88, AK 10, ID 27, MT 8, WY 2.
 
 ## 2. Data sources
 
@@ -51,8 +51,21 @@ Effective 2025-08-01, DNV consolidated its stroke certification standards into a
 
 | Hospital | Change | Evidence |
 |----------|--------|----------|
+| **PeaceHealth Peace Island Medical Center** (Friday Harbor, WA) | New Washington State Level III Stroke Center designation (announced 2026-06-08) | WA DOH ECS list DOH 345-299 (May 2026 rev.); PeaceHealth announcement |
+| **Cassia Regional** (Burley), **Minidoka Memorial** (Rupert), **Teton Valley** (Driggs) | Added — Idaho TSE Level III Stroke Centers (registry updated 2026-06-10) missing from prior editions | Idaho TSE Facility Designations registry; hospital websites |
+| **EIRMC / St Luke's Magic Valley / St Luke's McCall** | CMS CCN corrections (130004→130018, 131312→130002, 131326→131312) — prior IDs misassigned | Live CMS Hospital General Information API (2026-07-03) |
 | **Providence Alaska Medical Center** | Upgraded from DNV PSC → DNV CSC (2025-03-06) | Providence press release, Mar 2025 |
 | **Kootenai Health** (Coeur d'Alene, ID) | Dataset corrected: only holds Idaho TSE Level II state designation, not national JC/DNV PSC | `kh.org/neurology/stroke/` |
+
+### 2026-07-03 currency re-verification
+
+The full dataset was re-verified on 2026-07-03: all 88 WA records diffed against the WA DOH ECS list
+(DOH 345-299, May 2026 revision), all Idaho records diffed against the Idaho TSE Facility Designations
+registry (updated 2026-06-10), all certified AK/MT/WY records checked against certifier directories,
+hospital sites, and press coverage, and a five-state press sweep (2026-05-01 → 2026-07-03) found no
+additional certification changes. Every applied change required two independent public sources. Where
+independent sources conflicted on a capability flag, the value from the prior verified edition was
+retained pending confirmation.
 
 Verification methodology: each certification was cross-checked against at least two of (Joint Commission Quality Check, DNV directory, Idaho TSE registry, hospital website, hospital press release).
 
@@ -72,14 +85,37 @@ Assumptions:
 
 - **Road factor 1.25** converts great-circle to approximate road distance in varied western terrain. This is conservative for urban corridors and may underestimate mountain routes in MT/ID/WY.
 - **Ground speed 55 mph** is a blended rural/urban ambulance speed with lights; 8-minute overhead covers dispatch, onsite load, and hospital unload.
-- **Air speed 150 mph** is a blended helicopter (LifeFlight / Airlift NW) and fixed-wing speed; 25-minute overhead covers dispatch, preflight, takeoff, landing, and bedside handoff.
+- **Air speed 150 mph** is a blended rotor-wing and fixed-wing air-medical speed; 25-minute overhead covers dispatch, preflight, takeoff, landing, and bedside handoff.
 - **Best transport** is the min of both modes — real decisions depend on weather, asset availability, crew duty cycles, and patient stability.
 
 For the **door-to-puncture window**, the detail modal adds a ~30-minute **door-in-door-out (DIDO)** estimate to the transport time. AHA Get-With-The-Guidelines-Stroke target for transferred patients is ≤90 min door-to-puncture; ≤120 min is the "acceptable" stretch target.
 
 **These numbers are not a substitute for live dispatch.** They exist to inform network-planning decisions, not patient-care decisions.
 
-## 6. Data integrity
+## 6. Expansion-candidate scoring
+
+The **Expansion Candidates** view (press `E` in the app) ranks potential telestroke spoke sites. The score is computed entirely in the browser from fields already in `hospitals.json` — it adds no new claims about any hospital and never modifies the dataset.
+
+**Eligibility.** Hospitals that are EVT-capable (`hasELVO = true`) or hold CSC/TSC certification are hubs, not spoke candidates, and are excluded from the ranking.
+
+**Model.** Each eligible hospital gets a 0–100 score from three normalized signals under scenario weights `w`:
+
+```
+certGap = 1.0 if no certification · 0.65 if ASR · 0.35 if PSC
+evtGap  = min(miles_to_nearest_EVT,    cap) / cap
+advGap  = min(miles_to_nearest_CSCTSC, cap) / cap
+
+score = 100 × (w_cert·certGap + w_evt·evtGap + w_adv·advGap) / (w_cert + w_evt + w_adv)
+        + 8 if the record is flagged air-only          (clamped to 100)
+```
+
+Defaults: `w_cert = 40`, `w_evt = 40`, `w_adv = 20`, `cap = 200 mi`, EVT-desert threshold 100 mi. All five are adjustable in **scenario mode**; scenario settings are encoded in the URL (`wc`, `we`, `wa`, `dm`, `cap` query parameters) so a scenario can be shared as a link.
+
+**Rationale for the certification-gap ladder.** A hospital with no national certification has the largest documented gap between current state and telestroke-supported acute stroke care; ASR sites have foundational capability but depend on transfer and teleconsultation; PSC sites already deliver thrombolysis independently. The 1.0 / 0.65 / 0.35 spacing is a planning judgment, not a clinical measurement — which is exactly why it is user-adjustable.
+
+**What the score is not.** It does not assess clinical operations, staffing, stroke case volume, existing telestroke contracts, payer mix, or population served. It has **no population weighting** (see §8). It is a conversation-starter for network planning, not a site-selection verdict.
+
+## 7. Data integrity
 
 The `hospitals.json` file includes provenance metadata:
 
@@ -107,7 +143,7 @@ Each hospital record includes:
 - `hasELVO` (24/7 thrombectomy capability)
 - `dataSources[]`, `verified`
 
-Integrity checks enforced at build time:
+Integrity checks (run `python3 scripts/verify-data.py`, and shown live in the app's Data Quality panel — press `Q`):
 
 - Every CMS ID is unique (no duplicates).
 - Every hospital has valid `latitude`/`longitude`.
@@ -115,15 +151,16 @@ Integrity checks enforced at build time:
 - Every CSC and TSC has `hasELVO = true`.
 - Every certified hospital has a `certifyingBody`.
 
-## 7. Limitations
+## 8. Limitations
 
 - **Not a live feed.** Certifications change on 2-3 year cycles; we do periodic refresh, not real-time tracking.
 - **Scope-limited.** Does not include every acute-care hospital in the five states; see §1.
 - **Straight-line geometry.** No road-network routing, no real-time traffic, no weather-adjusted air transport.
 - **No population weighting.** EVT-desert analysis does not account for population density; a 100-mile gap in western MT affects far fewer people than a 100-mile gap in suburban WA.
 - **State designations vs. national.** Idaho TSE Level II and JC PSC are clinically similar but not legally equivalent; the app labels both as "PSC"-tier in certification type and notes the state designation in the `certifyingBody` / `certificationDetails` fields.
+- **Scoring is a heuristic.** The expansion-candidate score (§6) reflects only certification tier and distance geometry from the public dataset. Two hospitals with identical scores can differ enormously in feasibility.
 
-## 8. How to contribute
+## 9. How to contribute
 
 - **Data corrections:** open an issue with the hospital CMS ID, the proposed change, and the source URL.
 - **Code improvements:** open a PR. The app is pure static JS/CSS; no build step required.
