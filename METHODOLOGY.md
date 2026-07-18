@@ -1,6 +1,6 @@
 # Methodology
 
-*Last updated: 2026-07-04 · data version 2026.07.04.1 (verified 2026-07-04)*
+*Last updated: 2026-07-18 · data version 2026.07.18.1 (full dataset verified 2026-07-04; watch-list re-checked 2026-07-18)*
 
 This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
 
@@ -74,6 +74,19 @@ updates, so these are re-check candidates for the next data pass.
 
 Verification methodology: each certification was cross-checked against at least two of (Joint Commission Quality Check, DNV directory, Idaho TSE registry, hospital website, hospital press release).
 
+### 2026-07-18 watch-list re-check
+
+Targeted re-check of the items left open on 2026-07-04, plus a five-state press sweep
+(2026-07-04 → 2026-07-18) that found no new certification or EVT-capability changes.
+This was not a full-dataset re-verification, so `last_verified` remains 2026-07-04.
+
+| Item | Outcome |
+|------|---------|
+| **Cheyenne Regional Medical Center** CCN | **Corrected 530001 → 530014.** CMS Open Payments hospital registry, Medicare Care Compare, and the American Hospital Directory all list CRMC under CCN 530014; no source found for 530001. Two-source bar met → applied. |
+| **Samaritan (Moses Lake)** possible WA Stroke Level II | Still single-source (WA DOH ECS list, May 2026 rev.). Press coverage of the new hospital (opened 2026-03-07) does not mention a stroke designation. **OPEN — retained no-certification.** |
+| **East Adams Rural (Ritzville)** possible ECS removal | Rural Emergency Hospital conversion confirmed by regional press (approved ~2026-03); hospital site still claims WA Level III Stroke. DOH-list absence remains single-source for removal. **OPEN — retained ASR; re-check after REH transition settles.** |
+| **Idaho Falls Community** possible TSE Level III→II | Hospital site still says Level III; no second source for the registry's Level II. **OPEN — retained Level III.** |
+
 ## 5. Transport-time estimates
 
 Transport times shown in popups, detail modals, and exports are **order-of-magnitude planning estimates** using this model:
@@ -127,20 +140,20 @@ The `hospitals.json` file includes provenance metadata:
 ```json
 {
   "schema_version": "2.0.0",
-  "data_version": "2026.05.21.3",
-  "last_verified": "2026-05-21",
-  "generated_at": "2026-05-21T09:37:20.505663Z",
+  "data_version": "2026.07.18.1",
+  "last_verified": "2026-07-04",
+  "generated_at": "2026-07-18T08:31:48+00:00",
   "primary_sources": [ … ],
   "coverage_note": "…",
   "certification_definitions": { … },
   "certifying_bodies": { … },
-  "hospitals": [ … 132 records … ]
+  "hospitals": [ … 135 records … ]
 }
 ```
 
 Each hospital record includes:
 
-- `cmsId` (CMS Certification Number — unique across all 132)
+- `cmsId` (CMS Certification Number — unique across all 135)
 - `name`, `address`, `city`, `state`, `zip`
 - `latitude`, `longitude`, `geocoded`, `geocodeSource`
 - `strokeCertificationType` (CSC/TSC/PSC/ASR/null)

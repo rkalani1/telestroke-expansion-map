@@ -577,7 +577,11 @@ html.dark .cert-card p { color: var(--text-secondary); }
   pointer-events: auto; max-width: calc(100vw - 24px);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.provenance-bar a { color: #93c5fd; text-decoration: underline; cursor: pointer; }
+.provenance-bar a,
+.provenance-bar .provenance-link {
+  color: #93c5fd; text-decoration: underline; cursor: pointer;
+  background: none; border: none; font: inherit; padding: 0;
+}
 
 /* ---------- Toast ---------- */
 .toast-container {
@@ -682,7 +686,9 @@ html.dark .cert-card p { color: var(--text-secondary); }
   font-variant-numeric: tabular-nums;
 }
 .candidates-table th[aria-sort=ascending],
-.candidates-table th[aria-sort=descending] { background: #3730a3; } /* white text ≥ 8:1 in both themes */
+.candidates-table th[aria-sort=descending],
+.matrix-table th[aria-sort=ascending],
+.matrix-table th[aria-sort=descending] { background: #3730a3; } /* white text ≥ 8:1 in both themes */
 .th-sort-btn {
   background: none; border: none; color: inherit; font: inherit;
   font-weight: 600; cursor: pointer; padding: 0; width: 100%; text-align: left;

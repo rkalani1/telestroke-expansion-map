@@ -1,0 +1,44 @@
+# Regional Hospital Stroke Capabilities (WWAMI)
+
+Static, public-source reference map of hospital stroke-center certifications
+(CSC / TSC / PSC / ASR), state stroke designations, and 24/7 endovascular
+thrombectomy (EVT) capability across Washington, Alaska, Idaho, Montana, and
+Wyoming, with transparent distance/transport planning estimates and a
+user-adjustable expansion-planning heuristic.
+
+- Site: https://rkalani1.github.io/telestroke-expansion-map/
+- Source: https://github.com/rkalani1/telestroke-expansion-map
+
+## Data
+
+- /hospitals.json — the only dataset the app loads. Top-level metadata:
+  schema_version, data_version, last_verified, generated_at, primary_sources,
+  coverage_note, certification_definitions, certifying_bodies. One record per
+  hospital: cmsId (CMS CCN), address, city, state, zip, latitude, longitude,
+  strokeCertificationType (CSC/TSC/PSC/ASR/null), certifyingBody,
+  certificationDetails, hasELVO (24/7 thrombectomy), dataSources, verified.
+- Authoritative version and verification dates are the data_version and
+  last_verified fields inside hospitals.json. As of this file's last update:
+  data_version 2026.07.18.1; full dataset verified 2026-07-04; watch-list
+  re-checked 2026-07-18. Certification and EVT changes require two
+  independent public sources before they are applied.
+- Not a complete census of acute-care hospitals in the five states — see
+  METHODOLOGY.md §1 (scope) and §8 (limitations).
+
+## Methods
+
+- /METHODOLOGY.md — sources, certification nomenclature, transport-time model
+  (haversine × 1.25 road factor; 55 mph ground + 8 min overhead; 150 mph air
+  + 25 min overhead), expansion-scoring heuristic, integrity checks, limits.
+- /CHANGELOG.md — release and data history.
+- /COMPLIANCE.md — public-data boundary for this repository.
+
+## Scope
+
+Planning reference built from public sources (CMS, Joint Commission, DNV,
+state registries). Not for clinical decision-making, live transfer routing,
+or dispatch, and not an official state Department of Health product.
+Transport times are order-of-magnitude planning estimates, not operational
+dispatch times. Expansion scores are transparent heuristics computed in the
+browser; they make no claims about clinical operations, staffing, volume, or
+telestroke contract status.

@@ -2,6 +2,42 @@
 
 All notable changes to the Regional Facility Stroke Capabilities demo.
 
+## [2.4.0] - 2026-07-18
+
+Data 2026.07.18.1 + review pass (data accuracy, framing visibility, accessibility, machine-readability).
+
+- **Data:** corrected Cheyenne Regional Medical Center CMS CCN 530001 → 530014 — the single-source
+  flag raised 2026-07-04 is now multi-source confirmed (CMS Open Payments hospital registry, Medicare
+  Care Compare, American Hospital Directory; no source found for 530001). Re-checked the rest of the
+  2026-07-04 watch list and swept five-state press 2026-07-04 → 2026-07-18: no certification or EVT
+  changes found. Samaritan Moses Lake, East Adams Rural, and Idaho Falls Community conflicts remain
+  single-source → retained at prior verified values, documented OPEN in METHODOLOGY §4.
+  `last_verified` intentionally stays 2026-07-04 (date of the last full-dataset verification).
+- **Removed `facilities.json`:** the retired v2.2.0 synthetic seed (2026.05.27.synthetic) was still
+  being deployed at the site root even though the app has loaded verified `hospitals.json` since
+  2.2.1. Removing it prevents a machine consumer from ingesting synthetic records as real data.
+  Preserved in git history.
+- **Framing visibility:** the "not for clinical decision-making" statement lived only in a footer
+  that is invisible on screen (the absolutely-positioned map covers it). The same scope statement
+  now appears in the Data Quality panel (`Q`) and the methods modal (`?`).
+- **Accessibility:** distance-matrix sort headers are now native buttons with `aria-sort`
+  (keyboard-operable — same pattern the candidates table received in 2.3.0); global keyboard
+  shortcuts ignore Ctrl/Cmd/Alt combinations (browser Ctrl+R / Cmd+D no longer trigger app actions);
+  the sidebar hospital list exposes correct list/listitem semantics.
+- **Hardening:** referral-pathway, focused-path, and coverage tooltips are DOM-built instead of
+  HTML-string interpolation of dataset fields (closes the gap against the app's own no-raw-HTML
+  contract); malformed `lat`/`lng`/`z` URL parameters can no longer throw during boot; PNG export
+  aborts cleanly if the export library fails to load instead of erroring twice.
+- **Dashboard clarity:** the coverage-gaps metrics follow the active filters while the other
+  dashboard charts summarize the full dataset — the gaps section is now labeled "current view";
+  the provenance-bar methods link is a native button.
+- **Machine-readability (quiet):** canonical URL + `og:url`, schema.org `Dataset` JSON-LD, and a
+  plain-text `llms.txt` (purpose, scope, data files, verification dates, not-for-clinical-routing
+  boundary). No visible UI copy added.
+- **Docs:** METHODOLOGY gains the 2026-07-18 watch-list re-check (§4) and a current §7 metadata
+  example (was stale at 2026.05.21.3 / 132 records); cache-buster bumped to `app.js?v=2.4.0`
+  (2.3.1 had shipped still pointing at `?v=2.3.0`).
+
 ## [2.3.1] - 2026-07-04
 
 Data 2026.07.04.1 — completed the two-source adjudication of items left pending by the 2026-07-03 sweep:

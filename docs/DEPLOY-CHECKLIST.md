@@ -6,6 +6,8 @@ Run top to bottom before every public Pages deployment. "Done" means the **live 
 
 - [ ] `python3 scripts/verify-data.py` — all integrity checks pass
 - [ ] `node --check app.js` — syntax clean
+- [ ] If data changed: `data_version` bumped, CHANGELOG + METHODOLOGY updated, `llms.txt` version line refreshed
+- [ ] If app code changed: `app.js?v=` cache-buster in index.html bumped to the release version
 - [ ] Local smoke test (`python3 -m http.server 8000`):
   - [ ] App boots with no console errors; hospital count matches dataset
   - [ ] Filters: each tier pill, **None** pill, state dropdown, EVT-distance slider
