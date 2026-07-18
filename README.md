@@ -1,6 +1,6 @@
 # Regional Hospital Stroke Capabilities
 
-Interactive map of stroke-center certifications across the WWAMI region (Washington · Alaska · Idaho · Montana · Wyoming), built for regional hospital stroke capability mapping.
+Interactive map of stroke-center certifications across the WWAMI region (Washington · Alaska · Idaho · Montana · Wyoming), built for regional hospital stroke capability mapping. (The repository name, `telestroke-expansion-map`, reflects the planning use case; the product itself is a public-source capability reference.)
 
 **Live site:** https://rkalani1.github.io/telestroke-expansion-map/
 
@@ -34,7 +34,7 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 ## Data
 
 - **Coverage:** 135 hospitals across WA (88), AK (10), ID (27), MT (8), WY (2). Includes all verified national-stroke-certified hospitals in the five-state region plus state-designated (WA ECS / Idaho TSE) facilities.
-- **Last verified:** 2026-07-04
+- **Last verified:** 2026-07-04 (full dataset) · 2026-07-18 (watch-list re-check + press sweep; current data version 2026.07.18.1)
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
 - **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
 
@@ -102,6 +102,7 @@ index.html            Semantic shell
 app.css               All styles (tokens + components + responsive + print)
 app.js                Application logic (data load, map, filters, scoring, tools, exports)
 hospitals.json        Data + metadata (schema, sources, cert definitions)
+llms.txt              Plain-text site/dataset description for machine readers
 scripts/verify-data.py  Dataset integrity checks (no dependencies)
 METHODOLOGY.md        Data sourcing + certification standards + scoring model
 CHANGELOG.md          Release history
