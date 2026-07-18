@@ -8,7 +8,29 @@
   <meta property="og:title" content="Regional Hospital Stroke Capabilities" />
   <meta property="og:description" content="Interactive hospital stroke-certification and capability map for the WWAMI region." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://rkalani1.github.io/telestroke-expansion-map/" />
+  <link rel="canonical" href="https://rkalani1.github.io/telestroke-expansion-map/" />
   <title>Regional Hospital Stroke Capabilities — WA · AK · ID · MT · WY</title>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "Regional Hospital Stroke Capabilities (WWAMI)",
+    "description": "Public-source reference dataset of stroke-center certifications (CSC/TSC/PSC/ASR) and 24/7 endovascular thrombectomy capability for hospitals in Washington, Alaska, Idaho, Montana, and Wyoming, with transparent distance-based planning estimates. Planning reference only — not for clinical routing or live patient care.",
+    "url": "https://rkalani1.github.io/telestroke-expansion-map/",
+    "sameAs": "https://github.com/rkalani1/telestroke-expansion-map",
+    "license": "https://opensource.org/licenses/MIT",
+    "isAccessibleForFree": true,
+    "dateModified": "2026-07-18",
+    "spatialCoverage": "Washington, Alaska, Idaho, Montana, Wyoming (United States)",
+    "distribution": [{
+      "@type": "DataDownload",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://rkalani1.github.io/telestroke-expansion-map/hospitals.json"
+    }]
+  }
+  </script>
 
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%234f46e5'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='system-ui' font-size='28' font-weight='700' fill='white'%3E%E2%9A%95%3C/text%3E%3C/svg%3E" />
 
@@ -22,7 +44,7 @@
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin="anonymous"></script>
-  <script defer src="app.js?v=2.3.0"></script>
+  <script defer src="app.js?v=2.4.0"></script>
 </head>
 <body>
   <a class="sr-skip" href="#map">Skip to map</a>

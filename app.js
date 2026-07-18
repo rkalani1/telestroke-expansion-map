@@ -100,6 +100,17 @@ function el(tag, attrs = {}, children = []) {
 }
 function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
 
+// Leaflet parses string tooltip/popup content as HTML — always hand it DOM
+// nodes so dataset fields can never inject markup.
+function tooltipNode(parts) {
+  const span = el('span');
+  for (const p of (Array.isArray(parts) ? parts : [parts])) {
+    if (p == null) continue;
+    span.appendChild(typeof p === 'string' ? document.createTextNode(p) : p);
+  }
+  return span;
+}
+
 function titleCase(str) {
   if (!str) return '';
   const ACR = new Set(['AMC','UW','VA','CHI','DNV','CMS','OHSU','EIRMC','MT','ER','ICU','NICU','ECU','ED','USA','US']);
@@ -638,7 +649,7 @@ function renderList(filtered) {
   const list = $('#hospital-list');
   clear(list);
   if (filtered.length === 0) {
-    list.appendChild(el('div', { class: 'empty-state', text: 'No hospitals match your filters. Try clearing filters.' }));
+    list.appendChild(el('div', { class: 'empty-state', role: 'listitem', text: 'No hospitals match your filters. Try clearing filters.' }));
     return;
   }
   const order = { CSC: 0, TSC: 1, PSC: 2, ASR: 3 };
@@ -671,7 +682,8 @@ function renderList(filtered) {
     item.addEventListener('click', () => panToHospital(h.cmsId));
     item.addEventListener('mouseenter', () => highlightMarker(h.cmsId, true));
     item.addEventListener('mouseleave', () => highlightMarker(h.cmsId, false));
-    list.appendChild(item);
+    // The container is role="list" — each entry needs listitem semantics
+    list.appendChild(el('div', { role: 'listitem' }, [item]));
   }
 }
 
@@ -1002,7 +1014,7 @@ function showHospitalDetail(h) {
       }
     ).addTo(state.map);
     state.focusedPath.bindTooltip(
-      `${h.displayName} to CSC/TSC (${target.displayName}): ${formatMiles(d.nearestAdvancedDistance)} mi (~${bestTransportMinutes(d.nearestAdvancedDistance, h.airOnly)} min best)`,
+      tooltipNode(`${h.displayName} to CSC/TSC (${target.displayName}): ${formatMiles(d.nearestAdvancedDistance)} mi (~${bestTransportMinutes(d.nearestAdvancedDistance, h.airOnly)} min best)`),
       { sticky: true }
     );
 
@@ -1074,7 +1086,7 @@ function showHospitalDetail(h) {
             }
           ).addTo(state.map);
           state.focusedPath.bindTooltip(
-            `${h.displayName} to EVT (${evtTarget.displayName}): ${formatMiles(d.nearestEVTDistance)} mi (~${bestTransportMinutes(d.nearestEVTDistance, h.airOnly)} min best)`,
+            tooltipNode(`${h.displayName} to EVT (${evtTarget.displayName}): ${formatMiles(d.nearestEVTDistance)} mi (~${bestTransportMinutes(d.nearestEVTDistance, h.airOnly)} min best)`),
             { sticky: true }
           );
           state.map.fitBounds(state.focusedPath.getBounds(), { padding: [50, 50] });
@@ -1314,7 +1326,14 @@ function toggleReferralPathways() {
       { color, weight: dist > 100 ? 2 : 1, opacity: 0.45, dashArray: '5,8' }
     ).addTo(state.map);
     line.bindTooltip(
-      `<strong>${h.displayName}</strong> to CSC/TSC (<strong>${d.nearestAdvanced.displayName}</strong>)<br>Distance: ${formatMiles(dist)} mi (~${bestTransportMinutes(dist, h.airOnly)} min best)`,
+      tooltipNode([
+        el('strong', { text: h.displayName }),
+        ' to CSC/TSC (',
+        el('strong', { text: d.nearestAdvanced.displayName }),
+        ')',
+        el('br'),
+        `Distance: ${formatMiles(dist)} mi (~${bestTransportMinutes(dist, h.airOnly)} min best)`,
+      ]),
       { sticky: true }
     );
     state.overlays.referral.push(line);
@@ -1337,13 +1356,13 @@ function toggleCoverageOverlay() {
       radius: 50 * 1609.34, color: cssVar('--c-evt'), fillColor: cssVar('--c-evt'),
       fillOpacity: 0.06, weight: 1, opacity: 0.35,
     }).addTo(state.map);
-    c50.bindTooltip(`50 mi buffer around ${c.displayName}`, { sticky: true });
+    c50.bindTooltip(tooltipNode(`50 mi buffer around ${c.displayName}`), { sticky: true });
 
     const c100 = L.circle([c.latitude, c.longitude], {
       radius: 100 * 1609.34, color: cssVar('--c-psc'), fillColor: cssVar('--c-psc'),
       fillOpacity: 0.03, weight: 1, opacity: 0.25, dashArray: '5,5',
     }).addTo(state.map);
-    c100.bindTooltip(`100 mi buffer around ${c.displayName}`, { sticky: true });
+    c100.bindTooltip(tooltipNode(`100 mi buffer around ${c.displayName}`), { sticky: true });
 
     state.overlays.coverage.push(c50, c100);
   }
@@ -1449,17 +1468,27 @@ function renderDistanceMatrix() {
     [null, 'Nearest CSC/TSC'], ['distCSC', 'mi'], [null, 'Nearest EVT'], ['distEVT', 'mi'],
   ];
   for (const [key, label] of cols) {
-    const th = el('th', { text: label });
+    const th = el('th');
     if (key) {
-      th.style.cursor = 'pointer';
-      th.addEventListener('click', () => {
+      const active = state.matrixSort.col === key;
+      th.setAttribute('aria-sort', active ? (state.matrixSort.asc ? 'ascending' : 'descending') : 'none');
+      // Same pattern as the candidates table: native button, refocused after re-render
+      const btn = el('button', {
+        class: 'th-sort-btn', type: 'button',
+        text: label + (active ? (state.matrixSort.asc ? ' ▲' : ' ▼') : ''),
+        'aria-label': `Sort by ${label}`,
+        dataset: { sortKey: key },
+      });
+      btn.addEventListener('click', () => {
         if (state.matrixSort.col === key) state.matrixSort.asc = !state.matrixSort.asc;
         else { state.matrixSort.col = key; state.matrixSort.asc = true; }
         renderDistanceMatrix();
+        const fresh = document.querySelector(`#distance-matrix-content .th-sort-btn[data-sort-key="${key}"]`);
+        if (fresh) fresh.focus();
       });
-      if (state.matrixSort.col === key) {
-        th.appendChild(document.createTextNode(state.matrixSort.asc ? ' ▲' : ' ▼'));
-      }
+      th.appendChild(btn);
+    } else {
+      th.textContent = label;
     }
     headerRow.appendChild(th);
   }
@@ -1829,6 +1858,8 @@ function buildDataQA() {
   kvRow('Schema', state.meta?.schema || '—');
   kvRow('Records', String(total));
   prov.appendChild(provList);
+  prov.appendChild(el('p', { style: { marginTop: '6px', fontSize: '11px' }, text:
+    'Public-source planning reference. Not for clinical decision-making, live transfer routing, or dispatch — and not an official state Department of Health product.' }));
   container.appendChild(prov);
 
   // Completeness
@@ -2085,7 +2116,8 @@ async function exportMapPNG() {
       script.referrerPolicy = 'no-referrer';
       script.onload = resolve; script.onerror = reject;
       document.head.appendChild(script);
-    }).catch(() => { toast('Failed to load export library', 'error'); return; });
+    }).catch(() => {});
+    if (!window.html2canvas) { toast('Failed to load export library', 'error'); return; }
   }
   // Hide UI chrome during render
   const toHide = ['#sidebar', '#dashboard', '#tools-fab', '#tools-menu', '.mobile-bar', '.toast-container', '.provenance-bar'];
@@ -2202,7 +2234,14 @@ function loadStateFromURL() {
   }
   syncScenarioControls();
   if (p.has('lat') && p.has('lng') && p.has('z')) {
-    state.map.setView([parseFloat(p.get('lat')), parseFloat(p.get('lng'))], parseInt(p.get('z'), 10));
+    const lat = parseFloat(p.get('lat'));
+    const lng = parseFloat(p.get('lng'));
+    const z = parseInt(p.get('z'), 10);
+    // Hand-edited URLs must not throw mid-boot
+    if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(z)
+        && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+      state.map.setView([lat, lng], z);
+    }
   }
   applyFilters({ skipZoom: true });
 }
@@ -2359,7 +2398,12 @@ function bindEvents() {
       return;
     }
     if (inField) return;
-    if (e.key === '/' || (e.ctrlKey && e.key === 'f')) { e.preventDefault(); $('#search-input').focus(); }
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'f') {
+      e.preventDefault(); $('#search-input').focus(); return;
+    }
+    // Never shadow browser/OS shortcuts (Ctrl+R reload, Cmd+D bookmark, …)
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === '/') { e.preventDefault(); $('#search-input').focus(); }
     if (e.key === 'r' || e.key === 'R') resetAll();
     if (e.key === 'd' || e.key === 'D') toggleDarkUI();
     if (e.key === 'e' || e.key === 'E') openExpansionCandidates();
@@ -2384,6 +2428,7 @@ function buildCertInfo() {
   const intro = el('div', { class: 'modal-section' });
   intro.appendChild(el('h3', { text: 'Stroke Certification Levels' }));
   intro.appendChild(el('p', { text: 'Four tiered national certifications exist in the United States. All have equivalent clinical benchmarks across certifying bodies, with minor terminology differences.' }));
+  intro.appendChild(el('p', { style: { marginTop: '6px' }, text: 'This map is a public-source planning reference — not clinical routing guidance, and not an official state Department of Health product.' }));
   container.appendChild(intro);
 
   const cards = [

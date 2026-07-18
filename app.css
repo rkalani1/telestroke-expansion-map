@@ -682,7 +682,9 @@ html.dark .cert-card p { color: var(--text-secondary); }
   font-variant-numeric: tabular-nums;
 }
 .candidates-table th[aria-sort=ascending],
-.candidates-table th[aria-sort=descending] { background: #3730a3; } /* white text ≥ 8:1 in both themes */
+.candidates-table th[aria-sort=descending],
+.matrix-table th[aria-sort=ascending],
+.matrix-table th[aria-sort=descending] { background: #3730a3; } /* white text ≥ 8:1 in both themes */
 .th-sort-btn {
   background: none; border: none; color: inherit; font: inherit;
   font-weight: 600; cursor: pointer; padding: 0; width: 100%; text-align: left;
