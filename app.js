@@ -2261,9 +2261,8 @@ function updateProvenance() {
   if (!bar || !state.meta) return;
   clear(bar);
   bar.appendChild(document.createTextNode(`Data v${state.meta.version} · verified ${state.meta.verified} · `));
-  const link = el('a', { role: 'button', tabindex: '0', text: 'methods' });
+  const link = el('button', { class: 'provenance-link', type: 'button', text: 'methods' });
   link.addEventListener('click', () => openModal('cert-info-modal'));
-  link.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') openModal('cert-info-modal'); });
   bar.appendChild(link);
   bar.appendChild(document.createTextNode(' · '));
   const counts = `${state.hospitals.length} hospitals across WA · AK · ID · MT · WY`;

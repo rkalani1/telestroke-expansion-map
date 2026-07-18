@@ -577,7 +577,11 @@ html.dark .cert-card p { color: var(--text-secondary); }
   pointer-events: auto; max-width: calc(100vw - 24px);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.provenance-bar a { color: #93c5fd; text-decoration: underline; cursor: pointer; }
+.provenance-bar a,
+.provenance-bar .provenance-link {
+  color: #93c5fd; text-decoration: underline; cursor: pointer;
+  background: none; border: none; font: inherit; padding: 0;
+}
 
 /* ---------- Toast ---------- */
 .toast-container {

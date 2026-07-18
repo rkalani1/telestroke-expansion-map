@@ -28,6 +28,9 @@ Data 2026.07.18.1 + review pass (data accuracy, framing visibility, accessibilit
   HTML-string interpolation of dataset fields (closes the gap against the app's own no-raw-HTML
   contract); malformed `lat`/`lng`/`z` URL parameters can no longer throw during boot; PNG export
   aborts cleanly if the export library fails to load instead of erroring twice.
+- **Dashboard clarity:** the coverage-gaps metrics follow the active filters while the other
+  dashboard charts summarize the full dataset — the gaps section is now labeled "current view";
+  the provenance-bar methods link is a native button.
 - **Machine-readability (quiet):** canonical URL + `og:url`, schema.org `Dataset` JSON-LD, and a
   plain-text `llms.txt` (purpose, scope, data files, verification dates, not-for-clinical-routing
   boundary). No visible UI copy added.
