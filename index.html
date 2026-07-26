@@ -44,7 +44,7 @@
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin="anonymous"></script>
-  <script defer src="app.js?v=2.4.0"></script>
+  <script defer src="app.js?v=2.5.0"></script>
 </head>
 <body>
   <a class="sr-skip" href="#map">Skip to map</a>
@@ -54,16 +54,27 @@
   </div>
 
   <!-- Map -->
-  <main id="map" role="application" aria-label="Regional hospital stroke capabilities map"></main>
+  <main id="map" tabindex="0" aria-label="Regional hospital stroke capabilities map" aria-describedby="map-mode-hint"></main>
+  <p id="map-mode-hint" class="map-mode-hint">Press Enter for map mode · Escape exits</p>
 
   <!-- Toasts -->
   <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
 
   <!-- Mobile top bar -->
-  <div class="mobile-bar" role="toolbar" aria-label="Mobile controls">
-    <button id="mobile-sidebar-btn" class="icon-btn" aria-label="Open filters sidebar" title="Filters">☰</button>
-    <input id="mobile-search-input" type="search" placeholder="Search hospitals…" aria-label="Search hospitals" />
-    <button id="mobile-dash-btn" class="icon-btn" aria-label="Open dashboard" title="Dashboard">📊</button>
+  <div class="mobile-bar" aria-label="Mobile controls">
+    <div class="mobile-identity-row">
+      <button id="mobile-sidebar-btn" class="icon-btn" aria-label="Open filters sidebar" aria-expanded="false" aria-controls="sidebar" title="Filters">☰</button>
+      <div class="mobile-identity">
+        <strong>Stroke Capability Map</strong>
+        <span>WA · AK · ID · MT · WY</span>
+      </div>
+      <button id="mobile-dash-btn" class="icon-btn" aria-label="Open dashboard" aria-expanded="false" aria-controls="dashboard" title="Dashboard">📊</button>
+    </div>
+    <div class="mobile-search-row">
+      <input id="mobile-search-input" type="search" placeholder="Search hospitals…" aria-label="Search hospitals" />
+      <button id="mobile-clear-search" class="mobile-clear-search hidden" type="button">Clear</button>
+    </div>
+    <div id="mobile-search-status" class="mobile-search-status" role="status" aria-live="polite">Loading hospitals…</div>
   </div>
 
   <!-- Sidebar -->
@@ -72,6 +83,12 @@
     <header class="sidebar-header">
       <h1>Regional Hospital Stroke Capabilities</h1>
       <p>Washington · Alaska · Idaho · Montana · Wyoming</p>
+      <nav class="workspace-shortcuts" aria-label="Workspace shortcuts">
+        <button id="shortcut-map" type="button">Map</button>
+        <button id="shortcut-list" type="button">Hospital list</button>
+        <button id="shortcut-dashboard" type="button" aria-controls="dashboard" aria-expanded="false">Dashboard</button>
+        <button id="shortcut-tools" type="button" aria-controls="tools-menu" aria-expanded="false">Tools</button>
+      </nav>
     </header>
 
     <section class="sidebar-search">
@@ -129,11 +146,11 @@
       <span>Hospitals</span>
       <span id="list-count" aria-live="polite">0</span>
     </div>
-    <div id="hospital-list" class="hospital-list" role="list" aria-label="Hospital list (click to focus on map)"></div>
+    <div id="hospital-list" class="hospital-list" role="list" aria-label="Hospital list. Use Arrow keys, Home, and End to move through hospitals."></div>
   </aside>
 
   <!-- Dashboard -->
-  <aside id="dashboard" class="dashboard" aria-label="Statistics dashboard">
+  <aside id="dashboard" class="dashboard collapsed" aria-label="Statistics dashboard" aria-hidden="true">
     <button id="dashboard-close-mobile" class="mobile-close" type="button" aria-label="Close dashboard">✕ Close</button>
     <div class="dash-header">
       <h2>Dashboard</h2>

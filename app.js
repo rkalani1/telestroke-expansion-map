@@ -62,6 +62,12 @@ const state = {
   darkUI: false,
   cbPalette: false,
   toolsMenuOpen: false,
+  activeHospitalIndex: 0,
+  mapModeActive: false,
+  mobilePanel: null,
+  mobilePanelOpener: null,
+  mobileTrapHandler: null,
+  dashboardViewBeforeOpen: null,
   matrixSort: { col: 'name', asc: true },
   initialized: false,
   queryModeActive: false,
@@ -600,7 +606,14 @@ function applyFilters(opts = {}) {
   const meaningful = anyPill || state.stateFilter !== 'ALL' || search || state.evtDistMin > 0;
   if (!skipZoom && meaningful && filtered.length > 0 && filtered.length < state.hospitals.length) {
     const bounds = L.latLngBounds(filtered.map(h => [h.latitude, h.longitude]));
-    state.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 10 });
+    const dashboardOpen = window.innerWidth > 768 && !$('#dashboard')?.classList.contains('collapsed');
+    state.map.fitBounds(bounds, dashboardOpen
+      ? {
+          paddingTopLeft: [Math.min(380, Math.round(window.innerWidth * 0.34)), 48],
+          paddingBottomRight: [Math.min(340, Math.round(window.innerWidth * 0.31)), 48],
+          maxZoom: 10
+        }
+      : { padding: [48, 48], maxZoom: 10 });
   }
 }
 
@@ -631,10 +644,27 @@ function resetAll() {
   toast('All filters cleared');
 }
 
+function clearSearchOnly() {
+  state.searchTerm = '';
+  $('#search-input').value = '';
+  const mobileSearch = $('#mobile-search-input');
+  if (mobileSearch) mobileSearch.value = '';
+  applyFilters({ skipZoom: true });
+  if (state.filtered.length) {
+    const bounds = L.latLngBounds(state.filtered.map(h => [h.latitude, h.longitude]));
+    state.map.fitBounds(bounds, { padding: [48, 48], maxZoom: MAP_ZOOM });
+  } else {
+    state.map.setView(MAP_CENTER, MAP_ZOOM);
+  }
+  mobileSearch?.focus();
+}
+
 function renderClearButton() {
   const any = Object.values(state.activeFilters).some(v => v)
     || state.stateFilter !== 'ALL' || state.evtDistMin > 0 || state.searchTerm;
   $('#clear-btn').classList.toggle('hidden', !any);
+  const mobileClear = $('#mobile-clear-search');
+  if (mobileClear) mobileClear.classList.toggle('hidden', !state.searchTerm);
 }
 
 // ------------------------------------------------------------------
@@ -643,12 +673,24 @@ function renderClearButton() {
 function renderStatus(filtered) {
   $('#status-bar').textContent = `Showing ${filtered.length} of ${state.hospitals.length} hospitals`;
   $('#list-count').textContent = filtered.length;
+  const mobileStatus = $('#mobile-search-status');
+  if (mobileStatus) {
+    const query = state.searchTerm.trim();
+    mobileStatus.textContent = filtered.length === 0
+      ? `No hospitals match “${query || 'these filters'}”.`
+      : query
+        ? `${filtered.length} ${filtered.length === 1 ? 'hospital' : 'hospitals'} match “${query}”.`
+        : `${filtered.length} hospitals in the five-state region.`;
+    mobileStatus.classList.toggle('is-empty', filtered.length === 0);
+  }
 }
 
 function renderList(filtered) {
   const list = $('#hospital-list');
+  const previouslyActive = document.activeElement?.dataset?.cms || null;
   clear(list);
   if (filtered.length === 0) {
+    state.activeHospitalIndex = 0;
     list.appendChild(el('div', { class: 'empty-state', role: 'listitem', text: 'No hospitals match your filters. Try clearing filters.' }));
     return;
   }
@@ -658,7 +700,12 @@ function renderList(filtered) {
     const ob = order[b.strokeCertificationType] ?? 4;
     return oa - ob || a.displayName.localeCompare(b.displayName);
   });
-  for (const h of sorted) {
+  const preservedIndex = previouslyActive
+    ? sorted.findIndex(h => h.cmsId === previouslyActive)
+    : state.activeHospitalIndex;
+  state.activeHospitalIndex = Math.max(0, Math.min(sorted.length - 1, preservedIndex >= 0 ? preservedIndex : 0));
+
+  sorted.forEach((h, index) => {
     const color = markerColor(h);
     const location = [h.city, h.state].filter(Boolean).join(', ');
     const badges = el('div', { class: 'badges' });
@@ -674,7 +721,8 @@ function renderList(filtered) {
       badges,
     ]);
     const item = el('button', {
-      class: 'hospital-item', type: 'button', 'aria-label': `Focus ${h.displayName}`, dataset: { cms: h.cmsId },
+      class: 'hospital-item', type: 'button', tabindex: index === state.activeHospitalIndex ? '0' : '-1',
+      'aria-label': `Focus ${h.displayName}`, dataset: { cms: h.cmsId, index: String(index) },
     }, [
       el('span', { class: 'dot', style: { background: color } }),
       content,
@@ -682,9 +730,30 @@ function renderList(filtered) {
     item.addEventListener('click', () => panToHospital(h.cmsId));
     item.addEventListener('mouseenter', () => highlightMarker(h.cmsId, true));
     item.addEventListener('mouseleave', () => highlightMarker(h.cmsId, false));
+    item.addEventListener('focus', () => {
+      state.activeHospitalIndex = index;
+      $$('.hospital-item').forEach((button, buttonIndex) => {
+        button.tabIndex = buttonIndex === index ? 0 : -1;
+      });
+    });
+    item.addEventListener('keydown', (event) => {
+      const keys = ['ArrowDown', 'ArrowUp', 'Home', 'End'];
+      if (!keys.includes(event.key)) return;
+      event.preventDefault();
+      const buttons = $$('.hospital-item');
+      if (!buttons.length) return;
+      let next = index;
+      if (event.key === 'ArrowDown') next = Math.min(buttons.length - 1, index + 1);
+      if (event.key === 'ArrowUp') next = Math.max(0, index - 1);
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = buttons.length - 1;
+      state.activeHospitalIndex = next;
+      buttons.forEach((button, buttonIndex) => { button.tabIndex = buttonIndex === next ? 0 : -1; });
+      buttons[next].focus();
+    });
     // The container is role="list" — each entry needs listitem semantics
     list.appendChild(el('div', { role: 'listitem' }, [item]));
-  }
+  });
 }
 
 function panToHospital(cmsId) {
@@ -698,7 +767,7 @@ function panToHospital(cmsId) {
   if (item) { item.classList.add('highlighted'); item.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
   // Auto-close mobile sidebar on selection
   if (window.innerWidth <= 768) {
-    $('#sidebar').classList.remove('mobile-open');
+    closeMobilePanel('sidebar');
   }
 }
 
@@ -1291,6 +1360,17 @@ function toggleToolsMenu() {
   state.toolsMenuOpen = !state.toolsMenuOpen;
   menu.hidden = !state.toolsMenuOpen;
   fab.setAttribute('aria-expanded', String(state.toolsMenuOpen));
+  fab.setAttribute('aria-label', state.toolsMenuOpen ? 'Close tools menu' : 'Open tools menu');
+  fab.setAttribute('title', state.toolsMenuOpen ? 'Close tools menu' : 'Tools & analysis');
+  fab.textContent = state.toolsMenuOpen ? '×' : '⚙';
+  fab.dataset.state = state.toolsMenuOpen ? 'open' : 'closed';
+  const shortcut = $('#shortcut-tools');
+  if (shortcut) shortcut.setAttribute('aria-expanded', String(state.toolsMenuOpen));
+  if (state.toolsMenuOpen) {
+    requestAnimationFrame(() => menu.querySelector('button')?.focus());
+  } else if (menu.contains(document.activeElement)) {
+    fab.focus();
+  }
 }
 
 // ------------------------------------------------------------------
@@ -2268,6 +2348,181 @@ function updateProvenance() {
 }
 
 // ------------------------------------------------------------------
+// Responsive panels, map keyboard mode, and workspace shortcuts
+// ------------------------------------------------------------------
+function setDrawerBackgroundInert(activePanel, inert) {
+  const selectors = ['#map', '#sidebar', '#dashboard', '#tools-fab', '#tools-menu', '#provenance-bar', '.mobile-bar'];
+  selectors.forEach(selector => {
+    const node = $(selector);
+    if (!node || node === activePanel) return;
+    if (inert) {
+      node.dataset.drawerWasInert = node.hasAttribute('inert') ? '1' : '0';
+      node.setAttribute('inert', '');
+      node.dataset.drawerInert = '1';
+    } else if (node.dataset.drawerInert === '1') {
+      if (node.dataset.drawerWasInert !== '1') node.removeAttribute('inert');
+      delete node.dataset.drawerInert;
+      delete node.dataset.drawerWasInert;
+    }
+  });
+}
+
+function handleDrawerKeys(event, panel) {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    event.stopPropagation();
+    closeMobilePanel(panel.id);
+    return;
+  }
+  if (event.key !== 'Tab') return;
+  const focusables = Array.from(panel.querySelectorAll(
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )).filter(node => !node.hidden && node.offsetParent !== null);
+  if (!focusables.length) return;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function openMobilePanel(id, opener) {
+  if (window.innerWidth > 768) return;
+  if (state.mobilePanel && state.mobilePanel !== id) closeMobilePanel(state.mobilePanel, false);
+  const panel = $('#' + id);
+  if (!panel) return;
+  state.mobilePanel = id;
+  state.mobilePanelOpener = opener || document.activeElement;
+  panel.classList.add('mobile-open');
+  panel.removeAttribute('inert');
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-hidden', 'false');
+  setDrawerBackgroundInert(panel, true);
+  const trigger = id === 'sidebar' ? $('#mobile-sidebar-btn') : $('#mobile-dash-btn');
+  trigger?.setAttribute('aria-expanded', 'true');
+  const handler = event => handleDrawerKeys(event, panel);
+  state.mobileTrapHandler = handler;
+  panel.addEventListener('keydown', handler);
+  requestAnimationFrame(() => panel.querySelector('.mobile-close, button, input, select')?.focus());
+}
+
+function closeMobilePanel(id, restoreFocus = true) {
+  const panel = $('#' + id);
+  if (!panel) return;
+  panel.classList.remove('mobile-open');
+  panel.setAttribute('aria-hidden', 'true');
+  panel.setAttribute('inert', '');
+  if (state.mobileTrapHandler) panel.removeEventListener('keydown', state.mobileTrapHandler);
+  state.mobileTrapHandler = null;
+  setDrawerBackgroundInert(panel, false);
+  const trigger = id === 'sidebar' ? $('#mobile-sidebar-btn') : $('#mobile-dash-btn');
+  trigger?.setAttribute('aria-expanded', 'false');
+  const opener = state.mobilePanelOpener;
+  state.mobilePanel = null;
+  state.mobilePanelOpener = null;
+  if (restoreFocus && opener && document.contains(opener)) opener.focus();
+}
+
+function configureResponsivePanels() {
+  const mobile = window.innerWidth <= 768;
+  const sidebar = $('#sidebar');
+  const dashboard = $('#dashboard');
+  if (mobile) {
+    if (!sidebar.classList.contains('mobile-open')) {
+      sidebar.setAttribute('aria-hidden', 'true');
+      sidebar.setAttribute('inert', '');
+    }
+    if (!dashboard.classList.contains('mobile-open')) {
+      dashboard.setAttribute('aria-hidden', 'true');
+      dashboard.setAttribute('inert', '');
+    }
+  } else {
+    if (state.mobilePanel) closeMobilePanel(state.mobilePanel, false);
+    sidebar.removeAttribute('role');
+    sidebar.removeAttribute('aria-modal');
+    sidebar.removeAttribute('aria-hidden');
+    sidebar.removeAttribute('inert');
+    dashboard.removeAttribute('role');
+    dashboard.removeAttribute('aria-modal');
+    dashboard.removeAttribute('inert');
+    dashboard.setAttribute('aria-hidden', String(dashboard.classList.contains('collapsed')));
+  }
+}
+
+function fitMapBesideDashboard() {
+  const visible = state.filtered.length ? state.filtered : state.hospitals;
+  if (!visible.length) return;
+  const bounds = L.latLngBounds(visible.map(h => [h.latitude, h.longitude]));
+  state.map.fitBounds(bounds, {
+    paddingTopLeft: [Math.min(380, Math.round(window.innerWidth * 0.34)), 48],
+    paddingBottomRight: [Math.min(340, Math.round(window.innerWidth * 0.31)), 48],
+    maxZoom: 9
+  });
+}
+
+function setDashboardOpen(open, opener = null) {
+  const dashboard = $('#dashboard');
+  if (window.innerWidth <= 768) {
+    if (open) openMobilePanel('dashboard', opener);
+    else closeMobilePanel('dashboard');
+    return;
+  }
+  if (open) {
+    if (dashboard.classList.contains('collapsed')) {
+      const center = state.map.getCenter();
+      state.dashboardViewBeforeOpen = { center: [center.lat, center.lng], zoom: state.map.getZoom() };
+    }
+    dashboard.classList.remove('collapsed');
+    dashboard.setAttribute('aria-hidden', 'false');
+    localStorage.setItem('stroke-dashboard', 'open');
+    requestAnimationFrame(fitMapBesideDashboard);
+  } else {
+    dashboard.classList.add('collapsed');
+    dashboard.setAttribute('aria-hidden', 'true');
+    localStorage.setItem('stroke-dashboard', 'closed');
+    if (state.dashboardViewBeforeOpen) {
+      state.map.setView(state.dashboardViewBeforeOpen.center, state.dashboardViewBeforeOpen.zoom);
+      state.dashboardViewBeforeOpen = null;
+    }
+  }
+  $('#mobile-dash-btn')?.setAttribute('aria-expanded', String(open));
+  $('#shortcut-dashboard')?.setAttribute('aria-expanded', String(open));
+}
+
+function initializeDashboardState() {
+  const shouldOpen = localStorage.getItem('stroke-dashboard') === 'open';
+  $('#dashboard').classList.toggle('collapsed', !shouldOpen);
+  $('#dashboard').setAttribute('aria-hidden', String(!shouldOpen));
+  $('#shortcut-dashboard')?.setAttribute('aria-expanded', String(shouldOpen));
+  if (shouldOpen) requestAnimationFrame(fitMapBesideDashboard);
+}
+
+function setMapMode(active) {
+  state.mapModeActive = Boolean(active);
+  const mapNode = $('#map');
+  mapNode.classList.toggle('map-mode-active', state.mapModeActive);
+  if (state.mapModeActive) {
+    mapNode.setAttribute('role', 'application');
+    mapNode.setAttribute('aria-label', 'Interactive regional hospital map. Arrow keys pan; plus and minus zoom. Press Escape to return to page navigation.');
+    toast('Map keyboard mode on · press Escape to leave', 'info');
+  } else {
+    mapNode.removeAttribute('role');
+    mapNode.setAttribute('aria-label', 'Regional hospital stroke capabilities map');
+    toast('Map keyboard mode off', 'info');
+  }
+}
+
+function focusHospitalList() {
+  const item = $$('.hospital-item')[state.activeHospitalIndex] || $('.hospital-item');
+  item?.focus();
+}
+
+// ------------------------------------------------------------------
 // Event binding
 // ------------------------------------------------------------------
 function bindEvents() {
@@ -2331,6 +2586,7 @@ function bindEvents() {
 
   // Clear
   $('#clear-btn').addEventListener('click', resetAll);
+  $('#mobile-clear-search').addEventListener('click', clearSearchOnly);
 
   // Tools FAB
   $('#tools-fab').addEventListener('click', toggleToolsMenu);
@@ -2356,13 +2612,44 @@ function bindEvents() {
   $('#tool-reset').addEventListener('click', () => { toggleToolsMenu(); resetAll(); });
 
   // Dashboard collapse
-  $('#dash-close').addEventListener('click', () => $('#dashboard').classList.toggle('collapsed'));
+  $('#dash-close').addEventListener('click', () => setDashboardOpen(false));
 
   // Mobile toggles
-  $('#mobile-sidebar-btn').addEventListener('click', () => $('#sidebar').classList.toggle('mobile-open'));
-  $('#mobile-dash-btn').addEventListener('click', () => $('#dashboard').classList.toggle('mobile-open'));
-  $('#sidebar-close-mobile').addEventListener('click', () => $('#sidebar').classList.remove('mobile-open'));
-  $('#dashboard-close-mobile').addEventListener('click', () => $('#dashboard').classList.remove('mobile-open'));
+  $('#mobile-sidebar-btn').addEventListener('click', (event) => openMobilePanel('sidebar', event.currentTarget));
+  $('#mobile-dash-btn').addEventListener('click', (event) => setDashboardOpen(true, event.currentTarget));
+  $('#sidebar-close-mobile').addEventListener('click', () => closeMobilePanel('sidebar'));
+  $('#dashboard-close-mobile').addEventListener('click', () => setDashboardOpen(false));
+
+  // Visible landmark shortcuts
+  $('#shortcut-map').addEventListener('click', () => {
+    if (state.mobilePanel) closeMobilePanel(state.mobilePanel, false);
+    $('#map').focus();
+  });
+  $('#shortcut-list').addEventListener('click', focusHospitalList);
+  $('#shortcut-dashboard').addEventListener('click', (event) => {
+    if (window.innerWidth <= 768 && state.mobilePanel === 'sidebar') closeMobilePanel('sidebar', false);
+    setDashboardOpen(
+      $('#dashboard').classList.contains('collapsed') || window.innerWidth <= 768,
+      window.innerWidth <= 768 ? $('#mobile-dash-btn') : event.currentTarget
+    );
+  });
+  $('#shortcut-tools').addEventListener('click', () => {
+    if (window.innerWidth <= 768 && state.mobilePanel === 'sidebar') closeMobilePanel('sidebar', false);
+    if (!state.toolsMenuOpen) toggleToolsMenu();
+    else $('#tools-menu').querySelector('button')?.focus();
+  });
+
+  $('#map').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !state.mapModeActive) {
+      event.preventDefault();
+      setMapMode(true);
+    } else if (event.key === 'Escape' && state.mapModeActive) {
+      event.preventDefault();
+      event.stopPropagation();
+      setMapMode(false);
+      $('#map').focus();
+    }
+  }, true);
 
   // Modal close buttons + overlay click
   $$('[data-close-modal]').forEach(btn => btn.addEventListener('click', () => {
@@ -2370,7 +2657,7 @@ function bindEvents() {
   }));
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal-overlay')) closeModal();
-    if (state.toolsMenuOpen && !e.target.closest('#tools-menu') && !e.target.closest('#tools-fab')) toggleToolsMenu();
+    if (state.toolsMenuOpen && !e.target.closest('#tools-menu') && !e.target.closest('#tools-fab') && !e.target.closest('#shortcut-tools')) toggleToolsMenu();
   });
 
 
@@ -2389,6 +2676,15 @@ function bindEvents() {
     const tag = (document.activeElement?.tagName || '').toLowerCase();
     const inField = tag === 'input' || tag === 'textarea' || tag === 'select';
     if (e.key === 'Escape') {
+      if (state.mapModeActive) {
+        setMapMode(false);
+        $('#map').focus();
+        return;
+      }
+      if (state.mobilePanel) {
+        closeMobilePanel(state.mobilePanel);
+        return;
+      }
       closeAllModals();
       if (state.toolsMenuOpen) toggleToolsMenu();
       if (state.queryModeActive) toggleQueryMode();
@@ -2405,8 +2701,17 @@ function bindEvents() {
     if (e.key === 'd' || e.key === 'D') toggleDarkUI();
     if (e.key === 'e' || e.key === 'E') openExpansionCandidates();
     if (e.key === 'q' || e.key === 'Q') openDataQA();
+    if (e.key === 'l' || e.key === 'L') focusHospitalList();
+    if (e.key === 'm' || e.key === 'M') $('#map').focus();
+    if (e.key === 'g' || e.key === 'G') setDashboardOpen(true, document.activeElement);
+    if (e.key === 't' || e.key === 'T') {
+      if (!state.toolsMenuOpen) toggleToolsMenu();
+      else $('#tools-menu').querySelector('button')?.focus();
+    }
     if (e.key === '?') openModal('cert-info-modal');
   });
+
+  window.addEventListener('resize', configureResponsivePanels);
 
   // Map moveend -> update URL
   if (state.map) {
@@ -2485,6 +2790,8 @@ async function boot() {
     buildCertInfo();
     loadStateFromURL();
     applyFilters({ skipZoom: true });
+    initializeDashboardState();
+    configureResponsivePanels();
     state.initialized = true;
     toast(`Loaded ${state.hospitals.length} hospitals`, 'success');
   } catch (err) {
