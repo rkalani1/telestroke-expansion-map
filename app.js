@@ -1216,6 +1216,8 @@ function openModal(id) {
   const m = $('#' + id);
   if (!m) return;
   if (m.classList.contains('active')) return; // re-opening would stack focus traps and orphan focus restore
+  m.removeAttribute('inert');
+  m.setAttribute('aria-hidden', 'false');
   m.classList.add('active');
   m._previousActive = document.activeElement;
   const focusables = Array.from(m.querySelectorAll(
@@ -1254,9 +1256,7 @@ function restoreModalFocus(m) {
   }
 }
 
-function closeModal(id) {
-  const m = id ? $('#' + id) : document.querySelector('.modal-overlay.active');
-  if (!m) return;
+function deactivateModal(m) {
   m.classList.remove('active');
   if (m.id === 'hospital-detail-modal') {
     clearFocusedPath();
@@ -1266,21 +1266,19 @@ function closeModal(id) {
     m._focusTrapHandler = null;
   }
   restoreModalFocus(m);
+  m.setAttribute('aria-hidden', 'true');
+  m.setAttribute('inert', '');
+}
+
+function closeModal(id) {
+  const m = id ? $('#' + id) : document.querySelector('.modal-overlay.active');
+  if (!m) return;
+  deactivateModal(m);
   if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = '';
 }
 
 function closeAllModals() {
-  $$('.modal-overlay.active').forEach(m => {
-    if (m.id === 'hospital-detail-modal') {
-      clearFocusedPath();
-    }
-    if (m._focusTrapHandler) {
-      m.removeEventListener('keydown', m._focusTrapHandler);
-      m._focusTrapHandler = null;
-    }
-    m.classList.remove('active');
-    restoreModalFocus(m);
-  });
+  $$('.modal-overlay.active').forEach(deactivateModal);
   document.body.style.overflow = '';
 }
 
