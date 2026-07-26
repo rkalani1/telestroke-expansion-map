@@ -643,11 +643,58 @@ html.dark .cert-card p { color: var(--text-secondary); }
   }
   .dashboard.mobile-open { transform: translateX(0); opacity: 1; pointer-events: auto; }
   .mobile-close { display: block; }
-  .tools-fab { bottom: 16px; right: 16px; }
-  .tools-menu { right: 10px; bottom: 76px; }
+  .tools-fab {
+    width: 52px; height: 52px;
+    bottom: 132px; right: 12px;
+  }
+  .tools-menu {
+    right: 10px; bottom: 194px;
+    max-height: calc(100vh - var(--header-h) - 210px);
+  }
   .provenance-bar { display: none; }
-  .modal { padding: 14px; }
+  .modal-overlay { padding: calc(var(--header-h) + 8px) 8px 12px; }
+  .modal {
+    padding: 14px;
+    max-height: calc(100dvh - var(--header-h) - 20px);
+    border-radius: 14px;
+  }
   .modal-header h2 { font-size: 15px; }
+
+  .mobile-bar .icon-btn {
+    width: 40px; height: 40px;
+    flex: 0 0 40px;
+  }
+
+  .map-legend {
+    max-width: calc(100vw - 86px);
+    padding: 5px 7px;
+    gap: 5px;
+    font-size: 10px;
+  }
+
+  .map-legend .entry-btn {
+    min-height: 30px;
+    padding: 3px 5px;
+  }
+
+  .leaflet-control-attribution {
+    max-width: calc(100vw - 96px);
+    white-space: normal;
+    font-size: 8px;
+    line-height: 1.15;
+  }
+
+  .toast-container {
+    top: calc(var(--header-h) + 8px);
+    right: 8px;
+    left: 8px;
+    align-items: stretch;
+  }
+
+  .toast {
+    max-width: none;
+    text-align: center;
+  }
 }
 @media (min-width: 769px) {
   .mobile-close { display: none !important; }
@@ -811,4 +858,3 @@ html.dark .metric-row .value.qa-fail { color: #fca5a5; }
 .search-wrapper input[type="search"]:focus + .search-kbd-badge {
   opacity: 0;
 }
-
