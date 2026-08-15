@@ -2895,6 +2895,41 @@ function buildCertInfo() {
   intro.appendChild(el('p', { style: { marginTop: '6px' }, text: 'This map is a public-source planning reference — not clinical routing guidance, and not an official state Department of Health product.' }));
   container.appendChild(intro);
 
+  // The two record classes are the first thing a reader needs, because every
+  // count and every blank certification on this map depends on which one applies.
+  const classes = el('div', { class: 'cert-card neutral' });
+  classes.appendChild(el('h4', { text: 'Two classes of record' }));
+  const assessedN = state.hospitals.filter(h => !h.isCensus).length;
+  const censusN = state.hospitals.filter(h => h.isCensus).length;
+  const classRow = (title, body) => {
+    const p = el('p', { style: { margin: '4px 0' } });
+    p.appendChild(el('strong', { text: title + ': ' }));
+    p.appendChild(document.createTextNode(body));
+    classes.appendChild(p);
+  };
+  classRow(`Stroke capability (${assessedN})`,
+    'Certification verified against primary sources. No certification shown here means checked '
+    + 'and none found.');
+  classRow(`Not assessed (${censusN})`,
+    'Facility identity from the CMS acute-care census, included so every hospital in the region '
+    + 'is findable. Stroke capability has not been checked — no certification shown means '
+    + 'unknown, not none. These records are excluded from all certification statistics and from '
+    + 'expansion-candidate scoring, but still get full transport analysis.');
+  container.appendChild(classes);
+
+  // State designation vs national accreditation.
+  const stateOnly = state.hospitals.filter(h => h.certificationBasis === 'state').length;
+  const basis = el('div', { class: 'cert-card neutral' });
+  basis.appendChild(el('h4', { text: 'National certification vs. state designation' }));
+  basis.appendChild(el('p', { text:
+    `${stateOnly} of the ${assessedN} assessed hospitals display a tier derived from a state `
+    + 'stroke designation (Washington ECS, Idaho TSE) with no national accreditation on record. '
+    + 'For those, the CSC/TSC/PSC/ASR tier is this app\u2019s mapping of a state level onto the '
+    + 'national ladder \u2014 not a Joint Commission, DNV, ACHC or CIHQ finding. They are marked '
+    + 'with a dashed state badge in the list, and their detail view names both the national status '
+    + 'and the state designation separately.' }));
+  container.appendChild(basis);
+
   const cards = [
     ['CSC', 'csc'], ['TSC', 'tsc'], ['PSC', 'psc'], ['ASR', 'asr'], ['EVT', 'evt'],
   ];

@@ -4,30 +4,51 @@ Static, public-source reference map of hospital stroke-center certifications
 (CSC / TSC / PSC / ASR), state stroke designations, and 24/7 endovascular
 thrombectomy (EVT) capability across Washington, Alaska, Idaho, Montana, and
 Wyoming, with transparent distance/transport planning estimates and a
-user-adjustable expansion-planning heuristic.
+user-adjustable expansion-planning heuristic. 236 hospitals.
 
 - Site: https://rkalani1.github.io/telestroke-expansion-map/
 - Source: https://github.com/rkalani1/telestroke-expansion-map
 
 ## Data
 
-- /hospitals.json — the only dataset the app loads. Top-level metadata:
-  schema_version, data_version, last_verified, generated_at, primary_sources,
-  coverage_note, certification_definitions, certifying_bodies. One record per
-  hospital: cmsId (CMS CCN), address, city, state, zip, latitude, longitude,
-  strokeCertificationType (CSC/TSC/PSC/ASR/null), certifyingBody,
-  certificationDetails, hasELVO (24/7 thrombectomy), dataSources, verified.
-- Authoritative version and verification dates are the data_version and
-  last_verified fields inside hospitals.json. As of this file's last update:
-  data_version 2026.07.18.1; full dataset verified 2026-07-04; watch-list
-  re-checked 2026-07-18. Certification and EVT changes require two
-  independent public sources before they are applied.
-- Not a complete census of acute-care hospitals in the five states — see
-  METHODOLOGY.md §1 (scope) and §8 (limitations).
+- /hospitals.json — the only dataset the app loads (schema 3.0.0). Top-level
+  metadata: schema_version, data_version, last_verified, generated_at,
+  primary_sources, coverage_note, census_snapshot, record_classes,
+  certification_definitions, certifying_bodies.
+- IMPORTANT — there are TWO record classes, and conflating them misreports the
+  data. Each record carries recordClass and strokeDataStatus:
+    * recordClass "stroke-capability" (135 records, strokeDataStatus
+      "verified") — capability checked against primary sources. A null
+      strokeCertificationType means CHECKED AND NONE FOUND.
+    * recordClass "acute-care-census" (101 records, strokeDataStatus
+      "not-assessed") — facility identity from the CMS acute-care census.
+      strokeCertificationType is null and hasELVO is false because the site
+      was NEVER ASSESSED. This is NOT evidence of absent capability. Do not
+      count these as uncertified, and do not include them in certification
+      rates or coverage-gap statistics.
+- Per-record fields: id (primary key), cmsId (CMS CCN; may be null or shared),
+  facilityIdType (ccn | shared-ccn | military), name, aliases, address, city,
+  cityConfidence, county, state, zip, latitude, longitude, geocodePrecision,
+  strokeCertificationType (CSC/TSC/PSC/ASR/null), certificationBasis
+  (national | state | both | none | not-assessed), nationalCertification,
+  stateDesignation, certifyingBody, certificationDetails, hasELVO,
+  hospitalType, ownership, beds, healthSystem, dataSources, lastVerified.
+- certificationBasis matters: 67 of the 135 assessed records display a tier
+  derived from a WA ECS or Idaho TSE state designation alone, with no national
+  accreditation. strokeCertificationType is this project's mapping onto the
+  national ladder, not an accreditor's finding.
+- Authoritative dates live inside hospitals.json. As of this file's last
+  update: data_version 2026.08.15.1; stroke capability verified 2026-07-04
+  (watch-list re-checked 2026-07-18); acute-care census snapshot Oct 2023.
+  Certification and EVT changes require two independent public sources.
+- /data/verification-worklist.csv — 56 ranked records that still need a
+  primary-source check, with the source to check for each.
+- /data/cms-census-wwami-2023-10.csv — the vendored CMS census subset.
 
 ## Methods
 
-- /METHODOLOGY.md — sources, certification nomenclature, transport-time model
+- /METHODOLOGY.md — scope and record classes (§1), certification nomenclature
+  and the national-vs-state distinction (§3), transport-time model
   (haversine × 1.25 road factor; 55 mph ground + 8 min overhead; 150 mph air
   + 25 min overhead), expansion-scoring heuristic, integrity checks, limits.
 - /CHANGELOG.md — release and data history.
@@ -38,6 +59,8 @@ user-adjustable expansion-planning heuristic.
 Planning reference built from public sources (CMS, Joint Commission, DNV,
 state registries). Not for clinical decision-making, live transfer routing,
 or dispatch, and not an official state Department of Health product.
+Absence of a certification on an acute-care-census record means the site was
+not assessed, not that it lacks capability.
 Transport times are order-of-magnitude planning estimates, not operational
 dispatch times. Expansion scores are transparent heuristics computed in the
 browser; they make no claims about clinical operations, staffing, volume, or
