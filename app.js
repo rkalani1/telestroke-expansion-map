@@ -1431,8 +1431,11 @@ function showHospitalDetail(h) {
       }
     });
 
+    // When the nearest CSC/TSC is also the nearest EVT centre — the common case
+    // — two identical rows just cost vertical space on a phone.
+    const advIsEVT = d.nearestEVT && d.nearestAdvanced && d.nearestEVT.id === d.nearestAdvanced.id;
     tbl.appendChild(el('div', { class: 'kv' }, [
-      el('dt', { text: 'Nearest CSC/TSC:' }),
+      el('dt', { text: advIsEVT ? 'Nearest CSC/TSC + EVT:' : 'Nearest CSC/TSC:' }),
       el('dd', {}, [
         document.createTextNode(' '),
         hopBtn,
@@ -1450,7 +1453,7 @@ function showHospitalDetail(h) {
       el('dd', { text: ` ${groundText}  ·  Air: ~${airMinutes(dCSC)} min  ·  Best: ${bestTransportText(dCSC, h.airOnly)}` }),
     ]));
 
-    if (Number.isFinite(d.nearestEVTDistance) && d.nearestEVTDistance > 0) {
+    if (!advIsEVT && Number.isFinite(d.nearestEVTDistance) && d.nearestEVTDistance > 0) {
       const evtTarget = d.nearestEVT;
       const fitEVTBtn = el('button', {
         class: 'btn-fit-view',
