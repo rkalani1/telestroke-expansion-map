@@ -10,7 +10,8 @@
   --c-psc: #eab308; /* Amber Gold */
   --c-asr: #65a30d; /* Apple Green */
   --c-evt: #0d9488; /* Dark Teal */
-  --c-other: #64748b; /* Slate Grey */
+  --c-other: #64748b; /* Slate Grey — checked, no certification */
+  --c-census: #7c3aed; /* Violet — census record, capability NOT assessed */
 
   /* Low opacity backgrounds for badges / highlights */
   --c-csc-bg: rgba(225, 29, 72, 0.08);
@@ -18,6 +19,7 @@
   --c-psc-bg: rgba(234, 179, 8, 0.08);
   --c-asr-bg: rgba(101, 163, 13, 0.08);
   --c-evt-bg: rgba(13, 148, 136, 0.08);
+  --c-census-bg: rgba(124, 58, 237, 0.10);
 
   --c-psc-text: #7c2d12;
   --c-asr-text: #1a2e05;
@@ -73,6 +75,8 @@ html.dark {
   --c-psc-bg: rgba(253, 224, 71, 0.15); /* yellow-300 */
   --c-asr-bg: rgba(163, 230, 53, 0.15); /* lime-400 */
   --c-evt-bg: rgba(45, 212, 191, 0.15); /* teal-400 */
+  --c-census: #a78bfa; /* violet-400 — lifted for contrast on dark surfaces */
+  --c-census-bg: rgba(167, 139, 250, 0.16);
 
   --c-psc-text: #fcd34d;
   --c-asr-text: #bef264;
@@ -86,7 +90,9 @@ html.cb {
   --c-asr: #009E73;  /* green */
   --c-evt: #0072B2;  /* blue */
   --c-other: #56B4E9; /* sky */
+  --c-census: #CC79A7; /* reddish purple — the remaining Okabe-Ito hue */
 
+  --c-census-bg: rgba(204, 121, 167, 0.14);
   --c-csc-bg: rgba(213, 94, 0, 0.12);
   --c-tsc-bg: rgba(230, 159, 0, 0.12);
   --c-psc-bg: rgba(240, 228, 66, 0.12);
@@ -260,6 +266,7 @@ html.dark .leaflet-popup-tip {
 .pill[aria-pressed=true][data-filter=PSC] { background: var(--c-psc); border-color: var(--c-psc); color: #7c2d12; }
 .pill[aria-pressed=true][data-filter=ASR] { background: var(--c-asr); border-color: var(--c-asr); color: #1a2e05; }
 .pill[aria-pressed=true][data-filter=EVT] { background: var(--c-evt); border-color: var(--c-evt); }
+.pill[aria-pressed=true][data-filter=CENSUS] { background: var(--c-census); border-color: var(--c-census); }
 
 .secondary-filters {
   display: flex; gap: 8px; align-items: center; font-size: 12px;
@@ -312,6 +319,45 @@ html.dark .hospital-item.highlighted { background: #1e3a8a; }
 .badge-PSC { background: var(--c-psc-bg); color: var(--c-psc-text, var(--c-psc)); }
 .badge-ASR { background: var(--c-asr-bg); color: var(--c-asr-text, var(--c-asr)); }
 .badge-EVT { background: var(--c-evt-bg); color: var(--c-evt); }
+.badge-CENSUS { background: var(--c-census-bg); color: var(--c-census); }
+.badge-STATE {
+  background: transparent; color: var(--text-muted);
+  border: 1px dashed var(--border-strong);
+}
+
+/* Provenance banner at the top of the hospital detail modal. Tells a clinician
+   whether this record's stroke capability was actually checked. */
+.detail-banner {
+  padding: 10px 12px; border-radius: var(--radius-sm, 6px);
+  font-size: 12px; line-height: 1.5; margin-bottom: 14px;
+  border-left: 4px solid;
+}
+.detail-banner-verified {
+  background: var(--c-evt-bg); border-left-color: var(--c-evt); color: var(--text-secondary);
+}
+.detail-banner-census {
+  background: var(--c-census-bg); border-left-color: var(--c-census); color: var(--text-secondary);
+}
+.detail-note {
+  font-size: 11px; line-height: 1.5; color: var(--text-muted);
+  margin-top: 6px; padding-left: 10px; border-left: 2px solid var(--border);
+}
+
+/* Shown in place of the map when boot fails, so a blocked CDN or a failed data
+   fetch is legible on screen instead of only in the console. */
+.boot-error {
+  position: absolute; inset: 0; z-index: 500;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 32px; text-align: center;
+  background: var(--surface-solid); color: var(--text-primary);
+}
+.boot-error h2 { font-size: 18px; font-weight: 700; }
+.boot-error p { font-size: 13px; max-width: 46ch; color: var(--text-secondary); line-height: 1.55; }
+.boot-error-detail {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px !important; color: var(--text-muted) !important;
+  word-break: break-word;
+}
 
 .empty-state {
   padding: 32px 16px; text-align: center;

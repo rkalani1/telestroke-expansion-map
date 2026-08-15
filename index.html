@@ -37,14 +37,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin="anonymous" />
+  <!-- Leaflet is vendored rather than loaded from a CDN: hospital networks
+       commonly block third-party CDNs, and a blocked leaflet.js left the map
+       permanently blank. See vendor/leaflet/README.md. -->
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
   <link rel="stylesheet" href="app.css" />
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-          crossorigin="anonymous"></script>
-  <script defer src="app.js?v=2.5.0"></script>
+  <script defer src="vendor/leaflet/leaflet.js"></script>
+  <script defer src="app.js?v=3.0.0"></script>
 </head>
 <body>
   <a class="sr-skip" href="#map">Skip to map</a>
@@ -120,8 +119,11 @@
         <button class="pill" type="button" data-filter="EVT" aria-pressed="false">
           <span class="pill-dot" style="background:var(--c-evt)"></span>EVT
         </button>
-        <button class="pill" type="button" data-filter="NONE" aria-pressed="false" title="Hospitals with no national stroke certification">
+        <button class="pill" type="button" data-filter="NONE" aria-pressed="false" title="Checked — no stroke certification on record">
           <span class="pill-dot" style="background:var(--c-other)"></span>None
+        </button>
+        <button class="pill" type="button" data-filter="CENSUS" aria-pressed="false" title="Acute-care census records — stroke capability not assessed">
+          <span class="pill-dot" style="background:var(--c-census)"></span>Not assessed
         </button>
       </div>
       <div class="secondary-filters">
