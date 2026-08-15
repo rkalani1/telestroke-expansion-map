@@ -1,0 +1,93 @@
+name: verify
+
+# The repo documents pre-deploy checks in docs/DEPLOY-CHECKLIST.md but nothing
+# enforced them. This runs the automatable half on every push and PR.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dataset build dependency
+        # `zipcodes` is optional for verify-data.py, but installing it enables
+        # the check that every record's coordinates agree with the city it
+        # names — the check that catches a hospital plotted in the wrong town.
+        run: pip install --quiet zipcodes
+
+      - name: Dataset integrity
+        run: python3 scripts/verify-data.py
+
+      - name: JavaScript syntax
+        run: node --check app.js
+
+      - name: hospitals.json is valid JSON
+        run: python3 -c "import json; json.load(open('hospitals.json'))"
+
+      - name: Dataset build is idempotent
+        # hospitals.json must be exactly what build-dataset.py produces from the
+        # committed inputs, so a hand-edit that the build would overwrite fails
+        # here instead of silently reverting on the next rebuild.
+        run: |
+          python3 scripts/build-dataset.py > /dev/null
+          python3 - <<'PY'
+          import json, subprocess, sys
+          # data_version and generated_at are stamped from the clock each run.
+          diff = subprocess.run(
+              ['git', 'diff', '--name-only', '--', 'hospitals.json'],
+              capture_output=True, text=True).stdout.split()
+          if not diff:
+              sys.exit(0)
+          before = json.loads(subprocess.run(
+              ['git', 'show', 'HEAD:hospitals.json'], capture_output=True, text=True).stdout)
+          after = json.load(open('hospitals.json'))
+          volatile = {'data_version', 'generated_at'}
+          for key in volatile:
+              before.pop(key, None)
+              after.pop(key, None)
+          if before != after:
+              print('hospitals.json differs from what build-dataset.py produces.')
+              print('Run: python3 scripts/build-dataset.py')
+              b, a = before['hospitals'], after['hospitals']
+              if len(b) != len(a):
+                  print(f'  record count {len(b)} -> {len(a)}')
+              else:
+                  for x, y in zip(b, a):
+                      if x != y:
+                          print(f'  first differing record: {x.get("id")}')
+                          for k in sorted(set(x) | set(y)):
+                              if x.get(k) != y.get(k):
+                                  print(f'    {k}: {x.get(k)!r} -> {y.get(k)!r}')
+                          break
+              sys.exit(1)
+          PY
+
+      - name: Verification worklist is current
+        run: |
+          python3 scripts/build-worklist.py > /dev/null
+          git diff --exit-code -- data/verification-worklist.csv \
+            || { echo 'Run: python3 scripts/build-worklist.py'; exit 1; }
+
+      - name: Leaflet is vendored, not loaded from a CDN
+        # Regressing to a CDN reintroduces a blank map on networks that block
+        # third-party hosts, which is routine inside hospitals.
+        run: |
+          if grep -qE 'src="https://(unpkg|cdnjs|cdn\.jsdelivr)[^"]*leaflet' index.html; then
+            echo 'index.html loads Leaflet from a CDN; use vendor/leaflet/ instead.'
+            exit 1
+          fi
+          test -f vendor/leaflet/leaflet.js
+          test -f vendor/leaflet/leaflet.css

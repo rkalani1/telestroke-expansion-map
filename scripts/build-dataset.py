@@ -375,7 +375,12 @@ def main():
 
     with open(DATA) as f:
         doc = json.load(f)
-    curated = doc['hospitals']
+    # Census records are fully derived from the CSV, so drop any produced by a
+    # previous run and regenerate them. Without this, re-running the build walks
+    # them through the curated path and promotes them to `stroke-capability`,
+    # asserting a verification that never happened.
+    curated = [h for h in doc['hospitals']
+               if h.get('recordClass') != 'acute-care-census']
     census = load_census()
     places = PlaceResolver()
     if places.by_state is None:
@@ -389,9 +394,18 @@ def main():
         rec = dict(h)
         old_id = rec['cmsId']
 
+        # Identity migrations rewrite CCNs, so they must run exactly once. A
+        # record already carrying `facilityIdType` came from a previous run of
+        # this script; re-applying the corrections to it would walk 270017
+        # (St James, already corrected) on to 270049 and collide with
+        # St Vincent.
+        already_migrated = 'facilityIdType' in rec
+
         # identity
         override = IDENTITY_OVERRIDES.get(old_id)
-        if override:
+        if already_migrated:
+            pass
+        elif override:
             rec['id'] = override['id']
             rec['cmsId'] = override['cmsId']
             rec['facilityIdType'] = override['facilityIdType']
