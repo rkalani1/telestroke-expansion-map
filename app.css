@@ -171,7 +171,11 @@ input, select, textarea { font: inherit; }
 .sr-skip:focus { top: 8px; }
 
 /* ---------- Map ---------- */
-#map { position: absolute; inset: 0; width: 100%; height: 100vh; background: #e5e7eb; }
+/* 100dvh, not 100vh: on iOS Safari and Chrome Android 100vh is the *large*
+   viewport, so with the browser toolbar shown the map overflowed by ~50px and
+   `body { overflow: hidden }` made it unrecoverable — clipping the zoom control
+   and hiding the OSM/CARTO attribution Leaflet adds first. */
+#map { position: absolute; inset: 0; width: 100%; height: 100vh; height: 100dvh; background: #e5e7eb; }
 html.dark #map { background: #1f2937; }
 #map.map-mode-active {
   outline: 4px solid var(--accent);
@@ -388,7 +392,7 @@ html.dark .hospital-item.highlighted { background: #1e3a8a; }
 /* ---------- Dashboard (right panel) ---------- */
 .dashboard {
   position: fixed; top: 16px; right: 16px;
-  width: var(--dashboard-w); max-height: calc(100vh - 32px);
+  width: var(--dashboard-w); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px);
   background: var(--surface); border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg); z-index: 1000;
   overflow-y: auto;
@@ -457,7 +461,7 @@ canvas.chart { display: block; max-width: 100%; height: auto; }
   position: fixed; bottom: 84px; right: 20px; z-index: 1000;
   width: 240px; background: var(--surface); border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg); border: 1px solid var(--border);
-  padding: 6px; max-height: calc(100vh - 120px); overflow-y: auto;
+  padding: 6px; max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px); overflow-y: auto;
   backdrop-filter: blur(var(--blur-val));
 }
 .tools-menu[hidden] { display: none; }
@@ -798,7 +802,7 @@ html.dark .cert-card p { color: var(--text-secondary); }
 @media (max-width: 768px) {
   :root { --sidebar-w: 100%; --header-h: 132px; }
   .mobile-bar { display: flex; flex-direction: column; }
-  #map { top: var(--header-h); height: calc(100vh - var(--header-h)); }
+  #map { top: var(--header-h); height: calc(100vh - var(--header-h)); height: calc(100dvh - var(--header-h)); }
   .map-mode-hint {
     left: 10px;
     right: 10px;
@@ -814,7 +818,7 @@ html.dark .cert-card p { color: var(--text-secondary); }
   .sidebar.mobile-open { transform: translateX(0); }
   .dashboard {
     top: 0; right: 0; bottom: 0; left: 0;
-    width: 100%; max-height: 100vh;
+    width: 100%; max-height: 100vh; max-height: 100dvh;
     border-radius: 0; transform: translateX(100%); opacity: 0;
     z-index: 1003; pointer-events: none; border: none;
   }
@@ -826,7 +830,7 @@ html.dark .cert-card p { color: var(--text-secondary); }
   }
   .tools-menu {
     right: 10px; bottom: 194px;
-    max-height: calc(100vh - var(--header-h) - 210px);
+    max-height: calc(100vh - var(--header-h) - 210px); max-height: calc(100dvh - var(--header-h) - 210px);
   }
   .provenance-bar { display: none; }
   .modal-overlay { padding: calc(var(--header-h) + 8px) 8px 12px; }
@@ -1043,3 +1047,8 @@ html.dark .metric-row .value.qa-fail { color: #fca5a5; }
 .search-wrapper input[type="search"]:focus + .search-kbd-badge {
   opacity: 0;
 }
+
+
+/* The map fills the viewport, so Leaflet's bottom controls can land under the
+   iOS home indicator. */
+.leaflet-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }

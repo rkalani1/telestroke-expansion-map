@@ -108,9 +108,11 @@ Then smoke-test in a browser (see [docs/DEPLOY-CHECKLIST.md](./docs/DEPLOY-CHECK
 | `/` or `Ctrl+F` | Focus search |
 | `E` | Open expansion candidates |
 | `Q` | Open data quality panel |
-| `R` | Reset all filters + scenario |
+| `Shift+R` | Reset all filters + scenario |
 | `D` | Toggle dark mode |
 | `?` | Open methods/certification info |
+
+Single-key shortcuts are suppressed while a dialog is open. Reset is `Shift+R` rather than `R`, because the hospital list is keyboard-navigable and a stray keypress there used to clear every filter with no undo.
 | `Esc` | Close modal / tools menu |
 
 ## Accessibility

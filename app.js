@@ -1510,7 +1510,19 @@ function handleModalTab(e, modalNode) {
 function openModal(id) {
   const m = $('#' + id);
   if (!m) return;
-  if (m.classList.contains('active')) return; // re-opening would stack focus traps and orphan focus restore
+  if (m.classList.contains('active')) {
+    // Re-entrant open (hopping between hospitals inside the detail modal).
+    // Keep the early return so _previousActive survives and traps do not stack,
+    // but focus still has to move: showHospitalDetail clears the content node
+    // out from under the focused button, which drops activeElement to <body>
+    // and lets the next Tab walk the background page.
+    const heading = m.querySelector('.modal-header h2');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus();
+    }
+    return;
+  }
   m.removeAttribute('inert');
   m.setAttribute('aria-hidden', 'false');
   m.classList.add('active');
@@ -2559,7 +2571,10 @@ function saveStateToURL() {
 function loadStateFromURL() {
   const p = new URLSearchParams(window.location.search);
   if (!p.toString()) return;
-  for (const k of ['CSC','TSC','PSC','ASR','EVT','NONE']) {
+  // Read whatever saveStateToURL writes. A hardcoded list silently dropped the
+  // CENSUS pill, and the trailing applyFilters -> scheduleURLSave then rewrote
+  // the address bar without it, so the recipient could not even see the loss.
+  for (const k of Object.keys(state.activeFilters)) {
     if (p.has(k.toLowerCase())) {
       state.activeFilters[k] = true;
       const pill = document.querySelector(`.pill[data-filter="${k}"]`);
@@ -2568,7 +2583,14 @@ function loadStateFromURL() {
   }
   if (p.has('state')) { state.stateFilter = p.get('state'); $('#filter-state').value = state.stateFilter; }
   if (p.has('evtdist')) { state.evtDistMin = parseInt(p.get('evtdist'), 10) || 0; $('#filter-evt-distance').value = String(state.evtDistMin); $('#evt-dist-label').textContent = String(state.evtDistMin); }
-  if (p.has('q')) { state.searchTerm = p.get('q'); $('#search-input').value = state.searchTerm; }
+  if (p.has('q')) {
+    state.searchTerm = p.get('q');
+    $('#search-input').value = state.searchTerm;
+    // Under 768px the mobile box is the visible one; leaving it blank made a
+    // shared ?q= link look like an unexplained empty result.
+    const mobileSearch = $('#mobile-search-input');
+    if (mobileSearch) mobileSearch.value = state.searchTerm;
+  }
   if (p.has('dark')) { state.darkUI = true; document.documentElement.classList.add('dark'); }
   if (p.has('cb')) { state.cbPalette = true; document.documentElement.classList.add('cb'); }
   for (const [k, short] of [['wCert', 'wc'], ['wEvt', 'we'], ['wAdv', 'wa'], ['desertMi', 'dm'], ['capMi', 'cap']]) {
@@ -2964,8 +2986,16 @@ function bindEvents() {
     }
     // Never shadow browser/OS shortcuts (Ctrl+R reload, Cmd+D bookmark, …)
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    // With a dialog open these moved focus and state behind the overlay, and
+    // once focus left the modal node its keydown-bound trap could never fire
+    // again. e/q/? additionally stacked a second overlay with a second trap.
+    if (document.querySelector('.modal-overlay.active')) return;
     if (e.key === '/') { e.preventDefault(); $('#search-input').focus(); }
-    if (e.key === 'r' || e.key === 'R') resetAll();
+    // `r` is deliberately not a bare single key. The hospital list is a roving-
+    // tabindex list of buttons, so arrow-keying it leaves focus on a button
+    // where one stray keypress wiped every filter, the scenario weights and the
+    // map view, with no undo and no history entry to go back to.
+    if (e.key === 'R' && e.shiftKey) resetAll();
     if (e.key === 'd' || e.key === 'D') toggleDarkUI();
     if (e.key === 'e' || e.key === 'E') openExpansionCandidates();
     if (e.key === 'q' || e.key === 'Q') openDataQA();
