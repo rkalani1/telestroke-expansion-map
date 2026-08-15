@@ -877,7 +877,16 @@ function drawDonut() {
     { label: 'PSC', count: counts.PSC, color: cssVar('--c-psc') },
     { label: 'ASR', count: counts.ASR, color: cssVar('--c-asr') },
     { label: 'None', count: none, color: cssVar('--c-other') || '#d1d5db' },
+    { label: 'Not assessed', count: censusCount, color: cssVar('--c-census') },
   ];
+  // The ring must account for every record, or it reads as a complete picture
+  // of a dataset it only partly covers.
+  const canvasEl = $('#donut-chart');
+  if (canvasEl) {
+    canvasEl.setAttribute('aria-label',
+      'Certification distribution across ' + total + ' hospitals: '
+      + segs.filter(s => s.count > 0).map(s => `${s.count} ${s.label}`).join(', '));
+  }
   let angle = -Math.PI / 2;
   for (const s of segs) {
     if (s.count === 0) continue;
