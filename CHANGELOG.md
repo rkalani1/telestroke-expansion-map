@@ -2,6 +2,48 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.1.0] - 2026-08-15
+
+Follow-up polish pass closing the remaining verified audit findings.
+
+### Accuracy
+- Provenance bar no longer pairs "verified 2026-07-04" with the all-236 count —
+  it now reads "capability verified for 135" and carries the not-for-clinical-use
+  disclaimer, whose previous home was a footer the fullscreen map covered.
+- Executive summary leads with the ACTIVE VIEW block and labels every statistic
+  REGION-WIDE, so a filtered export can no longer be read as filtered figures.
+- The four analysis map views (referral pathways, distance map, EVT deserts,
+  zero-capability) now render the filtered set the sidebar describes, not all 236.
+- "Washington ECS" added to the certifying-bodies glossary — 54 records cite it
+  and it was never defined; the "all bodies equivalent" claim is now scoped to
+  the national certifiers.
+- Ground-speed code comment corrected (said ~60 mph; model and docs say 55);
+  unused NEEDLE_TARGET_MIN constant removed.
+
+### Interaction
+- Escape out of location-query mode no longer reopens the tools menu.
+- EVT slider filters per notch but re-fits the map once on release, instead of
+  eight fitBounds animations per drag; shared-link params are clamped and
+  step-snapped so knob, label and applied filter always agree.
+- Collapsed dashboard is inert — it kept a focusable close button inside an
+  aria-hidden subtree, a dead tab stop between the list and the tools FAB.
+- Referral lines and coverage circles are tappable (canvas hit tolerance was 0).
+
+### Screen readers
+- Filter results announce the full sentence with the active filters, not a bare
+  integer; histogram and state bars expose their actual distributions.
+
+### Mobile
+- Tools menu is a bottom sheet — the desktop flyout collapsed to 33px of
+  scrollable menu on a landscape phone and to nothing at 320px.
+- Sliders and the state select meet 44px touch targets; map-mode hint no longer
+  swallows taps and is hidden on touch-only devices.
+
+### In-app reference
+- Keyboard shortcuts (all 11) listed in the ? modal; README table corrected.
+- Palette reads cached per theme state (~620 getComputedStyle calls per render
+  before); dark-mode toggle now re-renders markers so census hollows repaint.
+
 ## [3.0.0] - 2026-08-15
 
 Schema 3.0.0 · data 2026.08.15.1. Coverage expanded to the full regional acute-care census,

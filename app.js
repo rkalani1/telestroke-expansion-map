@@ -16,7 +16,7 @@ const MAP_CENTER = [47.5, -120.5];
 const MAP_ZOOM = 7;
 
 // Transport speed assumptions (for door-to-door estimates)
-// Ground ambulance: ~55 mph rural, use ~60 mph blended effective
+// Ground ambulance: 55 mph blended rural/urban with lights (see METHODOLOGY §5)
 // Air (fixed-wing / rotor-wing air-medical): ~150 mph blended
 // Road factor: haversine distance * 1.25 to approximate road network
 const ROAD_FACTOR = 1.25;
@@ -24,7 +24,6 @@ const GROUND_MPH = 55;
 const AIR_MPH = 150;
 const AIR_OVERHEAD_MIN = 25;    // dispatch + takeoff + landing
 const GROUND_OVERHEAD_MIN = 8;  // dispatch + load
-const NEEDLE_TARGET_MIN = 60;    // AHA door-to-needle goal
 const PUNCTURE_TARGET_MIN = 90;  // AHA door-to-puncture goal (transfer case)
 const PUNCTURE_STRETCH_MIN = 120; // AHA "acceptable" stretch target
 const DIDO_MIN = 30;             // assumed door-in-door-out at the sending site
@@ -41,9 +40,19 @@ const MARKER_COLOR_VAR = {
   CSC: '--c-csc', TSC: '--c-tsc', PSC: '--c-psc', ASR: '--c-asr',
   EVT: '--c-evt', OTHER: '--c-other',
 };
+// getComputedStyle per call cost ~620 style reads per unfiltered render.
+// The palette only changes when the dark/colour-blind classes flip, so cache
+// per class-state and invalidate in toggleDarkUI / togglePalette.
+let cssVarCache = Object.create(null);
 function cssVar(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#666';
+  let v = cssVarCache[name];
+  if (v === undefined) {
+    v = getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#666';
+    cssVarCache[name] = v;
+  }
+  return v;
 }
+function invalidateCssVarCache() { cssVarCache = Object.create(null); }
 
 // ------------------------------------------------------------------
 // Module-level state
@@ -87,6 +96,15 @@ const state = {
 // Cache advanced/EVT center lists
 let advancedCenters = [];
 let evtCenters = [];
+
+// Shared renderer for bulk overlays (referral lines, coverage circles). Under
+// preferCanvas the default hit tolerance is 0 — a ~0.5px target on a weight-1
+// line — which made their identifying tooltips effectively untappable.
+let overlayRenderer = null;
+function getOverlayRenderer() {
+  if (!overlayRenderer) overlayRenderer = L.canvas({ tolerance: 10 });
+  return overlayRenderer;
+}
 
 // ------------------------------------------------------------------
 // Utilities
@@ -883,7 +901,16 @@ function renderClearButton() {
 // Sidebar list
 // ------------------------------------------------------------------
 function renderStatus(filtered) {
-  $('#status-bar').textContent = `Showing ${filtered.length} of ${state.hospitals.length} hospitals`;
+  // The one live region for filter results. A bare count ("12") is what a
+  // screen reader used to hear; name the filters that produced it.
+  const parts = [];
+  const pills = Object.entries(state.activeFilters).filter(([, v]) => v).map(([k]) => k === 'CENSUS' ? 'Not assessed' : k);
+  if (pills.length) parts.push(pills.join('/'));
+  if (state.stateFilter !== 'ALL') parts.push(state.stateFilter);
+  if (state.evtDistMin > 0) parts.push(`>${state.evtDistMin} mi from EVT`);
+  if (state.searchTerm.trim()) parts.push(`\u201c${state.searchTerm.trim()}\u201d`);
+  $('#status-bar').textContent = `Showing ${filtered.length} of ${state.hospitals.length} hospitals`
+    + (parts.length ? ` \u00b7 ${parts.join(' \u00b7 ')}` : '');
   $('#list-count').textContent = filtered.length;
   const mobileStatus = $('#mobile-search-status');
   if (mobileStatus) {
@@ -1098,6 +1125,10 @@ function drawStateBars() {
       el('span', { class: 'label', text: s }),
       track,
       el('span', { class: 'total', text: String(hs.length) }),
+      el('span', { class: 'visually-hidden',
+        text: `${s}: ${hs.length} hospitals \u2014 ${buckets.CSC} CSC, ${buckets.TSC} TSC, `
+          + `${buckets.PSC} PSC, ${buckets.ASR} ASR, ${none} with no certification on record, `
+          + `${censusCount} not assessed` }),
     ]);
     container.appendChild(row);
   }
@@ -1163,6 +1194,10 @@ function drawHistogram() {
   ctx.fillStyle = cssVar('--text-muted') || '#9ca3af';
   ctx.font = '9px system-ui, sans-serif'; ctx.textAlign = 'center';
   ctx.fillText('miles to nearest EVT', 130, baseY + 24);
+  // Screen-reader users get the distribution, not "histogram".
+  canvas.setAttribute('aria-label',
+    'Miles to nearest EVT centre, all records: '
+    + labels.map((l, i) => `${counts[i]} at ${l} miles`).join(', '));
 }
 
 // ------------------------------------------------------------------
@@ -1245,7 +1280,9 @@ function clearQueryPath() {
 }
 
 function toggleQueryMode() {
-  toggleToolsMenu();
+  // Guarded: the Escape path closes the menu first, and an unconditional
+  // toggle here popped it back open over the map.
+  if (state.toolsMenuOpen) toggleToolsMenu();
   state.queryModeActive = !state.queryModeActive;
   const mapContainer = $('#map');
   if (state.queryModeActive) {
@@ -1319,6 +1356,9 @@ function showHospitalDetail(h) {
   loc.appendChild(locKV);
   if (h.cmsIdNote) {
     loc.appendChild(el('p', { class: 'detail-note', text: h.cmsIdNote }));
+  }
+  if (h.geocodeNote) {
+    loc.appendChild(el('p', { class: 'detail-note', text: h.geocodeNote }));
   }
   content.appendChild(loc);
 
@@ -1775,7 +1815,10 @@ function toggleReferralPathways() {
     return;
   }
   let n = 0;
-  for (const h of state.hospitals) {
+  // Draw for the hospitals on screen, not the whole region — with a filter
+  // active the map showed five states of lines while the sidebar said
+  // "Showing 12 of 236".
+  for (const h of state.filtered) {
     if (h.strokeCertificationType === 'CSC' || h.strokeCertificationType === 'TSC') continue;
     const d = state.distances[h.id];
     if (!d?.nearestAdvanced || !Number.isFinite(d.nearestAdvancedDistance)) continue;
@@ -1783,7 +1826,7 @@ function toggleReferralPathways() {
     const color = dist < 50 ? cssVar('--c-evt') : dist <= 100 ? cssVar('--c-psc') : dist <= 150 ? cssVar('--c-tsc') : cssVar('--c-csc');
     const line = L.polyline(
       [[h.latitude, h.longitude], [d.nearestAdvanced.latitude, d.nearestAdvanced.longitude]],
-      { color, weight: dist > 100 ? 2 : 1, opacity: 0.45, dashArray: '5,8' }
+      { color, weight: dist > 100 ? 2 : 1, opacity: 0.45, dashArray: '5,8', renderer: getOverlayRenderer() }
     ).addTo(state.map);
     line.bindTooltip(
       tooltipNode([
@@ -1814,13 +1857,13 @@ function toggleCoverageOverlay() {
   for (const c of evtCenters) {
     const c50 = L.circle([c.latitude, c.longitude], {
       radius: 50 * 1609.34, color: cssVar('--c-evt'), fillColor: cssVar('--c-evt'),
-      fillOpacity: 0.06, weight: 1, opacity: 0.35,
+      fillOpacity: 0.06, weight: 1, opacity: 0.35, renderer: getOverlayRenderer(),
     }).addTo(state.map);
     c50.bindTooltip(tooltipNode(`50 mi buffer around ${c.displayName}`), { sticky: true });
 
     const c100 = L.circle([c.latitude, c.longitude], {
       radius: 100 * 1609.34, color: cssVar('--c-psc'), fillColor: cssVar('--c-psc'),
-      fillOpacity: 0.03, weight: 1, opacity: 0.25, dashArray: '5,5',
+      fillOpacity: 0.03, weight: 1, opacity: 0.25, dashArray: '5,5', renderer: getOverlayRenderer(),
     }).addTo(state.map);
     c100.bindTooltip(tooltipNode(`100 mi buffer around ${c.displayName}`), { sticky: true });
 
@@ -1834,7 +1877,7 @@ function showDistanceMap() {
   toggleToolsMenu();
   state.markerLayer.clearLayers();
   state.markers = [];
-  for (const h of state.hospitals) {
+  for (const h of state.filtered) {
     const d = state.distances[h.id]?.nearestAdvancedDistance ?? Infinity;
     let color;
     if (!Number.isFinite(d) || d === 0) color = markerColor(h);
@@ -1843,15 +1886,15 @@ function showDistanceMap() {
     else color = cssVar('--c-csc');
     showMarker(h, { fillColor: color, color: 'white', weight: 2, opacity: 1, fillOpacity: 0.85 }, markerSize(h));
   }
-  const under = state.hospitals.filter(h => {
+  const under = state.filtered.filter(h => {
     const d = state.distances[h.id]?.nearestAdvancedDistance;
     return d > 0 && d < 50 && Number.isFinite(d);
   }).length;
-  const mid = state.hospitals.filter(h => {
+  const mid = state.filtered.filter(h => {
     const d = state.distances[h.id]?.nearestAdvancedDistance;
     return d >= 50 && d <= 100;
   }).length;
-  const over = state.hospitals.filter(h => {
+  const over = state.filtered.filter(h => {
     const d = state.distances[h.id]?.nearestAdvancedDistance;
     return d > 100 && Number.isFinite(d);
   }).length;
@@ -1864,7 +1907,7 @@ function showEVTDeserts() {
   state.markers = [];
   const desertMi = state.scenario.desertMi;
   let desertCount = 0;
-  for (const h of state.hospitals) {
+  for (const h of state.filtered) {
     const d = state.distances[h.id]?.nearestEVTDistance ?? Infinity;
     const isEVT = h.hasELVO;
     const isDesert = !isEVT && d > desertMi && Number.isFinite(d);
@@ -1885,7 +1928,7 @@ function showZeroCapability() {
   state.markerLayer.clearLayers();
   state.markers = [];
   let n = 0;
-  for (const h of state.hospitals) {
+  for (const h of state.filtered) {
     const zero = !h.strokeCertificationType && !h.isCensus;
     if (zero) n++;
     const color = zero ? cssVar('--c-csc') : markerColor(h);
@@ -2026,6 +2069,7 @@ const SCENARIO_DEFAULTS = { wCert: 40, wEvt: 40, wAdv: 20, desertMi: 100, capMi:
 // these so a hand-edited link can never poison the math (e.g. capMi 0 → NaN)
 // or desync the slider knob from the label.
 const SCENARIO_RANGES = { wCert: [0, 100], wEvt: [0, 100], wAdv: [0, 100], desertMi: [50, 200], capMi: [100, 300] };
+const SCENARIO_STEPS = { wCert: 5, wEvt: 5, wAdv: 5, desertMi: 10, capMi: 25 };
 const CERT_GAP_WEIGHT = { ASR: 0.65, PSC: 0.35 };
 const AIR_ONLY_BONUS = 8;
 
@@ -2495,6 +2539,13 @@ function generateExecutiveSummary() {
     'REGIONAL HOSPITAL STROKE CAPABILITIES — EXECUTIVE SUMMARY',
     `Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
     `Data last verified: ${state.meta?.verified || 'unknown'}  ·  Schema ${state.meta?.schema}  ·  Version ${state.meta?.version}`,
+    ...(activeFilterParts.length ? [
+      '',
+      'ACTIVE VIEW (the filters on screen when this summary was generated)',
+      `  Filters: ${activeFilterParts.join('  ·  ')}`,
+      `  Hospitals shown: ${state.filtered.length} of ${total}`,
+      '  Every figure below is REGION-WIDE and ignores these filters.',
+    ] : []),
     '',
     'DATASET SCOPE',
     `  Coverage: WWAMI region (WA, AK, ID, MT, WY)`,
@@ -2502,6 +2553,8 @@ function generateExecutiveSummary() {
     `    - stroke capability verified: ${assessed}`,
     `    - acute-care census only (capability NOT assessed): ${censusCount}`,
     `  Percentages below are over the ${assessed} records whose capability was assessed.`,
+    '',
+    'REGION-WIDE FIGURES \u2014 not affected by any active filters',
     '',
     'CERTIFICATION DISTRIBUTION (assessed records only)',
     `  CSC (Comprehensive):      ${by.CSC}`,
@@ -2517,12 +2570,6 @@ function generateExecutiveSummary() {
     `  Both counts include hospitals that are themselves a CSC/TSC (transfer time 0).`,
     `  EVT deserts (>${desertMi} mi to nearest 24/7 thrombectomy): ${deserts} (${total ? (deserts/total*100).toFixed(1) : '0.0'}%)`,
     `  Transport figures cover all ${total} mapped hospitals — geometry is known even where capability is not.`,
-    ...(activeFilterParts.length ? [
-      '',
-      'ACTIVE VIEW',
-      `  Filters: ${activeFilterParts.join('  ·  ')}`,
-      `  Hospitals shown: ${state.filtered.length} of ${total}`,
-    ] : []),
     '',
     `TOP EXPANSION CANDIDATES (planning heuristic — weights cert ${sc.wCert} / EVT-dist ${sc.wEvt} / CSC-TSC-dist ${sc.wAdv}, cap ${sc.capMi} mi)`,
     ...topCandidates.map(c =>
@@ -2680,11 +2727,15 @@ function toggleDarkUI() {
   document.documentElement.classList.toggle('dark', state.darkUI);
   localStorage.setItem('stroke-dark', String(state.darkUI));
   toast(state.darkUI ? 'Dark mode on' : 'Light mode on');
-  // Re-render to pick up new colors
+  // Re-render to pick up new colors (markers included: the census markers'
+  // hollow fill is the theme surface colour)
+  invalidateCssVarCache();
+  applyFilters({ skipZoom: true });
   drawDonut(); drawStateBars(); drawHistogram();
 }
 function togglePalette() {
   state.cbPalette = !state.cbPalette;
+  invalidateCssVarCache();
   document.documentElement.classList.toggle('cb', state.cbPalette);
   localStorage.setItem('stroke-cb', String(state.cbPalette));
   toast(state.cbPalette ? 'Colour-blind palette on' : 'Default palette');
@@ -2736,8 +2787,20 @@ function loadStateFromURL() {
       if (pill) pill.setAttribute('aria-pressed', 'true');
     }
   }
-  if (p.has('state')) { state.stateFilter = p.get('state'); $('#filter-state').value = state.stateFilter; }
-  if (p.has('evtdist')) { state.evtDistMin = parseInt(p.get('evtdist'), 10) || 0; $('#filter-evt-distance').value = String(state.evtDistMin); $('#evt-dist-label').textContent = String(state.evtDistMin); }
+  if (p.has('state')) {
+    const s = (p.get('state') || '').toUpperCase();
+    state.stateFilter = ['ALL', 'WA', 'AK', 'ID', 'MT', 'WY'].includes(s) ? s : 'ALL';
+    $('#filter-state').value = state.stateFilter;
+  }
+  if (p.has('evtdist')) {
+    // Clamp and step-snap: the DOM snaps the knob but the raw assignment left
+    // knob and label disagreeing on hand-edited links, and a negative value
+    // printed "-50" while silently filtering nothing.
+    const raw = parseInt(p.get('evtdist'), 10) || 0;
+    state.evtDistMin = Math.round(Math.min(200, Math.max(0, raw)) / 25) * 25;
+    $('#filter-evt-distance').value = String(state.evtDistMin);
+    $('#evt-dist-label').textContent = String(state.evtDistMin);
+  }
   if (p.has('q')) {
     state.searchTerm = p.get('q');
     $('#search-input').value = state.searchTerm;
@@ -2752,7 +2815,9 @@ function loadStateFromURL() {
     if (p.has(short)) {
       const v = parseInt(p.get(short), 10);
       const [lo, hi] = SCENARIO_RANGES[k];
-      if (Number.isFinite(v)) state.scenario[k] = Math.min(hi, Math.max(lo, v));
+      const step = SCENARIO_STEPS[k] || 1;
+      // Snap to the slider's own step so the knob and the applied value agree.
+      if (Number.isFinite(v)) state.scenario[k] = Math.min(hi, Math.max(lo, Math.round(v / step) * step));
     }
   }
   syncScenarioControls();
@@ -2783,13 +2848,18 @@ function updateProvenance() {
   const bar = $('#provenance-bar');
   if (!bar || !state.meta) return;
   clear(bar);
-  bar.appendChild(document.createTextNode(`Data v${state.meta.version} · verified ${state.meta.verified} · `));
+  // The verified date applies to the assessed subset, not all records — the
+  // same conflation the detail view had. And the not-for-clinical-use
+  // disclaimer previously lived only in a <footer> the fullscreen map covers,
+  // so this bar is its one always-visible home.
+  const assessedCount = state.hospitals.filter(h => !h.isCensus).length;
+  bar.appendChild(el('strong', { text: 'Planning reference \u2014 not for clinical use' }));
+  bar.appendChild(document.createTextNode(
+    ` \u00b7 Data v${state.meta.version} \u00b7 ${state.hospitals.length} hospitals `
+    + `(capability verified for ${assessedCount}, ${state.meta.verified}) \u00b7 `));
   const link = el('button', { class: 'provenance-link', type: 'button', text: 'methods' });
   link.addEventListener('click', () => openModal('cert-info-modal'));
   bar.appendChild(link);
-  bar.appendChild(document.createTextNode(' · '));
-  const counts = `${state.hospitals.length} hospitals across WA · AK · ID · MT · WY`;
-  bar.appendChild(document.createTextNode(counts));
 }
 
 // ------------------------------------------------------------------
@@ -2929,11 +2999,20 @@ function setDashboardOpen(open, opener = null) {
       state.dashboardViewBeforeOpen = { center: [center.lat, center.lng], zoom: state.map.getZoom() };
     }
     dashboard.classList.remove('collapsed');
+    dashboard.removeAttribute('inert');
     dashboard.setAttribute('aria-hidden', 'false');
     localStorage.setItem('stroke-dashboard', 'open');
     requestAnimationFrame(fitMapBesideDashboard);
   } else {
+    // Collapse is usually triggered from #dash-close, which is inside the
+    // subtree about to go inert — move focus out first, or it is destroyed in
+    // place. inert (not just aria-hidden) also removes the dead tab stop the
+    // collapsed panel used to leave between the list and the tools FAB.
+    if (dashboard.contains(document.activeElement)) {
+      $('#shortcut-dashboard')?.focus();
+    }
     dashboard.classList.add('collapsed');
+    dashboard.setAttribute('inert', '');
     dashboard.setAttribute('aria-hidden', 'true');
     localStorage.setItem('stroke-dashboard', 'closed');
     if (state.dashboardViewBeforeOpen) {
@@ -2948,6 +3027,7 @@ function setDashboardOpen(open, opener = null) {
 function initializeDashboardState() {
   const shouldOpen = localStorage.getItem('stroke-dashboard') === 'open';
   $('#dashboard').classList.toggle('collapsed', !shouldOpen);
+  $('#dashboard').toggleAttribute('inert', !shouldOpen);
   $('#dashboard').setAttribute('aria-hidden', String(!shouldOpen));
   $('#shortcut-dashboard')?.setAttribute('aria-expanded', String(shouldOpen));
   if (shouldOpen) requestAnimationFrame(fitMapBesideDashboard);
@@ -2986,13 +3066,16 @@ function bindEvents() {
     state.stateFilter = e.target.value;
     applyFilters();
   });
-  // EVT distance slider
+  // EVT distance slider — label and filter update per notch, but the map only
+  // re-fits when the drag ends. Zooming per input event fired up to eight
+  // fitBounds animations to wildly different bounding boxes in one drag.
   const slider = $('#filter-evt-distance');
   slider.addEventListener('input', (e) => {
     state.evtDistMin = parseInt(e.target.value, 10) || 0;
     $('#evt-dist-label').textContent = String(state.evtDistMin);
-    applyFilters();
+    applyFilters({ skipZoom: true });
   });
+  slider.addEventListener('change', () => applyFilters());
   // Search
   const search = $('#search-input');
   const mobileSearch = $('#mobile-search-input');
@@ -3210,7 +3293,7 @@ function buildCertInfo() {
 
   const intro = el('div', { class: 'modal-section' });
   intro.appendChild(el('h3', { text: 'Stroke Certification Levels' }));
-  intro.appendChild(el('p', { text: 'Four tiered national certifications exist in the United States. All have equivalent clinical benchmarks across certifying bodies, with minor terminology differences.' }));
+  intro.appendChild(el('p', { text: 'Four tiered national certifications exist in the United States. Across the national certifying bodies (Joint Commission, DNV, ACHC, CIHQ) the clinical benchmarks are equivalent, with minor terminology differences. State designations (Washington ECS, Idaho TSE) are separate systems mapped onto this ladder for display \u2014 see below.' }));
   intro.appendChild(el('p', { style: { marginTop: '6px' }, text: 'This map is a public-source planning reference — not clinical routing guidance, and not an official state Department of Health product.' }));
   container.appendChild(intro);
 
@@ -3270,6 +3353,28 @@ function buildCertInfo() {
     bodies.appendChild(row);
   }
   container.appendChild(bodies);
+
+  // The shortcuts existed only in the README, which nobody using the deployed
+  // page has open.
+  const keys = el('div', { class: 'cert-card neutral' });
+  keys.appendChild(el('h4', { text: 'Keyboard Shortcuts' }));
+  const SHORTCUTS = [
+    ['/', 'Focus search'], ['L', 'Focus the hospital list'],
+    ['M', 'Focus the map (Enter for map mode, arrows pan, Escape exits)'],
+    ['G', 'Open the dashboard'], ['T', 'Open the tools menu'],
+    ['E', 'Expansion candidates'], ['Q', 'Data quality panel'],
+    ['D', 'Toggle dark mode'], ['Shift+R', 'Reset all filters and scenario'],
+    ['Esc', 'Close dialog / drawer / tools menu / map mode'],
+  ];
+  const kbdList = el('div', { class: 'shortcut-grid' });
+  for (const [k, desc] of SHORTCUTS) {
+    kbdList.appendChild(el('kbd', { text: k }));
+    kbdList.appendChild(el('span', { text: desc }));
+  }
+  keys.appendChild(kbdList);
+  keys.appendChild(el('p', { style: { marginTop: '6px', fontSize: '11px', color: cssVar('--text-muted') },
+    text: 'Single-key shortcuts are ignored while a dialog is open or while typing in a field.' }));
+  container.appendChild(keys);
 
   const methods = el('div', { class: 'cert-card neutral' });
   methods.appendChild(el('h4', { text: 'Transport-Time Methodology' }));

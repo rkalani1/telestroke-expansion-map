@@ -191,6 +191,7 @@ html.dark #map { background: #1f2937; }
   outline-offset: -4px;
 }
 .map-mode-hint {
+  pointer-events: none; /* purely informational — it sat over the map swallowing taps */
   position: fixed;
   left: calc(var(--sidebar-w) + 16px);
   top: 16px;
@@ -697,13 +698,17 @@ html.dark .cert-card p { color: var(--text-secondary); }
 .map-legend .info-link:hover { text-decoration: underline; }
 
 /* ---------- Data provenance ---------- */
+/* Anchored above the legend (a Leaflet bottom-left control), not centred over
+   it — centred at bottom: 6px it sat behind the legend and its disclaimer was
+   unreadable. Left-aligned with the legend's own margin. */
 .provenance-bar {
-  position: fixed; bottom: 6px; left: 50%; transform: translateX(-50%);
-  background: rgba(17,24,39,.85); color: #d1d5db; font-size: 10.5px;
+  position: fixed; bottom: 6px; left: calc(var(--sidebar-w) + 12px);
+  background: rgba(17,24,39,.88); color: #d1d5db; font-size: 10.5px;
   padding: 3px 10px; border-radius: 9999px; z-index: 999;
-  pointer-events: auto; max-width: calc(100vw - 24px);
+  pointer-events: auto; max-width: calc(100vw - var(--sidebar-w) - 140px);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.provenance-bar strong { color: #fbbf24; font-weight: 700; }
 .provenance-bar a,
 .provenance-bar .provenance-link {
   color: #93c5fd; text-decoration: underline; cursor: pointer;
@@ -837,9 +842,15 @@ html.dark .cert-card p { color: var(--text-secondary); }
     width: 52px; height: 52px;
     bottom: 132px; right: 12px;
   }
+  /* Bottom sheet. The desktop flyout anchored at bottom: 194px collapsed to
+     ~33px of scrollable menu on a landscape phone (375px tall) and to nothing
+     at 320px, hiding all 18 analysis and export actions. */
   .tools-menu {
-    right: 10px; bottom: 194px;
-    max-height: calc(100vh - var(--header-h) - 210px); max-height: calc(100dvh - var(--header-h) - 210px);
+    left: 8px; right: 8px; bottom: 0; width: auto;
+    max-height: 70vh; max-height: 70dvh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    z-index: 1004; /* above the FAB so the sheet never opens underneath it */
   }
   .provenance-bar { display: none; }
   .modal-overlay { padding: calc(var(--header-h) + 8px) 8px 12px; }
@@ -1061,6 +1072,8 @@ html.dark .metric-row .value.qa-fail { color: #fca5a5; }
 /* The map fills the viewport, so Leaflet's bottom controls can land under the
    iOS home indicator. */
 .leaflet-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+/* Lift the legend clear of the provenance strip pinned at bottom: 6px. */
+.leaflet-bottom.leaflet-left { margin-bottom: 26px; }
 
 
 /* Focus indicators that are actually visible.
@@ -1131,3 +1144,40 @@ html.cb .pill[aria-pressed=true][data-filter=EVT] { background: #005b8f; border-
   min-height: 32px;
 }
 .mobile-search-status:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+
+/* Map-mode is a keyboard affordance; on touch-only devices the hint pill just
+   occupied map space. Kept in the accessibility tree for aria-describedby. */
+@media (hover: none) and (pointer: coarse) {
+  .map-mode-hint {
+    position: absolute !important;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+}
+
+/* Sliders sized for a fingertip. The EVT slider offered nine stops across
+   ~64px of travel against a ~20px thumb; the five scenario sliders had the
+   same problem at 110px. */
+@media (max-width: 768px) {
+  .secondary-filters { flex-direction: column; align-items: stretch; gap: 8px; }
+  .secondary-filters select { min-height: 44px; }
+  .range-group { width: 100%; }
+  .range-group input[type=range] { flex: 1; width: auto; min-height: 44px; }
+  .scenario-row input[type=range] { width: auto; flex: 1; min-height: 44px; }
+  .clear-btn { min-height: 44px; padding: 0 10px; }
+  .toast-container { top: calc(var(--header-h) + 44px); }
+}
+
+
+/* Keyboard-shortcut list in the methods modal */
+.shortcut-grid {
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 12px;
+  align-items: center; font-size: 12px;
+}
+.shortcut-grid kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px; padding: 1px 7px; justify-self: start;
+  background: var(--surface-3); border: 1px solid var(--border-strong);
+  border-bottom-width: 2px; border-radius: 5px; color: var(--text-secondary);
+}

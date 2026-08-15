@@ -106,14 +106,18 @@ Then smoke-test in a browser (see [docs/DEPLOY-CHECKLIST.md](./docs/DEPLOY-CHECK
 | Key | Action |
 |-----|--------|
 | `/` or `Ctrl+F` | Focus search |
+| `L` | Focus the hospital list |
+| `M` | Focus the map (then Enter for map mode) |
+| `G` | Open the dashboard |
+| `T` | Open the tools menu |
 | `E` | Open expansion candidates |
 | `Q` | Open data quality panel |
-| `Shift+R` | Reset all filters + scenario |
 | `D` | Toggle dark mode |
-| `?` | Open methods/certification info |
+| `Shift+R` | Reset all filters + scenario |
+| `?` | Open methods/certification info (includes this list) |
+| `Esc` | Close modal / drawer / tools menu / map mode |
 
 Single-key shortcuts are suppressed while a dialog is open. Reset is `Shift+R` rather than `R`, because the hospital list is keyboard-navigable and a stray keypress there used to clear every filter with no undo.
-| `Esc` | Close modal / tools menu |
 
 ## Accessibility
 
