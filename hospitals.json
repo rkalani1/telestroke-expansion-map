@@ -2,7 +2,7 @@
   "schema_version": "3.0.0",
   "data_version": "2026.08.15.1",
   "last_verified": "2026-07-04",
-  "generated_at": "2026-08-15T07:43:40+00:00",
+  "generated_at": "2026-08-15T22:13:42+00:00",
   "primary_sources": [
     "The Joint Commission Quality Check (qualitycheck.org) — national CSC/TSC/PSC/ASR certifications",
     "DNV Healthcare Accredited Organizations Directory — national CSC/PSC+/PSC/ASR certifications",
@@ -24,7 +24,8 @@
     "DNV": "Second-largest stroke certifier; uses ASR/PSC/PSC+/CSC nomenclature. \"Integrated Stroke Program Requirements 25-0\" effective 2025-08-01 consolidated all DNV tiers.",
     "ACHC": "Accreditation Commission for Health Care — all four levels.",
     "CIHQ": "Center for Improvement in Healthcare Quality — ASRH and PSC.",
-    "Idaho TSE": "Idaho state Time-Sensitive Emergency system — Level I/II/III stroke designations; not a national accreditation."
+    "Idaho TSE": "Idaho state Time-Sensitive Emergency system — Level I/II/III stroke designations; not a national accreditation.",
+    "Washington ECS": "Washington State Emergency Cardiac & Stroke system (WA DOH) — Level I/II/III stroke designations; a state categorization, not a national accreditation."
   },
   "hospitals": [
     {
