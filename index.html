@@ -160,9 +160,10 @@
     </div>
     <div class="dash-section" aria-label="Certification donut">
       <canvas id="donut-chart" class="chart" width="180" height="180" aria-label="Certification distribution donut chart" role="img"></canvas>
+      <p class="dash-scope dash-scope-block">Certification split · all records, not the current filter</p>
     </div>
     <div class="dash-section" aria-label="State bars">
-      <h3>By state</h3>
+      <h3>By state <span class="dash-scope">· all records</span></h3>
       <div id="state-bars"></div>
     </div>
     <div class="dash-section" aria-label="Coverage gaps">
@@ -170,7 +171,7 @@
       <div id="gap-metrics"></div>
     </div>
     <div class="dash-section" aria-label="Distance histogram">
-      <h3>Distance to nearest EVT</h3>
+      <h3>Distance to nearest EVT <span class="dash-scope">· all records</span></h3>
       <canvas id="histogram-chart" class="chart" width="248" height="110" aria-label="Histogram of distances to nearest EVT center" role="img"></canvas>
     </div>
   </aside>

@@ -7,6 +7,53 @@ All notable changes to the Regional Hospital Stroke Capabilities reference.
 Schema 3.0.0 · data 2026.08.15.1. Coverage expanded to the full regional acute-care census,
 plus identity and geocoding corrections found by auditing the dataset against CMS.
 
+### Transport model and clinician workflow (audit follow-up)
+
+An 8-dimension audit raised 72 findings; 52 survived independent adversarial
+verification. Fixed here:
+
+- **Door-to-puncture measured to the wrong destination.** The window was computed
+  to the nearest CSC/TSC rather than the nearest EVT centre — different sets, 22
+  vs 18 — inflating it for 59 records by up to 109 min. Cheyenne Regional read
+  203 min while naming Banner Wyoming (81 min away) directly above. EVT-capable
+  sites now say "on site" instead of showing a transfer window.
+- **Ground times quoted for hospitals with no road connection.** The popup
+  printed "~782 min ground" for Bartlett Regional (Juneau); the modal had the
+  correct branch but the popup never passed the flag.
+- **Verdict sentence and progress bar disagreed** for anything in the 91–120 min
+  band, using different thresholds against different quantities.
+- **"Best" transport unlabelled.** The crossover is ~18 mi, not the ~80 mi the
+  code comment claimed, so "best" is a helicopter for 181 of 218 transfers.
+- **Executive summary excluded all 18 CSC/TSC hospitals** from its within-60-min
+  counts while keeping them in the denominator (ground 20.3% → 28.0%).
+- **Search:** `st alphonsus` returned nothing while `saint alphonsus` returned
+  two; queries are now normalised (st/saint, mt/mount, punctuation), every token
+  must match at a word boundary, and results are ranked by relevance.
+- **`titleCase` shouted 32 of 236 names** — "ST Luke's", "Community Hospital OF
+  Anaconda" — from a blanket uppercase-if-short rule.
+- **24/7 EVT had no visual channel**: the four PSC-tier EVT centres were
+  pixel-identical to the 41 PSCs without thrombectomy. Now a teal ring, with a
+  matching legend key.
+- **Nearest EVT added to the map popup**, and the detail record reordered so the
+  transfer answer is above the fold on a phone.
+- **Keyboard:** single-key shortcuts fired over open modals, moving focus behind
+  the overlay and permanently escaping the focus trap; `r` wiped every filter
+  from one keypress while the hospital list holds button focus (now `Shift+R`).
+- **Shared links dropped the "Not assessed" filter**, then rewrote the address
+  bar without it so the loss was undetectable.
+- **Accessibility:** row `aria-label`s suppressed every badge, so tier, state-only
+  status and EVT capability were unavailable to screen readers; badge and
+  pressed-pill contrast failed 1.4.3 in all four palettes (worst 2.04:1, now
+  ≥4.5:1); focus rings were invisible on the header buttons and drawn outside
+  the viewport on the map.
+- **Mobile:** `100vh` clipped the zoom control and hid the OSM/CARTO attribution
+  on iOS and Android; sub-16px inputs force-zoomed Safari on every search tap;
+  the status bar reported a filtered subset as the regional total and Clear left
+  filters intact.
+- **CI added** (`.github/workflows/verify.yml`), which immediately caught that
+  `build-dataset.py` was not idempotent — a second run promoted census records
+  to "verified" and collided two corrected CCNs.
+
 ### Coverage — 135 → 236 hospitals
 
 - Merged the CMS acute-care census for the five states so a call from **any** hospital in

@@ -146,7 +146,15 @@ Assumptions:
 - **Air speed 150 mph** is a blended rotor-wing and fixed-wing air-medical speed; 25-minute overhead covers dispatch, preflight, takeoff, landing, and bedside handoff.
 - **Best transport** is the min of both modes — real decisions depend on weather, asset availability, crew duty cycles, and patient stability.
 
-For the **door-to-puncture window**, the detail modal adds a ~30-minute **door-in-door-out (DIDO)** estimate to the transport time. AHA Get-With-The-Guidelines-Stroke target for transferred patients is ≤90 min door-to-puncture; ≤120 min is the "acceptable" stretch target.
+**Which mode "best" means.** Solving the two formulas, air overtakes ground at about **18 great-circle miles** — the effective ground speed against great-circle distance is 44 mph, so air's 150 mph erases its 17-minute overhead advantage almost immediately. Across this dataset air is the faster mode for 181 of 218 interfacility transfers. Because "best" therefore assumes an air asset is available and flying, every displayed best-time now names its mode.
+
+### Door-to-puncture window
+
+The detail modal estimates transport to the **nearest EVT-capable centre**, not the nearest CSC/TSC. These are not the same set: 22 hospitals are EVT-capable while only 18 hold CSC/TSC certification, and the four PSC-tier EVT centres (Eastern Idaho Regional, Saint Alphonsus Nampa, Providence St Patrick, Banner Wyoming) are the nearest thrombectomy option for a large part of Idaho, Montana and Wyoming. Measuring to the nearest CSC/TSC overstated the window for 59 records by up to 109 minutes.
+
+A flat **30-minute door-in-door-out (DIDO)** allowance is added. AHA Get-With-The-Guidelines-Stroke targets ≤90 min door-to-puncture for transferred patients; ≤120 min is the "acceptable" stretch target. Both the sentence and the progress bar are coloured from the same thresholds against the same total.
+
+**What the total does and does not include.** It covers transport plus an assumed DIDO and therefore reaches **arrival at the receiving centre**. It does **not** include that centre's arrival-to-groin interval, so true door-to-puncture is longer than the figure shown. The 30-minute DIDO is a placeholder, not any site's measured value. Hospitals that are themselves EVT-capable show "on site" rather than a transfer window.
 
 **These numbers are not a substitute for live dispatch.** They exist to inform network-planning decisions, not patient-care decisions.
 

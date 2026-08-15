@@ -31,6 +31,10 @@
 
   --c-psc-text: #7c2d12;
   --c-asr-text: #1a2e05;
+  --c-csc-text: #9f1239;   /* rose 800   — 7.07:1 on --c-csc-bg */
+  --c-tsc-text: #9a3412;   /* orange 800 — 6.74:1 */
+  --c-evt-text: #0f766e;   /* teal 700   — 4.98:1 */
+  --c-census-text: #6d28d9;/* violet 700 */
 
   --text-primary: #0f172a; /* Slate 900 */
   --text-secondary: #334155; /* Slate 700 */
@@ -91,6 +95,10 @@ html.dark {
 
   --c-psc-text: #fcd34d;
   --c-asr-text: #bef264;
+  --c-csc-text: #fda4af;   /* rose 300   — 8.20:1 on the dark badge tint */
+  --c-tsc-text: #fdba74;   /* orange 300 — 8.31:1 */
+  --c-evt-text: #5eead4;   /* teal 300   — 8.97:1 */
+  --c-census-text: #c4b5fd;/* violet 300 */
 }
 
 /* Color-blind safe palette (Okabe-Ito inspired) — apply via html.cb class */
@@ -177,6 +185,7 @@ input, select, textarea { font: inherit; }
    and hiding the OSM/CARTO attribution Leaflet adds first. */
 #map { position: absolute; inset: 0; width: 100%; height: 100vh; height: 100dvh; background: #e5e7eb; }
 html.dark #map { background: #1f2937; }
+#map:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
 #map.map-mode-active {
   outline: 4px solid var(--accent);
   outline-offset: -4px;
@@ -285,11 +294,11 @@ html.dark .leaflet-popup-tip {
 .pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
 .pill[aria-pressed=true] { color: #fff; }
 .pill[aria-pressed=true][data-filter=CSC] { background: var(--c-csc); border-color: var(--c-csc); }
-.pill[aria-pressed=true][data-filter=TSC] { background: var(--c-tsc); border-color: var(--c-tsc); }
+.pill[aria-pressed=true][data-filter=TSC] { background: var(--c-tsc); border-color: var(--c-tsc); color: #431407; }
 .pill[aria-pressed=true][data-filter=PSC] { background: var(--c-psc); border-color: var(--c-psc); color: #7c2d12; }
 .pill[aria-pressed=true][data-filter=ASR] { background: var(--c-asr); border-color: var(--c-asr); color: #1a2e05; }
-.pill[aria-pressed=true][data-filter=EVT] { background: var(--c-evt); border-color: var(--c-evt); }
-.pill[aria-pressed=true][data-filter=CENSUS] { background: var(--c-census); border-color: var(--c-census); }
+.pill[aria-pressed=true][data-filter=EVT] { background: #0f766e; border-color: #0f766e; }
+.pill[aria-pressed=true][data-filter=CENSUS] { background: #6d28d9; border-color: #6d28d9; }
 
 .secondary-filters {
   display: flex; gap: 8px; align-items: center; font-size: 12px;
@@ -337,12 +346,12 @@ html.dark .hospital-item.highlighted { background: #1e3a8a; }
   letter-spacing: .03em; text-transform: uppercase;
   background: var(--surface-3); color: var(--text-secondary);
 }
-.badge-CSC { background: var(--c-csc-bg); color: var(--c-csc); }
-.badge-TSC { background: var(--c-tsc-bg); color: var(--c-tsc); }
+.badge-CSC { background: var(--c-csc-bg); color: var(--c-csc-text, var(--c-csc)); }
+.badge-TSC { background: var(--c-tsc-bg); color: var(--c-tsc-text, var(--c-tsc)); }
 .badge-PSC { background: var(--c-psc-bg); color: var(--c-psc-text, var(--c-psc)); }
 .badge-ASR { background: var(--c-asr-bg); color: var(--c-asr-text, var(--c-asr)); }
-.badge-EVT { background: var(--c-evt-bg); color: var(--c-evt); }
-.badge-CENSUS { background: var(--c-census-bg); color: var(--c-census); }
+.badge-EVT { background: var(--c-evt-bg); color: var(--c-evt-text, var(--c-evt)); }
+.badge-CENSUS { background: var(--c-census-bg); color: var(--c-census-text, var(--c-census)); }
 .badge-STATE {
   background: transparent; color: var(--text-muted);
   border: 1px dashed var(--border-strong);
@@ -1052,3 +1061,64 @@ html.dark .metric-row .value.qa-fail { color: #fca5a5; }
 /* The map fills the viewport, so Leaflet's bottom controls can land under the
    iOS home indicator. */
 .leaflet-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+
+/* Focus indicators that are actually visible.
+   The indigo --accent outline computed to ~1.0:1 against the header's hardcoded
+   indigo/violet gradient, and #map is inset:0 inside overflow:hidden so an
+   outward offset drew its ring outside the viewport. */
+.workspace-shortcuts button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, .55);
+}
+
+/* P1: below 16px, Mobile Safari zooms the viewport on focus and — with no
+   maximum-scale set — never zooms back out, clipping the right edge of the
+   layout where the dashboard button sits. */
+@media (max-width: 768px) {
+  #search-input,
+  #mobile-search-input,
+  #filter-state { font-size: 16px; }
+}
+
+
+/* Detail-modal reading order.
+   Sections are appended in construction order (facility -> capabilities ->
+   transport -> nearby), which put ten rows of health system, ownership, county,
+   CMS CCN and latitude above the transfer answer. On a 375x667 phone the
+   nearest-EVT row fell below the fold on every record. Flex `order` reorders
+   without restructuring the build, so the DOM order still reads sensibly and
+   the provenance banner stays first. */
+#hospital-detail-content { display: flex; flex-direction: column; }
+#hospital-detail-content > .detail-banner { order: 0; }
+#hospital-detail-content > .detail-transport { order: 1; }
+#hospital-detail-content > .detail-capabilities { order: 2; }
+#hospital-detail-content > .detail-nearby { order: 3; }
+#hospital-detail-content > .detail-facility { order: 4; }
+#hospital-detail-content > .detail-sources { order: 5; }
+
+/* Touch targets inside the record. These computed to ~18px. */
+@media (max-width: 768px) {
+  .btn-inline-link, .btn-fit-view { min-height: 44px; display: inline-flex; align-items: center; }
+  .nearby-row-btn { min-height: 44px; }
+}
+
+
+/* Only the coverage-gap metrics respond to the active filters; the donut, state
+   bars and histogram are region-wide. Say which is which. */
+.dash-scope { font-weight: 500; color: var(--text-muted); font-size: 10px; }
+.dash-scope-block { display: block; margin-top: 6px; text-align: center; line-height: 1.4; }
+
+/* Badge and pressed-pill contrast. The tier colours are chosen for marker fills
+   against a map; reused as 9px text they measured 2.04-4.15:1. Text tokens are
+   separated from fill tokens, as PSC and ASR already did. */
+.badge { font-size: 10px; }
+
+
+/* Colour-blind palette: the pressed-pill fills are chosen for hue separation,
+   not for text contrast. White on the CSC orange measured 3.87:1. */
+html.cb .pill[aria-pressed=true][data-filter=CSC] { background: #b84f00; border-color: #b84f00; }
+html.cb .pill[aria-pressed=true][data-filter=TSC] { background: var(--c-tsc); border-color: var(--c-tsc); color: #431407; }
+html.cb .pill[aria-pressed=true][data-filter=PSC] { background: var(--c-psc); border-color: var(--c-psc); color: #3f3f05; }
+html.cb .pill[aria-pressed=true][data-filter=EVT] { background: #005b8f; border-color: #005b8f; color: #fff; }

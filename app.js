@@ -126,16 +126,71 @@ function tooltipNode(parts) {
   return span;
 }
 
+// Keep-uppercase tokens. Street directionals and PO live here because
+// titleCase also formats addresses — without them "2500 NE Sunset Blvd"
+// becomes "2500 Ne Sunset Blvd".
+const TITLE_ACRONYMS = new Set([
+  'AMC', 'UW', 'VA', 'CHI', 'DNV', 'CMS', 'OHSU', 'EIRMC', 'ER', 'ICU', 'NICU',
+  'ECU', 'ED', 'USA', 'US', 'CAH', 'PHS', 'SEARHC', 'HCA',
+  'N', 'S', 'E', 'W', 'NE', 'NW', 'SE', 'SW', 'PO',
+]);
+// Lowercased when they are not the first word.
+const TITLE_PARTICLES = new Set(['of', 'at', 'the', 'and', 'for', 'in', 'on']);
+
 function titleCase(str) {
   if (!str) return '';
-  const ACR = new Set(['AMC','UW','VA','CHI','DNV','CMS','OHSU','EIRMC','MT','ER','ICU','NICU','ECU','ED','USA','US']);
-  return str.split(/\s+/).map(w => {
+  // A blanket "uppercase anything <= 2 chars" rule shouted 32 of 236 facility
+  // names — "ST Luke's", "Community Hospital OF Anaconda", "Big Horn CO
+  // Memorial" — because it fired on ST, OF and CO. Directionals are handled by
+  // the acronym set above instead.
+  return str.split(/\s+/).map((w, i) => {
     const upper = w.toUpperCase();
-    if (ACR.has(upper)) return upper;
-    if (w.length <= 2) return upper;
+    if (TITLE_ACRONYMS.has(upper)) return upper;
+    const lower = w.toLowerCase();
+    if (i > 0 && TITLE_PARTICLES.has(lower)) return lower;
     if (w.includes('-')) return w.split('-').map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join('-');
     return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
   }).join(' ').replace(/\bMc([a-z])/g, (_, c) => 'Mc' + c.toUpperCase());
+}
+
+// Search normalization. A clinician types what they say, and the dataset spells
+// it however CMS does: "st alphonsus" found nothing while "saint alphonsus"
+// found two, and "st. pete's" found nothing despite that alias existing. A zero
+// at 2am reads as "this hospital is not in the network", which is the wrong
+// conclusion to hand someone.
+function normalizeSearch(str) {
+  return (str || '')
+    .toLowerCase()
+    .replace(/[.'\u2019]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\bst\b/g, 'saint')
+    .replace(/\bmt\b/g, 'mount')
+    .replace(/\bhosp\b/g, 'hospital')
+    .replace(/\bmed\b/g, 'medical')
+    .replace(/\bctr\b/g, 'center')
+    .replace(/\bcentre\b/g, 'center')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function matchesToken(haystack, token) {
+  if (!token) return true;
+  return haystack === token
+    || haystack.startsWith(token + ' ')
+    || haystack.includes(' ' + token);
+}
+
+// Relevance for the sidebar order while a search is active. Without it a query
+// is ordered by certification tier, so the hospital the clinician typed can sit
+// below a dozen higher-tier partial matches.
+function searchRank(h, query, tokens) {
+  const name = h.nameIndex || '';
+  if (name === query) return 0;
+  if (name.startsWith(query)) return 1;
+  if (name.includes(' ' + query)) return 2;
+  if (name.includes(query)) return 3;
+  if (tokens.every(t => matchesToken(name, t))) return 4;
+  return 5;
 }
 
 function haversineMi(lat1, lon1, lat2, lon2) {
@@ -255,14 +310,15 @@ async function loadData() {
       // Search haystack is built once, not rebuilt per keystroke across 236
       // records. Includes the shorthand a clinician actually says out loud
       // ("Harborview", "HMC") plus county and health system.
-      rec.searchIndex = [
+      rec.nameIndex = normalizeSearch([rec.displayName, h.name, ...(h.aliases || [])].join(' '));
+      rec.searchIndex = normalizeSearch([
         rec.displayName, h.name, ...(h.aliases || []),
         h.address, h.city, h.county, h.state, h.zip,
         h.healthSystem, h.strokeCertificationType, h.certifyingBody,
         h.stateDesignation?.label, h.hospitalType,
         h.hasELVO ? 'EVT thrombectomy' : '',
         rec.isCensus ? 'census not assessed' : '',
-      ].filter(Boolean).join(' ').toLowerCase();
+      ].filter(Boolean).join(' '));
       return rec;
     });
   // Census records carry no assessed stroke capability, so they can never be a
@@ -478,6 +534,12 @@ function initMap() {
           dot.style.background = 'transparent';
           dot.style.border = `2px dashed ${cssVar('--c-census')}`;
         }
+        if (filterKey === 'EVT') {
+          // No marker is ever solid teal — EVT is drawn as a ring around the
+          // tier colour, so the key has to be a ring too.
+          dot.style.background = cssVar('--surface-solid');
+          dot.style.border = `3px solid ${cssVar('--c-evt')}`;
+        }
         const entry = el('button', {
           class: 'entry-btn',
           type: 'button',
@@ -513,6 +575,28 @@ function setTileLayer(dark) {
 // ------------------------------------------------------------------
 // Marker rendering
 // ------------------------------------------------------------------
+// An aria-label overrides the whole subtree for name computation, so the city,
+// the tier badge, the "state only" qualifier, the "Not assessed" marker and the
+// EVT badge were all silently dropped for screen-reader users. Compose the name
+// from the same facts the row displays.
+function rowAccessibleName(h) {
+  const parts = [h.displayName];
+  const place = [h.city, h.state].filter(Boolean).join(', ');
+  if (place) parts.push(place);
+  if (h.isCensus) {
+    parts.push('stroke capability not assessed');
+  } else if (h.strokeCertificationType) {
+    parts.push(CERT_NAMES[h.strokeCertificationType] || h.strokeCertificationType);
+    if (h.certificationBasis === 'state') {
+      parts.push(`${h.stateDesignation ? h.stateDesignation.label : 'state designation'} only, no national accreditation`);
+    }
+  } else {
+    parts.push('no certification on record');
+  }
+  parts.push(h.hasELVO ? '24/7 thrombectomy' : (h.isCensus ? '' : 'no 24/7 thrombectomy'));
+  return parts.filter(Boolean).join(', ');
+}
+
 function markerColor(h) {
   if (h.isCensus) return cssVar('--c-census');
   if (h.strokeCertificationType && MARKER_COLOR_VAR[h.strokeCertificationType]) {
@@ -522,7 +606,7 @@ function markerColor(h) {
 }
 function markerSize(h) {
   if (h.isCensus) return 5;
-  const sizes = { CSC: 12, TSC: 11, PSC: 10, ASR: 9 };
+  const sizes = { CSC: 14, TSC: 12, PSC: 10, ASR: 8 };
   return sizes[h.strokeCertificationType] || 7;
 }
 
@@ -539,10 +623,14 @@ function defaultMarkerStyle(h) {
       dashArray: '2,2',
     };
   }
+  // 24/7 thrombectomy gets its own channel. Tier colour was an accidental proxy
+  // for 18 of the 22 EVT centres, but the four PSC-tier ones were pixel-
+  // identical to the 41 PSCs without it — and those rural regional centres are
+  // exactly what a fly-past-the-nearest-hospital decision turns on.
   return {
     fillColor: markerColor(h),
-    color: 'white',
-    weight: 2,
+    color: h.hasELVO ? cssVar('--c-evt') : 'white',
+    weight: h.hasELVO ? 4 : 2,
     opacity: 1,
     fillOpacity: 0.85,
     dashArray: null,
@@ -641,7 +729,24 @@ function buildPopupContent(h) {
   }
 
   const d = state.distances[h.id];
-  if (d && d.nearestAdvancedDistance > 0 && Number.isFinite(d.nearestAdvancedDistance)) {
+  // The nearest thrombectomy centre is the question this tool exists to answer
+  // fastest; it used to require opening the modal and scrolling inside it.
+  if (d && Number.isFinite(d.nearestEVTDistance)) {
+    meta.appendChild(document.createElement('br'));
+    if (d.nearestEVTDistance === 0) {
+      const s = el('strong', { style: { color: cssVar('--c-evt') }, text: '24/7 EVT on site' });
+      meta.appendChild(s);
+      meta.appendChild(document.createElement('br'));
+    } else {
+      line(d.nearestAdvanced && d.nearestEVT && d.nearestAdvanced.id === d.nearestEVT.id
+        ? 'Nearest CSC/TSC + EVT:' : 'Nearest EVT:', d.nearestEVTName);
+      meta.appendChild(document.createTextNode(
+        `${transportLine(d.nearestEVTDistance, h.airOnly)} · best ${bestTransportText(d.nearestEVTDistance, h.airOnly)}`));
+      meta.appendChild(document.createElement('br'));
+    }
+  }
+  const sameTarget = d && d.nearestEVT && d.nearestAdvanced && d.nearestEVT.id === d.nearestAdvanced.id;
+  if (d && !sameTarget && d.nearestAdvancedDistance > 0 && Number.isFinite(d.nearestAdvancedDistance)) {
     meta.appendChild(document.createElement('br'));
     line('Nearest CSC/TSC:', d.nearestAdvancedName);
     const miles = d.nearestAdvancedDistance;
@@ -660,10 +765,15 @@ function applyFilters(opts = {}) {
   const { skipZoom = false } = opts;
   clearOverlays();
   const anyPill = Object.values(state.activeFilters).some(v => v);
-  const search = state.searchTerm.toLowerCase().trim();
+  // Every token must match somewhere, rather than one contiguous run — so
+  // "alphonsus nampa" finds the record whose name interleaves the two.
+  const searchTokens = normalizeSearch(state.searchTerm).split(' ').filter(Boolean);
 
   const filtered = state.hospitals.filter(h => {
-    if (search && !h.searchIndex.includes(search)) return false;
+    // Tokens match at word boundaries. A bare substring test let the one-letter
+    // token in "St V" match any record containing a "v" anywhere, turning a
+    // 2-result query into 30.
+    if (searchTokens.length && !searchTokens.every(t => matchesToken(h.searchIndex, t))) return false;
     if (state.stateFilter !== 'ALL' && h.state !== state.stateFilter) return false;
     if (state.evtDistMin > 0) {
       const dist = state.distances[h.id]?.nearestEVTDistance || 0;
@@ -685,6 +795,8 @@ function applyFilters(opts = {}) {
     return true;
   });
   state.filtered = filtered;
+  state.searchNormalized = searchTokens.join(' ');
+  state.searchTokens = searchTokens;
 
   renderMarkers(filtered);
   renderList(filtered);
@@ -694,7 +806,7 @@ function applyFilters(opts = {}) {
   scheduleURLSave();
 
   // Zoom to fit when a meaningful subset is active
-  const meaningful = anyPill || state.stateFilter !== 'ALL' || search || state.evtDistMin > 0;
+  const meaningful = anyPill || state.stateFilter !== 'ALL' || searchTokens.length > 0 || state.evtDistMin > 0;
   if (!skipZoom && meaningful && filtered.length > 0 && filtered.length < state.hospitals.length) {
     const bounds = L.latLngBounds(filtered.map(h => [h.latitude, h.longitude]));
     const dashboardOpen = window.innerWidth > 768 && !$('#dashboard')?.classList.contains('collapsed');
@@ -754,8 +866,17 @@ function renderClearButton() {
   const any = Object.values(state.activeFilters).some(v => v)
     || state.stateFilter !== 'ALL' || state.evtDistMin > 0 || state.searchTerm;
   $('#clear-btn').classList.toggle('hidden', !any);
+  // Previously shown only when a query was present, and bound to clearSearchOnly
+  // — so with a stale pill on, clearing the query reproduced the same empty
+  // result and the cause stayed hidden behind an unopened drawer.
   const mobileClear = $('#mobile-clear-search');
-  if (mobileClear) mobileClear.classList.toggle('hidden', !state.searchTerm);
+  if (mobileClear) {
+    mobileClear.classList.toggle('hidden', !any);
+    const otherFilters = any && !(state.searchTerm && Object.values(state.activeFilters).every(v => !v)
+      && state.stateFilter === 'ALL' && state.evtDistMin === 0);
+    mobileClear.textContent = otherFilters ? 'Clear all' : 'Clear';
+    mobileClear.dataset.clearAll = otherFilters ? 'true' : 'false';
+  }
 }
 
 // ------------------------------------------------------------------
@@ -771,7 +892,7 @@ function renderStatus(filtered) {
       ? `No hospitals match “${query || 'these filters'}”.`
       : query
         ? `${filtered.length} ${filtered.length === 1 ? 'hospital' : 'hospitals'} match “${query}”.`
-        : `${filtered.length} hospitals in the five-state region.`;
+        : `${filtered.length} of ${state.hospitals.length} records shown.`;
     mobileStatus.classList.toggle('is-empty', filtered.length === 0);
   }
 }
@@ -786,7 +907,14 @@ function renderList(filtered) {
     return;
   }
   const order = { CSC: 0, TSC: 1, PSC: 2, ASR: 3 };
+  const q = state.searchNormalized || '';
+  const tokens = state.searchTokens || [];
   const sorted = [...filtered].sort((a, b) => {
+    if (q) {
+      const ra = searchRank(a, q, tokens);
+      const rb = searchRank(b, q, tokens);
+      if (ra !== rb) return ra - rb;
+    }
     const oa = order[a.strokeCertificationType] ?? 4;
     const ob = order[b.strokeCertificationType] ?? 4;
     return oa - ob || a.displayName.localeCompare(b.displayName);
@@ -824,9 +952,9 @@ function renderList(filtered) {
     ]);
     const item = el('button', {
       class: 'hospital-item', type: 'button', tabindex: index === state.activeHospitalIndex ? '0' : '-1',
-      'aria-label': `Open details for ${h.displayName}`, dataset: { cms: h.id, index: String(index) },
+      'aria-label': rowAccessibleName(h), dataset: { cms: h.id, index: String(index) },
     }, [
-      el('span', { class: 'dot', style: { background: color } }),
+      el('span', { class: 'dot', 'aria-hidden': 'true', style: { background: color } }),
       content,
     ]);
     // Matches the map-marker behaviour. Previously a list click only panned the
@@ -1160,7 +1288,7 @@ function showHospitalDetail(h) {
   content.appendChild(banner);
 
   // Location
-  const loc = el('div', { class: 'detail-section' });
+  const loc = el('div', { class: 'detail-section detail-facility' });
   loc.appendChild(el('h3', { text: 'Facility' }));
   const locKV = el('div');
   const kv = (label, val) => {
@@ -1195,7 +1323,7 @@ function showHospitalDetail(h) {
   content.appendChild(loc);
 
   // Capabilities
-  const cap = el('div', { class: 'detail-section' });
+  const cap = el('div', { class: 'detail-section detail-capabilities' });
   cap.appendChild(el('h3', { text: 'Stroke Capabilities' }));
   const capKV = el('div');
   const row = (label, text, color) => {
@@ -1209,6 +1337,7 @@ function showHospitalDetail(h) {
     r.appendChild(dd); capKV.appendChild(r);
   };
   let stateOnlyNote = null;
+  let capabilityNote = null;
   if (h.isCensus) {
     row('Certification:', 'Not assessed', cssVar('--c-census'));
     row('24/7 thrombectomy:', 'Unknown', cssVar('--c-census'));
@@ -1229,6 +1358,14 @@ function showHospitalDetail(h) {
     if (h.stateDesignation) {
       row('State designation:', h.stateDesignation.label);
     }
+    // The tier definition answers the on-call question directly ("ASR = rapid
+    // assessment, stabilisation, IV thrombolysis, teleneurology 24/7, transfer
+    // protocols") and previously cost closing this record to go find it.
+    const tierDef = state.meta?.certDefs?.[h.strokeCertificationType];
+    if (tierDef) {
+      const clause = tierDef.split('\u2014').slice(1).join('\u2014').trim() || tierDef;
+      capabilityNote = clause;
+    }
     if (h.certificationBasis === 'state') {
       stateOnlyNote = `The ${h.strokeCertificationType} tier above is this app's mapping of a state `
         + 'designation onto the national tier ladder. It is not a Joint Commission, DNV, ACHC '
@@ -1238,6 +1375,10 @@ function showHospitalDetail(h) {
     if (h.certificationDetails) row('Details:', h.certificationDetails);
   }
   cap.appendChild(capKV);
+  if (capabilityNote) cap.appendChild(el('p', { class: 'detail-note', text: capabilityNote }));
+  if (h.hasELVO && state.meta?.certDefs?.EVT) {
+    cap.appendChild(el('p', { class: 'detail-note', text: state.meta.certDefs.EVT }));
+  }
   if (stateOnlyNote) cap.appendChild(el('p', { class: 'detail-note', text: stateOnlyNote }));
   content.appendChild(cap);
 
@@ -1261,7 +1402,7 @@ function showHospitalDetail(h) {
       { sticky: true }
     );
 
-    const dist = el('div', { class: 'detail-section' });
+    const dist = el('div', { class: 'detail-section detail-transport' });
     dist.appendChild(el('h3', { text: 'Transport Analysis' }));
     const tbl = el('div');
     const dCSC = d.nearestAdvancedDistance;
@@ -1415,7 +1556,7 @@ function showHospitalDetail(h) {
   }
 
   // Nearby hospitals
-  const nearbySect = el('div', { class: 'detail-section' });
+  const nearbySect = el('div', { class: 'detail-section detail-nearby' });
   nearbySect.appendChild(el('h3', { text: 'Nearby Hospitals (5 closest)' }));
   const nearby = state.hospitals
     .filter(n => n.id !== h.id)
@@ -1441,7 +1582,7 @@ function showHospitalDetail(h) {
     const rowEl = el('button', {
       class: 'nearby-row-btn',
       type: 'button',
-      'aria-label': `View details for ${n.displayName}`,
+      'aria-label': `${rowAccessibleName(n)}, ${formatMiles(n.dist)} miles away`,
       onclick: () => {
         panToHospital(n.id);
         showHospitalDetail(n);
@@ -1456,7 +1597,7 @@ function showHospitalDetail(h) {
 
   // Data sources
   if (h.dataSources?.length) {
-    const srcSect = el('div', { style: { fontSize: '11px', color: cssVar('--text-muted'), paddingTop: '8px', borderTop: '1px solid var(--border)' } });
+    const srcSect = el('div', { class: 'detail-sources', style: { fontSize: '11px', color: cssVar('--text-muted'), paddingTop: '8px', borderTop: '1px solid var(--border)' } });
     srcSect.appendChild(el('strong', { text: 'Data sources: ' }));
     srcSect.appendChild(document.createTextNode(h.dataSources.join('; ')));
     // This record's own provenance, not the file's. Stamping the dataset-wide
@@ -2876,7 +3017,10 @@ function bindEvents() {
 
   // Clear
   $('#clear-btn').addEventListener('click', resetAll);
-  $('#mobile-clear-search').addEventListener('click', clearSearchOnly);
+  $('#mobile-clear-search').addEventListener('click', (e) => {
+    if (e.currentTarget.dataset.clearAll === 'true') resetAll();
+    else clearSearchOnly();
+  });
 
   // Tools FAB
   $('#tools-fab').addEventListener('click', toggleToolsMenu);
