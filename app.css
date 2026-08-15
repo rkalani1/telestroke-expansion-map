@@ -1122,3 +1122,12 @@ html.cb .pill[aria-pressed=true][data-filter=CSC] { background: #b84f00; border-
 html.cb .pill[aria-pressed=true][data-filter=TSC] { background: var(--c-tsc); border-color: var(--c-tsc); color: #431407; }
 html.cb .pill[aria-pressed=true][data-filter=PSC] { background: var(--c-psc); border-color: var(--c-psc); color: #3f3f05; }
 html.cb .pill[aria-pressed=true][data-filter=EVT] { background: #005b8f; border-color: #005b8f; color: #fff; }
+
+
+/* The mobile result count is now the affordance that opens the results drawer. */
+.mobile-search-status {
+  display: block; width: 100%; text-align: left;
+  background: none; border: 0; cursor: pointer;
+  min-height: 32px;
+}
+.mobile-search-status:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

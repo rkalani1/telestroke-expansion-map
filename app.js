@@ -1979,7 +1979,12 @@ function renderDistanceMatrix() {
 }
 
 function exportDistanceMatrixCSV() {
-  const rows = [['Hospital', 'State', 'City', 'Certification', 'Certifying Body', 'Nearest CSC/TSC', 'Distance CSC/TSC (mi)', 'Ground min', 'Air min', 'Nearest EVT', 'Distance EVT (mi)']];
+  const assumptions = [`Planning estimates — great-circle x ${ROAD_FACTOR} road factor; `
+    + `${GROUND_MPH} mph ground + ${GROUND_OVERHEAD_MIN} min overhead; `
+    + `${AIR_MPH} mph air + ${AIR_OVERHEAD_MIN} min overhead. Not dispatch times.`];
+  const rows = [assumptions, ['Hospital', 'State', 'City', 'Certification', 'Certifying Body',
+    'Air-only access', 'Nearest CSC/TSC', 'Distance CSC/TSC (mi)', 'CSC/TSC ground min', 'CSC/TSC air min',
+    'Nearest EVT', 'Distance EVT (mi)', 'EVT ground min', 'EVT air min']];
   for (const h of state.hospitals) {
     const d = state.distances[h.id] || {};
     const dA = Number.isFinite(d.nearestAdvancedDistance) && d.nearestAdvancedDistance > 0 ? d.nearestAdvancedDistance : '';
@@ -1988,12 +1993,15 @@ function exportDistanceMatrixCSV() {
       h.displayName, h.state, h.city || '',
       h.isCensus ? 'Not assessed' : (h.strokeCertificationType || 'None'),
       h.certifyingBody || '',
+      h.airOnly ? 'Yes' : 'No',
       d.nearestAdvancedName || '',
       dA === '' ? '' : dA.toFixed(1),
       dA === '' ? '' : (h.airOnly ? 'N/A' : groundMinutes(dA)),
       dA === '' ? '' : airMinutes(dA),
       d.nearestEVTName || '',
       dE === '' ? '' : dE.toFixed(1),
+      dE === '' ? '' : (h.airOnly ? 'N/A' : groundMinutes(dE)),
+      dE === '' ? '' : airMinutes(dE),
     ]);
   }
   const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
@@ -2576,7 +2584,10 @@ function exportHospitalsCSV() {
   const src = state.filtered;
   const isSubset = src.length < state.hospitals.length;
   if (src.length === 0) { toast('No hospitals match the current filters — nothing to export', 'warning'); return; }
-  const rows = [['Name', 'Aliases', 'Address', 'City', 'County', 'State', 'ZIP', 'Latitude', 'Longitude',
+  const rows = [[`Planning estimates — great-circle x ${ROAD_FACTOR} road factor; ${GROUND_MPH} mph ground `
+    + `+ ${GROUND_OVERHEAD_MIN} min overhead; ${AIR_MPH} mph air + ${AIR_OVERHEAD_MIN} min overhead. `
+    + `Not dispatch times. "Not assessed" means stroke capability was never checked, not that none exists.`],
+    ['Name', 'Aliases', 'Address', 'City', 'County', 'State', 'ZIP', 'Latitude', 'Longitude',
     'Record class', 'Stroke data status', 'Tier shown', 'Certification basis', 'National certification',
     'State designation', 'Certifying Body', 'Certification Details', 'EVT (24/7)',
     'Facility type', 'Beds', 'Health system',
@@ -2824,7 +2835,7 @@ function handleDrawerKeys(event, panel) {
   }
 }
 
-function openMobilePanel(id, opener) {
+function openMobilePanel(id, opener, focusTarget) {
   if (window.innerWidth > 768) return;
   if (state.mobilePanel && state.mobilePanel !== id) closeMobilePanel(state.mobilePanel, false);
   const panel = $('#' + id);
@@ -2842,7 +2853,13 @@ function openMobilePanel(id, opener) {
   const handler = event => handleDrawerKeys(event, panel);
   state.mobileTrapHandler = handler;
   panel.addEventListener('keydown', handler);
-  requestAnimationFrame(() => panel.querySelector('.mobile-close, button, input, select')?.focus());
+  // focusTarget lets a caller land somewhere more useful than the Close button
+  // — opening the drawer from a search should put the user on the results.
+  requestAnimationFrame(() => {
+    const el = (typeof focusTarget === 'function' ? focusTarget() : null)
+      || panel.querySelector('.mobile-close, button, input, select');
+    el?.focus();
+  });
 }
 
 function closeMobilePanel(id, restoreFocus = true) {
@@ -3007,13 +3024,32 @@ function bindEvents() {
       search.value = e.target.value;
     });
     mobileSearch.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        if (state.filtered && state.filtered.length === 1) {
-          const h = state.filtered[0];
-          panToHospital(h.id);
-          showHospitalDetail(h);
-        }
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      // Enter used to do nothing unless the query happened to match exactly one
+      // hospital. Everything else dead-ended: the results render into
+      // #hospital-list, which lives in a drawer that is translated off-screen
+      // and inert until the user taps the hamburger.
+      if (!state.filtered || state.filtered.length === 0) return;
+      if (state.filtered.length === 1) {
+        const h = state.filtered[0];
+        panToHospital(h.id);
+        showHospitalDetail(h);
+        return;
+      }
+      openMobilePanel('sidebar', mobileSearch,
+        () => $$('.hospital-item')[state.activeHospitalIndex] || $('.hospital-item'));
+    });
+  }
+
+  // The result count is the only feedback a mobile search gives, so make it the
+  // way through to the results rather than a dead label.
+  const mobileStatusEl = $('#mobile-search-status');
+  if (mobileStatusEl) {
+    mobileStatusEl.addEventListener('click', () => {
+      if (state.filtered && state.filtered.length) {
+        openMobilePanel('sidebar', mobileStatusEl,
+          () => $$('.hospital-item')[state.activeHospitalIndex] || $('.hospital-item'));
       }
     });
   }
