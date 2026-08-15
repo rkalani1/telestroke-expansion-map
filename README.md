@@ -1,16 +1,29 @@
 # Regional Hospital Stroke Capabilities
 
-Interactive map of stroke-center certifications across the WWAMI region (Washington · Alaska · Idaho · Montana · Wyoming), built for regional hospital stroke capability mapping. (The repository name, `telestroke-expansion-map`, reflects the planning use case; the product itself is a public-source capability reference.)
+Interactive map of stroke-center certifications and acute-care hospitals across the WWAMI region (Washington · Alaska · Idaho · Montana · Wyoming), built so a vascular neurologist, fellow, or resident on call can look up **any** hospital in the region and get its capability and transfer picture in one view. (The repository name, `telestroke-expansion-map`, reflects the planning use case; the product itself is a public-source capability reference.)
 
 **Live site:** https://rkalani1.github.io/telestroke-expansion-map/
 
-![Map screenshot](https://img.shields.io/badge/status-live-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Data](https://img.shields.io/badge/data-verified%20July%202026-informational)
+![Map screenshot](https://img.shields.io/badge/status-live-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Data](https://img.shields.io/badge/data-verified%20July%202026-informational) ![Records](https://img.shields.io/badge/hospitals-236-blue)
 
 ---
+
+## Two classes of record
+
+Every hospital on the map is one of two kinds, and the difference is stated everywhere it matters — marker shape, list badge, detail banner, exports, and every statistic:
+
+| Class | What it means | Count |
+|-------|---------------|-------|
+| **Stroke capability** | Certification individually verified against primary sources. A blank certification here means *checked, none found*. | 135 |
+| **Acute-care census** | Facility identity from the CMS acute-care census, so every hospital in the region is findable. Stroke capability **has not been assessed** — blank means *unknown*, not *none*. | 101 |
+
+Census records never assert a tier or an EVT flag, are excluded from every capability statistic and from expansion-candidate scoring, and still get full transport analysis — the geometry is known even where the capability is not.
 
 ## What it does
 
 - Maps every hospital in the dataset with color-coded markers by certification tier (CSC / TSC / PSC / ASR) and visible badges for 24/7 thrombectomy (EVT) capability.
+- **Separates national accreditation from state designation.** 67 of the 135 assessed records display a tier derived from a WA ECS or Idaho TSE state designation alone, with no national accreditation on record. The detail view says so in as many words, and the list row carries a dashed state badge — a WA ECS Level III should never be read as a Joint Commission ASR.
+- **Finds hospitals by what clinicians actually call them.** Search covers spoken shorthand (`HMC`, `Harborview`, `Sacred Heart`, `St V`), county, health system, facility type, and city — not just the official CMS name.
 - Computes, for each hospital, distance and estimated ground/air transport time to the nearest CSC/TSC and nearest EVT center.
 - Identifies **EVT deserts** (hospitals beyond a configurable distance from 24/7 thrombectomy) and **zero-capability** hospitals (no national certification — also available as a "None" filter pill).
 - **Expansion candidates (press `E`)**: ranks non-EVT, non-CSC/TSC hospitals by a transparent planning heuristic (certification gap, distance to EVT, distance to CSC/TSC), with a per-site "Why?" breakdown showing exactly how each score was computed, nearest-center names, and ground/air estimates.
@@ -33,8 +46,10 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 
 ## Data
 
-- **Coverage:** 135 hospitals across WA (88), AK (10), ID (27), MT (8), WY (2). Includes all verified national-stroke-certified hospitals in the five-state region plus state-designated (WA ECS / Idaho TSE) facilities.
-- **Last verified:** 2026-07-04 (full dataset) · 2026-07-18 (watch-list re-check + press sweep; current data version 2026.07.18.1)
+- **Coverage:** 236 hospitals across WA (91), MT (59), ID (44), WY (27), AK (15) — 135 with verified stroke capability, 101 acute-care census records.
+- **Stroke capability last verified:** 2026-07-04 (full dataset) · 2026-07-18 (watch-list re-check + press sweep)
+- **Census snapshot:** CMS Hospital General Information, Oct 2023. Used for facility identity, type, ownership and bed counts only — no stroke claim is derived from it.
+- **Open items:** [`data/verification-worklist.csv`](./data/verification-worklist.csv) ranks the 56 records that still need a primary-source check, each with the source to check.
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
 - **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
 
@@ -69,8 +84,19 @@ python3 -m http.server 8000
 There is intentionally no build step or test framework. Two lightweight checks cover the moving parts:
 
 ```bash
-python3 scripts/verify-data.py   # dataset integrity (mirrors METHODOLOGY.md §7)
+python3 scripts/verify-data.py   # 17 dataset integrity checks (mirrors METHODOLOGY.md §7)
 node --check app.js              # JS syntax
+```
+
+`verify-data.py` runs without dependencies; installing `zipcodes` (`pip install zipcodes`)
+additionally enables the check that every record's coordinates agree with the city it names.
+
+To rebuild the dataset after editing curated records or refreshing the census:
+
+```bash
+pip install zipcodes
+python3 scripts/build-dataset.py   # normalise + merge census (idempotent)
+python3 scripts/build-worklist.py  # regenerate the verification queue
 ```
 
 Then smoke-test in a browser (see [docs/DEPLOY-CHECKLIST.md](./docs/DEPLOY-CHECKLIST.md) for the full list).
@@ -82,9 +108,11 @@ Then smoke-test in a browser (see [docs/DEPLOY-CHECKLIST.md](./docs/DEPLOY-CHECK
 | `/` or `Ctrl+F` | Focus search |
 | `E` | Open expansion candidates |
 | `Q` | Open data quality panel |
-| `R` | Reset all filters + scenario |
+| `Shift+R` | Reset all filters + scenario |
 | `D` | Toggle dark mode |
 | `?` | Open methods/certification info |
+
+Single-key shortcuts are suppressed while a dialog is open. Reset is `Shift+R` rather than `R`, because the hospital list is keyboard-navigable and a stray keypress there used to clear every filter with no undo.
 | `Esc` | Close modal / tools menu |
 
 ## Accessibility
@@ -98,15 +126,20 @@ Then smoke-test in a browser (see [docs/DEPLOY-CHECKLIST.md](./docs/DEPLOY-CHECK
 ## File layout
 
 ```
-index.html            Semantic shell
-app.css               All styles (tokens + components + responsive + print)
-app.js                Application logic (data load, map, filters, scoring, tools, exports)
-hospitals.json        Data + metadata (schema, sources, cert definitions)
-llms.txt              Plain-text site/dataset description for machine readers
-scripts/verify-data.py  Dataset integrity checks (no dependencies)
-METHODOLOGY.md        Data sourcing + certification standards + scoring model
-CHANGELOG.md          Release history
-docs/                 Deploy checklist + improvement notes
+index.html                        Semantic shell
+app.css                           All styles (tokens + components + responsive + print)
+app.js                            Application logic (data load, map, filters, scoring, exports)
+hospitals.json                    Data + metadata (schema, sources, cert definitions)
+vendor/leaflet/                   Leaflet 1.9.4, vendored — see vendor/leaflet/README.md
+data/cms-census-wwami-2023-10.csv CMS acute-care census subset for the five states
+data/verification-worklist.csv    Ranked queue of records needing a primary-source check
+llms.txt                          Plain-text site/dataset description for machine readers
+scripts/build-dataset.py          Rebuild hospitals.json (normalise + merge census)
+scripts/build-worklist.py         Regenerate the verification queue
+scripts/verify-data.py            Dataset integrity checks
+METHODOLOGY.md                    Data sourcing + certification standards + scoring model
+CHANGELOG.md                      Release history
+docs/                             Deploy checklist + improvement notes
 ```
 
 ## License
@@ -116,7 +149,8 @@ MIT — see [LICENSE](./LICENSE).
 ## Attribution
 
 - Basemap tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, styled by [CARTO](https://carto.com/attributions)
-- Mapping library: [Leaflet](https://leafletjs.com/)
+- Mapping library: [Leaflet](https://leafletjs.com/) (BSD-2-Clause, vendored in `vendor/leaflet/`)
+- Acute-care census derived from CMS Hospital General Information
 - PNG export: [html2canvas](https://html2canvas.hertzen.com/)
 
 ---

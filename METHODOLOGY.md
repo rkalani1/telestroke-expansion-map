@@ -1,21 +1,47 @@
 # Methodology
 
-*Last updated: 2026-07-18 · data version 2026.07.18.1 (full dataset verified 2026-07-04; watch-list re-checked 2026-07-18)*
+*Last updated: 2026-08-15 · schema 3.0.0 · data version 2026.08.15.1*
+*Stroke capability verified 2026-07-04 (watch-list re-checked 2026-07-18); acute-care census snapshot Oct 2023*
 
 This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
 
 ---
 
-## 1. Scope
+## 1. Scope and record classes
 
-The dataset covers acute-care hospitals in the WWAMI region (Washington, Alaska, Idaho, Montana, Wyoming) that meet at least one of the following criteria:
+The dataset covers the WWAMI region (Washington, Alaska, Idaho, Montana, Wyoming) and holds **two classes of record**. The distinction is load-bearing: it is the difference between "we checked and found no certification" and "we have not checked".
 
-1. Currently hold a **national stroke certification** (CSC, TSC, PSC, or ASR) from Joint Commission, DNV, ACHC, or CIHQ.
-2. Hold a state-level stroke designation equivalent to one of the above (e.g., Idaho TSE Level I/II/III).
+### `stroke-capability` — 135 records
 
-This is **not** a complete census of every acute-care hospital in the five states. Montana and Wyoming in particular have many additional critical-access hospitals not currently in scope. The coverage model is focused on hospitals with known stroke capabilities.
+Hospitals whose stroke capability has been individually verified against primary sources. A hospital qualifies if it:
 
-As of 2026-07-03, the dataset contains **135 hospitals**: WA 88, AK 10, ID 27, MT 8, WY 2.
+1. Currently holds a **national stroke certification** (CSC, TSC, PSC, or ASR) from Joint Commission, DNV, ACHC, or CIHQ; or
+2. Holds a state-level stroke designation (WA ECS Level I/II/III, Idaho TSE Level I/II/III); or
+3. Was checked and found to hold neither — recorded as `strokeCertificationType: null` with `certificationBasis: "none"`.
+
+Distribution: WA 88, ID 27, AK 10, MT 8, WY 2.
+
+### `acute-care-census` — 101 records
+
+Every remaining Medicare-certified acute-care and critical-access hospital in the five states, from the CMS acute-care census. These exist so that a call from any hospital in the region resolves to a record with a location, a facility profile, and a transfer picture.
+
+Their stroke capability has **not** been assessed. They carry `strokeCertificationType: null`, `hasELVO: false` and `certificationBasis: "not-assessed"`, and the application:
+
+- renders them hollow on the map, in a distinct colour, at a smaller radius;
+- badges them "Not assessed" in the sidebar list and in the nearby-hospitals list;
+- shows a banner on the detail view stating that no certification on file means unknown, not none;
+- excludes them from certification counts, coverage-gap metrics, the zero-capability view, and expansion-candidate scoring;
+- never treats them as a hub in nearest-CSC/TSC or nearest-EVT calculations.
+
+Distribution: MT 51, WY 25, ID 17, AK 5, WA 3.
+
+**Total: 236 records** — WA 91, MT 59, ID 44, WY 27, AK 15.
+
+### What is still out of scope
+
+- 19 CMS census rows for the five states carry no coordinates and could not be plotted (listed in `data/verification-worklist.csv`).
+- Facilities with no CMS Certification Number are only present where curated by hand (e.g. Madigan Army Medical Center); the census cannot supply them.
+- The census snapshot is from Oct 2023, so hospitals opened since are absent and closures may persist.
 
 ## 2. Data sources
 
@@ -29,6 +55,9 @@ Each hospital record is derived from, and cross-checked against, these primary s
 | **Idaho TSE System** | Idaho state Level I / II / III designations |
 | **Washington State DOH** | ECS facility list, state stroke designations |
 | **Hospital websites & press releases** | Recent certification changes, thrombectomy capability |
+| **CMS Hospital General Information** (Oct 2023 snapshot) | Acute-care census: CCN, facility name, hospital type, ownership, bed count, coordinates |
+
+The Oct 2023 CMS snapshot is vendored at `data/cms-census-wwami-2023-10.csv` (253 rows) so the build is reproducible without network access. It is used for **facility identity only** — no stroke-capability claim is ever derived from it.
 
 Geocoding: addresses were forward-geocoded via the [Nominatim / OpenStreetMap](https://nominatim.openstreetmap.org/) service; each record includes the resulting latitude/longitude.
 
@@ -42,6 +71,17 @@ Geocoding: addresses were forward-geocoded via the [Nominatim / OpenStreetMap](h
 | ASR | **"ASRH"** | ✓ | ✓ | ✓ | **ASR** |
 
 **EVT** ("endovascular thrombectomy") is not a separate tier but a clinical capability. All CSCs and TSCs provide 24/7 EVT; some PSCs provide EVT as well without holding full TSC certification. In this app, the `hasELVO` flag tracks 24/7 EVT capability independently of the written certification tier, because what matters for stroke-system planning is whether the facility can perform thrombectomy — not which tier label is attached.
+
+### National certification vs. state designation
+
+These are different things and the dataset now keeps them apart. Every record carries:
+
+- `nationalCertification` — `{body, tier, details}` when a national accreditor (Joint Commission, DNV, ACHC, CIHQ) certifies the site, else `null`.
+- `stateDesignation` — `{system, level, label}` when a state stroke system designates it (`WA ECS Level II`, `Idaho TSE Level III`, …), else `null`.
+- `certificationBasis` — `national` · `state` · `both` · `none` · `not-assessed`.
+- `strokeCertificationType` — the **display tier**, which for a state-only site is this project's mapping of a state level onto the national ladder.
+
+Of the 135 assessed records, **67 display a tier that rests on a state designation alone** (49 ASR, 16 PSC, 1 CSC, 1 TSC), 46 are national-only, 3 hold both, and 19 hold neither. Because a state level is not a national certification, the detail view labels these explicitly and the sidebar row carries a dashed state badge. Idaho TSE Level II and Joint Commission PSC are clinically similar but not legally equivalent; the two CSC/TSC-level records resting on a state designation alone are flagged P1 in the verification worklist.
 
 ### DNV 2025 update
 
@@ -106,7 +146,15 @@ Assumptions:
 - **Air speed 150 mph** is a blended rotor-wing and fixed-wing air-medical speed; 25-minute overhead covers dispatch, preflight, takeoff, landing, and bedside handoff.
 - **Best transport** is the min of both modes — real decisions depend on weather, asset availability, crew duty cycles, and patient stability.
 
-For the **door-to-puncture window**, the detail modal adds a ~30-minute **door-in-door-out (DIDO)** estimate to the transport time. AHA Get-With-The-Guidelines-Stroke target for transferred patients is ≤90 min door-to-puncture; ≤120 min is the "acceptable" stretch target.
+**Which mode "best" means.** Solving the two formulas, air overtakes ground at about **18 great-circle miles** — the effective ground speed against great-circle distance is 44 mph, so air's 150 mph erases its 17-minute overhead advantage almost immediately. Across this dataset air is the faster mode for 181 of 218 interfacility transfers. Because "best" therefore assumes an air asset is available and flying, every displayed best-time now names its mode.
+
+### Door-to-puncture window
+
+The detail modal estimates transport to the **nearest EVT-capable centre**, not the nearest CSC/TSC. These are not the same set: 22 hospitals are EVT-capable while only 18 hold CSC/TSC certification, and the four PSC-tier EVT centres (Eastern Idaho Regional, Saint Alphonsus Nampa, Providence St Patrick, Banner Wyoming) are the nearest thrombectomy option for a large part of Idaho, Montana and Wyoming. Measuring to the nearest CSC/TSC overstated the window for 59 records by up to 109 minutes.
+
+A flat **30-minute door-in-door-out (DIDO)** allowance is added. AHA Get-With-The-Guidelines-Stroke targets ≤90 min door-to-puncture for transferred patients; ≤120 min is the "acceptable" stretch target. Both the sentence and the progress bar are coloured from the same thresholds against the same total.
+
+**What the total does and does not include.** It covers transport plus an assumed DIDO and therefore reaches **arrival at the receiving centre**. It does **not** include that centre's arrival-to-groin interval, so true door-to-puncture is longer than the figure shown. The 30-minute DIDO is a placeholder, not any site's measured value. Hospitals that are themselves EVT-capable show "on site" rather than a transfer window.
 
 **These numbers are not a substitute for live dispatch.** They exist to inform network-planning decisions, not patient-care decisions.
 
@@ -114,7 +162,7 @@ For the **door-to-puncture window**, the detail modal adds a ~30-minute **door-i
 
 The **Expansion Candidates** view (press `E` in the app) ranks potential telestroke spoke sites. The score is computed entirely in the browser from fields already in `hospitals.json` — it adds no new claims about any hospital and never modifies the dataset.
 
-**Eligibility.** Hospitals that are EVT-capable (`hasELVO = true`) or hold CSC/TSC certification are hubs, not spoke candidates, and are excluded from the ranking.
+**Eligibility.** Hospitals that are EVT-capable (`hasELVO = true`) or hold CSC/TSC certification are hubs, not spoke candidates, and are excluded from the ranking. **Acute-care census records are also excluded**: scoring a facility whose stroke capability was never assessed would manufacture a certification gap out of missing data. 113 of the 236 records are eligible.
 
 **Model.** Each eligible hospital gets a 0–100 score from three normalized signals under scenario weights `w`:
 
@@ -135,47 +183,95 @@ Defaults: `w_cert = 40`, `w_evt = 40`, `w_adv = 20`, `cap = 200 mi`, EVT-desert 
 
 ## 7. Data integrity
 
-The `hospitals.json` file includes provenance metadata:
+`hospitals.json` carries provenance metadata:
 
 ```json
 {
-  "schema_version": "2.0.0",
-  "data_version": "2026.07.18.1",
+  "schema_version": "3.0.0",
+  "data_version": "2026.08.15.1",
   "last_verified": "2026-07-04",
-  "generated_at": "2026-07-18T08:31:48+00:00",
+  "generated_at": "…",
   "primary_sources": [ … ],
-  "coverage_note": "…",
+  "census_snapshot": { "source": …, "as_of": "2023-10", "file": …, "note": … },
+  "record_classes": { "stroke-capability": …, "acute-care-census": … },
   "certification_definitions": { … },
   "certifying_bodies": { … },
-  "hospitals": [ … 135 records … ]
+  "hospitals": [ … 236 records … ]
 }
 ```
 
-Each hospital record includes:
+### Record identity
 
-- `cmsId` (CMS Certification Number — unique across all 135)
-- `name`, `address`, `city`, `state`, `zip`
-- `latitude`, `longitude`, `geocoded`, `geocodeSource`
-- `strokeCertificationType` (CSC/TSC/PSC/ASR/null)
-- `certifyingBody`, `certificationDetails`
-- `hasELVO` (24/7 thrombectomy capability)
-- `dataSources[]`, `verified`
+`id` is the primary key and is stable; `cmsId` is the CMS Certification Number and may be `null` or shared. `facilityIdType` says which case applies:
 
-Integrity checks (run `python3 scripts/verify-data.py`, and shown live in the app's Data Quality panel — press `Q`):
+| `facilityIdType` | Meaning | Example |
+|---|---|---|
+| `ccn` | Has its own CMS CCN | most records |
+| `shared-ccn` | Provider-based campus billing under a parent's CCN | St Luke's Meridian, on Boise's `130006` |
+| `military` | Not a Medicare-certified provider, so no CCN exists | Madigan Army Medical Center |
 
-- Every CMS ID is unique (no duplicates).
-- Every hospital has valid `latitude`/`longitude`.
-- Every hospital has a populated `city`.
-- Every CSC and TSC has `hasELVO = true`.
-- Every certified hospital has a `certifyingBody`.
+Earlier editions used synthetic identifiers (`50005F`, `130006-M`) in the `cmsId` field, which the UI then displayed as "CMS ID". Both are now modelled honestly, and distance calculations key on `id` rather than `cmsId` — previously Madigan keyed on a null and Meridian collided with Boise.
+
+### CMS Certification Number corrections
+
+Five CCNs in the dataset appear in **no** CMS Hospital General Information snapshot from 2013 to 2023, while a facility with a matching name sits at the same coordinates under a different CCN:
+
+| Was | Now | Facility | Evidence |
+|---|---|---|---|
+| 270002 | **270017** | St James Healthcare, Butte MT | CMS lists it under 270017, 0.07 mi from our coordinates |
+| 270017 | **270049** | St Vincent Healthcare, Billings MT | CMS lists it under 270049, 0.17 mi away; 270017 is St James |
+| 270024 | **270051** | Logan Health Medical Center, Kalispell MT | CMS 2023-10 name matches exactly, 0.10 mi away |
+| 500010 | **500108** | St Joseph Medical Center, Tacoma WA | CMS lists it under 500108, 0.03 mi away |
+| 500115 | **500039** | St Michael Medical Center, Silverdale WA | CMS 500039 "Harrison Medical Center", renamed and relocated from Bremerton in 2020 |
+
+Each superseded value is retained on the record in `cmsIdCorrectedFrom` with the reasoning in `cmsIdNote`.
+
+### Geocoding
+
+Six records were plotted in the wrong place, which silently corrupts every distance and transport estimate derived from them:
+
+| Record | Stated city | Error |
+|---|---|---|
+| Garfield County PHD #1 | Pomeroy, WA | 264 mi — coordinates were near Anacortes |
+| Ocean Beach Hospital | Ilwaco, WA | 240 mi — a coastal hospital plotted in the Columbia Basin |
+| Newport Community Hospital | Newport, WA | 45 mi |
+| Arbor Health Morton Hospital | Morton, WA | 40 mi — coordinates were at Joint Base Lewis-McChord |
+| Mason General Hospital | Shelton, WA | 39 mi |
+| Cascade Medical Center | Cascade, ID | 23 mi |
+
+All six are relocated to their city's ZIP centroid, marked `geocodePrecision: "approximate"` with `geocodeSource: "City centroid (ZIP code area)"`, and retain the original coordinates in `geocodeCorrectedFrom`. A centroid is imprecise but is not wrong by a county. All six are P1 in the verification worklist for a street-level re-geocode.
+
+The tolerance is 18 miles, chosen because real western-US hospitals sit up to ~12 mi from their mailing city's centroid — Madigan posts a Tacoma address from Joint Base Lewis-McChord, 12.1 mi out — while every genuine error found was off by 23 mi or more.
+
+City and county on census records are inferred from the CMS coordinates against an offline ZIP database, flagged `cityConfidence` as `name-corroborated`, `coordinate-derived`, or `unresolved`. Where no town centroid sits within 12 mi, no city is asserted: a wrong town name is worse than none. County on curated records is only set when the lookup independently reproduces the city already on file.
+
+### Checks
+
+Run `python3 scripts/verify-data.py`; the same checks run live in the app's Data Quality panel (press `Q`). 17 checks:
+
+**Identity** — every `id` present and unique · every self-owned CCN unique · every `facilityIdType` recognised · every CCN's state prefix matches its state (AK 02, ID 13, MT 27, WA 50, WY 53) · every CCN is six digits.
+
+**Geometry** — every record geocoded with plausible coordinates · every state in scope · every record's coordinates within 18 mi of the city it names *(requires `pip install zipcodes`; skipped otherwise)*.
+
+**Classes** — every `recordClass` and `certificationBasis` recognised · **no census record asserts stroke capability** · every assessed record has a definite EVT flag.
+
+**Certification** — every tier valid · every CSC/TSC has `hasELVO = true` · every certified hospital has a certifying body · `certificationBasis` agrees with the `nationalCertification`/`stateDesignation` fields · every assessed hospital has a populated city.
+
+### Rebuilding
+
+`scripts/build-dataset.py` is idempotent and regenerates `hospitals.json` from the curated records plus the vendored census. `scripts/build-worklist.py` regenerates `data/verification-worklist.csv`.
 
 ## 8. Limitations
 
 - **Not a live feed.** Certifications change on 2-3 year cycles; we do periodic refresh, not real-time tracking.
-- **Scope-limited.** Does not include every acute-care hospital in the five states; see §1.
+- **Two different currencies in one file.** Stroke capability was verified 2026-07-04; facility identity for census records comes from an Oct 2023 CMS snapshot. A hospital that opened, closed, or was renamed since 2023 may be missing or stale. Every record states which class it belongs to.
+- **Capability unknown is not capability absent.** 101 of 236 records have never been assessed for stroke capability. The app marks them everywhere, but the distinction only works if the reader honours it.
+- **Census cities are inferred.** City and county on census records are derived from CMS coordinates against a ZIP centroid database, not from a street address. Roughly one in ten lands on a neighbouring town; each carries a `cityConfidence` flag, and the map marker is on the CMS coordinates regardless.
+- **Six approximate locations.** The records relocated in §7 sit at a city centroid, not a street address, so their distances carry up to a few miles of error until re-geocoded.
+- **Scope-limited.** 19 CMS census rows lack coordinates and are absent from the map; facilities without a CMS CCN are only present where curated by hand. See §1.
 - **Straight-line geometry.** No road-network routing, no real-time traffic, no weather-adjusted air transport.
 - **No population weighting.** EVT-desert analysis does not account for population density; a 100-mile gap in western MT affects far fewer people than a 100-mile gap in suburban WA.
-- **State designations vs. national.** Idaho TSE Level II and JC PSC are clinically similar but not legally equivalent; the app labels both as "PSC"-tier in certification type and notes the state designation in the `certifyingBody` / `certificationDetails` fields.
+- **State designations vs. national.** Idaho TSE Level II and JC PSC are clinically similar but not legally equivalent. 67 of 135 assessed records display a tier derived from a state designation alone; see §3. The tier is this project's mapping, not an accreditor's finding.
 - **Scoring is a heuristic.** The expansion-candidate score (§6) reflects only certification tier and distance geometry from the public dataset. Two hospitals with identical scores can differ enormously in feasibility.
 
 ## 9. How to contribute

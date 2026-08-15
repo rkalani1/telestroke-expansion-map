@@ -1,6 +1,122 @@
 # Changelog
 
-All notable changes to the Regional Facility Stroke Capabilities demo.
+All notable changes to the Regional Hospital Stroke Capabilities reference.
+
+## [3.0.0] - 2026-08-15
+
+Schema 3.0.0 · data 2026.08.15.1. Coverage expanded to the full regional acute-care census,
+plus identity and geocoding corrections found by auditing the dataset against CMS.
+
+### Transport model and clinician workflow (audit follow-up)
+
+An 8-dimension audit raised 72 findings; 52 survived independent adversarial
+verification. Fixed here:
+
+- **Door-to-puncture measured to the wrong destination.** The window was computed
+  to the nearest CSC/TSC rather than the nearest EVT centre — different sets, 22
+  vs 18 — inflating it for 59 records by up to 109 min. Cheyenne Regional read
+  203 min while naming Banner Wyoming (81 min away) directly above. EVT-capable
+  sites now say "on site" instead of showing a transfer window.
+- **Ground times quoted for hospitals with no road connection.** The popup
+  printed "~782 min ground" for Bartlett Regional (Juneau); the modal had the
+  correct branch but the popup never passed the flag.
+- **Verdict sentence and progress bar disagreed** for anything in the 91–120 min
+  band, using different thresholds against different quantities.
+- **"Best" transport unlabelled.** The crossover is ~18 mi, not the ~80 mi the
+  code comment claimed, so "best" is a helicopter for 181 of 218 transfers.
+- **Executive summary excluded all 18 CSC/TSC hospitals** from its within-60-min
+  counts while keeping them in the denominator (ground 20.3% → 28.0%).
+- **Search:** `st alphonsus` returned nothing while `saint alphonsus` returned
+  two; queries are now normalised (st/saint, mt/mount, punctuation), every token
+  must match at a word boundary, and results are ranked by relevance.
+- **`titleCase` shouted 32 of 236 names** — "ST Luke's", "Community Hospital OF
+  Anaconda" — from a blanket uppercase-if-short rule.
+- **24/7 EVT had no visual channel**: the four PSC-tier EVT centres were
+  pixel-identical to the 41 PSCs without thrombectomy. Now a teal ring, with a
+  matching legend key.
+- **Nearest EVT added to the map popup**, and the detail record reordered so the
+  transfer answer is above the fold on a phone.
+- **Keyboard:** single-key shortcuts fired over open modals, moving focus behind
+  the overlay and permanently escaping the focus trap; `r` wiped every filter
+  from one keypress while the hospital list holds button focus (now `Shift+R`).
+- **Shared links dropped the "Not assessed" filter**, then rewrote the address
+  bar without it so the loss was undetectable.
+- **Accessibility:** row `aria-label`s suppressed every badge, so tier, state-only
+  status and EVT capability were unavailable to screen readers; badge and
+  pressed-pill contrast failed 1.4.3 in all four palettes (worst 2.04:1, now
+  ≥4.5:1); focus rings were invisible on the header buttons and drawn outside
+  the viewport on the map.
+- **Mobile:** `100vh` clipped the zoom control and hid the OSM/CARTO attribution
+  on iOS and Android; sub-16px inputs force-zoomed Safari on every search tap;
+  the status bar reported a filtered subset as the regional total and Clear left
+  filters intact.
+- **CI added** (`.github/workflows/verify.yml`), which immediately caught that
+  `build-dataset.py` was not idempotent — a second run promoted census records
+  to "verified" and collided two corrected CCNs.
+
+### Coverage — 135 → 236 hospitals
+
+- Merged the CMS acute-care census for the five states so a call from **any** hospital in
+  the region resolves to a record: MT 8 → 59, WY 2 → 27, ID 27 → 44, AK 10 → 15, WA 88 → 91.
+- Census facilities are a distinct `recordClass` carrying identity only — CCN, name, hospital
+  type, ownership, bed count, coordinates. They assert **no** stroke capability.
+- "Not assessed" is kept distinct from "none" everywhere: hollow markers in their own colour,
+  a "Not assessed" badge in the list and in nearby-hospitals, a banner on the detail view, a
+  separate filter pill, their own donut and state-bar segment, and their own CSV columns.
+- Census records are excluded from certification counts, coverage-gap metrics, the
+  zero-capability view, expansion-candidate scoring, and nearest-hub selection. They still get
+  full transport analysis — the geometry is known even where the capability is not.
+
+### Data corrections
+
+- **Five CMS Certification Numbers corrected.** Each appeared in no CMS Hospital General
+  Information snapshot 2013–2023 while a same-named facility sat at the same coordinates under
+  a different CCN: 270002→270017 (St James, Butte MT), 270017→270049 (St Vincent, Billings MT),
+  270024→270051 (Logan Health, Kalispell MT), 500010→500108 (St Joseph, Tacoma WA),
+  500115→500039 (St Michael, Silverdale WA). Prior values retained in `cmsIdCorrectedFrom`.
+- **Six wrong geocodes corrected.** Ocean Beach Hospital (Ilwaco) was plotted 240 mi inland;
+  Garfield County PHD (Pomeroy) 264 mi away near Anacortes; Newport 45 mi, Arbor Health Morton
+  40 mi, Mason General 39 mi, Cascade ID 23 mi. All relocated to their city centroid and marked
+  approximate; originals retained in `geocodeCorrectedFrom`.
+- **Synthetic identifiers removed from `cmsId`.** `50005F` (Madigan AMC — not a Medicare
+  provider, so no CCN exists) and `130006-M` (St Luke's Meridian — provider-based campus on
+  Boise's CCN) were being displayed to users as "CMS ID". Records now carry a stable `id`
+  separate from `cmsId`, plus `facilityIdType` and an explanatory `cmsIdNote`.
+
+### Certification clarity
+
+- National accreditation and state designation are now separate fields (`nationalCertification`,
+  `stateDesignation`, `certificationBasis`). 67 of 135 assessed records display a tier resting on
+  a WA ECS or Idaho TSE designation alone; the detail view states this plainly and the list row
+  carries a dashed state badge, so a WA ECS Level III is never read as a Joint Commission ASR.
+
+### Availability
+
+- **Leaflet is now vendored** (`vendor/leaflet/`) instead of loaded from unpkg. A blocked CDN —
+  routine on hospital networks — previously left the page on "Loading…" indefinitely with only a
+  console error.
+- Boot failures now render an on-screen explanation and a retry button.
+
+### Clinician workflow
+
+- Sidebar rows open the full record; previously they only panned the map and the deep-dive was
+  reachable only by hunting for the marker.
+- Search covers spoken shorthand (`HMC`, `Harborview`, `Sacred Heart`, `St V`), county, health
+  system and facility type, from an index built once at load instead of rebuilt per keystroke.
+- Detail view adds health system, facility type, bed count, ownership, county, aliases, and a
+  provenance banner; addresses no longer repeat the city and state.
+
+### Data hygiene
+
+- `certifyingBody` vocabulary normalised (`Washington State DOH`→`WA DOH`, `Idaho DOH`→`Idaho TSE`,
+  literal `"None"`→`null`); `geocodeSource` collapsed from 12 spellings to 4; dead
+  `strokeCertificationDetails` field removed; `verified` (true on all 135, carrying no signal)
+  replaced with `strokeDataStatus` + `lastVerified`.
+- `scripts/build-dataset.py` and `scripts/build-worklist.py` added; both idempotent.
+- `scripts/verify-data.py` grew from 7 checks to 17, including CCN state-prefix validation and a
+  coordinates-agree-with-city check that would have caught all six geocode errors.
+- `data/verification-worklist.csv` — 56 ranked items (20 P1) that still need a primary-source
+  check, each naming the source to check.
 
 ## [2.4.0] - 2026-07-18
 

@@ -10,7 +10,8 @@
   --c-psc: #eab308; /* Amber Gold */
   --c-asr: #65a30d; /* Apple Green */
   --c-evt: #0d9488; /* Dark Teal */
-  --c-other: #64748b; /* Slate Grey */
+  --c-other: #64748b; /* Slate Grey — checked, no certification */
+  --c-census: #7c3aed; /* Violet — census record, capability NOT assessed */
 
   /* Low opacity backgrounds for badges / highlights */
   --c-csc-bg: rgba(225, 29, 72, 0.08);
@@ -18,9 +19,22 @@
   --c-psc-bg: rgba(234, 179, 8, 0.08);
   --c-asr-bg: rgba(101, 163, 13, 0.08);
   --c-evt-bg: rgba(13, 148, 136, 0.08);
+  --c-census-bg: rgba(124, 58, 237, 0.10);
+
+  /* Door-to-puncture verdict. Deliberately separate from the certification
+     palette: --c-evt/--c-tsc/--c-csc double as badge colours on the same card,
+     and in the colour-blind palette two of them collapse to near-identical
+     oranges (1.72:1). */
+  --status-ontarget: #047857; /* emerald 700 */
+  --status-stretch: #b45309;  /* amber 700 */
+  --status-over: #b91c1c;     /* red 700 */
 
   --c-psc-text: #7c2d12;
   --c-asr-text: #1a2e05;
+  --c-csc-text: #9f1239;   /* rose 800   — 7.07:1 on --c-csc-bg */
+  --c-tsc-text: #9a3412;   /* orange 800 — 6.74:1 */
+  --c-evt-text: #0f766e;   /* teal 700   — 4.98:1 */
+  --c-census-text: #6d28d9;/* violet 700 */
 
   --text-primary: #0f172a; /* Slate 900 */
   --text-secondary: #334155; /* Slate 700 */
@@ -73,9 +87,18 @@ html.dark {
   --c-psc-bg: rgba(253, 224, 71, 0.15); /* yellow-300 */
   --c-asr-bg: rgba(163, 230, 53, 0.15); /* lime-400 */
   --c-evt-bg: rgba(45, 212, 191, 0.15); /* teal-400 */
+  --c-census: #a78bfa; /* violet-400 — lifted for contrast on dark surfaces */
+  --c-census-bg: rgba(167, 139, 250, 0.16);
+  --status-ontarget: #34d399; /* emerald 400 */
+  --status-stretch: #fbbf24;  /* amber 400 */
+  --status-over: #f87171;     /* red 400 */
 
   --c-psc-text: #fcd34d;
   --c-asr-text: #bef264;
+  --c-csc-text: #fda4af;   /* rose 300   — 8.20:1 on the dark badge tint */
+  --c-tsc-text: #fdba74;   /* orange 300 — 8.31:1 */
+  --c-evt-text: #5eead4;   /* teal 300   — 8.97:1 */
+  --c-census-text: #c4b5fd;/* violet 300 */
 }
 
 /* Color-blind safe palette (Okabe-Ito inspired) — apply via html.cb class */
@@ -86,7 +109,14 @@ html.cb {
   --c-asr: #009E73;  /* green */
   --c-evt: #0072B2;  /* blue */
   --c-other: #56B4E9; /* sky */
+  --c-census: #CC79A7; /* reddish purple — the remaining Okabe-Ito hue */
+  /* Okabe-Ito blue / orange / vermillion: distinguishable under every common
+     colour-vision deficiency, unlike the green/orange/red default. */
+  --status-ontarget: #0072B2;
+  --status-stretch: #E69F00;
+  --status-over: #D55E00;
 
+  --c-census-bg: rgba(204, 121, 167, 0.14);
   --c-csc-bg: rgba(213, 94, 0, 0.12);
   --c-tsc-bg: rgba(230, 159, 0, 0.12);
   --c-psc-bg: rgba(240, 228, 66, 0.12);
@@ -99,6 +129,9 @@ html.cb {
 html.cb.dark {
   --c-psc-text: #fef08a;
   --c-asr-text: #86efac;
+  --status-ontarget: #56B4E9;
+  --status-stretch: #F0E442;
+  --status-over: #E69F00;
 }
 
 /* ---------- Reset + base ---------- */
@@ -146,8 +179,13 @@ input, select, textarea { font: inherit; }
 .sr-skip:focus { top: 8px; }
 
 /* ---------- Map ---------- */
-#map { position: absolute; inset: 0; width: 100%; height: 100vh; background: #e5e7eb; }
+/* 100dvh, not 100vh: on iOS Safari and Chrome Android 100vh is the *large*
+   viewport, so with the browser toolbar shown the map overflowed by ~50px and
+   `body { overflow: hidden }` made it unrecoverable — clipping the zoom control
+   and hiding the OSM/CARTO attribution Leaflet adds first. */
+#map { position: absolute; inset: 0; width: 100%; height: 100vh; height: 100dvh; background: #e5e7eb; }
 html.dark #map { background: #1f2937; }
+#map:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
 #map.map-mode-active {
   outline: 4px solid var(--accent);
   outline-offset: -4px;
@@ -256,10 +294,11 @@ html.dark .leaflet-popup-tip {
 .pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
 .pill[aria-pressed=true] { color: #fff; }
 .pill[aria-pressed=true][data-filter=CSC] { background: var(--c-csc); border-color: var(--c-csc); }
-.pill[aria-pressed=true][data-filter=TSC] { background: var(--c-tsc); border-color: var(--c-tsc); }
+.pill[aria-pressed=true][data-filter=TSC] { background: var(--c-tsc); border-color: var(--c-tsc); color: #431407; }
 .pill[aria-pressed=true][data-filter=PSC] { background: var(--c-psc); border-color: var(--c-psc); color: #7c2d12; }
 .pill[aria-pressed=true][data-filter=ASR] { background: var(--c-asr); border-color: var(--c-asr); color: #1a2e05; }
-.pill[aria-pressed=true][data-filter=EVT] { background: var(--c-evt); border-color: var(--c-evt); }
+.pill[aria-pressed=true][data-filter=EVT] { background: #0f766e; border-color: #0f766e; }
+.pill[aria-pressed=true][data-filter=CENSUS] { background: #6d28d9; border-color: #6d28d9; }
 
 .secondary-filters {
   display: flex; gap: 8px; align-items: center; font-size: 12px;
@@ -307,11 +346,52 @@ html.dark .hospital-item.highlighted { background: #1e3a8a; }
   letter-spacing: .03em; text-transform: uppercase;
   background: var(--surface-3); color: var(--text-secondary);
 }
-.badge-CSC { background: var(--c-csc-bg); color: var(--c-csc); }
-.badge-TSC { background: var(--c-tsc-bg); color: var(--c-tsc); }
+.badge-CSC { background: var(--c-csc-bg); color: var(--c-csc-text, var(--c-csc)); }
+.badge-TSC { background: var(--c-tsc-bg); color: var(--c-tsc-text, var(--c-tsc)); }
 .badge-PSC { background: var(--c-psc-bg); color: var(--c-psc-text, var(--c-psc)); }
 .badge-ASR { background: var(--c-asr-bg); color: var(--c-asr-text, var(--c-asr)); }
-.badge-EVT { background: var(--c-evt-bg); color: var(--c-evt); }
+.badge-EVT { background: var(--c-evt-bg); color: var(--c-evt-text, var(--c-evt)); }
+.badge-CENSUS { background: var(--c-census-bg); color: var(--c-census-text, var(--c-census)); }
+.badge-STATE {
+  background: transparent; color: var(--text-muted);
+  border: 1px dashed var(--border-strong);
+}
+
+/* Provenance banner at the top of the hospital detail modal. Tells a clinician
+   whether this record's stroke capability was actually checked. */
+.detail-banner {
+  padding: 10px 12px; border-radius: var(--radius-sm, 6px);
+  font-size: 12px; line-height: 1.5; margin-bottom: 14px;
+  border-left: 4px solid;
+}
+.detail-banner-verified {
+  background: var(--c-evt-bg); border-left-color: var(--c-evt); color: var(--text-secondary);
+}
+.detail-banner-census {
+  background: var(--c-census-bg); border-left-color: var(--c-census); color: var(--text-secondary);
+}
+.detail-note {
+  font-size: 11px; line-height: 1.5; color: var(--text-muted);
+  margin-top: 6px; padding-left: 10px; border-left: 2px solid var(--border);
+}
+
+/* Shown in place of the map when boot fails, so a blocked CDN or a failed data
+   fetch is legible on screen instead of only in the console. */
+.boot-error {
+  position: absolute; inset: 0; z-index: 500;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 32px; text-align: center;
+  background: var(--surface-solid); color: var(--text-primary);
+}
+.boot-error h2 { font-size: 18px; font-weight: 700; }
+.boot-error p { font-size: 13px; max-width: 46ch; color: var(--text-secondary); line-height: 1.55; }
+.boot-error-detail {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px !important; color: var(--text-muted) !important;
+  word-break: break-word;
+}
+
+.matrix-unassessed { color: var(--c-census); font-style: italic; }
 
 .empty-state {
   padding: 32px 16px; text-align: center;
@@ -321,7 +401,7 @@ html.dark .hospital-item.highlighted { background: #1e3a8a; }
 /* ---------- Dashboard (right panel) ---------- */
 .dashboard {
   position: fixed; top: 16px; right: 16px;
-  width: var(--dashboard-w); max-height: calc(100vh - 32px);
+  width: var(--dashboard-w); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px);
   background: var(--surface); border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg); z-index: 1000;
   overflow-y: auto;
@@ -390,7 +470,7 @@ canvas.chart { display: block; max-width: 100%; height: auto; }
   position: fixed; bottom: 84px; right: 20px; z-index: 1000;
   width: 240px; background: var(--surface); border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg); border: 1px solid var(--border);
-  padding: 6px; max-height: calc(100vh - 120px); overflow-y: auto;
+  padding: 6px; max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px); overflow-y: auto;
   backdrop-filter: blur(var(--blur-val));
 }
 .tools-menu[hidden] { display: none; }
@@ -731,7 +811,7 @@ html.dark .cert-card p { color: var(--text-secondary); }
 @media (max-width: 768px) {
   :root { --sidebar-w: 100%; --header-h: 132px; }
   .mobile-bar { display: flex; flex-direction: column; }
-  #map { top: var(--header-h); height: calc(100vh - var(--header-h)); }
+  #map { top: var(--header-h); height: calc(100vh - var(--header-h)); height: calc(100dvh - var(--header-h)); }
   .map-mode-hint {
     left: 10px;
     right: 10px;
@@ -747,7 +827,7 @@ html.dark .cert-card p { color: var(--text-secondary); }
   .sidebar.mobile-open { transform: translateX(0); }
   .dashboard {
     top: 0; right: 0; bottom: 0; left: 0;
-    width: 100%; max-height: 100vh;
+    width: 100%; max-height: 100vh; max-height: 100dvh;
     border-radius: 0; transform: translateX(100%); opacity: 0;
     z-index: 1003; pointer-events: none; border: none;
   }
@@ -759,7 +839,7 @@ html.dark .cert-card p { color: var(--text-secondary); }
   }
   .tools-menu {
     right: 10px; bottom: 194px;
-    max-height: calc(100vh - var(--header-h) - 210px);
+    max-height: calc(100vh - var(--header-h) - 210px); max-height: calc(100dvh - var(--header-h) - 210px);
   }
   .provenance-bar { display: none; }
   .modal-overlay { padding: calc(var(--header-h) + 8px) 8px 12px; }
@@ -976,3 +1056,78 @@ html.dark .metric-row .value.qa-fail { color: #fca5a5; }
 .search-wrapper input[type="search"]:focus + .search-kbd-badge {
   opacity: 0;
 }
+
+
+/* The map fills the viewport, so Leaflet's bottom controls can land under the
+   iOS home indicator. */
+.leaflet-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+
+/* Focus indicators that are actually visible.
+   The indigo --accent outline computed to ~1.0:1 against the header's hardcoded
+   indigo/violet gradient, and #map is inset:0 inside overflow:hidden so an
+   outward offset drew its ring outside the viewport. */
+.workspace-shortcuts button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, .55);
+}
+
+/* P1: below 16px, Mobile Safari zooms the viewport on focus and — with no
+   maximum-scale set — never zooms back out, clipping the right edge of the
+   layout where the dashboard button sits. */
+@media (max-width: 768px) {
+  #search-input,
+  #mobile-search-input,
+  #filter-state { font-size: 16px; }
+}
+
+
+/* Detail-modal reading order.
+   Sections are appended in construction order (facility -> capabilities ->
+   transport -> nearby), which put ten rows of health system, ownership, county,
+   CMS CCN and latitude above the transfer answer. On a 375x667 phone the
+   nearest-EVT row fell below the fold on every record. Flex `order` reorders
+   without restructuring the build, so the DOM order still reads sensibly and
+   the provenance banner stays first. */
+#hospital-detail-content { display: flex; flex-direction: column; }
+#hospital-detail-content > .detail-banner { order: 0; }
+#hospital-detail-content > .detail-transport { order: 1; }
+#hospital-detail-content > .detail-capabilities { order: 2; }
+#hospital-detail-content > .detail-nearby { order: 3; }
+#hospital-detail-content > .detail-facility { order: 4; }
+#hospital-detail-content > .detail-sources { order: 5; }
+
+/* Touch targets inside the record. These computed to ~18px. */
+@media (max-width: 768px) {
+  .btn-inline-link, .btn-fit-view { min-height: 44px; display: inline-flex; align-items: center; }
+  .nearby-row-btn { min-height: 44px; }
+}
+
+
+/* Only the coverage-gap metrics respond to the active filters; the donut, state
+   bars and histogram are region-wide. Say which is which. */
+.dash-scope { font-weight: 500; color: var(--text-muted); font-size: 10px; }
+.dash-scope-block { display: block; margin-top: 6px; text-align: center; line-height: 1.4; }
+
+/* Badge and pressed-pill contrast. The tier colours are chosen for marker fills
+   against a map; reused as 9px text they measured 2.04-4.15:1. Text tokens are
+   separated from fill tokens, as PSC and ASR already did. */
+.badge { font-size: 10px; }
+
+
+/* Colour-blind palette: the pressed-pill fills are chosen for hue separation,
+   not for text contrast. White on the CSC orange measured 3.87:1. */
+html.cb .pill[aria-pressed=true][data-filter=CSC] { background: #b84f00; border-color: #b84f00; }
+html.cb .pill[aria-pressed=true][data-filter=TSC] { background: var(--c-tsc); border-color: var(--c-tsc); color: #431407; }
+html.cb .pill[aria-pressed=true][data-filter=PSC] { background: var(--c-psc); border-color: var(--c-psc); color: #3f3f05; }
+html.cb .pill[aria-pressed=true][data-filter=EVT] { background: #005b8f; border-color: #005b8f; color: #fff; }
+
+
+/* The mobile result count is now the affordance that opens the results drawer. */
+.mobile-search-status {
+  display: block; width: 100%; text-align: left;
+  background: none; border: 0; cursor: pointer;
+  min-height: 32px;
+}
+.mobile-search-status:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

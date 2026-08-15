@@ -4,13 +4,26 @@ Run top to bottom before every public Pages deployment. "Done" means the **live 
 
 ## 1. Pre-merge (on the feature branch)
 
-- [ ] `python3 scripts/verify-data.py` — all integrity checks pass
-- [ ] `node --check app.js` — syntax clean
+CI (`.github/workflows/verify.yml`) now runs the first four items on every push
+and pull request. A red check is a blocker; a green check is not proof the
+**live site** is right — the manual list below still applies.
+
+- [ ] `python3 scripts/verify-data.py` — all 17 integrity checks pass *(CI)*
+- [ ] `node --check app.js` — syntax clean *(CI)*
+- [ ] `python3 scripts/build-dataset.py` leaves `hospitals.json` unchanged — the build is
+      idempotent and the committed file is what it produces *(CI)*
+- [ ] `python3 scripts/build-worklist.py` leaves `data/verification-worklist.csv` unchanged *(CI)*
+- [ ] Leaflet still served from `vendor/leaflet/`, never a CDN *(CI)*
 - [ ] If data changed: `data_version` bumped, CHANGELOG + METHODOLOGY updated, `llms.txt` version line refreshed
 - [ ] If app code changed: `app.js?v=` cache-buster in index.html bumped to the release version
+- [ ] If the dataset grew or shrank: hospital counts refreshed in README, METHODOLOGY §1, llms.txt,
+      and the JSON-LD `description` in index.html
 - [ ] Local smoke test (`python3 -m http.server 8000`):
   - [ ] App boots with no console errors; hospital count matches dataset
-  - [ ] Filters: each tier pill, **None** pill, state dropdown, EVT-distance slider
+  - [ ] Filters: each tier pill, **None** pill, **Not assessed** pill, state dropdown, EVT-distance slider
+  - [ ] Record classes read correctly: a census record shows the "not assessed" banner and no tier;
+        a state-only record shows "National certification: None on record" alongside its state designation
+  - [ ] Search resolves shorthand (`HMC`, `St V`), a county, and a health system
   - [ ] Expansion candidates (`E`): table renders, a "Why?" row expands, one scenario slider re-ranks, **Reset scenario** restores defaults
   - [ ] Data quality panel (`Q`): all integrity checks show ✓ pass
   - [ ] Exports: filtered hospitals CSV, candidates CSV, distance matrix CSV download and open
