@@ -24,8 +24,10 @@ const GROUND_MPH = 55;
 const AIR_MPH = 150;
 const AIR_OVERHEAD_MIN = 25;    // dispatch + takeoff + landing
 const GROUND_OVERHEAD_MIN = 8;  // dispatch + load
-const NEEDLE_TARGET_MIN = 60;   // AHA door-to-needle goal
-const PUNCTURE_TARGET_MIN = 90; // AHA door-to-puncture goal (transfer case)
+const NEEDLE_TARGET_MIN = 60;    // AHA door-to-needle goal
+const PUNCTURE_TARGET_MIN = 90;  // AHA door-to-puncture goal (transfer case)
+const PUNCTURE_STRETCH_MIN = 120; // AHA "acceptable" stretch target
+const DIDO_MIN = 30;             // assumed door-in-door-out at the sending site
 
 // Palette keys map to CSS custom properties so palette toggling works
 const CERT_NAMES = {
@@ -153,8 +155,39 @@ function airMinutes(mi) {
 }
 function bestTransportMinutes(mi, airOnly = false) {
   if (airOnly) return airMinutes(mi);
-  // Under ~80 miles, ground usually wins after overhead; above, air wins.
+  // Ground wins only under ~18 mi. Air's 150 mph against an effective 44 mph
+  // great-circle ground speed overtakes its 17-minute overhead head start
+  // almost immediately, so "best" is a helicopter for most of this region.
   return Math.min(groundMinutes(mi), airMinutes(mi));
+}
+
+// Which mode "best" actually is, so a bare minute count never hides the fact
+// that it assumes an air asset is available and flying.
+function bestTransportMode(mi, airOnly = false) {
+  if (airOnly) return 'air';
+  return airMinutes(mi) < groundMinutes(mi) ? 'air' : 'ground';
+}
+
+function bestTransportText(mi, airOnly = false) {
+  return `~${bestTransportMinutes(mi, airOnly)} min (${bestTransportMode(mi, airOnly)})`;
+}
+
+// Ground is not an option for records with no road connection; printing a
+// plausible-looking ambulance time for them is worse than printing none.
+function transportLine(mi, airOnly = false) {
+  const ground = airOnly
+    ? 'ground not feasible (no road connection)'
+    : `~${groundMinutes(mi)} min ground`;
+  return `${ground} / ~${airMinutes(mi)} min air (${formatMiles(mi)} mi)`;
+}
+
+// One source of truth for the door-to-puncture verdict, shared by the sentence
+// and the bar beneath it — they previously used different thresholds against
+// different quantities and disagreed for anything in the 91-120 min band.
+function punctureStatus(totalMin) {
+  if (totalMin <= PUNCTURE_TARGET_MIN) return { varName: '--status-ontarget', label: 'on target' };
+  if (totalMin <= PUNCTURE_STRETCH_MIN) return { varName: '--status-stretch', label: 'stretch' };
+  return { varName: '--status-over', label: 'over target' };
 }
 
 function formatMiles(mi) {
@@ -612,7 +645,7 @@ function buildPopupContent(h) {
     meta.appendChild(document.createElement('br'));
     line('Nearest CSC/TSC:', d.nearestAdvancedName);
     const miles = d.nearestAdvancedDistance;
-    meta.appendChild(document.createTextNode(`~${groundMinutes(miles)} min ground / ~${airMinutes(miles)} min air (${formatMiles(miles)} mi)`));
+    meta.appendChild(document.createTextNode(transportLine(miles, h.airOnly)));
     meta.appendChild(document.createElement('br'));
     meta.appendChild(el('span', { style: { fontSize: '10px', color: '#9ca3af' }, text: `${GROUND_MPH} mph ground + ${ROAD_FACTOR}× road factor; ${AIR_MPH} mph air; +overhead` }));
   }
@@ -1008,10 +1041,10 @@ function drawHistogram() {
 // Hospital detail modal
 // ------------------------------------------------------------------
 function buildTargetProgressBar(totalTime) {
-  const maxMin = 150;
+  const maxMin = Math.round(PUNCTURE_STRETCH_MIN * 1.25);
   const fillPct = Math.min((totalTime / maxMin) * 100, 100);
-  const goalPct = (90 / maxMin) * 100;
-  const color = totalTime <= 90 ? cssVar('--c-evt') : totalTime <= 120 ? cssVar('--c-tsc') : cssVar('--c-csc');
+  const goalPct = (PUNCTURE_TARGET_MIN / maxMin) * 100;
+  const color = cssVar(punctureStatus(totalTime).varName);
   
   const track = el('div', { class: 'puncture-timeline' });
   const fill = el('div', {
@@ -1026,7 +1059,7 @@ function buildTargetProgressBar(totalTime) {
   const tickLabel = el('span', {
     class: 'puncture-timeline-tick-label',
     style: { left: `${goalPct}%` },
-    text: '90m Goal'
+    text: `${PUNCTURE_TARGET_MIN}m target`
   });
   
   const valLabel = el('span', {
@@ -1273,7 +1306,7 @@ function showHospitalDetail(h) {
 
     tbl.appendChild(el('div', { class: 'kv' }, [
       el('dt', { text: 'Ground transfer:' }),
-      el('dd', { text: ` ${groundText}  ·  Air: ~${airMinutes(dCSC)} min  ·  Best: ~${bestTransportMinutes(dCSC, h.airOnly)} min` }),
+      el('dd', { text: ` ${groundText}  ·  Air: ~${airMinutes(dCSC)} min  ·  Best: ${bestTransportText(dCSC, h.airOnly)}` }),
     ]));
 
     if (Number.isFinite(d.nearestEVTDistance) && d.nearestEVTDistance > 0) {
@@ -1318,28 +1351,66 @@ function showHospitalDetail(h) {
         el('dd', {}, [
           document.createTextNode(' '),
           hopEVTBtn,
-          document.createTextNode(` (${formatMiles(d.nearestEVTDistance)} mi)  ·  Best transport: ~${bestTransportMinutes(d.nearestEVTDistance, h.airOnly)} min `),
+          document.createTextNode(` (${formatMiles(d.nearestEVTDistance)} mi)  ·  ${transportLine(d.nearestEVTDistance, h.airOnly)}  ·  best ${bestTransportText(d.nearestEVTDistance, h.airOnly)} `),
           fitEVTBtn
         ]),
       ]));
     }
 
-    // Door-in-door-out context
+    // Thrombectomy happens at an EVT centre, which is not always the nearest
+    // CSC/TSC — 22 sites are EVT-capable but only 18 hold CSC/TSC. Measuring
+    // this window to the nearest CSC/TSC inflated it for 59 records, by up to
+    // 109 minutes: Cheyenne Regional read 173 min via a distant CSC while
+    // Banner Wyoming, 141 mi away, is the actual thrombectomy destination.
+    const onSiteEVT = d.nearestEVTDistance === 0;
+    const punctureTarget = Number.isFinite(d.nearestEVTDistance) ? d.nearestEVT : d.nearestAdvanced;
+    const punctureMi = Number.isFinite(d.nearestEVTDistance) ? d.nearestEVTDistance : dCSC;
+
     const goldenNote = el('div', { class: 'kv' });
-    goldenNote.appendChild(el('dt', { text: 'Door-to-puncture window:' }));
-    const ddNote = el('dd');
-    const bestMin = bestTransportMinutes(dCSC, h.airOnly);
-    const fits60 = bestMin <= 60;
-    const color = fits60 ? cssVar('--c-evt') : bestMin <= 120 ? cssVar('--c-tsc') : cssVar('--c-csc');
-    const note = el('span', { text: ` ${bestMin} min transport + 30 min DIDO ≈ ${bestMin + 30} min total to puncture (AHA target ${PUNCTURE_TARGET_MIN} min)` });
-    note.style.color = color; note.style.fontWeight = '600';
-    ddNote.appendChild(note);
-    goldenNote.appendChild(ddNote); tbl.appendChild(goldenNote);
+    if (onSiteEVT) {
+      goldenNote.appendChild(el('dt', { text: 'Thrombectomy:' }));
+      const dd = el('dd');
+      const span = el('span', { text: ' On site — no interfacility transfer required.' });
+      span.style.color = cssVar('--c-evt');
+      span.style.fontWeight = '600';
+      dd.appendChild(span);
+      goldenNote.appendChild(dd);
+      tbl.appendChild(goldenNote);
+    } else {
+      goldenNote.appendChild(el('dt', { text: 'Est. time to EVT-centre arrival:' }));
+      const ddNote = el('dd');
+      const bestMin = bestTransportMinutes(punctureMi, h.airOnly);
+      const totalMin = bestMin + DIDO_MIN;
+      const status = punctureStatus(totalMin);
+      const note = el('span', {
+        text: ` ${bestMin} min transport (${bestTransportMode(punctureMi, h.airOnly)}) + ${DIDO_MIN} min DIDO`
+          + ` \u2248 ${totalMin} min to arrival at ${punctureTarget ? punctureTarget.displayName : 'the nearest EVT centre'}`
+          + ` \u2014 ${status.label} against the AHA ${PUNCTURE_TARGET_MIN} min door-to-puncture goal`,
+      });
+      note.style.color = cssVar(status.varName);
+      note.style.fontWeight = '600';
+      ddNote.appendChild(note);
+      goldenNote.appendChild(ddNote);
+      tbl.appendChild(goldenNote);
 
-    // AHA timeline progress bar
-    tbl.appendChild(buildTargetProgressBar(bestMin + 30));
+      // AHA timeline progress bar
+      tbl.appendChild(buildTargetProgressBar(totalMin));
+    }
 
+    // The modal is the only surface that renders a colour-coded AHA verdict and
+    // a progress bar, and it previously carried no statement of what the numbers
+    // assume. Keep this inside the section so it survives scrolling.
     dist.appendChild(tbl);
+    dist.appendChild(el('p', {
+      class: 'detail-note',
+      text: `Straight-line planning estimate. Ground assumes great-circle \u00d7 ${ROAD_FACTOR} at `
+        + `${GROUND_MPH} mph + ${GROUND_OVERHEAD_MIN} min overhead; air assumes ${AIR_MPH} mph + `
+        + `${AIR_OVERHEAD_MIN} min dispatch, takeoff and landing, and that an air asset is `
+        + `available and flying. DIDO is a flat ${DIDO_MIN} min placeholder, not this site's `
+        + `measured figure. The total reaches arrival at the receiving centre \u2014 it does not `
+        + `include their arrival-to-groin interval, so true door-to-puncture is longer. `
+        + `Confirm with dispatch and the receiving centre.`,
+    }));
     content.appendChild(dist);
   }
 
@@ -1388,10 +1459,19 @@ function showHospitalDetail(h) {
     const srcSect = el('div', { style: { fontSize: '11px', color: cssVar('--text-muted'), paddingTop: '8px', borderTop: '1px solid var(--border)' } });
     srcSect.appendChild(el('strong', { text: 'Data sources: ' }));
     srcSect.appendChild(document.createTextNode(h.dataSources.join('; ')));
-    if (state.meta?.verified) {
-      srcSect.appendChild(document.createElement('br'));
-      srcSect.appendChild(el('strong', { text: 'Last verified: ' }));
-      srcSect.appendChild(document.createTextNode(state.meta.verified));
+    // This record's own provenance, not the file's. Stamping the dataset-wide
+    // verification date here put "last verified 2026-07-04" beneath a 2023 CMS
+    // snapshot on all 101 census records, which were never verified at all.
+    srcSect.appendChild(document.createElement('br'));
+    if (h.lastVerified) {
+      srcSect.appendChild(el('strong', { text: 'Capability last verified: ' }));
+      srcSect.appendChild(document.createTextNode(h.lastVerified));
+    } else {
+      srcSect.appendChild(el('strong', { text: 'Capability never verified. ' }));
+      srcSect.appendChild(document.createTextNode(
+        state.meta?.censusSnapshot?.as_of
+          ? `Facility identity from the ${state.meta.censusSnapshot.as_of} CMS census snapshot.`
+          : 'Facility identity from the CMS acute-care census.'));
     }
     content.appendChild(srcSect);
   }
@@ -2211,13 +2291,18 @@ function generateExecutiveSummary() {
   const evt = state.hospitals.filter(h => h.hasELVO).length;
   const desertMi = state.scenario.desertMi;
   const deserts = state.hospitals.filter(h => (state.distances[h.id]?.nearestEVTDistance || 0) > desertMi).length;
+  // `d > 0` is a *display* convention elsewhere (suppress a zero in favour of an
+  // em dash). Used as an access filter it excluded all 18 CSC/TSC hospitals —
+  // the sites with the best possible access — from the within-60-min counts
+  // while leaving them in the denominator.
+  const roadAccessible = state.hospitals.filter(h => !h.airOnly).length;
   const ground60 = state.hospitals.filter(h => {
     const d = state.distances[h.id]?.nearestAdvancedDistance;
-    return !h.airOnly && Number.isFinite(d) && d > 0 && groundMinutes(d) <= 60;
+    return !h.airOnly && Number.isFinite(d) && groundMinutes(d) <= 60;
   }).length;
   const air60 = state.hospitals.filter(h => {
     const d = state.distances[h.id]?.nearestAdvancedDistance;
-    return Number.isFinite(d) && d > 0 && airMinutes(d) <= 60;
+    return Number.isFinite(d) && airMinutes(d) <= 60;
   }).length;
 
   const byState = (s) => {
@@ -2263,8 +2348,9 @@ function generateExecutiveSummary() {
     `  EVT-capable (24/7 thrombectomy): ${evt}`,
     '',
     'TRANSPORT & ACCESS',
-    `  Hospitals within 60-min ground transfer of CSC/TSC: ${ground60} (${total ? (ground60/total*100).toFixed(1) : '0.0'}%)`,
-    `  Hospitals within 60-min air transfer of CSC/TSC:    ${air60} (${total ? (air60/total*100).toFixed(1) : '0.0'}%)`,
+    `  Within 60-min ground transfer of CSC/TSC: ${ground60} of ${roadAccessible} road-accessible (${roadAccessible ? (ground60/roadAccessible*100).toFixed(1) : '0.0'}%)`,
+    `  Within 60-min air transfer of CSC/TSC:    ${air60} (${total ? (air60/total*100).toFixed(1) : '0.0'}%)`,
+    `  Both counts include hospitals that are themselves a CSC/TSC (transfer time 0).`,
     `  EVT deserts (>${desertMi} mi to nearest 24/7 thrombectomy): ${deserts} (${total ? (deserts/total*100).toFixed(1) : '0.0'}%)`,
     `  Transport figures cover all ${total} mapped hospitals — geometry is known even where capability is not.`,
     ...(activeFilterParts.length ? [

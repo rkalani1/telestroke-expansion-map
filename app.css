@@ -21,6 +21,14 @@
   --c-evt-bg: rgba(13, 148, 136, 0.08);
   --c-census-bg: rgba(124, 58, 237, 0.10);
 
+  /* Door-to-puncture verdict. Deliberately separate from the certification
+     palette: --c-evt/--c-tsc/--c-csc double as badge colours on the same card,
+     and in the colour-blind palette two of them collapse to near-identical
+     oranges (1.72:1). */
+  --status-ontarget: #047857; /* emerald 700 */
+  --status-stretch: #b45309;  /* amber 700 */
+  --status-over: #b91c1c;     /* red 700 */
+
   --c-psc-text: #7c2d12;
   --c-asr-text: #1a2e05;
 
@@ -77,6 +85,9 @@ html.dark {
   --c-evt-bg: rgba(45, 212, 191, 0.15); /* teal-400 */
   --c-census: #a78bfa; /* violet-400 — lifted for contrast on dark surfaces */
   --c-census-bg: rgba(167, 139, 250, 0.16);
+  --status-ontarget: #34d399; /* emerald 400 */
+  --status-stretch: #fbbf24;  /* amber 400 */
+  --status-over: #f87171;     /* red 400 */
 
   --c-psc-text: #fcd34d;
   --c-asr-text: #bef264;
@@ -91,6 +102,11 @@ html.cb {
   --c-evt: #0072B2;  /* blue */
   --c-other: #56B4E9; /* sky */
   --c-census: #CC79A7; /* reddish purple — the remaining Okabe-Ito hue */
+  /* Okabe-Ito blue / orange / vermillion: distinguishable under every common
+     colour-vision deficiency, unlike the green/orange/red default. */
+  --status-ontarget: #0072B2;
+  --status-stretch: #E69F00;
+  --status-over: #D55E00;
 
   --c-census-bg: rgba(204, 121, 167, 0.14);
   --c-csc-bg: rgba(213, 94, 0, 0.12);
@@ -105,6 +121,9 @@ html.cb {
 html.cb.dark {
   --c-psc-text: #fef08a;
   --c-asr-text: #86efac;
+  --status-ontarget: #56B4E9;
+  --status-stretch: #F0E442;
+  --status-over: #E69F00;
 }
 
 /* ---------- Reset + base ---------- */
