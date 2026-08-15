@@ -359,6 +359,8 @@ html.dark .hospital-item.highlighted { background: #1e3a8a; }
   word-break: break-word;
 }
 
+.matrix-unassessed { color: var(--c-census); font-style: italic; }
+
 .empty-state {
   padding: 32px 16px; text-align: center;
   color: var(--text-muted); font-size: 13px;

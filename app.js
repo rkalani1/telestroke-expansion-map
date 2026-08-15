@@ -434,24 +434,28 @@ function initMap() {
         ['--c-asr', 'ASR', 'ASR'],
         ['--c-evt', 'EVT', 'EVT'],
       ];
+      // Both remaining classes now have toggle pills, so every legend entry is
+      // clickable — and "not assessed" gets its own hollow swatch matching the
+      // marker style rather than being folded into a vague "Other".
+      items.push(['--c-other', 'None', 'NONE']);
+      items.push(['--c-census', 'Not assessed', 'CENSUS']);
       for (const [v, label, filterKey] of items) {
+        const dot = el('span', { class: 'legend-dot', style: { background: cssVar(v) } });
+        if (filterKey === 'CENSUS') {
+          dot.style.background = 'transparent';
+          dot.style.border = `2px dashed ${cssVar('--c-census')}`;
+        }
         const entry = el('button', {
           class: 'entry-btn',
           type: 'button',
           'aria-label': `Toggle ${label} filter`,
+          title: filterKey === 'CENSUS'
+            ? 'Acute-care census records — stroke capability not assessed'
+            : filterKey === 'NONE' ? 'Checked — no stroke certification on record' : undefined,
           onclick: () => togglePill(filterKey),
-        }, [
-          el('span', { class: 'legend-dot', style: { background: cssVar(v) } }),
-          document.createTextNode(label),
-        ]);
+        }, [dot, document.createTextNode(label)]);
         div.appendChild(entry);
       }
-      // 'Other' is static as there is no corresponding toggle pill
-      const otherEntry = el('span', { class: 'entry' }, [
-        el('span', { class: 'legend-dot', style: { background: cssVar('--c-other') } }),
-        document.createTextNode('Other'),
-      ]);
-      div.appendChild(otherEntry);
 
       const info = el('button', { class: 'info-link', type: 'button', 'aria-label': 'Certification info', text: '?' });
       info.addEventListener('click', () => openModal('cert-info-modal'));
@@ -1712,7 +1716,12 @@ function renderDistanceMatrix() {
     const dEVT = d.nearestEVTDistance > 0 && Number.isFinite(d.nearestEVTDistance) ? d.nearestEVTDistance.toFixed(0) : '—';
     tr.appendChild(el('td', { text: h.displayName }));
     tr.appendChild(el('td', { text: h.state }));
-    tr.appendChild(el('td', { text: h.strokeCertificationType || '—' }));
+    // Without this an unassessed record shows the same em-dash as one checked
+    // and found uncertified.
+    tr.appendChild(el('td', {
+      text: h.isCensus ? 'not assessed' : (h.strokeCertificationType || '—'),
+      class: h.isCensus ? 'matrix-unassessed' : undefined,
+    }));
 
     tr.appendChild(el('td', { text: d.nearestAdvancedName || '—' }));
     tr.appendChild(el('td', { class: 'num', text: dCSC }));
@@ -1731,7 +1740,9 @@ function exportDistanceMatrixCSV() {
     const dA = Number.isFinite(d.nearestAdvancedDistance) && d.nearestAdvancedDistance > 0 ? d.nearestAdvancedDistance : '';
     const dE = Number.isFinite(d.nearestEVTDistance) && d.nearestEVTDistance > 0 ? d.nearestEVTDistance : '';
     rows.push([
-      h.displayName, h.state, h.city || '', h.strokeCertificationType || 'None', h.certifyingBody || '',
+      h.displayName, h.state, h.city || '',
+      h.isCensus ? 'Not assessed' : (h.strokeCertificationType || 'None'),
+      h.certifyingBody || '',
       d.nearestAdvancedName || '',
       dA === '' ? '' : dA.toFixed(1),
       dA === '' ? '' : (h.airOnly ? 'N/A' : groundMinutes(dA)),
