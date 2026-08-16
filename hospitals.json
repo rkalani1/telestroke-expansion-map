@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0.0",
-  "data_version": "2026.08.15.1",
+  "data_version": "2026.08.15.2",
   "last_verified": "2026-07-04",
-  "generated_at": "2026-08-15T22:13:42+00:00",
+  "generated_at": "2026-08-15T22:41:06+00:00",
   "primary_sources": [
     "The Joint Commission Quality Check (qualitycheck.org) — national CSC/TSC/PSC/ASR certifications",
     "DNV Healthcare Accredited Organizations Directory — national CSC/PSC+/PSC/ASR certifications",
@@ -1904,15 +1904,18 @@
       "cmsId": "130013",
       "strokeCertificationType": "PSC",
       "certifyingBody": "Idaho TSE",
-      "certificationDetails": "Idaho TSE designated Level II+ Stroke Center (Primary stroke care with 24/7 mechanical thrombectomy / EVT / ELVO capability)",
-      "hasELVO": true,
+      "certificationDetails": "Idaho TSE designated Level II Stroke Center (April 2023, upgraded from Level III 2019; 3-year cycle, redesignation due ~2026). Prior editions showed \"Level II+\" with 24/7 thrombectomy; no source supports the II+ tier, and the thrombectomy claim rests on hospital materials alone while the system’s EVT hub is Saint Alphonsus Boise — withdrawn pending primary-source confirmation.",
+      "hasELVO": false,
       "latitude": 43.5936,
       "longitude": -116.5175,
       "geocoded": true,
       "geocodeSource": "Nominatim/OpenStreetMap",
       "dataSources": [
         "Idaho TSE Statewide Council",
-        "Saint Alphonsus Health System website"
+        "Saint Alphonsus Health System website",
+        "Trinity Health/Saint Alphonsus announcement (Apr 2023): Level II designation",
+        "Idaho Press (Apr 2023) + KIVI TV: independent confirmation of Level II",
+        "hasELVO withdrawn 2026-08-15: no independent evidence of 24/7 on-site EVT"
       ],
       "id": "130013",
       "facilityIdType": "ccn",
@@ -1921,8 +1924,8 @@
       "lastVerified": "2026-07-04",
       "stateDesignation": {
         "system": "Idaho TSE",
-        "level": "II+",
-        "label": "Idaho TSE Level II+"
+        "level": "II",
+        "label": "Idaho TSE Level II"
       },
       "nationalCertification": null,
       "certificationBasis": "state",
@@ -8186,12 +8189,13 @@
       "dataSources": [
         "CMS (Nov 2024)",
         "Verification (Feb 2026)",
-        "Note: Military hospital; no Joint Commission stroke certification found; limited neurointerventional capability but no 24/7 EVT program"
+        "Note: Military hospital; no Joint Commission stroke certification found; limited neurointerventional capability but no 24/7 EVT program",
+        "Internal-consistency correction 2026-08-15: TSC/hasELVO contradicted the record’s own Feb-2026 note; WA ECS Level II maps to PSC"
       ],
-      "strokeCertificationType": "TSC",
+      "strokeCertificationType": "PSC",
       "certifyingBody": "WA DOH",
-      "certificationDetails": "Washington State Level II Stroke Center",
-      "hasELVO": true,
+      "certificationDetails": "Washington State ECS Level II Stroke Center. Prior editions displayed TSC with 24/7 EVT, contradicting this record’s own verification note (\"limited neurointerventional capability but no 24/7 EVT program\") and the dataset’s WA Level II → PSC mapping used for every other Level II site. Corrected 2026-08-15.",
+      "hasELVO": false,
       "city": "Tacoma",
       "id": "WA-MADIGAN-AMC",
       "facilityIdType": "military",

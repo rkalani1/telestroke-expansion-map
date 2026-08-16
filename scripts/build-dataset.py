@@ -613,7 +613,12 @@ def main():
     out.sort(key=lambda r: (r['state'], r.get('city') or '', r['name']))
 
     doc['schema_version'] = SCHEMA_VERSION
-    doc['data_version'] = datetime.now(timezone.utc).strftime('%Y.%m.%d.1')
+    # Same-day rebuilds with changed content bump the ordinal instead of
+    # silently reusing the morning's version string.
+    today = datetime.now(timezone.utc).strftime('%Y.%m.%d')
+    prev = doc.get('data_version', '')
+    ordinal = int(prev.rsplit('.', 1)[1]) + 1 if prev.startswith(today) else 1
+    doc['data_version'] = f'{today}.{ordinal}'
     doc['generated_at'] = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     doc['census_snapshot'] = {
         'source': CENSUS_SOURCE,

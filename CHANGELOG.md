@@ -2,6 +2,33 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.1.1] - 2026-08-15
+
+Data 2026.08.15.2 — structured search-based verification of the 13 highest-priority
+open items (two-independent-source bar, adversarial re-check on every proposed
+change), plus a five-state press sweep for certification/EVT changes 2026-07-04 →
+2026-08-15, which found none. Full outcomes in METHODOLOGY §4.
+
+- **Saint Alphonsus Nampa corrected: Idaho TSE Level II+ → Level II.** Hospital
+  announcement, Idaho Press and KIVI TV (April 2023) all say plain Level II; no
+  source supports a "II+" tier. With the "primary with thrombectomy" label gone,
+  the 24/7-EVT flag rested on the hospital's own materials while the system names
+  Boise as its EVT hub — **hasELVO withdrawn** pending primary-source confirmation.
+- **Madigan AMC corrected: TSC → PSC, hasELVO → false.** The record contradicted
+  its own Feb-2026 note ("limited neurointerventional capability but no 24/7 EVT
+  program") and was the only WA ECS Level II mapped above PSC. Search found no
+  admissible evidence of an EVT program.
+- Confirmed two-source: Providence St Patrick (JC Advanced PSC + 24/7 EVT) and
+  Saint Alphonsus Boise (TSE Level I). Banner Wyoming's EVT capability confirmed
+  independently; its JC certification (last publicly confirmed 2022) queued for a
+  recertification check. Benefis, St. Peter's Helena, Fairbanks Memorial and
+  Alaska Native Medical Center: no evidence of certification found in 8–12
+  searches each; "none on record" retained.
+- EVT-capable count 22 → 20; CSC/TSC 18 → 17. Transport estimates in southern
+  Puget Sound and the Boise valley now route to the nearest confirmed EVT centre.
+- Same-day data rebuilds now increment the version ordinal instead of silently
+  reusing the day's version string.
+
 ## [3.1.0] - 2026-08-15
 
 Follow-up polish pass closing the remaining verified audit findings.
