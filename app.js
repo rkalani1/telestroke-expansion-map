@@ -642,9 +642,10 @@ function defaultMarkerStyle(h) {
     };
   }
   // 24/7 thrombectomy gets its own channel. Tier colour was an accidental proxy
-  // for 18 of the 22 EVT centres, but the four PSC-tier ones were pixel-
-  // identical to the 41 PSCs without it — and those rural regional centres are
-  // exactly what a fly-past-the-nearest-hospital decision turns on.
+  // for the CSC/TSC-tier EVT centres, but the PSC-tier ones (EIRMC, St Patrick
+  // Missoula, Banner Wyoming) were pixel-identical to the PSCs without it — and
+  // those rural regional centres are exactly what a fly-past-the-nearest-
+  // hospital decision turns on.
   return {
     fillColor: markerColor(h),
     color: h.hasELVO ? cssVar('--c-evt') : 'white',

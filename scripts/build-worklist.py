@@ -24,13 +24,27 @@ OUT = os.path.join(ROOT, 'data', 'verification-worklist.csv')
 # (METHODOLOGY.md §4). Each still needs a second confirming source.
 CARRIED_OPEN_ITEMS = [
     ('500033', 'WA Stroke Level II designation',
-     'Registry (WA DOH ECS, May 2026 rev.) shows a designation; press coverage of the new '
-     'hospital does not mention one. Retained no-certification.'),
+     'Registry (WA DOH ECS, May 2026 rev.) shows a designation; 2026-08-15 search pass found no '
+     'second, non-DOH source. Retained no-certification.'),
     ('501311', 'ECS list removal / Rural Emergency Hospital conversion',
      'REH conversion confirmed by regional press; absence from the DOH list remains '
-     'single-sourced for removal. Retained ASR.'),
+     'single-sourced for removal; 2026-08-15 search pass found nothing further. Retained ASR.'),
     ('130074', 'Idaho TSE Level III -> II upgrade',
-     'Registry shows Level II; hospital site still says Level III. Retained Level III.'),
+     'Registry shows Level II; hospital site (May 2021 announcement, still live) says Level III; '
+     '2026-08-15 search pass found no independent 2024-2026 source. Retained Level III.'),
+    ('WA-MADIGAN-AMC', 'WA ECS stroke level confirmation',
+     'Tier corrected TSC->PSC and hasELVO withdrawn 2026-08-15 on internal evidence; the ECS '
+     'Level II designation itself still needs confirmation against the current DOH list.'),
+    ('130013', '24/7 EVT capability re-check (Nampa)',
+     'hasELVO withdrawn 2026-08-15: designation is plain TSE Level II (two-source, Apr 2023), and '
+     'the thrombectomy claim rested on hospital materials alone. Confirm with the TSE registry or '
+     'the neurointerventional service. Redesignation due ~2026.'),
+    ('530012', 'JC certification recertification check (Banner Wyoming)',
+     'EVT independently confirmed (2024 press); JC Advanced PSC last publicly confirmed March 2022 '
+     '— a 3-year cycle puts recertification ~2025. Check the JC Quality Check directory.'),
+    ('130018', 'Idaho TSE "Level II+" label check (EIRMC)',
+     'Own site claims II+ with active 2025 EVT metrics; Wikipedia shows plain Level II. Confirm '
+     'the II+ tier against the TSE registry.'),
 ]
 
 FIELDS = ['priority', 'id', 'name', 'state', 'item', 'why_flagged', 'source_to_check']

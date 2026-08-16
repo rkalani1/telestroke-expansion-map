@@ -127,6 +127,25 @@ This was not a full-dataset re-verification, so `last_verified` remains 2026-07-
 | **East Adams Rural (Ritzville)** possible ECS removal | Rural Emergency Hospital conversion confirmed by regional press (approved ~2026-03); hospital site still claims WA Level III Stroke. DOH-list absence remains single-source for removal. **OPEN — retained ASR; re-check after REH transition settles.** |
 | **Idaho Falls Community** possible TSE Level III→II | Hospital site still says Level III; no second source for the registry's Level II. **OPEN — retained Level III.** |
 
+### 2026-08-15 search-based verification pass
+
+With primary-source directories unreachable from the authoring environment, a structured
+web-search verification pass covered the 13 highest-priority open items (one researcher per item,
+two-independent-source bar, verbatim source quotes required, adversarial re-check on any proposed
+change) plus a five-state press sweep for certification and EVT changes 2026-07-04 → 2026-08-15.
+The sweep found **no certification or EVT-capability changes** in any of the five states.
+
+| Item | Outcome |
+|------|---------|
+| **Saint Alphonsus Nampa** | **Corrected: Idaho TSE Level II+ → Level II** (hospital announcement + Idaho Press + KIVI TV, April 2023; no source supports a "II+" tier). With the "primary **with thrombectomy**" tier label gone, the 24/7-EVT flag rested on hospital materials alone while the system's own communications name Boise as its EVT hub — **hasELVO withdrawn** pending primary-source confirmation. Redesignation due ~2026. |
+| **Madigan AMC** | **Corrected: TSC → PSC, hasELVO → false.** The record contradicted its own Feb-2026 verification note ("limited neurointerventional capability but no 24/7 EVT program") and was the only WA ECS Level II mapped above PSC. Search found no admissible evidence of an EVT program. WA ECS level itself still needs a DOH-list check. |
+| **Providence St Patrick** (Missoula) | Confirmed two-source: JC Advanced PSC (recertified Dec 2023 per Missoula Current + hospital site) and 24/7 EVT. |
+| **Saint Alphonsus Boise** | Confirmed two-source: Idaho TSE Level I (redesignated Aug 2024); still no national certification on record. |
+| **EIRMC** (Idaho Falls) | Consistent, single-source-current: own site claims JC PSC + TSE Level II+ + active EVT with 2025 metrics; Wikipedia shows "Level II". Retained; II+ label flagged for registry check. |
+| **Banner Wyoming** (Casper) | EVT confirmed independently (Oil City News 2024; Wyoming Neurologic Associates: "only thrombectomy-capable hospital in the state"). JC PSC certification last publicly confirmed March 2022 — recertification check queued. |
+| **Benefis, St. Peter's Helena, Fairbanks Memorial, Alaska Native** | 8–12 searches each: no evidence of any certification or EVT program; "none on record" retained (silence is weak evidence — certifier-directory checks still queued). |
+| **Samaritan Moses Lake / East Adams / Idaho Falls Community** | Still single-sourced or conflicting; retained as-is, open. |
+
 ## 5. Transport-time estimates
 
 Transport times shown in popups, detail modals, and exports are **order-of-magnitude planning estimates** using this model:
@@ -146,11 +165,11 @@ Assumptions:
 - **Air speed 150 mph** is a blended rotor-wing and fixed-wing air-medical speed; 25-minute overhead covers dispatch, preflight, takeoff, landing, and bedside handoff.
 - **Best transport** is the min of both modes — real decisions depend on weather, asset availability, crew duty cycles, and patient stability.
 
-**Which mode "best" means.** Solving the two formulas, air overtakes ground at about **18 great-circle miles** — the effective ground speed against great-circle distance is 44 mph, so air's 150 mph erases its 17-minute overhead advantage almost immediately. Across this dataset air is the faster mode for 181 of 218 interfacility transfers. Because "best" therefore assumes an air asset is available and flying, every displayed best-time now names its mode.
+**Which mode "best" means.** Solving the two formulas, air overtakes ground at about **18 great-circle miles** — the effective ground speed against great-circle distance is 44 mph, so air's 150 mph erases its 17-minute overhead advantage almost immediately. Across this dataset air is the faster mode for 183 of the 215 spoke-to-EVT transfers. Because "best" therefore assumes an air asset is available and flying, every displayed best-time now names its mode.
 
 ### Door-to-puncture window
 
-The detail modal estimates transport to the **nearest EVT-capable centre**, not the nearest CSC/TSC. These are not the same set: 22 hospitals are EVT-capable while only 18 hold CSC/TSC certification, and the four PSC-tier EVT centres (Eastern Idaho Regional, Saint Alphonsus Nampa, Providence St Patrick, Banner Wyoming) are the nearest thrombectomy option for a large part of Idaho, Montana and Wyoming. Measuring to the nearest CSC/TSC overstated the window for 59 records by up to 109 minutes.
+The detail modal estimates transport to the **nearest EVT-capable centre**, not the nearest CSC/TSC. These are not the same set: 20 hospitals are EVT-capable while only 17 hold CSC/TSC certification, and the three PSC-tier EVT centres (Eastern Idaho Regional, Providence St Patrick, Banner Wyoming) are the nearest thrombectomy option for a large part of Idaho, Montana and Wyoming. Measuring to the nearest CSC/TSC overstated the window for 59 records by up to 109 minutes.
 
 A flat **30-minute door-in-door-out (DIDO)** allowance is added. AHA Get-With-The-Guidelines-Stroke targets ≤90 min door-to-puncture for transferred patients; ≤120 min is the "acceptable" stretch target. Both the sentence and the progress bar are coloured from the same thresholds against the same total.
 
