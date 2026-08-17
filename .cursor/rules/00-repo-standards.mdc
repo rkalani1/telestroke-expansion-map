@@ -1,0 +1,29 @@
+---
+description: Repository-specific coding and design standards
+alwaysApply: true
+globs:
+  - "**/*"
+---
+
+# Cursor Agent Rules: Clinical Web Applications & Bedside Calculators
+# Purpose: Zero-dependency, ultra-reliable, client-side clinical calculators and bedside decision support.
+
+## 1. Core Principles & Philosophy
+- **Function-Driven Design**: The calculator/tool must be immediately actionable, fast-loading (<500ms), and frictionless.
+- **Client-Side Autonomy**: Must execute entirely in the browser with vanilla HTML5, CSS3, and modern JavaScript (ES6+). Avoid unnecessary heavy frameworks unless explicitly required.
+- **Strict Clinical Safety Boundaries**: Clearly display "For Educational and Decision Support Demonstration Only". Never claim definitive diagnostic authority.
+
+## 2. Mathematical & Algorithmic Rigor
+- **Edge-Case Validation**: Explicitly test and guard against NaN, undefined, zero-division (e.g. sample size = 0, variance = 0), and negative inputs.
+- **Numerical Precision**: Format statistical outputs logically (e.g. p-values < 0.001 as "< 0.001", percentages to 1 decimal place, HR with 95% CI).
+- **Formula Grounding**: Document the underlying statistical or clinical reference in code comments (e.g., Schoenfeld formula for survival power, Wilson score interval for proportions).
+
+## 3. UI/UX, Typography & Accessibility
+- **Responsive Fluid Layout**: Ensure pixel-perfect usability across mobile phones, iPad/tablets, and desktop screens.
+- **Typography & Readability**: Curated, high-legibility typography (system UI font stack or Inter). Proper line-height and letter-spacing.
+- **Accessibility (WCAG 2.1 AA)**: High contrast ratios, accessible form labels, keyboard navigation (Tab/Enter), and clear focus rings.
+- **No Cliché Slop**: No rainbow gradients, decorative glow borders, or useless placeholder cards.
+
+## 4. Verification & Testing
+- Every JavaScript calculation function must be modular and testable.
+- Run deterministic checks before committing changes.
