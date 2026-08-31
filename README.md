@@ -53,6 +53,10 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
 - **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
 
+## AI-Assisted Dataset Update Gate
+
+Use `docs/automedbench-lite.md` before accepting AI-generated changes to hospital data, certification tiers, EVT capability flags, transport-time assumptions, exports, or map copy. The gate requires S1 Plan, S2 Setup, S3 Validate, S4 Execute, and S5 Submit with source trace, local preview checks, distance/geocoding checks, residual owner review, and no-confidential-data confirmation.
+
 ## Transport-time model
 
 Distances are great-circle (haversine). Ground transfer time = (haversine × 1.25) / 55 mph + 8 min overhead. Air transfer time = haversine / 150 mph + 25 min dispatch/takeoff/landing overhead. These are **planning estimates** only. Real transfer times depend on weather, traffic, staffing, and specific asset availability.
