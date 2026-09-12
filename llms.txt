@@ -17,10 +17,10 @@ user-adjustable expansion-planning heuristic. 236 hospitals.
   certification_definitions, certifying_bodies.
 - IMPORTANT — there are TWO record classes, and conflating them misreports the
   data. Each record carries recordClass and strokeDataStatus:
-    * recordClass "stroke-capability" (135 records, strokeDataStatus
+    * recordClass "stroke-capability" (136 records, strokeDataStatus
       "verified") — capability checked against primary sources. A null
       strokeCertificationType means CHECKED AND NONE FOUND.
-    * recordClass "acute-care-census" (101 records, strokeDataStatus
+    * recordClass "acute-care-census" (100 records, strokeDataStatus
       "not-assessed") — facility identity from the CMS acute-care census.
       strokeCertificationType is null and hasELVO is false because the site
       was NEVER ASSESSED. This is NOT evidence of absent capability. Do not
@@ -33,15 +33,16 @@ user-adjustable expansion-planning heuristic. 236 hospitals.
   (national | state | both | none | not-assessed), nationalCertification,
   stateDesignation, certifyingBody, certificationDetails, hasELVO,
   hospitalType, ownership, beds, healthSystem, dataSources, lastVerified.
-- certificationBasis matters: 67 of the 135 assessed records display a tier
+- certificationBasis matters: 67 of the 136 assessed records display a tier
   derived from a WA ECS or Idaho TSE state designation alone, with no national
   accreditation. strokeCertificationType is this project's mapping onto the
   national ladder, not an accreditor's finding.
 - Authoritative dates live inside hospitals.json. As of this file's last
-  update: data_version 2026.08.15.1; stroke capability verified 2026-07-04
-  (watch-list re-checked 2026-07-18); acute-care census snapshot Oct 2023.
+  update: data_version 2026.09.12.1; stroke capability verified 2026-07-04
+  (open items re-checked 2026-07-18, 2026-08-15 and 2026-09-12); acute-care
+  census snapshot Oct 2023.
   Certification and EVT changes require two independent public sources.
-- /data/verification-worklist.csv — 56 ranked records that still need a
+- /data/verification-worklist.csv — 61 ranked items that still need a
   primary-source check, with the source to check for each.
 - /data/cms-census-wwami-2023-10.csv — the vendored CMS census subset.
 

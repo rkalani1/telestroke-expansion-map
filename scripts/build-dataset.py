@@ -423,7 +423,11 @@ def main():
 
         rec['recordClass'] = 'stroke-capability'
         rec['strokeDataStatus'] = 'verified'
-        rec['lastVerified'] = doc.get('last_verified')
+        # The dataset-wide date is the last full re-verification. A record
+        # corrected or first assessed in a later targeted pass keeps its own,
+        # later date so the detail view never claims it was verified before
+        # it was.
+        rec['lastVerified'] = max(rec.get('lastVerified') or '', doc.get('last_verified') or '') or None
 
         # address / locality
         stripped = strip_locality(rec.get('address'), rec.get('city'),

@@ -14,15 +14,15 @@ Every hospital on the map is one of two kinds, and the difference is stated ever
 
 | Class | What it means | Count |
 |-------|---------------|-------|
-| **Stroke capability** | Certification individually verified against primary sources. A blank certification here means *checked, none found*. | 135 |
-| **Acute-care census** | Facility identity from the CMS acute-care census, so every hospital in the region is findable. Stroke capability **has not been assessed** — blank means *unknown*, not *none*. | 101 |
+| **Stroke capability** | Certification individually verified against primary sources. A blank certification here means *checked, none found*. | 136 |
+| **Acute-care census** | Facility identity from the CMS acute-care census, so every hospital in the region is findable. Stroke capability **has not been assessed** — blank means *unknown*, not *none*. | 100 |
 
 Census records never assert a tier or an EVT flag, are excluded from every capability statistic and from expansion-candidate scoring, and still get full transport analysis — the geometry is known even where the capability is not.
 
 ## What it does
 
 - Maps every hospital in the dataset with color-coded markers by certification tier (CSC / TSC / PSC / ASR) and visible badges for 24/7 thrombectomy (EVT) capability.
-- **Separates national accreditation from state designation.** 67 of the 135 assessed records display a tier derived from a WA ECS or Idaho TSE state designation alone, with no national accreditation on record. The detail view says so in as many words, and the list row carries a dashed state badge — a WA ECS Level III should never be read as a Joint Commission ASR.
+- **Separates national accreditation from state designation.** 67 of the 136 assessed records display a tier derived from a WA ECS or Idaho TSE state designation alone, with no national accreditation on record. The detail view says so in as many words, and the list row carries a dashed state badge — a WA ECS Level III should never be read as a Joint Commission ASR.
 - **Finds hospitals by what clinicians actually call them.** Search covers spoken shorthand (`HMC`, `Harborview`, `Sacred Heart`, `St V`), county, health system, facility type, and city — not just the official CMS name.
 - Computes, for each hospital, distance and estimated ground/air transport time to the nearest CSC/TSC and nearest EVT center.
 - Identifies **EVT deserts** (hospitals beyond a configurable distance from 24/7 thrombectomy) and **zero-capability** hospitals (no national certification — also available as a "None" filter pill).
@@ -46,10 +46,10 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 
 ## Data
 
-- **Coverage:** 236 hospitals across WA (91), MT (59), ID (44), WY (27), AK (15) — 135 with verified stroke capability, 101 acute-care census records.
-- **Stroke capability last verified:** 2026-07-04 (full dataset) · 2026-07-18 (watch-list re-check + press sweep)
+- **Coverage:** 236 hospitals across WA (91), MT (59), ID (44), WY (27), AK (15) — 136 with verified stroke capability, 100 acute-care census records.
+- **Stroke capability last verified:** 2026-07-04 (full dataset) · 2026-07-18, 2026-08-15 and 2026-09-12 (targeted re-checks of open items + five-state press sweeps)
 - **Census snapshot:** CMS Hospital General Information, Oct 2023. Used for facility identity, type, ownership and bed counts only — no stroke claim is derived from it.
-- **Open items:** [`data/verification-worklist.csv`](./data/verification-worklist.csv) ranks the 56 records that still need a primary-source check, each with the source to check.
+- **Open items:** [`data/verification-worklist.csv`](./data/verification-worklist.csv) ranks the 61 items that still need a primary-source check, each with the source to check.
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
 - **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
 
