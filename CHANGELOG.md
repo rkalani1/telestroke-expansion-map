@@ -2,6 +2,18 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.1.3] - 2026-09-12
+
+- **Basemap switched from CARTO to OpenStreetMap.** CARTO began requiring an API
+  key for its `basemaps.cartocdn.com` raster tiles in late August 2026; unkeyed
+  requests still load but come back stamped "API KEY REQUIRED", which is what the
+  live map had been showing. The page now uses OpenStreetMap's standard tile
+  layer, which needs no key (attribution retained, as the OSM tile usage policy
+  requires). "Toggle dark map tiles" still works — OSM serves no dark raster
+  style, so the same layer is inverted through a CSS filter on the tile pane.
+- `app.css` now carries a cache-buster alongside `app.js` (it changed here and
+  had none, so returning visitors would have kept the stale stylesheet).
+
 ## [3.1.2] - 2026-09-12
 
 Data 2026.09.12.1 — targeted search-based re-check of every open worklist item plus a

@@ -579,15 +579,20 @@ function initMap() {
   });
   new LegendControl().addTo(state.map);
 }
+// Basemap. CARTO began requiring an API key for basemaps.cartocdn.com in late
+// August 2026; unkeyed requests still return tiles, but stamped "API KEY
+// REQUIRED" across the map. OpenStreetMap's standard tiles need no key. Their
+// usage policy asks for visible attribution (the Leaflet attribution control)
+// and a Referer header, which every browser sends; this is a low-traffic
+// planning page, not a bulk tile consumer. OSM serves no dark raster style, so
+// "dark tiles" is the same layer with a CSS filter on the tile pane (app.css).
+const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 function setTileLayer(dark) {
-  if (state.tileLayer) state.map.removeLayer(state.tileLayer);
-  const url = dark
-    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-  state.tileLayer = L.tileLayer(url, {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    maxZoom: 19, subdomains: 'abcd',
-  }).addTo(state.map);
+  if (!state.tileLayer) {
+    state.tileLayer = L.tileLayer(TILE_URL, { attribution: TILE_ATTRIBUTION, maxZoom: 19 }).addTo(state.map);
+  }
+  state.map.getContainer().classList.toggle('dark-tiles', !!dark);
 }
 
 // ------------------------------------------------------------------

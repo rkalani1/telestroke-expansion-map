@@ -1037,6 +1037,12 @@ html.dark .metric-row .value.qa-fail { color: #fca5a5; }
 
 #map.query-cursor,
 #map.query-cursor .leaflet-interactive,
+/* Dark map tiles: OpenStreetMap serves no dark raster style, so invert the
+   tile pane only. Markers and overlays live in other panes and keep their
+   colours. */
+#map.dark-tiles .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9) saturate(0.7);
+}
 #map.query-cursor .leaflet-container {
   cursor: crosshair !important;
 }

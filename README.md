@@ -152,7 +152,7 @@ MIT — see [LICENSE](./LICENSE).
 
 ## Attribution
 
-- Basemap tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, styled by [CARTO](https://carto.com/attributions)
+- Basemap tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (standard tile layer, no API key; see the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/))
 - Mapping library: [Leaflet](https://leafletjs.com/) (BSD-2-Clause, vendored in `vendor/leaflet/`)
 - Acute-care census derived from CMS Hospital General Information
 - PNG export: [html2canvas](https://html2canvas.hertzen.com/)

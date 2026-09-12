@@ -31,7 +31,9 @@ Then update the version in this file and smoke-test the map.
 
 ## Still remote
 
-- **Basemap tiles** — `basemaps.cartocdn.com`. A map without tiles still shows
+- **Basemap tiles** — `tile.openstreetmap.org` (CARTO's `basemaps.cartocdn.com`
+  was dropped in 3.1.3 when it began stamping unkeyed tiles "API KEY
+  REQUIRED"). A map without tiles still shows
   markers, the sidebar, distances and every analysis tool, so this degrades
   gracefully rather than failing hard.
 - **`html2canvas`** — loaded on demand from `cdnjs.cloudflare.com` only when
