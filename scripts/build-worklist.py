@@ -20,31 +20,47 @@ DATA = os.path.join(ROOT, 'hospitals.json')
 CENSUS = os.path.join(ROOT, 'data', 'cms-census-wwami-2023-10.csv')
 OUT = os.path.join(ROOT, 'data', 'verification-worklist.csv')
 
-# Items left explicitly open by the 2026-07-18 watch-list re-check
-# (METHODOLOGY.md §4). Each still needs a second confirming source.
+# Items left explicitly open by the targeted re-checks of 2026-07-18, 2026-08-15
+# and 2026-09-12 (METHODOLOGY.md §4). Each still needs a second confirming
+# source, or a certifier-directory check the authoring environment could not
+# reach.
 CARRIED_OPEN_ITEMS = [
     ('500033', 'WA Stroke Level II designation',
-     'Registry (WA DOH ECS, May 2026 rev.) shows a designation; 2026-08-15 search pass found no '
-     'second, non-DOH source. Retained no-certification.'),
+     'Registry (WA DOH ECS, May 2026 rev.) shows a designation; the 2026-08-15 and 2026-09-12 search '
+     'passes found no second, non-DOH source (hospital site silent). Retained no-certification.'),
     ('501311', 'ECS list removal / Rural Emergency Hospital conversion',
-     'REH conversion confirmed by regional press; absence from the DOH list remains '
-     'single-sourced for removal; 2026-08-15 search pass found nothing further. Retained ASR.'),
+     'REH conversion confirmed by regional press (approval expected summer 2026); hospital site still '
+     'claims WA Level III Stroke as of 2026-09-12. Absence from the DOH list remains single-sourced '
+     'for removal. Retained ASR.'),
     ('130074', 'Idaho TSE Level III -> II upgrade',
-     'Registry shows Level II; hospital site (May 2021 announcement, still live) says Level III; '
-     '2026-08-15 search pass found no independent 2024-2026 source. Retained Level III.'),
+     'Registry shows Level II; hospital site (May 2021 announcement, still live 2026-09-12) says '
+     'Level III; no independent 2024-2026 source found. Retained Level III.'),
     ('WA-MADIGAN-AMC', 'WA ECS stroke level confirmation',
-     'Tier corrected TSC->PSC and hasELVO withdrawn 2026-08-15 on internal evidence; the ECS '
-     'Level II designation itself still needs confirmation against the current DOH list.'),
+     'Tier corrected TSC->PSC and hasELVO withdrawn 2026-08-15 on internal evidence; the ECS Level II '
+     'designation itself still needs confirmation against the current DOH list (2026-09-12 search '
+     'found only a 2023 third-party "no JC stroke certification" listing).'),
     ('130013', '24/7 EVT capability re-check (Nampa)',
-     'hasELVO withdrawn 2026-08-15: designation is plain TSE Level II (two-source, Apr 2023), and '
-     'the thrombectomy claim rested on hospital materials alone. Confirm with the TSE registry or '
-     'the neurointerventional service. Redesignation due ~2026.'),
+     'hasELVO withdrawn 2026-08-15: designation is plain TSE Level II (two-source, Apr 2023). The '
+     'hospital site still lists thrombectomy (2026-09-12) but no independent source does. Confirm '
+     'with the TSE registry or the neurointerventional service. Redesignation due ~2026.'),
     ('530012', 'JC certification recertification check (Banner Wyoming)',
-     'EVT independently confirmed (2024 press); JC Advanced PSC last publicly confirmed March 2022 '
-     '— a 3-year cycle puts recertification ~2025. Check the JC Quality Check directory.'),
+     'EVT independently confirmed (2024 press); JC Advanced PSC last publicly confirmed March 2022, '
+     'described as retained in July 2025 coverage — a formal recertification date is still '
+     'unconfirmed. Check the JC Quality Check directory.'),
     ('130018', 'Idaho TSE "Level II+" label check (EIRMC)',
-     'Own site claims II+ with active 2025 EVT metrics; Wikipedia shows plain Level II. Confirm '
-     'the II+ tier against the TSE registry.'),
+     'Own site claims II+ with active 2025 EVT metrics (still live 2026-09-12); Wikipedia shows plain '
+     'Level II. Confirm the II+ tier against the TSE registry.'),
+    ('270023', 'Joint Commission directory check (Community Medical Center Missoula)',
+     'Promoted from census to assessed 2026-09-12 on NBC Montana coverage + hospital news release '
+     '(June 2026, JC Advanced Primary Stroke Center). Confirm the listing in JC Quality Check.'),
+    ('500108', 'CSC certifying body and WA ECS level (St. Joseph Tacoma)',
+     "Tier CSC with 24/7 EVT is corroborated by VMFH's stroke-center page, but the record's details "
+     'text still described a JC Advanced PSC and WA Level II from a prior edition (rewritten '
+     '2026-09-12). Confirm the certifying body and current ECS level against the directories.'),
+    ('020008', 'Joint Commission stroke certification check (Bartlett Regional)',
+     'Wikipedia states the hospital is Joint Commission-accredited "for ... acute stroke care"; no '
+     'hospital or certifier source found in the 2026-09-12 search pass. Single source — check JC '
+     'Quality Check for an ASRH/PSC certification. Retained none-on-record.'),
 ]
 
 FIELDS = ['priority', 'id', 'name', 'state', 'item', 'why_flagged', 'source_to_check']

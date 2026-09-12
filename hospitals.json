@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0.0",
-  "data_version": "2026.08.15.2",
+  "data_version": "2026.09.12.1",
   "last_verified": "2026-07-04",
-  "generated_at": "2026-08-15T22:41:06+00:00",
+  "generated_at": "2026-09-12T23:10:45+00:00",
   "primary_sources": [
     "The Joint Commission Quality Check (qualitycheck.org) — national CSC/TSC/PSC/ASR certifications",
     "DNV Healthcare Accredited Organizations Directory — national CSC/PSC+/PSC/ASR certifications",
@@ -11,7 +11,7 @@
     "CMS Hospital General Information — provider identity, address, geocoded via OSM/Nominatim",
     "Hospital press releases and system websites (Providence, Billings Clinic, MultiCare, Banner, etc.)"
   ],
-  "coverage_note": "This dataset tracks hospitals in the regional catchment (WA/AK/ID/MT/WY). It is scoped to regional stroke capability analysis and includes verified national stroke-certified hospitals and selected additional acute-care facilities. It is not a complete census of all acute-care hospitals in the five-state region. Where independent sources conflict on a capability flag, the value from the prior verified edition is retained pending confirmation.",
+  "coverage_note": "This dataset covers the WWAMI region (WA/AK/ID/MT/WY). It holds two classes of record: stroke-capability records whose certification and 24/7 thrombectomy status were individually verified against primary sources, and acute-care census records (every remaining Medicare-certified acute-care and critical-access hospital in the five states with coordinates in the CMS Hospital General Information snapshot) whose stroke capability has not been assessed. Census rows without coordinates are listed in data/verification-worklist.csv rather than mapped. Where independent sources conflict on a capability flag, the value from the prior verified edition is retained pending confirmation.",
   "certification_definitions": {
     "CSC": "Comprehensive Stroke Center — highest level. 24/7 neurosurgery, advanced imaging (CT/CTA/CTP/MRI/DSA), endovascular thrombectomy (EVT), neuro-ICU, stroke research program.",
     "TSC": "Thrombectomy-Capable Stroke Center — 24/7 mechanical thrombectomy for large vessel occlusion, interventional neuroradiology team, neuro-ICU, ≥15 EVTs/year per physician. DNV uses \"PSC+\" for equivalent.",
@@ -439,9 +439,10 @@
       "latitude": 61.5627638,
       "longitude": -149.2578912,
       "dataSources": [
-        "CMS Hospital General Information (Nov 2024)"
+        "CMS Hospital General Information (Nov 2024)",
+        "Mat-Su Regional Medical Center stroke-care page (matsuregional.com/stroke-care): Joint Commission Primary Stroke Center; AHA GWTG-Stroke Gold Plus 2023 (re-checked 2026-09-12)"
       ],
-      "certificationDetails": null,
+      "certificationDetails": "Joint Commission Primary Stroke Center",
       "id": "020006",
       "facilityIdType": "ccn",
       "recordClass": "stroke-capability",
@@ -451,7 +452,7 @@
       "nationalCertification": {
         "body": "Joint Commission",
         "tier": "PSC",
-        "details": null
+        "details": "Joint Commission Primary Stroke Center"
       },
       "certificationBasis": "national",
       "geocodeSource": null,
@@ -3992,26 +3993,29 @@
       "id": "270023",
       "cmsId": "270023",
       "facilityIdType": "ccn",
-      "recordClass": "acute-care-census",
-      "strokeDataStatus": "not-assessed",
+      "recordClass": "stroke-capability",
+      "strokeDataStatus": "verified",
       "name": "COMMUNITY MEDICAL CENTER",
-      "address": null,
+      "address": "2827 FORT MISSOULA RD",
       "city": "Missoula",
-      "cityConfidence": "coordinate-derived",
       "county": "Missoula County",
       "state": "MT",
-      "zip": "59801",
+      "zip": "59804",
       "latitude": 46.842062,
       "longitude": -114.055919,
       "geocoded": true,
       "geocodeSource": "CMS Hospital General Information",
       "geocodePrecision": "rooftop",
-      "strokeCertificationType": null,
-      "certifyingBody": null,
-      "certificationDetails": null,
-      "certificationBasis": "not-assessed",
+      "strokeCertificationType": "PSC",
+      "certifyingBody": "Joint Commission",
+      "certificationDetails": "Joint Commission Advanced Primary Stroke Center (announced June 2026 — the hospital's first stroke certification on record). Promoted from an acute-care census record to an assessed record on 2026-09-12. No thrombectomy claim found; Providence St Patrick remains Missoula's 24/7 EVT centre.",
+      "certificationBasis": "national",
       "stateDesignation": null,
-      "nationalCertification": null,
+      "nationalCertification": {
+        "body": "Joint Commission",
+        "tier": "PSC",
+        "details": "Joint Commission Advanced Primary Stroke Center (announced June 2026 — the hospital's first stroke certification on record). Promoted from an acute-care census record to an assessed record on 2026-09-12. No thrombectomy claim found; Providence St Patrick remains Missoula's 24/7 EVT centre."
+      },
       "hasELVO": false,
       "hospitalType": "Acute Care",
       "ownership": "Voluntary non-profit - Private",
@@ -4021,9 +4025,12 @@
         "COMMUNITY MEDICAL CENTER INC"
       ],
       "dataSources": [
-        "CMS Hospital General Information (Oct 2023 snapshot, via klocey/hospitals-data-archive)"
+        "CMS Hospital General Information (Oct 2023 snapshot, via klocey/hospitals-data-archive) — facility identity",
+        "NBC Montana (June 2026): Joint Commission Gold Seal of Approval, Advanced Primary Stroke Center",
+        "Community Medical Center news release (communitymed.org/news), syndicated regionally (June 2026)",
+        "Search-based verification 2026-09-12 (two independent sources); Joint Commission Quality Check directory check queued"
       ],
-      "lastVerified": null,
+      "lastVerified": "2026-09-12",
       "healthSystem": null,
       "aliases": [
         "CMC"
@@ -8276,14 +8283,15 @@
       "cmsId": "500108",
       "strokeCertificationType": "CSC",
       "certifyingBody": "Joint Commission",
-      "certificationDetails": "Joint Commission Primary Stroke Center and state Level II Stroke Center; performs 24/7 mechanical thrombectomy (EVT/ELVO)",
+      "certificationDetails": "Comprehensive Stroke Center with 24/7 mechanical thrombectomy (EVT/ELVO) — the VMFH stroke-center page lists St. Joseph and Virginia Mason Medical Center as Comprehensive Stroke Centers. Prior editions recorded a Joint Commission Advanced Primary Stroke Center certification and a WA Level II designation; the certifying body for the CSC tier and the current WA ECS level are queued for a directory check (details rewritten 2026-09-12).",
       "hasELVO": true,
       "latitude": 47.2454805,
       "longitude": -122.4480476,
       "dataSources": [
         "CMS Hospital General Information (Nov 2024)",
         "VMFH website",
-        "WA DOH ECS Facility List"
+        "WA DOH ECS Facility List",
+        "VMFH stroke-center page (vmfh.org): St. Joseph and Virginia Mason listed as Comprehensive Stroke Centers (re-checked 2026-09-12)"
       ],
       "cmsIdCorrectedFrom": "500010",
       "cmsIdNote": "CMS lists ST JOSEPH MEDICAL CENTER (Tacoma WA) under 500108, 0.03 mi from our coordinates; 500010 absent from all CMS snapshots 2013-2023",
@@ -8296,7 +8304,7 @@
       "nationalCertification": {
         "body": "Joint Commission",
         "tier": "CSC",
-        "details": "Joint Commission Primary Stroke Center and state Level II Stroke Center; performs 24/7 mechanical thrombectomy (EVT/ELVO)"
+        "details": "Comprehensive Stroke Center with 24/7 mechanical thrombectomy (EVT/ELVO) — the VMFH stroke-center page lists St. Joseph and Virginia Mason Medical Center as Comprehensive Stroke Centers. Prior editions recorded a Joint Commission Advanced Primary Stroke Center certification and a WA Level II designation; the certifying body for the CSC tier and the current WA ECS level are queued for a directory check (details rewritten 2026-09-12)."
       },
       "certificationBasis": "national",
       "geocodeSource": null,
@@ -8877,7 +8885,8 @@
       "longitude": -106.3092552,
       "dataSources": [
         "CMS Hospital General Information (Nov 2024)",
-        "Banner Health website"
+        "Banner Health website",
+        "Oil City News / Becker's 100 Great Community Hospitals (July 2025): described as retaining Joint Commission Primary Stroke Center status (re-checked 2026-09-12; formal recertification date still unconfirmed)"
       ],
       "certificationDetails": "Joint Commission Primary Stroke Center; provides 24/7 endovascular thrombectomy (EVT/ELVO) capabilities with a dedicated neurointerventional suite",
       "id": "530012",

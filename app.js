@@ -1543,7 +1543,7 @@ function showHospitalDetail(h) {
     }
 
     // Thrombectomy happens at an EVT centre, which is not always the nearest
-    // CSC/TSC — 22 sites are EVT-capable but only 18 hold CSC/TSC. Measuring
+    // CSC/TSC — 20 sites are EVT-capable but only 17 hold CSC/TSC. Measuring
     // this window to the nearest CSC/TSC inflated it for 59 records, by up to
     // 109 minutes: Cheyenne Regional read 173 min via a distant CSC while
     // Banner Wyoming, 141 mi away, is the actual thrombectomy destination.

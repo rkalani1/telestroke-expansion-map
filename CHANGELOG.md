@@ -2,6 +2,51 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.1.2] - 2026-09-12
+
+Data 2026.09.12.1 — targeted search-based re-check of every open worklist item plus a
+five-state press sweep 2026-08-15 → 2026-09-12, and a consistency pass over every figure
+the page and its docs cite. Primary-source directories (Joint Commission Quality Check,
+DNV, WA DOH, Idaho TSE, data.cms.gov) were again unreachable from the authoring
+environment, so every change required two independent public sources. Outcomes in
+METHODOLOGY §4.
+
+### Data
+- **Community Medical Center (Missoula, MT) added to the assessed set: Joint Commission
+  Advanced Primary Stroke Center**, announced June 2026 (NBC Montana + hospital news
+  release). It had been carried as an unassessed acute-care census record, so the sweeps
+  that only re-verified assessed records never looked at it. No thrombectomy claim;
+  `hasELVO` false. Assessed 135 → 136, census 101 → 100, PSC 46 → 47. EVT-capable (20)
+  and CSC/TSC (17) counts are unchanged, so no transport estimate moves.
+- **St. Joseph Medical Center (Tacoma) details text corrected** — it still read "Joint
+  Commission Primary Stroke Center and state Level II" from the edition before its tier was
+  raised to CSC. The certifying body for the CSC tier is queued for a directory check.
+- Sweep found no other certification or EVT changes. Re-checked and retained: Samaritan
+  Moses Lake, East Adams, Idaho Falls Community, Madigan, Saint Alphonsus Nampa, EIRMC,
+  Banner Wyoming (JC PSC status described as retained in July 2025 coverage), Benefis,
+  St. Peter's Helena, Fairbanks Memorial, Alaska Native. Mat-Su Regional's JC PSC
+  corroborated and its empty details filled. Bartlett Regional (Juneau) gains a worklist
+  item: one tertiary source describes JC accreditation for acute stroke care.
+- A record first assessed in a later targeted pass now keeps its own `lastVerified`
+  (the build overwrote it with the dataset-wide date, so Community Medical Center would
+  have claimed verification on 2026-07-04).
+- Dataset `coverage_note` rewritten: it still said the file "is not a complete census" and
+  held only "selected additional" facilities, which has been false since 3.0.0 and was
+  displayed verbatim in the methods modal and data-quality panel.
+- Worklist regenerated: 61 items (25 P1).
+
+### Consistency
+- `app.js?v=` cache-buster had not been bumped for 3.1.1 (app.js changed in that release);
+  now 3.1.2.
+- METHODOLOGY header, its §7 example and `llms.txt` cited data version 2026.08.15.1 while
+  the file carried 2026.08.15.2.
+- State-only tier split corrected to 49 ASR / 17 PSC / 1 CSC (was still "16 PSC, 1 TSC"
+  from before the Madigan correction) and the "two CSC/TSC-level state-only records" claim
+  to the one that remains; eligible expansion candidates 116 (was 113); spoke-to-EVT
+  transfers 216 (was 215); README worklist size 61 (was 56); a code comment still said
+  "22 EVT-capable / 18 CSC/TSC".
+- JSON-LD `dateModified` and `sitemap.xml` `lastmod` advanced to 2026-09-12.
+
 ## [3.1.1] - 2026-08-15
 
 Data 2026.08.15.2 — structured search-based verification of the 13 highest-priority
