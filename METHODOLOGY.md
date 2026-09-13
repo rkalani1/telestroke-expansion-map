@@ -1,6 +1,6 @@
 # Methodology
 
-*Last updated: 2026-09-12 · schema 3.0.0 · data version 2026.09.12.1*
+*Last updated: 2026-09-13 · schema 3.0.0 · data version 2026.09.13.1*
 *Stroke capability verified 2026-07-04 (open items re-checked 2026-07-18, 2026-08-15 and 2026-09-12); acute-care census snapshot Oct 2023*
 
 This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
@@ -231,7 +231,7 @@ Defaults: `w_cert = 40`, `w_evt = 40`, `w_adv = 20`, `cap = 200 mi`, EVT-desert 
 ```json
 {
   "schema_version": "3.0.0",
-  "data_version": "2026.09.12.1",
+  "data_version": "2026.09.13.1",
   "last_verified": "2026-07-04",
   "generated_at": "…",
   "primary_sources": [ … ],

@@ -2,6 +2,39 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.1.4] - 2026-09-13
+
+Accuracy follow-ups from the post-merge review of 3.1.2 (the Copilot review on the
+release PR, plus this project's own pre-deploy gate). No map, code or count
+changes; data version 2026.09.13.1.
+
+- **Per-record verification dates corrected.** Mat-Su Regional and St. Joseph
+  Tacoma were re-checked on 2026-09-12 and their records edited, but both still
+  carried `lastVerified: 2026-07-04`, so the detail view reported a stale date for
+  a record that pass had just updated. Both now read 2026-09-12, as does
+  Intermountain St. James, whose May-2026 certification the pass confirmed.
+- **Two overstated sentences removed from record text.** The Missoula record called
+  the June-2026 certification "the hospital's first stroke certification on
+  record" — nothing supports a claim about its certification history, since the
+  hospital had never been assessed; it now says exactly that. The St. Joseph record
+  described "prior editions" recording a Joint Commission *Advanced* Primary Stroke
+  Center and a tier "raised to CSC"; git history shows the tier field has read CSC
+  in every edition and the word Advanced never appeared.
+- **St. Joseph's certifying body is now visibly provisional.** The structured fields
+  assert Joint Commission CSC while the details text said the certifying body was
+  unconfirmed. The text now states that the Joint Commission attribution is carried
+  forward from prior editions pending the directory check; the cited VMFH page
+  names no accreditor.
+- **Intermountain St. James carries its own evidence.** METHODOLOGY §4 credits an
+  advance from Acute Stroke Ready to Primary Stroke Center (May 2026) to three
+  sources the record did not list; they are now on the record.
+- **Verification worklist: real sources, no duplicate rows.** Every carried open
+  item named "state registry + hospital site" whatever it actually asked — a Joint
+  Commission listing cannot be confirmed from a state registry. Each item now names
+  the directory that can settle it. A record with a specific carried item no longer
+  also produces the generic "Certification status" row (Bartlett Regional and
+  Samaritan Moses Lake each had two). 61 items -> 59.
+
 ## [3.1.3] - 2026-09-12
 
 - **Basemap switched from CARTO to OpenStreetMap.** CARTO began requiring an API
@@ -31,8 +64,9 @@ METHODOLOGY §4.
   `hasELVO` false. Assessed 135 → 136, census 101 → 100, PSC 46 → 47. EVT-capable (20)
   and CSC/TSC (17) counts are unchanged, so no transport estimate moves.
 - **St. Joseph Medical Center (Tacoma) details text corrected** — it still read "Joint
-  Commission Primary Stroke Center and state Level II" from the edition before its tier was
-  raised to CSC. The certifying body for the CSC tier is queued for a directory check.
+  Commission Primary Stroke Center and state Level II" although the tier field has read CSC in
+  every edition in git history. The certifying body for the CSC tier is queued for a
+  directory check.
 - Sweep found no other certification or EVT changes. Re-checked and retained: Samaritan
   Moses Lake, East Adams, Idaho Falls Community, Madigan, Saint Alphonsus Nampa, EIRMC,
   Banner Wyoming (JC PSC status described as retained in July 2025 coverage), Benefis,

@@ -38,11 +38,11 @@ user-adjustable expansion-planning heuristic. 236 hospitals.
   accreditation. strokeCertificationType is this project's mapping onto the
   national ladder, not an accreditor's finding.
 - Authoritative dates live inside hospitals.json. As of this file's last
-  update: data_version 2026.09.12.1; stroke capability verified 2026-07-04
-  (open items re-checked 2026-07-18, 2026-08-15 and 2026-09-12); acute-care
-  census snapshot Oct 2023.
+  update: data_version 2026.09.13.1; stroke capability verified 2026-07-04
+  (open items re-checked 2026-07-18, 2026-08-15, 2026-09-12 and 2026-09-13);
+  acute-care census snapshot Oct 2023.
   Certification and EVT changes require two independent public sources.
-- /data/verification-worklist.csv — 61 ranked items that still need a
+- /data/verification-worklist.csv — 59 ranked items that still need a
   primary-source check, with the source to check for each.
 - /data/cms-census-wwami-2023-10.csv — the vendored CMS census subset.
 

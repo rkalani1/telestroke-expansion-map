@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0.0",
-  "data_version": "2026.09.12.1",
+  "data_version": "2026.09.13.1",
   "last_verified": "2026-07-04",
-  "generated_at": "2026-09-12T23:10:45+00:00",
+  "generated_at": "2026-09-13T09:02:38+00:00",
   "primary_sources": [
     "The Joint Commission Quality Check (qualitycheck.org) — national CSC/TSC/PSC/ASR certifications",
     "DNV Healthcare Accredited Organizations Directory — national CSC/PSC+/PSC/ASR certifications",
@@ -447,7 +447,7 @@
       "facilityIdType": "ccn",
       "recordClass": "stroke-capability",
       "strokeDataStatus": "verified",
-      "lastVerified": "2026-07-04",
+      "lastVerified": "2026-09-12",
       "stateDesignation": null,
       "nationalCertification": {
         "body": "Joint Commission",
@@ -2767,7 +2767,8 @@
       "dataSources": [
         "CMS Hospital General Information (Nov 2024)",
         "Joint Commission Quality Check (May 2026)",
-        "St. James Healthcare website"
+        "St. James Healthcare website",
+        "Intermountain Health newsroom, NBC Montana and Whitehall Ledger (May 2026): JC Primary Stroke Center, advancing from Acute Stroke Ready Hospital (confirmed 2026-09-12)"
       ],
       "certificationDetails": "Joint Commission Primary Stroke Center (certified May 2026)",
       "cmsIdCorrectedFrom": "270002",
@@ -2776,7 +2777,7 @@
       "facilityIdType": "ccn",
       "recordClass": "stroke-capability",
       "strokeDataStatus": "verified",
-      "lastVerified": "2026-07-04",
+      "lastVerified": "2026-09-12",
       "stateDesignation": null,
       "nationalCertification": {
         "body": "Joint Commission",
@@ -4008,13 +4009,13 @@
       "geocodePrecision": "rooftop",
       "strokeCertificationType": "PSC",
       "certifyingBody": "Joint Commission",
-      "certificationDetails": "Joint Commission Advanced Primary Stroke Center (announced June 2026 — the hospital's first stroke certification on record). Promoted from an acute-care census record to an assessed record on 2026-09-12. No thrombectomy claim found; Providence St Patrick remains Missoula's 24/7 EVT centre.",
+      "certificationDetails": "Joint Commission Advanced Primary Stroke Center (announced June 2026). Promoted from an acute-care census record to an assessed record on 2026-09-12; this hospital's certification status had never been assessed before that date. No thrombectomy claim found; Providence St Patrick remains Missoula's 24/7 EVT centre.",
       "certificationBasis": "national",
       "stateDesignation": null,
       "nationalCertification": {
         "body": "Joint Commission",
         "tier": "PSC",
-        "details": "Joint Commission Advanced Primary Stroke Center (announced June 2026 — the hospital's first stroke certification on record). Promoted from an acute-care census record to an assessed record on 2026-09-12. No thrombectomy claim found; Providence St Patrick remains Missoula's 24/7 EVT centre."
+        "details": "Joint Commission Advanced Primary Stroke Center (announced June 2026). Promoted from an acute-care census record to an assessed record on 2026-09-12; this hospital's certification status had never been assessed before that date. No thrombectomy claim found; Providence St Patrick remains Missoula's 24/7 EVT centre."
       },
       "hasELVO": false,
       "hospitalType": "Acute Care",
@@ -8283,7 +8284,7 @@
       "cmsId": "500108",
       "strokeCertificationType": "CSC",
       "certifyingBody": "Joint Commission",
-      "certificationDetails": "Comprehensive Stroke Center with 24/7 mechanical thrombectomy (EVT/ELVO) — the VMFH stroke-center page lists St. Joseph and Virginia Mason Medical Center as Comprehensive Stroke Centers. Prior editions recorded a Joint Commission Advanced Primary Stroke Center certification and a WA Level II designation; the certifying body for the CSC tier and the current WA ECS level are queued for a directory check (details rewritten 2026-09-12).",
+      "certificationDetails": "Comprehensive Stroke Center with 24/7 mechanical thrombectomy (EVT/ELVO) — the VMFH stroke-center page lists St. Joseph and Virginia Mason Medical Center as Comprehensive Stroke Centers, without naming the accreditor. The Joint Commission attribution is carried forward from prior editions and, with the current WA ECS level, is queued for a directory check. Earlier editions' details text described a Joint Commission Primary Stroke Center and a state Level II designation while the tier field already read CSC (rewritten 2026-09-12).",
       "hasELVO": true,
       "latitude": 47.2454805,
       "longitude": -122.4480476,
@@ -8299,12 +8300,12 @@
       "facilityIdType": "ccn",
       "recordClass": "stroke-capability",
       "strokeDataStatus": "verified",
-      "lastVerified": "2026-07-04",
+      "lastVerified": "2026-09-12",
       "stateDesignation": null,
       "nationalCertification": {
         "body": "Joint Commission",
         "tier": "CSC",
-        "details": "Comprehensive Stroke Center with 24/7 mechanical thrombectomy (EVT/ELVO) — the VMFH stroke-center page lists St. Joseph and Virginia Mason Medical Center as Comprehensive Stroke Centers. Prior editions recorded a Joint Commission Advanced Primary Stroke Center certification and a WA Level II designation; the certifying body for the CSC tier and the current WA ECS level are queued for a directory check (details rewritten 2026-09-12)."
+        "details": "Comprehensive Stroke Center with 24/7 mechanical thrombectomy (EVT/ELVO) — the VMFH stroke-center page lists St. Joseph and Virginia Mason Medical Center as Comprehensive Stroke Centers, without naming the accreditor. The Joint Commission attribution is carried forward from prior editions and, with the current WA ECS level, is queued for a directory check. Earlier editions' details text described a Joint Commission Primary Stroke Center and a state Level II designation while the tier field already read CSC (rewritten 2026-09-12)."
       },
       "certificationBasis": "national",
       "geocodeSource": null,
