@@ -2,6 +2,19 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.1.5] - 2026-09-14
+
+- **Machine-readable dates caught up with the data.** The JSON-LD `dateModified`
+  and the sitemap `lastmod` still read 2026-09-12 after 3.1.4 changed record text
+  and three verification dates under data version 2026.09.13.1. Both now read
+  2026-09-13, the date of the content they describe.
+- Note for the record: GitHub never processed the push event for the 3.1.4 merge
+  commit (7f4ab65) — no Pages build and neither push-triggered workflow produced a
+  run for it, during a window when the API was also returning 500s and 502s. The
+  Pages "request a build" API path is not reachable from the authoring
+  environment, so 3.1.4 sat merged but undeployed until this release's push
+  re-triggered the build.
+
 ## [3.1.4] - 2026-09-13
 
 Accuracy follow-ups from the post-merge review of 3.1.2 (the Copilot review on the
