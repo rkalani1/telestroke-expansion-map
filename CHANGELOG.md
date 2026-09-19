@@ -2,6 +2,41 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.2.0] - 2026-09-19
+
+Currency re-check plus a design and accessibility pass over the page itself. Data
+unchanged (2026.09.13.1): a five-state press sweep 2026-09-12 → 2026-09-19 found no
+certification, state-designation or thrombectomy changes (METHODOLOGY §4).
+
+### Fixed
+- **The legend ignored the colour-blind palette and the dark theme.** Its swatches were
+  painted with colours resolved once when the map was built, so after switching to the
+  Okabe-Ito palette the key still showed the default red/orange/yellow while every
+  marker and pill had changed. Swatches now reference the live custom properties.
+- **Zoom-out button hidden under the tools button** on desktop, where both occupied the
+  bottom-right corner. The zoom control now clears it.
+- **Keyboard hint printed over the page title.** The "Press Enter for map mode" pill was
+  permanently visible and not excluded from print. It now appears only while the map has
+  keyboard focus or map mode is active, and never in print.
+- **Printed map had no key.** Print hid every Leaflet control, legend included; only the
+  zoom buttons are dropped now.
+- **White-on-indigo failed contrast in dark mode** on primary buttons, the candidates and
+  distance-matrix table headers and the tools button (2.9:1, because the dark-mode accent
+  is lifted for text on dark surfaces). Filled controls use a dedicated fill token that
+  measures ≥ 6.5:1 in both themes.
+- **CSC/TSC records carried no transport section at all**, so a record such as Harborview
+  answered "where would this patient go" with an absence. They now state that the site is
+  itself the receiving centre, with 24/7 thrombectomy on site where that applies.
+
+### Design
+- The mobile "Close" bar and the open-state tools button were solid red, which reads as an
+  error; both now use the accent.
+- On mouse-driven devices the filter pills and legend keys are sized to their text instead
+  of the 44px touch minimum, which is kept for coarse pointers.
+- Sidebar header gradient deepened within one indigo family; the EVT-distance filter is
+  labelled "EVT ≥" instead of "EVT>".
+- Cache-busters bumped to 3.2.0; sitemap `lastmod` 2026-09-19.
+
 ## [3.1.5] - 2026-09-14
 
 - **Machine-readable dates caught up with the data.** The JSON-LD `dateModified`
