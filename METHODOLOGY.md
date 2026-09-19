@@ -175,8 +175,13 @@ the 2026-07-03 sweep had missed because the hospital was not yet an assessed rec
 Five-state search sweep for certification, state-designation and thrombectomy-programme
 announcements 2026-09-12 → 2026-09-19, run by state, by certifier (Joint Commission, DNV,
 WA ECS levels, Idaho TSE levels) and by the region's major systems. **No changes found.**
-Primary-source directories remained unreachable from the authoring environment, so the open
-worklist items stand as recorded on 2026-09-13 and `last_verified` remains 2026-07-04.
+A second sweep the same day (hospital closures and emergency-department conversions,
+thrombectomy-programme launches, and a targeted re-check of the largest open P1 items —
+Benefis, St. Peter's Helena, Fairbanks Memorial, Alaska Native, Bartlett Regional and Banner
+Wyoming) likewise found no new evidence; the only certification news in the period was Good
+Shepherd (Hermiston, Oregon), outside the five states. Primary-source directories remained
+unreachable from the authoring environment, so the open worklist items stand as recorded on
+2026-09-13 and `last_verified` remains 2026-07-04.
 
 ## 5. Transport-time estimates
 
