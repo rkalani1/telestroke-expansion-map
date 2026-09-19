@@ -547,16 +547,19 @@ function initMap() {
       items.push(['--c-other', 'None', 'NONE']);
       items.push(['--c-census', 'Not assessed', 'CENSUS']);
       for (const [v, label, filterKey] of items) {
-        const dot = el('span', { class: 'legend-dot', style: { background: cssVar(v) } });
+        // Inline `var(...)` references, not computed colours: the swatches then
+        // follow the colour-blind palette and dark theme live. Resolving them
+        // here froze the default palette into the legend for the session.
+        const dot = el('span', { class: 'legend-dot', style: { background: `var(${v})` } });
         if (filterKey === 'CENSUS') {
           dot.style.background = 'transparent';
-          dot.style.border = `2px dashed ${cssVar('--c-census')}`;
+          dot.style.border = '2px dashed var(--c-census)';
         }
         if (filterKey === 'EVT') {
           // No marker is ever solid teal — EVT is drawn as a ring around the
           // tier colour, so the key has to be a ring too.
-          dot.style.background = cssVar('--surface-solid');
-          dot.style.border = `3px solid ${cssVar('--c-evt')}`;
+          dot.style.background = 'var(--surface-solid)';
+          dot.style.border = '3px solid var(--c-evt)';
         }
         const entry = el('button', {
           class: 'entry-btn',
@@ -1601,6 +1604,26 @@ function showHospitalDetail(h) {
         + `include their arrival-to-groin interval, so true door-to-puncture is longer. `
         + `Confirm with dispatch and the receiving centre.`,
     }));
+    content.appendChild(dist);
+  } else if (d.nearestAdvancedDistance === 0) {
+    // This hospital *is* a CSC/TSC. Without this branch the record carried no
+    // transport section at all, so the answer to "where would we send this
+    // patient" was an absence rather than a statement.
+    const dist = el('div', { class: 'detail-section detail-transport' });
+    dist.appendChild(el('h3', { text: 'Transport Analysis' }));
+    const row = el('div', { class: 'kv' });
+    row.appendChild(el('dt', { text: 'Receiving centre:' }));
+    const dd = el('dd');
+    const span = el('span', {
+      text: h.hasELVO
+        ? ' This hospital is a CSC/TSC with 24/7 thrombectomy on site — no interfacility transfer.'
+        : ' This hospital is a CSC/TSC receiving centre — no interfacility transfer.',
+    });
+    span.style.color = cssVar('--c-evt');
+    span.style.fontWeight = '600';
+    dd.appendChild(span);
+    row.appendChild(dd);
+    dist.appendChild(row);
     content.appendChild(dist);
   }
 

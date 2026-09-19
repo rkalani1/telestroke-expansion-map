@@ -47,7 +47,7 @@ Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE
 ## Data
 
 - **Coverage:** 236 hospitals across WA (91), MT (59), ID (44), WY (27), AK (15) — 136 with verified stroke capability, 100 acute-care census records.
-- **Stroke capability last verified:** 2026-07-04 (full dataset) · 2026-07-18, 2026-08-15, 2026-09-12 (targeted re-checks of open items + five-state press sweeps) · 2026-09-13 (record-text and worklist accuracy pass)
+- **Stroke capability last verified:** 2026-07-04 (full dataset) · 2026-07-18, 2026-08-15, 2026-09-12 (targeted re-checks of open items + five-state press sweeps) · 2026-09-13 (record-text and worklist accuracy pass) · 2026-09-19 (press sweep, no changes)
 - **Census snapshot:** CMS Hospital General Information, Oct 2023. Used for facility identity, type, ownership and bed counts only — no stroke claim is derived from it.
 - **Open items:** [`data/verification-worklist.csv`](./data/verification-worklist.csv) ranks the 59 items that still need a primary-source check, each naming the directory or registry that can settle it.
 - **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)

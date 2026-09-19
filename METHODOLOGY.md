@@ -1,7 +1,7 @@
 # Methodology
 
-*Last updated: 2026-09-13 · schema 3.0.0 · data version 2026.09.13.1*
-*Stroke capability verified 2026-07-04 (open items re-checked 2026-07-18, 2026-08-15 and 2026-09-12); acute-care census snapshot Oct 2023*
+*Last updated: 2026-09-19 · schema 3.0.0 · data version 2026.09.13.1*
+*Stroke capability verified 2026-07-04 (open items re-checked 2026-07-18, 2026-08-15, 2026-09-12 and 2026-09-13; press sweep 2026-09-19); acute-care census snapshot Oct 2023*
 
 This document describes how hospital records, stroke certifications, and transport-time estimates are determined in this project.
 
@@ -169,6 +169,14 @@ the 2026-07-03 sweep had missed because the hospital was not yet an assessed rec
 | **Bartlett Regional** (Juneau, AK) | A single tertiary source (Wikipedia) describes Joint Commission accreditation "for … acute stroke care"; no hospital or certifier source found. Retained none-on-record; **added to the worklist** for a JC Quality Check lookup. |
 | **Intermountain St. James** (Butte) · **PeaceHealth Peace Island** (Friday Harbor) | Confirmed in place: JC Primary Stroke Center, May 2026 (advanced from ASRH — Intermountain newsroom, NBC Montana, Whitehall Ledger); WA Level III, June 2026 (PeaceHealth, San Juan Journal, Islands' Weekly). |
 | Census vintage | data.cms.gov unreachable; the Oct 2023 snapshot is retained. **OPEN.** |
+
+### 2026-09-19 press sweep
+
+Five-state search sweep for certification, state-designation and thrombectomy-programme
+announcements 2026-09-12 → 2026-09-19, run by state, by certifier (Joint Commission, DNV,
+WA ECS levels, Idaho TSE levels) and by the region's major systems. **No changes found.**
+Primary-source directories remained unreachable from the authoring environment, so the open
+worklist items stand as recorded on 2026-09-13 and `last_verified` remains 2026-07-04.
 
 ## 5. Transport-time estimates
 
