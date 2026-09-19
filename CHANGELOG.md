@@ -2,6 +2,50 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [3.2.1] - 2026-09-19
+
+Second pass on the same day: independent audits the 3.2.0 pass had not run (axe-core
+against every view and modal, html-validate, ESLint) plus the last visual rough edges.
+Data unchanged (2026.09.13.1): a further press sweep the same day — certifications,
+closures, thrombectomy launches — found nothing in the five states.
+
+### Fixed
+- **Keyboard focus could land on the collapsed dashboard.** On every desktop load the
+  responsive-panel setup stripped the `inert` attribute the dashboard initialiser had just
+  set, so Tab from the hospital list stepped through three invisible buttons before
+  reaching the tools button. The panel is now inert whenever it is collapsed.
+- **Hospital detail rows had no list to belong to.** Each label/value pair was a `<dt>`
+  and `<dd>` inside a `<div>`; every row is now its own `<dl>`, so screen readers
+  announce label and value as a pair.
+- **Executive summary was scrollable but unreachable by keyboard**, as were the candidates
+  and distance-matrix table wrappers on narrow screens. All three are focusable and named.
+- **Empty column header** over the candidates table's "Why?" buttons now carries a hidden
+  "Actions" label. **Data Quality modal** headings went h2 → h4; sections are h3.
+- **Phones had no level-one heading and content outside any landmark** while the sidebar
+  drawer was closed (its h1 is hidden with the drawer). The mobile top bar is a `<header>`
+  whose title is the h1; the provenance bar is a labelled `<section>`.
+- **Drawer role was invalid markup.** Sidebar and dashboard switch to `role="dialog"` on
+  phones, which `<aside>` does not permit; both are `<div role="complementary">` on
+  desktop, so the swap is legal and the sidebar header no longer nests a banner landmark.
+- **Dark theme: highlighted list entry's grey city line** measured 4.03:1 on the blue
+  highlight; lifted above 7:1.
+- **Scenario sliders were 16px tall** with 6px between rows — under the 24px target-size
+  minimum (WCAG 2.2). Now 24px.
+- **`/` shortcut badge overlapped the end of the search placeholder** and showed on
+  phones, where there is no keyboard shortcut. The input reserves room for it on desktop;
+  it is hidden on narrow screens.
+- **Scenario-control labels wrapped** ("CSC/TSC-distance weight", "EVT-desert threshold");
+  the grid's minimum column width is wider.
+
+### Changed
+- Sidebar shortcut buttons: 11px text (were 10px).
+- Markup hygiene: no inline styles (pill dots, modal toolbars and footer moved to classes),
+  explicit `type="button"` on the mobile bar, no redundant `aria-label` on the labelled
+  search input, void elements without self-closing slashes, and the hospital list is a
+  native `<ul>`/`<li>` list.
+- CI now runs html-validate and ESLint (`.htmlvalidate.json`, `eslint.config.mjs`); the
+  one lint finding, an unused variable in the executive summary, is removed.
+
 ## [3.2.0] - 2026-09-19
 
 Currency re-check plus a design and accessibility pass over the page itself. Data

@@ -4,12 +4,14 @@ Run top to bottom before every public Pages deployment. "Done" means the **live 
 
 ## 1. Pre-merge (on the feature branch)
 
-CI (`.github/workflows/verify.yml`) now runs the first four items on every push
+CI (`.github/workflows/verify.yml`) runs every item marked *(CI)* on every push
 and pull request. A red check is a blocker; a green check is not proof the
 **live site** is right — the manual list below still applies.
 
 - [ ] `python3 scripts/verify-data.py` — all 17 integrity checks pass *(CI)*
 - [ ] `node --check app.js` — syntax clean *(CI)*
+- [ ] `npx --yes html-validate@8 index.html` — markup and ARIA valid *(CI)*
+- [ ] `npx --yes eslint@9 app.js` — no undefined globals, unused variables or unreachable code *(CI)*
 - [ ] `python3 scripts/build-dataset.py` leaves `hospitals.json` unchanged — the build is
       idempotent and the committed file is what it produces *(CI)*
 - [ ] `python3 scripts/build-worklist.py` leaves `data/verification-worklist.csv` unchanged *(CI)*

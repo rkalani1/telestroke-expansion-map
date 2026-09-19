@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Look up any hospital in Washington, Alaska, Idaho, Montana or Wyoming: stroke-center certification, 24/7 thrombectomy capability, nearest EVT centre, and transport estimates. 236 hospitals." />
-  <meta name="theme-color" content="#4f46e5" />
-  <meta property="og:title" content="Regional Hospital Stroke Capabilities" />
-  <meta property="og:description" content="Stroke certification, thrombectomy capability and transfer times for 236 hospitals across the WWAMI region." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://rkalani1.github.io/telestroke-expansion-map/" />
-  <link rel="canonical" href="https://rkalani1.github.io/telestroke-expansion-map/" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Look up any hospital in Washington, Alaska, Idaho, Montana or Wyoming: stroke-center certification, 24/7 thrombectomy capability, nearest EVT centre, and transport estimates. 236 hospitals.">
+  <meta name="theme-color" content="#4f46e5">
+  <meta property="og:title" content="Regional Hospital Stroke Capabilities">
+  <meta property="og:description" content="Stroke certification, thrombectomy capability and transfer times for 236 hospitals across the WWAMI region.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rkalani1.github.io/telestroke-expansion-map/">
+  <link rel="canonical" href="https://rkalani1.github.io/telestroke-expansion-map/">
   <title>Regional Hospital Stroke Capabilities — WA · AK · ID · MT · WY</title>
 
   <script type="application/ld+json">
@@ -32,7 +32,7 @@
   }
   </script>
 
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%234f46e5'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='system-ui' font-size='28' font-weight='700' fill='white'%3E%E2%9A%95%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%234f46e5'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='system-ui' font-size='28' font-weight='700' fill='white'%3E%E2%9A%95%3C/text%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,10 +40,10 @@
   <!-- Leaflet is vendored rather than loaded from a CDN: hospital networks
        commonly block third-party CDNs, and a blocked leaflet.js left the map
        permanently blank. See vendor/leaflet/README.md. -->
-  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
-  <link rel="stylesheet" href="app.css?v=3.2.0" />
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="app.css?v=3.2.1">
   <script defer src="vendor/leaflet/leaflet.js"></script>
-  <script defer src="app.js?v=3.2.0"></script>
+  <script defer src="app.js?v=3.2.1"></script>
 </head>
 <body>
   <a class="sr-skip" href="#map">Skip to map</a>
@@ -60,26 +60,26 @@
   <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
 
   <!-- Mobile top bar -->
-  <div class="mobile-bar" aria-label="Mobile controls">
+  <header class="mobile-bar" aria-label="Mobile controls">
     <div class="mobile-identity-row">
-      <button id="mobile-sidebar-btn" class="icon-btn" aria-label="Open filters sidebar" aria-expanded="false" aria-controls="sidebar" title="Filters">☰</button>
+      <button id="mobile-sidebar-btn" class="icon-btn" type="button" aria-label="Open filters sidebar" aria-expanded="false" aria-controls="sidebar" title="Filters">☰</button>
       <div class="mobile-identity">
-        <strong>Stroke Capability Map</strong>
+        <h1>Stroke Capability Map</h1>
         <span>WA · AK · ID · MT · WY</span>
       </div>
-      <button id="mobile-dash-btn" class="icon-btn" aria-label="Open dashboard" aria-expanded="false" aria-controls="dashboard" title="Dashboard">📊</button>
+      <button id="mobile-dash-btn" class="icon-btn" type="button" aria-label="Open dashboard" aria-expanded="false" aria-controls="dashboard" title="Dashboard">📊</button>
     </div>
     <div class="mobile-search-row">
-      <input id="mobile-search-input" type="search" placeholder="Name, nickname, city, county…" aria-label="Search hospitals" />
+      <input id="mobile-search-input" type="search" placeholder="Name, nickname, city, county…" aria-label="Search hospitals">
       <button id="mobile-clear-search" class="mobile-clear-search hidden" type="button">Clear</button>
     </div>
     <button id="mobile-search-status" class="mobile-search-status" type="button" aria-live="polite" aria-controls="sidebar">Loading hospitals…</button>
-  </div>
+  </header>
 
   <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar" aria-label="Hospital filters and list">
+  <div id="sidebar" class="sidebar" role="complementary" aria-label="Hospital filters and list">
     <button id="sidebar-close-mobile" class="mobile-close" type="button" aria-label="Close sidebar">✕ Close</button>
-    <header class="sidebar-header">
+    <div class="sidebar-header">
       <h1>Regional Hospital Stroke Capabilities</h1>
       <p>Washington · Alaska · Idaho · Montana · Wyoming</p>
       <nav class="workspace-shortcuts" aria-label="Workspace shortcuts">
@@ -88,12 +88,12 @@
         <button id="shortcut-dashboard" type="button" aria-controls="dashboard" aria-expanded="false">Dashboard</button>
         <button id="shortcut-tools" type="button" aria-controls="tools-menu" aria-expanded="false">Tools</button>
       </nav>
-    </header>
+    </div>
 
     <section class="sidebar-search">
       <label for="search-input" class="visually-hidden">Search hospitals</label>
       <div class="search-wrapper">
-        <input id="search-input" type="search" placeholder="Name, nickname (HMC), city, county, system…" aria-label="Search hospitals" />
+        <input id="search-input" type="search" placeholder="Name, nickname (HMC), city, county, system…">
         <span class="search-kbd-badge" aria-hidden="true">/</span>
       </div>
       <div class="sidebar-status">
@@ -105,25 +105,25 @@
     <section class="filter-row" aria-label="Certification filters">
       <div class="pill-row" role="group" aria-label="Certification type filters">
         <button class="pill" type="button" data-filter="CSC" aria-pressed="false">
-          <span class="pill-dot" style="background:var(--c-csc)"></span>CSC
+          <span class="pill-dot"></span>CSC
         </button>
         <button class="pill" type="button" data-filter="TSC" aria-pressed="false">
-          <span class="pill-dot" style="background:var(--c-tsc)"></span>TSC
+          <span class="pill-dot"></span>TSC
         </button>
         <button class="pill" type="button" data-filter="PSC" aria-pressed="false">
-          <span class="pill-dot" style="background:var(--c-psc)"></span>PSC
+          <span class="pill-dot"></span>PSC
         </button>
         <button class="pill" type="button" data-filter="ASR" aria-pressed="false">
-          <span class="pill-dot" style="background:var(--c-asr)"></span>ASR
+          <span class="pill-dot"></span>ASR
         </button>
         <button class="pill" type="button" data-filter="EVT" aria-pressed="false">
-          <span class="pill-dot" style="background:var(--c-evt)"></span>EVT
+          <span class="pill-dot"></span>EVT
         </button>
         <button class="pill" type="button" data-filter="NONE" aria-pressed="false" title="Checked — no stroke certification on record">
-          <span class="pill-dot" style="background:var(--c-other)"></span>None
+          <span class="pill-dot"></span>None
         </button>
         <button class="pill" type="button" data-filter="CENSUS" aria-pressed="false" title="Acute-care census records — stroke capability not assessed">
-          <span class="pill-dot" style="background:var(--c-census)"></span>Not assessed
+          <span class="pill-dot"></span>Not assessed
         </button>
       </div>
       <div class="secondary-filters">
@@ -138,7 +138,7 @@
         </select>
         <div class="range-group">
           <label for="filter-evt-distance" title="Minimum distance to nearest EVT center">EVT ≥</label>
-          <input id="filter-evt-distance" type="range" min="0" max="200" step="25" value="0" aria-label="Minimum miles to nearest EVT center" />
+          <input id="filter-evt-distance" type="range" min="0" max="200" step="25" value="0" aria-label="Minimum miles to nearest EVT center">
           <span id="evt-dist-label" aria-hidden="true">0</span><span aria-hidden="true">mi</span>
         </div>
       </div>
@@ -148,33 +148,33 @@
       <span>Hospitals</span>
       <span id="list-count">0</span>
     </div>
-    <div id="hospital-list" class="hospital-list" role="list" aria-label="Hospital list. Use Arrow keys, Home, and End to move through hospitals."></div>
-  </aside>
+    <ul id="hospital-list" class="hospital-list" role="list" aria-label="Hospital list. Use Arrow keys, Home, and End to move through hospitals."></ul>
+  </div>
 
   <!-- Dashboard -->
-  <aside id="dashboard" class="dashboard collapsed" aria-label="Statistics dashboard" aria-hidden="true">
+  <div id="dashboard" class="dashboard collapsed" role="complementary" aria-label="Statistics dashboard" aria-hidden="true" inert>
     <button id="dashboard-close-mobile" class="mobile-close" type="button" aria-label="Close dashboard">✕ Close</button>
     <div class="dash-header">
       <h2>Dashboard</h2>
       <button id="dash-close" class="icon-btn" type="button" aria-label="Collapse dashboard" title="Collapse">×</button>
     </div>
-    <div class="dash-section" aria-label="Certification donut">
+    <div class="dash-section" role="group" aria-label="Certification donut">
       <canvas id="donut-chart" class="chart" width="180" height="180" aria-label="Certification distribution donut chart" role="img"></canvas>
       <p class="dash-scope dash-scope-block">Certification split · all records, not the current filter</p>
     </div>
-    <div class="dash-section" aria-label="State bars">
+    <div class="dash-section" role="group" aria-label="State bars">
       <h3>By state <span class="dash-scope">· all records</span></h3>
       <div id="state-bars"></div>
     </div>
-    <div class="dash-section" aria-label="Coverage gaps">
+    <div class="dash-section" role="group" aria-label="Coverage gaps">
       <h3>Coverage gaps · current view</h3>
       <div id="gap-metrics"></div>
     </div>
-    <div class="dash-section" aria-label="Distance histogram">
+    <div class="dash-section" role="group" aria-label="Distance histogram">
       <h3>Distance to nearest EVT <span class="dash-scope">· all records</span></h3>
       <canvas id="histogram-chart" class="chart" width="248" height="110" aria-label="Histogram of distances to nearest EVT center" role="img"></canvas>
     </div>
-  </aside>
+  </div>
 
   <!-- Tools FAB + menu -->
   <button id="tools-fab" class="tools-fab" type="button" aria-expanded="false" aria-controls="tools-menu" aria-label="Open tools menu" title="Tools &amp; analysis">⚙</button>
@@ -205,7 +205,7 @@
   </nav>
 
   <!-- Provenance bar -->
-  <div id="provenance-bar" class="provenance-bar" aria-label="Data provenance"></div>
+  <section id="provenance-bar" class="provenance-bar" aria-label="Data provenance"></section>
 
   <!-- Modal: Certification info -->
   <div id="cert-info-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cert-info-title" aria-hidden="true" inert>
@@ -225,7 +225,9 @@
         <h2 id="matrix-title">Distance Matrix</h2>
         <button class="icon-btn" type="button" data-close-modal="distance-matrix-modal" aria-label="Close">×</button>
       </div>
-      <button id="matrix-export-csv" class="btn btn-primary" type="button" style="margin-bottom:12px">Export CSV</button>
+      <div class="modal-toolbar">
+        <button id="matrix-export-csv" class="btn btn-primary" type="button">Export CSV</button>
+      </div>
       <div id="distance-matrix-content"></div>
     </div>
   </div>
@@ -249,27 +251,27 @@
         <div class="scenario-grid">
           <div class="scenario-row">
             <label for="w-cert">Certification-gap weight</label>
-            <input id="w-cert" type="range" min="0" max="100" step="5" value="40" />
+            <input id="w-cert" type="range" min="0" max="100" step="5" value="40">
             <span class="scenario-val" id="w-cert-val" aria-hidden="true">40</span>
           </div>
           <div class="scenario-row">
             <label for="w-evt">EVT-distance weight</label>
-            <input id="w-evt" type="range" min="0" max="100" step="5" value="40" />
+            <input id="w-evt" type="range" min="0" max="100" step="5" value="40">
             <span class="scenario-val" id="w-evt-val" aria-hidden="true">40</span>
           </div>
           <div class="scenario-row">
             <label for="w-adv">CSC/TSC-distance weight</label>
-            <input id="w-adv" type="range" min="0" max="100" step="5" value="20" />
+            <input id="w-adv" type="range" min="0" max="100" step="5" value="20">
             <span class="scenario-val" id="w-adv-val" aria-hidden="true">20</span>
           </div>
           <div class="scenario-row">
             <label for="desert-mi">EVT-desert threshold (mi)</label>
-            <input id="desert-mi" type="range" min="50" max="200" step="10" value="100" />
+            <input id="desert-mi" type="range" min="50" max="200" step="10" value="100">
             <span class="scenario-val" id="desert-mi-val" aria-hidden="true">100</span>
           </div>
           <div class="scenario-row">
             <label for="cap-mi">Distance cap (mi)</label>
-            <input id="cap-mi" type="range" min="100" max="300" step="25" value="200" />
+            <input id="cap-mi" type="range" min="100" max="300" step="25" value="200">
             <span class="scenario-val" id="cap-mi-val" aria-hidden="true">200</span>
           </div>
         </div>
@@ -299,7 +301,7 @@
   <div id="hospital-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="detail-title" aria-hidden="true" inert>
     <div class="modal">
       <div class="modal-header">
-        <h2 id="detail-title"></h2>
+        <h2 id="detail-title">Hospital details</h2>
         <button class="icon-btn" type="button" data-close-modal="hospital-detail-modal" aria-label="Close">×</button>
       </div>
       <div id="hospital-detail-content"></div>
@@ -313,16 +315,18 @@
         <h2 id="exec-title">Executive Summary</h2>
         <button class="icon-btn" type="button" data-close-modal="executive-summary-modal" aria-label="Close">×</button>
       </div>
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <div class="modal-toolbar">
         <button id="exec-copy" class="btn btn-primary" type="button">Copy to clipboard</button>
         <button id="exec-download" class="btn btn-secondary" type="button">Download .txt</button>
         <button id="exec-print" class="btn btn-secondary" type="button">Print one-pager</button>
       </div>
-      <pre id="executive-summary-content" class="exec-summary"></pre>
+      <section class="exec-summary" tabindex="0" aria-label="Executive summary text">
+        <pre id="executive-summary-content"></pre>
+      </section>
     </div>
   </div>
 
-  <footer style="margin-top: 40px; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb;">
+  <footer class="site-footer">
     <p>Public-reference planning tool built from public data sources (CMS, Joint Commission, DNV, state registries). Not for clinical decision-making or real patient care.</p>
   </footer>
 </body>

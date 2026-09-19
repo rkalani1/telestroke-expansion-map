@@ -34,6 +34,17 @@ jobs:
       - name: JavaScript syntax
         run: node --check app.js
 
+      - name: HTML validation
+        # html-validate:recommended; the two documented exceptions live in
+        # .htmlvalidate.json (role="list" kept on <ul> for VoiceOver, and
+        # <div role="complementary"> because <aside> may not become a dialog).
+        run: npx --yes html-validate@8 index.html
+
+      - name: JavaScript lint
+        # Flat config in eslint.config.mjs: undefined globals, unused variables,
+        # unreachable code and the other correctness rules; no style rules.
+        run: npx --yes eslint@9 app.js
+
       - name: hospitals.json is valid JSON
         run: python3 -c "import json; json.load(open('hospitals.json'))"
 
