@@ -81,11 +81,13 @@ python3 -m http.server 8000
 
 ## Verification (before any deploy)
 
-There is intentionally no build step or test framework. Two lightweight checks cover the moving parts:
+There is intentionally no build step or test framework. Four lightweight checks cover the moving parts:
 
 ```bash
-python3 scripts/verify-data.py   # 17 dataset integrity checks (mirrors METHODOLOGY.md §7)
-node --check app.js              # JS syntax
+python3 scripts/verify-data.py       # 17 dataset integrity checks (mirrors METHODOLOGY.md §7)
+node --check app.js                  # JS syntax
+npx --yes html-validate@8 index.html # markup and ARIA validity (.htmlvalidate.json)
+npx --yes eslint@9 app.js            # undefined globals, unused variables, unreachable code (eslint.config.mjs)
 ```
 
 `verify-data.py` runs without dependencies; installing `zipcodes` (`pip install zipcodes`)

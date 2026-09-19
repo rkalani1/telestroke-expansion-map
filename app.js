@@ -939,7 +939,7 @@ function renderList(filtered) {
   clear(list);
   if (filtered.length === 0) {
     state.activeHospitalIndex = 0;
-    list.appendChild(el('div', { class: 'empty-state', role: 'listitem', text: 'No hospitals match your filters. Try clearing filters.' }));
+    list.appendChild(el('li', { class: 'empty-state', text: 'No hospitals match your filters. Try clearing filters.' }));
     return;
   }
   const order = { CSC: 0, TSC: 1, PSC: 2, ASR: 3 };
@@ -1020,7 +1020,7 @@ function renderList(filtered) {
       buttons[next].focus();
     });
     // The container is role="list" — each entry needs listitem semantics
-    list.appendChild(el('div', { role: 'listitem' }, [item]));
+    list.appendChild(el('li', {}, [item]));
   });
 }
 
@@ -1339,7 +1339,7 @@ function showHospitalDetail(h) {
   const locKV = el('div');
   const kv = (label, val) => {
     if (val == null || val === '') return;
-    const row = el('div', { class: 'kv' });
+    const row = el('dl', { class: 'kv' });
     row.appendChild(el('dt', { text: label }));
     row.appendChild(el('dd', { text: ' ' + val }));
     locKV.appendChild(row);
@@ -1376,7 +1376,7 @@ function showHospitalDetail(h) {
   cap.appendChild(el('h3', { text: 'Stroke Capabilities' }));
   const capKV = el('div');
   const row = (label, text, color) => {
-    const r = el('div', { class: 'kv' });
+    const r = el('dl', { class: 'kv' });
     r.appendChild(el('dt', { text: label }));
     const dd = el('dd');
     const span = el('span', { text: ' ' + text });
@@ -1483,7 +1483,7 @@ function showHospitalDetail(h) {
     // When the nearest CSC/TSC is also the nearest EVT centre — the common case
     // — two identical rows just cost vertical space on a phone.
     const advIsEVT = d.nearestEVT && d.nearestAdvanced && d.nearestEVT.id === d.nearestAdvanced.id;
-    tbl.appendChild(el('div', { class: 'kv' }, [
+    tbl.appendChild(el('dl', { class: 'kv' }, [
       el('dt', { text: advIsEVT ? 'Nearest CSC/TSC + EVT:' : 'Nearest CSC/TSC:' }),
       el('dd', {}, [
         document.createTextNode(' '),
@@ -1497,7 +1497,7 @@ function showHospitalDetail(h) {
       ? 'Not feasible (no road connection)'
       : `~${groundMinutes(dCSC)} min`;
 
-    tbl.appendChild(el('div', { class: 'kv' }, [
+    tbl.appendChild(el('dl', { class: 'kv' }, [
       el('dt', { text: 'Ground transfer:' }),
       el('dd', { text: ` ${groundText}  ·  Air: ~${airMinutes(dCSC)} min  ·  Best: ${bestTransportText(dCSC, h.airOnly)}` }),
     ]));
@@ -1539,7 +1539,7 @@ function showHospitalDetail(h) {
         }
       });
 
-      tbl.appendChild(el('div', { class: 'kv' }, [
+      tbl.appendChild(el('dl', { class: 'kv' }, [
         el('dt', { text: 'Nearest EVT:' }),
         el('dd', {}, [
           document.createTextNode(' '),
@@ -1559,7 +1559,7 @@ function showHospitalDetail(h) {
     const punctureTarget = Number.isFinite(d.nearestEVTDistance) ? d.nearestEVT : d.nearestAdvanced;
     const punctureMi = Number.isFinite(d.nearestEVTDistance) ? d.nearestEVTDistance : dCSC;
 
-    const goldenNote = el('div', { class: 'kv' });
+    const goldenNote = el('dl', { class: 'kv' });
     if (onSiteEVT) {
       goldenNote.appendChild(el('dt', { text: 'Thrombectomy:' }));
       const dd = el('dd');
@@ -1611,7 +1611,7 @@ function showHospitalDetail(h) {
     // patient" was an absence rather than a statement.
     const dist = el('div', { class: 'detail-section detail-transport' });
     dist.appendChild(el('h3', { text: 'Transport Analysis' }));
-    const row = el('div', { class: 'kv' });
+    const row = el('dl', { class: 'kv' });
     row.appendChild(el('dt', { text: 'Receiving centre:' }));
     const dd = el('dd');
     const span = el('span', {
@@ -1991,7 +1991,7 @@ function renderDistanceMatrix() {
   const sorted = [...state.hospitals].sort((a, b) => state.matrixSort.asc ? fn(a, b) : fn(b, a));
   const container = $('#distance-matrix-content');
   clear(container);
-  const wrap = el('div', { class: 'matrix-wrap' });
+  const wrap = el('div', { class: 'matrix-wrap', tabindex: '0', role: 'region', 'aria-label': 'Scrollable table' });
   const table = el('table', { class: 'matrix-table' });
   const thead = el('thead');
   const headerRow = el('tr');
@@ -2019,6 +2019,8 @@ function renderDistanceMatrix() {
         if (fresh) fresh.focus();
       });
       th.appendChild(btn);
+    } else if (label === 'Actions') {
+      th.appendChild(el('span', { class: 'visually-hidden', text: label }));
     } else {
       th.textContent = label;
     }
@@ -2231,13 +2233,13 @@ function renderCandidates() {
   }
 
   clear(container);
-  const wrap = el('div', { class: 'matrix-wrap' });
+  const wrap = el('div', { class: 'matrix-wrap', tabindex: '0', role: 'region', 'aria-label': 'Scrollable table' });
   const table = el('table', { class: 'matrix-table candidates-table' });
   const thead = el('thead');
   const headerRow = el('tr');
   const cols = [
     ['rank', '#'], ['name', 'Hospital'], ['state', 'ST'], ['cert', 'Cert'],
-    ['evtMi', 'EVT mi'], ['advMi', 'CSC/TSC mi'], ['score', 'Score'], [null, ''],
+    ['evtMi', 'EVT mi'], ['advMi', 'CSC/TSC mi'], ['score', 'Score'], [null, 'Actions'],
   ];
   for (const [key, label] of cols) {
     const th = el('th');
@@ -2261,6 +2263,8 @@ function renderCandidates() {
         if (fresh) fresh.focus();
       });
       th.appendChild(btn);
+    } else if (label === 'Actions') {
+      th.appendChild(el('span', { class: 'visually-hidden', text: label }));
     } else {
       th.textContent = label;
     }
@@ -2396,7 +2400,7 @@ function buildDataQA() {
 
   // Provenance
   const prov = el('div', { class: 'cert-card neutral' });
-  prov.appendChild(el('h4', { text: 'Provenance' }));
+  prov.appendChild(el('h3', { text: 'Provenance' }));
   const provList = el('div', { class: 'qa-kv' });
   const kvRow = (label, val) => {
     const row = el('div', { class: 'metric-row' });
@@ -2415,7 +2419,7 @@ function buildDataQA() {
 
   // Completeness
   const comp = el('div', { class: 'cert-card neutral' });
-  comp.appendChild(el('h4', { text: 'Field completeness' }));
+  comp.appendChild(el('h3', { text: 'Field completeness' }));
   const compTable = el('table', { class: 'qa-table' });
   const headTr = el('tr');
   for (const t of ['Field', 'Populated', 'Missing']) headTr.appendChild(el('th', { text: t }));
@@ -2448,7 +2452,7 @@ function buildDataQA() {
 
   // Integrity checks (mirrors METHODOLOGY.md §7 / scripts/verify-data.py)
   const integ = el('div', { class: 'cert-card neutral' });
-  integ.appendChild(el('h4', { text: 'Integrity checks (run live in your browser)' }));
+  integ.appendChild(el('h3', { text: 'Integrity checks (run live in your browser)' }));
   const ids = new Set(hs.map(h => h.id));
   const assessedRecords = hs.filter(h => !h.isCensus);
   const ccns = hs.filter(h => h.facilityIdType === 'ccn' && h.cmsId).map(h => h.cmsId);
@@ -2471,7 +2475,7 @@ function buildDataQA() {
 
   // Assumptions
   const assume = el('div', { class: 'cert-card neutral' });
-  assume.appendChild(el('h4', { text: 'Model assumptions' }));
+  assume.appendChild(el('h3', { text: 'Model assumptions' }));
   const ul = el('ul', { style: { paddingLeft: '16px', fontSize: '12px', lineHeight: '1.6' } });
   for (const t of [
     `Distances are great-circle (haversine); road distance approximated as haversine × ${ROAD_FACTOR}.`,
@@ -2485,7 +2489,7 @@ function buildDataQA() {
 
   // Sources
   const src = el('div', { class: 'cert-card neutral' });
-  src.appendChild(el('h4', { text: `Primary sources (verified ${state.meta?.verified || '—'})` }));
+  src.appendChild(el('h3', { text: `Primary sources (verified ${state.meta?.verified || '—'})` }));
   const srcUl = el('ul', { style: { paddingLeft: '16px', fontSize: '12px', lineHeight: '1.6' } });
   for (const s of (state.meta?.sources || [])) srcUl.appendChild(el('li', { text: s }));
   src.appendChild(srcUl);
@@ -2524,7 +2528,6 @@ function generateExecutiveSummary() {
   const censusCount = state.hospitals.filter(h => h.isCensus).length;
   const assessed = total - censusCount;
   const noCert = assessed - certified;
-  const zero = state.hospitals.filter(h => !h.strokeCertificationType && !h.isCensus).length;
   const evt = state.hospitals.filter(h => h.hasELVO).length;
   const desertMi = state.scenario.desertMi;
   const deserts = state.hospitals.filter(h => (state.distances[h.id]?.nearestEVTDistance || 0) > desertMi).length;
@@ -2993,13 +2996,13 @@ function configureResponsivePanels() {
     }
   } else {
     if (state.mobilePanel) closeMobilePanel(state.mobilePanel, false);
-    sidebar.removeAttribute('role');
+    sidebar.setAttribute('role', 'complementary');
     sidebar.removeAttribute('aria-modal');
     sidebar.removeAttribute('aria-hidden');
     sidebar.removeAttribute('inert');
-    dashboard.removeAttribute('role');
+    dashboard.setAttribute('role', 'complementary');
     dashboard.removeAttribute('aria-modal');
-    dashboard.removeAttribute('inert');
+    dashboard.toggleAttribute('inert', dashboard.classList.contains('collapsed'));
     dashboard.setAttribute('aria-hidden', String(dashboard.classList.contains('collapsed')));
   }
 }
