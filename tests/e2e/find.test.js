@@ -2,7 +2,7 @@
 // The core lookup workflow: search, results, keyboard navigation, details.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { startServer, launch, openApp, search, pick } = require('./helpers');
+const { startServer, launch, openApp, search, pick, frames, recordFixture } = require('./helpers');
 
 let srv; let browser; let ctx; let page; let errors;
 test.before(async () => {
@@ -49,14 +49,69 @@ test('no results gives a clear empty state', async () => {
   assert.match(await page.textContent('#result-summary'), /^0 of/);
 });
 
+// The rows a query should list, worked out from every record's search fields
+// rather than read from the app's own results.
+const matchesOf = (q) => page.evaluate((q) => {
+  const S = window.__strokeAtlas; const C = window.StrokeCore;
+  return S.all.filter(h => C.matchesQuery(h.fields, C.tokenize(q))).map(h => h.id).sort();
+}, q);
+const rowIds = () => page.$$eval('#results .result', rs => rs.map(r => r.dataset.id).sort());
+
 test('rapid typing settles on the final query', async () => {
+  const final = await matchesOf('kootenai');
+  // An earlier keystroke's list differs, so a stale render would show.
+  assert.ok(final.length > 0 && (await matchesOf('k')).length > final.length);
   await page.fill('#search', '');
   await page.type('#search', 'kootenai', { delay: 15 });
-  await page.waitForFunction(() => window.__strokeAtlas.ui.q === 'kootenai');
-  await page.waitForTimeout(150);
+  await page.waitForFunction((n) => window.__strokeAtlas.ui.q === 'kootenai' && document.querySelectorAll('#results .result').length === n, final.length);
+  await frames(page);
+  assert.deepEqual(await rowIds(), final, 'the list shows the final query\'s matches, and only those');
   assert.match(await firstName(), /Kootenai/i);
-  const all = await names();
-  assert.ok(all.every(n => /kootenai/i.test(n) || true));
+});
+
+test('rapid typing then ArrowDown focuses a row of the final query and keeps it', async () => {
+  await search(page, 'spokane');
+  const final = await matchesOf('kootenai');
+  assert.ok(final.length > 0);
+  assert.ok(!(await rowIds()).some(id => final.includes(id)), 'no row of the old list belongs to the new query');
+  await page.fill('#search', '');
+  // ArrowDown lands inside the search debounce of the last keystroke.
+  await page.type('#search', 'kootenai', { delay: 10 });
+  await page.keyboard.press('ArrowDown');
+  const now = await page.evaluate(() => ({ cls: document.activeElement.className, id: document.activeElement.dataset.id }));
+  assert.equal(now.cls, 'result');
+  assert.ok(final.includes(now.id), `focused row ${now.id} belongs to the final query`);
+  assert.equal(await page.evaluate(() => window.__strokeAtlas.ui.q), 'kootenai', 'ArrowDown applied the pending query');
+  // Outlast the 120 ms search debounce: a timer or render left pending by the
+  // typing would rebuild the list and drop this focus. Nothing to wait for
+  // here, so this is a bounded wait for something that must not happen.
+  await page.evaluate(() => new Promise(r => setTimeout(r, 300)));
+  await frames(page);
+  const later = await page.evaluate(() => ({ cls: document.activeElement.className, id: document.activeElement.dataset.id }));
+  assert.equal(later.cls, 'result', 'focus is still on a row, not <body>');
+  assert.ok(final.includes(later.id));
+  assert.deepEqual(await rowIds(), final);
+  await page.keyboard.press('ArrowDown');
+  const next = await page.evaluate(() => document.activeElement.dataset.id);
+  if (final.length > 1) assert.notEqual(next, later.id, 'a second ArrowDown moves on');
+});
+
+test('a focused row that drops out of the list hands focus to a current row, never <body>', async () => {
+  await search(page, 'spokane');
+  await page.focus('#search');
+  await page.keyboard.press('ArrowDown');
+  await page.waitForFunction(() => document.activeElement.classList.contains('result'));
+  const gone = await page.evaluate(() => document.activeElement.dataset.id);
+  // The list changes under the focused row (as when a pending search lands).
+  await page.evaluate(() => { const S = window.__strokeAtlas; S.ui.q = 'kootenai'; window.update(); });
+  await frames(page);
+  const r = await page.evaluate(() => ({ tag: document.activeElement.tagName, cls: document.activeElement.className, id: document.activeElement.dataset.id, tabbable: document.activeElement.tabIndex }));
+  assert.notEqual(r.tag, 'BODY');
+  assert.equal(r.cls, 'result');
+  assert.notEqual(r.id, gone);
+  assert.ok((await matchesOf('kootenai')).includes(r.id));
+  assert.equal(r.tabbable, 0, 'the focused row is the tabbable one');
+  await page.fill('#search', '');
 });
 
 test('keyboard: arrow into results, move, open, escape restores focus', async () => {
@@ -93,16 +148,29 @@ test('Enter on a single match opens it; the selected row is marked', async () =>
   await page.click('#detail-close');
 });
 
-test('unlocated records stay searchable and say why there is no marker', async () => {
-  const lost = await pick(page, (S) => { const h = S.all.find(x => !x.outOfRegion && !x.location); return h ? h.name : null; });
-  if (!lost) return; // every record located: nothing to check
-  await search(page, lost);
-  const row = page.locator('#results .result', { hasText: lost }).first();
+test('unlocated records stay searchable, say why there is no marker, and are counted apart (fixture)', async () => {
+  const fx = recordFixture();
+  const { page: p, context, errors: errs } = await openApp(browser, srv.base, '', { routes: [fx.route] });
+  const lost = fx.unlocated;
+  // In the analysis set, so the default list and the status lines count it.
+  assert.ok(await p.$(`#results .result[data-id="${lost.id}"]`), 'listed without a search');
+  assert.match(await p.textContent('#result-summary'), / · 1 without a map location$/);
+  assert.match(await p.textContent('#map-status'), /, 1 not located;/);
+  const marked = await p.evaluate((id) => { const S = window.__strokeAtlas; const mk = S.markers.get(id); return !!(mk && S.markerLayer.hasLayer(mk)); }, lost.id);
+  assert.equal(marked, false, 'no marker is drawn for it');
+  await search(p, lost.name);
+  const row = p.locator(`#results .result[data-id="${lost.id}"]`);
   assert.match(await row.textContent(), /No map location/);
   await row.click();
-  await page.waitForSelector('#detail:not([hidden])');
-  assert.match(await page.textContent('#detail-body'), /No cited location/);
-  await page.click('#detail-close');
+  await p.waitForSelector('#detail:not([hidden])');
+  const body = await p.textContent('#detail-body');
+  assert.match(body, /No cited location — not drawn on the map/);
+  assert.match(body, /Unavailable: no verified location for this hospital\./);
+  assert.doesNotMatch(body, /Nearby hospitals/, 'no straight-line neighbours without a location');
+  assert.equal(await p.$('#detail-actions [data-act="fit"]'), null, 'nothing to fit on the map');
+  assert.equal(await p.evaluate(() => { let n = 0; window.__strokeAtlas.lineLayer.eachLayer(l => { if (l.getLatLngs) n++; }); return n; }), 0, 'no lines drawn');
+  assert.deepEqual(errs, []);
+  await context.close();
 });
 
 test('no runtime errors during the lookup workflow', () => { assert.deepEqual(errors, []); });

@@ -111,4 +111,84 @@ async function search(page, text) {
   }, text);
 }
 
-module.exports = { startServer, launch, openApp, readDownload, parseCsv, pick, search, ROOT };
+// Two animation frames: the app renders on the frame after a change.
+const frames = (page) => page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+
+// The selected hospital and the far end of every selection line drawn (nearest
+// documented 24/7 EVT center, my center, and the CSC/TSC-level center when
+// that line is shown) must sit inside the map and outside every panel floating
+// over it. Read from the drawn lines, so a destination left out of a fit shows.
+async function endpointsClear(page) {
+  return page.evaluate(() => {
+    const S = window.__strokeAtlas;
+    const m = S.map.getContainer().getBoundingClientRect();
+    const sel = S.byId.get(S.ui.selected);
+    const a = S.access[sel.id];
+    const named = [['nearest EVT', a.evt247.dest], ['my center', S.ui.hub && S.byId.get(S.ui.hub)], ['CSC/TSC-level', S.ui.advLine && a.advanced.dest]];
+    const pts = [{ what: 'sender', ll: sel.location }];
+    S.lineLayer.eachLayer(l => {
+      if (!l.getLatLngs) return;
+      const end = l.getLatLngs()[1];
+      const hit = named.find(([, h]) => h && h.location && Math.abs(h.location.lat - end.lat) < 1e-9 && Math.abs(h.location.lng - end.lng) < 1e-9);
+      pts.push({ what: hit ? hit[0] : 'line end', ll: end });
+    });
+    const overlays = ['#detail', '#legend', '#map-status', '.map-jump', '.search-block']
+      .map(q => [q, document.querySelector(q)])
+      .filter(([, n]) => n && !n.hidden && getComputedStyle(n).display !== 'none' && n.getBoundingClientRect().width)
+      .map(([q, n]) => [q, n.getBoundingClientRect()]);
+    return pts.map(({ what, ll }) => {
+      const p = S.map.latLngToContainerPoint([ll.lat, ll.lng]);
+      const x = m.left + p.x; const y = m.top + p.y;
+      return { what, inMap: x >= m.left && x <= m.right && y >= m.top && y <= m.bottom,
+        under: overlays.filter(([, r]) => x >= r.left && x <= r.right && y >= r.top && y <= r.bottom).map(o => o[0]) };
+    });
+  });
+}
+
+// The current data has no unlocated and no closed record. This serves a copy
+// of the real hospitals.json, built at test time, in which one campus has lost
+// its coordinates and one 24/7 EVT center (the nearest one for several other
+// hospitals) is closed, each with the derived fields the build gives such a
+// record (scripts/build-dataset.py). Everything else follows the data.
+function recordFixture() {
+  const C = require(path.join(ROOT, 'core.js'));
+  const json = JSON.parse(fs.readFileSync(path.join(ROOT, 'hospitals.json'), 'utf8'));
+  const all = json.hospitals;
+  const inRegion = all.filter(h => !h.outOfRegion);
+  const evtSet = C.destinationSet(all, 'evt247');
+  const advSet = C.destinationSet(all, 'advanced');
+  const byId = (id) => all.find(h => h.id === id);
+  const dependents = (c) => inRegion.filter(h => h.id !== c.id && C.nearestInSet(h, evtSet).dest === c);
+  const closed = evtSet.filter(h => !h.outOfRegion && h.id !== '500064' && dependents(h).length >= 3).sort((a, b) => a.id.localeCompare(b.id))[0];
+  const unlocated = inRegion.filter(h => h.state === 'WA' && C.isEligible(h) && C.isActive(h) && C.locationOf(h) && !evtSet.includes(h) && !advSet.includes(h))
+    .sort((a, b) => a.id.localeCompare(b.id))[0];
+  const deps = dependents(closed).map(h => h.id);
+  // Dependents whose six nearest hospitals (the detail's Nearby list) included the closed campus.
+  const nearbyBefore = deps.filter(id => inRegion.filter(x => x.id !== id && C.locationOf(x))
+    .map(x => [x, C.distanceBetween(byId(id), x)]).sort((p, q) => p[1] - q[1]).slice(0, 6).some(([x]) => x === closed));
+  const c = json.counts;
+  const was = closed.derived.eligibility.value;
+  c[was === 'eligible' ? 'eligible' : was === 'excluded' ? 'excluded' : 'eligibility_unknown']--;
+  c.excluded++;
+  c.closed_or_merged++;
+  if (closed.status.value === 'active') c.active--;
+  else if (closed.status.value === 'unknown') c.status_unknown--;
+  closed.status = Object.assign({}, closed.status, { value: 'closed' });
+  closed.derived.eligibility = { value: 'excluded', code: 'not-active', reason: 'Not an active hospital campus (closed)' };
+  closed.derived.needsVerification = closed.derived.needsVerification.filter(k => !['eligibility-unresolved', 'status-unknown', 'location-unverified', 'address-unverified'].includes(k));
+  const geo = ['location-unverified', 'location-conflict', 'outside-state-boundary', 'near-state-boundary', 'near-county-boundary', 'far-from-named-city', 'nearer-to-another-town', 'town-not-in-gazetteer'];
+  unlocated.location = null;
+  Object.assign(unlocated.derived, { located: false, county: null, countyFips: null, cityDistanceMi: null, nearestTown: null, geoFlags: [] });
+  unlocated.derived.needsVerification = unlocated.derived.needsVerification.filter(k => !geo.includes(k)).concat('unlocated');
+  c.unlocated++;
+  const body = JSON.stringify(json);
+  return {
+    json,
+    closed: { id: closed.id, name: closed.name, state: closed.state, dependents: deps, nearbyBefore },
+    unlocated: { id: unlocated.id, name: unlocated.name },
+    evtCentersBefore: evtSet.length,
+    route: [/hospitals\.json/, r => r.fulfill({ status: 200, body, headers: { 'Content-Type': 'application/json; charset=utf-8' } })],
+  };
+}
+
+module.exports = { startServer, launch, openApp, readDownload, parseCsv, pick, search, frames, endpointsClear, recordFixture, ROOT };

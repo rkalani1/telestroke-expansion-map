@@ -37,11 +37,16 @@
   --c-asr: #4b8f3a;
   --c-none: #7b8594;
   --c-unassessed: #6a55b0;
+  /* Dashed "not assessed" ring and hollow-marker stroke drawn on the basemap:
+     >= 3:1 against the land, water and map background in every palette. */
+  --c-unassessed-stroke: #6a55b0;
   --c-evt: #0e7f86;
   --c-hub: #1d5bb8;
   --c-excluded: #949ca7;
   --c-conflict: #a3262f;
   --c-neighbor: #5f6b7a;
+  /* Dotted "partly assessed" ring: dark on the light basemap (>= 3:1 in every palette). */
+  --c-partial: #353c47;
   /* Sequential distance ramp: farther = darker */
   --d-0: #e7f1fb;
   --d-1: #b7d4ef;
@@ -114,11 +119,13 @@ html[data-theme="dark"] {
   --c-asr: #79bd63;
   --c-none: #8f99a8;
   --c-unassessed: #a593e6;
+  --c-unassessed-stroke: #a593e6;
   --c-evt: #34c0c7;
   --c-hub: #7fb0f5;
   --c-excluded: #5d6672;
   --c-conflict: #f08a8f;
   --c-neighbor: #9aa6b5;
+  --c-partial: #c9d0da;
   --d-0: #1f2f45;
   --d-1: #24497a;
   --d-2: #3c72b8;
@@ -146,6 +153,9 @@ html.cb {
   --c-evt: #0072b2;
   --c-none: #8a8a8a;
   --c-unassessed: #cc79a7;
+  /* #cc79a7 is under 3:1 on the light basemap (2.6:1, 2:1 on water): the
+     same hue, darker, for rings and strokes there. */
+  --c-unassessed-stroke: #b04380;
   --t-csc: #8a3c00;
   --t-tsc: #7a5400;
   --t-psc: #5c5600;
@@ -154,6 +164,7 @@ html.cb {
   --t-unassessed: #7d3a62;
 }
 html.cb[data-theme="dark"] {
+  --c-unassessed-stroke: #cc79a7; /* 4.6:1 on the dark map */
   --t-csc: #ffc39a;
   --t-tsc: #ffd98c;
   --t-psc: #f7f09d;
@@ -354,8 +365,8 @@ input[type="range"] { accent-color: var(--accent); min-height: 28px; width: 100%
 .sw-PSC { background: var(--c-psc); }
 .sw-ASR { background: var(--c-asr); }
 .sw-NONE { background: var(--c-none); }
-.sw-UNASSESSED { background: transparent; border: 2px dashed var(--c-unassessed); }
-.sw-PARTIAL { background: var(--c-none); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--c-unassessed); }
+.sw-UNASSESSED { background: transparent; border: 2px dashed var(--c-unassessed-stroke); }
+.sw-PARTIAL { background: var(--c-none); outline: 2px dotted var(--c-partial); outline-offset: 1.5px; }
 .sw-CONFLICT { background: transparent; border: 2px solid var(--c-conflict); transform: rotate(45deg) scale(.82); }
 
 .list-tools { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-4); border-bottom: 1px solid var(--border); font-size: var(--fs-sm); color: var(--text-2); }
@@ -373,7 +384,9 @@ input[type="range"] { accent-color: var(--accent); min-height: 28px; width: 100%
 .result .r-name { font-weight: 650; font-size: var(--fs-md); line-height: 1.3; }
 .result .r-meta { grid-column: 2; color: var(--text-3); font-size: var(--fs-xs); }
 .result .r-badges { grid-column: 2; display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
-.result .r-dist { grid-column: 3; grid-row: 1; text-align: right; font-size: var(--fs-xs); color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* "45 mi to documented 24/7 EVT" wraps beside the name and meta lines
+   rather than taking the name's width. */
+.result .r-dist { grid-column: 3; grid-row: 1 / span 2; max-width: 10em; text-align: right; font-size: var(--fs-xs); color: var(--text-2); font-variant-numeric: tabular-nums; text-wrap: balance; }
 .empty { padding: var(--sp-5) var(--sp-4); color: var(--text-3); font-size: var(--fs-sm); display: grid; gap: var(--sp-2); }
 
 .badge {
@@ -389,6 +402,7 @@ input[type="range"] { accent-color: var(--accent); min-height: 28px; width: 100%
 .b-EVT { background: color-mix(in srgb, var(--c-evt) 14%, var(--surface)); color: var(--t-evt); }
 .b-STATE { background: transparent; border: 1px dashed var(--border-strong); color: var(--text-2); }
 .b-UNASSESSED { background: transparent; border: 1px dashed var(--c-unassessed); color: var(--t-unassessed); }
+.b-PARTIAL { background: transparent; border: 1px dotted var(--c-partial); color: var(--text-2); }
 .b-CONFLICT { background: transparent; border: 1px solid var(--c-conflict); color: var(--danger); }
 .b-MUTED { background: var(--surface-2); color: var(--text-3); }
 .b-HUB { background: var(--accent); color: var(--accent-ink); }
@@ -422,6 +436,41 @@ table.data td.num, table.data th.num { text-align: right; font-variant-numeric: 
 table.data caption { text-align: left; font-weight: 650; font-size: var(--fs-sm); padding: var(--sp-2) 0 4px; color: var(--text); }
 table.data tfoot td { font-weight: 650; border-top: 1px solid var(--border-strong); }
 .bar { display: inline-block; height: 8px; border-radius: 2px; background: var(--accent); vertical-align: middle; margin-right: 4px; }
+
+/* Distance table: sortable headers are real buttons with one-line short
+   headings, so the sticky header row stays shallow. The dialog body keeps
+   the table at its own height and scrolls, rather than squeezing it into
+   what the note leaves; a row or heading focused inside the table scrolls
+   clear of the sticky header row and hospital column (sizes set by app.js). */
+#dlg-matrix .dlg-body { grid-auto-rows: max-content; }
+.matrix-wrap { max-height: min(64dvh, 720px); scroll-padding-top: var(--matrix-head, 3rem); scroll-padding-left: var(--matrix-col, 0px); }
+table.matrix td, table.matrix th { white-space: nowrap; }
+table.matrix td.wrap, table.matrix th[scope="row"] { white-space: normal; min-width: 12ch; }
+table.matrix thead th { padding: 0; vertical-align: bottom; }
+.th-sort {
+  display: flex; align-items: center; gap: 4px; width: 100%; min-height: 32px; padding: 4px 6px;
+  border: 0; background: none; color: inherit; font: inherit; font-weight: 650; text-align: inherit; white-space: nowrap;
+}
+th.num .th-sort { justify-content: flex-end; text-align: right; }
+.th-sort:hover { background: var(--surface-3); }
+.th-sort:focus-visible { outline-offset: -2px; } /* inside the scrolling wrapper, not clipped by it */
+.th-sort .sort-ind { color: var(--text-3); min-width: 1ch; }
+th[aria-sort] .th-sort { color: var(--accent); }
+th[aria-sort] .th-sort .sort-ind { color: inherit; }
+/* The hospital column stays in view while the table scrolls sideways (phones). */
+table.matrix tbody th[scope="row"] { position: sticky; left: 0; top: auto; z-index: 1; background: var(--surface); font-weight: 500; }
+table.matrix thead th:first-child { left: 0; z-index: 2; }
+table.matrix .link-btn { min-height: 24px; padding: 0; text-align: left; }
+/* Short screens: the whole table scrolls with the dialog body, and the header
+   row is not sticky, so it can never cover the rows. */
+@media (max-height: 480px) {
+  .matrix-wrap { max-height: none; }
+  table.matrix thead th { position: static; }
+  table.matrix thead th:first-child { position: sticky; top: auto; }
+  /* Room for rows: a tighter dialog header, and a wider hospital column so names wrap less. */
+  #dlg-matrix .dlg-head { padding-block: var(--sp-1); }
+  table.matrix th[scope="row"] { min-width: 20ch; }
+}
 
 /* ---------- compare + data ---------- */
 .compare-list { margin: 0; padding: 0 0 0 var(--sp-4); display: grid; gap: var(--sp-1); }
@@ -482,8 +531,10 @@ html[data-theme="dark"] .map.bm-standard .leaflet-tile-pane { filter: invert(1) 
 .map-banner .icon-btn { flex: none; margin: -4px 0; }
 
 .legend {
+  /* Never up over the status bar above it, however many lines that wraps to
+     (its measured height, --status-h, comes from app.js). */
   position: absolute; left: var(--sp-3); bottom: var(--sp-3); z-index: 500;
-  width: 252px; max-height: calc(100% - 80px); overflow: auto;
+  width: 252px; max-height: calc(100% - var(--status-h, 56px) - 2 * var(--sp-3) - var(--sp-2)); overflow: auto;
   background: color-mix(in srgb, var(--surface) 96%, transparent); border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow-1); font-size: var(--fs-xs);
 }
@@ -506,7 +557,7 @@ html[data-theme="dark"] .map.bm-standard .leaflet-tile-pane { filter: invert(1) 
 .mk .body.dashed { stroke-dasharray: 2.6 2; stroke-width: 1.8; }
 .f-CSC { fill: var(--c-csc); } .f-TSC { fill: var(--c-tsc); } .f-PSC { fill: var(--c-psc); }
 .f-ASR { fill: var(--c-asr); } .f-NONE { fill: var(--c-none); }
-.f-UNASSESSED { fill: var(--surface); stroke: var(--c-unassessed) !important; }
+.f-UNASSESSED { fill: var(--surface); stroke: var(--c-unassessed-stroke) !important; }
 .f-CONFLICT { fill: var(--surface); stroke: var(--c-conflict) !important; stroke-width: 2.2 !important; }
 .f-EXCLUDED { fill: var(--c-excluded); }
 .f-UNKNOWNELIG { fill: var(--surface); stroke: var(--text-3) !important; }
@@ -515,7 +566,7 @@ html[data-theme="dark"] .map.bm-standard .leaflet-tile-pane { filter: invert(1) 
 .f-d0 { fill: var(--d-0); } .f-d1 { fill: var(--d-1); } .f-d2 { fill: var(--d-2); } .f-d3 { fill: var(--d-3); } .f-d4 { fill: var(--d-4); }
 .f-dna { fill: var(--surface); stroke: var(--text-3) !important; }
 .f-eA { fill: var(--e-assessed); } .f-eO { fill: var(--e-old); } .f-eP { fill: var(--e-partial); }
-.mk .dash-overlay { fill: none; stroke: var(--c-unassessed); stroke-width: 1.8; stroke-dasharray: 2.6 2; }
+.mk .dash-overlay { fill: none; stroke: var(--c-unassessed-stroke); stroke-width: 1.8; stroke-dasharray: 2.6 2; }
 .mk .hub-star { fill: var(--c-hub); stroke: var(--marker-stroke); stroke-width: .8; }
 .mk-icon { background: none; border: 0; }
 /* Count of markers overlapping at this zoom; drawn on the top marker. */
@@ -601,6 +652,7 @@ table.scenario { font-size: var(--fs-xs); }
 .dlg[open] { display: flex; flex-direction: column; }
 .dlg-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4); border-bottom: 1px solid var(--border); }
 .dlg-head h2 { font-size: var(--fs-lg); }
+.dlg-head-actions { display: flex; align-items: center; gap: var(--sp-2); flex: none; }
 .dlg-body { overflow: auto; padding: var(--sp-4); display: grid; gap: var(--sp-3); align-content: start; }
 .weights { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--sp-2) var(--sp-4); }
 .weights label { display: grid; gap: 2px; font-size: var(--fs-xs); color: var(--text-2); }
@@ -629,6 +681,8 @@ table.scenario { font-size: var(--fs-xs); }
   font-size: var(--fs-xs); line-height: 1.35; color: var(--text-2);
 }
 .toasts { position: fixed; z-index: 4000; right: var(--sp-4); bottom: calc(var(--footer-real, var(--footer-h)) + var(--sp-3)); display: grid; gap: var(--sp-2); justify-items: end; pointer-events: none; }
+/* Moved to the top while a toast would cover the control that has focus (app.js placeToasts). */
+.toasts.toasts-top { top: var(--sp-3); bottom: auto; }
 .toast { pointer-events: auto; max-width: 380px; padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-sm); background: var(--text); color: var(--surface); font-size: var(--fs-sm); box-shadow: var(--shadow-2); }
 .toast.warn { background: #6b4600; color: #fff; }
 .toast.error { background: #8a1f27; color: #fff; }
@@ -678,8 +732,9 @@ table.scenario { font-size: var(--fs-xs); }
   .map-status { top: auto; bottom: var(--sp-2); left: var(--sp-2); right: 52px; max-width: none; padding: 4px 8px; }
   .map-jump { top: calc(var(--sheet-top, 132px) + 4px); right: var(--sp-2); }
   .jump-select { width: 132px; }
-  .legend { left: var(--sp-2); right: auto; bottom: calc(var(--sp-2) + 64px); width: min(260px, calc(100% - 72px));
-    max-height: min(42%, calc(100% - var(--sheet-top, 132px) - 64px - var(--sp-2) - 8px)); }
+  /* The status bar wraps on narrow screens: its measured height (--status-h, app.js) places the legend. */
+  .legend { left: var(--sp-2); right: auto; bottom: calc(var(--sp-2) + var(--status-h, 56px) + 6px); width: min(260px, calc(100% - 72px));
+    max-height: min(42%, calc(100% - var(--sheet-top, 132px) - var(--status-h, 56px) - 6px - 2 * var(--sp-2))); }
   .map-banner { top: calc(var(--sheet-top, 132px) + 48px); }
   .legend.collapsed { width: auto; }
   .leaflet-bottom.leaflet-right { margin-bottom: 4px; }
