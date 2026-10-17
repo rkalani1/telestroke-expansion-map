@@ -138,3 +138,15 @@ class Cities:
         if near is None:
             return hits[0]
         return min(hits, key=lambda h: haversine_mi(near[0], near[1], h[1], h[2]))
+
+    def nearest(self, state, lat, lng):
+        """(name, lat, lng, miles) of the gazetteer place in `state` nearest the point."""
+        best = None
+        for (st, _), rows in self.index.items():
+            if st != state:
+                continue
+            for name, a, b in rows:
+                d = haversine_mi(lat, lng, a, b)
+                if best is None or d < best[3]:
+                    best = (name, a, b, d)
+        return best

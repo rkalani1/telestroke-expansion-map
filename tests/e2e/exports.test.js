@@ -101,7 +101,12 @@ test('comparison export aligns fields across hospitals', async () => {
   const rows = parseCsv(buffer.toString('utf8'));
   assert.equal(rows[0].length, 3);
   assert.ok(rows.some(r => r[0] === 'National certification'));
-  assert.ok(rows.some(r => r[0] === 'Evidence: last checked / age'));
+  assert.ok(rows.some(r => r[0] === 'Oldest critical evidence (age)'));
+  for (const k of ['capability_sources', 'my_center', 'distance_metric', 'transport_assumptions', 'data_version', 'evidence_review_date', 'exported_on', 'release']) {
+    assert.ok(rows.some(r => r[0] === k), 'comparison CSV carries ' + k);
+  }
+  const src = rows.find(r => r[0] === 'capability_sources');
+  assert.match(src[1], /^https?:\/\//, 'source URLs for the first hospital');
 });
 
 test('no runtime errors during exports', () => { assert.deepEqual(errors, []); });

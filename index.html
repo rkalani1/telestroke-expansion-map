@@ -109,7 +109,7 @@
                 </div>
                 <label class="check"><input type="checkbox" id="inc-unknown" checked> Include eligibility unresolved <span class="count" data-count="inc-unknown"></span></label>
                 <label class="check"><input type="checkbox" id="inc-excluded"> Include excluded (pediatric, closed, no general ED) <span class="count" data-count="inc-excluded"></span></label>
-                <p class="hint" id="scope-help">The analysis set is active campuses with a documented 24/7 general emergency department serving adults. Search always looks across every record.</p>
+                <p class="hint" id="scope-help">The analysis set is active campuses with a documented 24/7 general emergency department serving adults. Search looks across every record whatever the scope; the other filters still apply.</p>
               </fieldset>
 
               <fieldset class="field-group">
@@ -121,6 +121,7 @@
                   <button type="button" class="chip" data-tier="asr" aria-pressed="false"><span class="swatch sw-ASR" aria-hidden="true"></span>ASR <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="none" aria-pressed="false"><span class="swatch sw-NONE" aria-hidden="true"></span>None found <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="unassessed" aria-pressed="false"><span class="swatch sw-UNASSESSED" aria-hidden="true"></span>Not assessed <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="conflicting" aria-pressed="false"><span class="swatch sw-CONFLICT" aria-hidden="true"></span>Conflicting <span class="count"></span></button>
                 </div>
                 <label class="check"><input type="checkbox" id="f-evt"> Documented 24/7 thrombectomy (EVT) <span class="count" data-count="evt"></span></label>
                 <p class="hint">Counts are within the current scope and other filters. EVT overlaps the tiers: a PSC can document 24/7 EVT.</p>

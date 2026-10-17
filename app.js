@@ -45,6 +45,7 @@ const CAP_LABELS = { assessed: 'Capability assessed', partial: 'Capability partl
 const NV_LABELS = {
   'capability-unassessed': 'Stroke capability not assessed',
   'capability-partial': 'Stroke capability partly assessed',
+  'evidence-undated': 'Capability evidence has no claim-level check date',
   'conflicting-evidence': 'Conflicting evidence',
   'evidence-stale': 'Capability evidence older than 12 months',
   'eligibility-unresolved': 'Analysis eligibility unresolved',
@@ -268,7 +269,16 @@ function evtLabel(h) {
   if (e === 'negative') return 'Verified: no thrombectomy program';
   return 'Not assessed';
 }
-function lastCheckedOf(h) { return (h.derived && h.derived.capabilityChecked) || null; }
+// Evidence age is the OLDEST critical claim's check date (national
+// certification, 24/7 EVT, and state designation where the state has a
+// program). Null when any of them is undated or none was checked.
+function lastCheckedOf(h) { return (h.derived && h.derived.capabilityOldest) || null; }
+function evidenceDateText(h) {
+  const d = lastCheckedOf(h);
+  if (d) { const a = ageDays(d); return `${d}${a != null ? ' (' + a + ' days)' : ''}`; }
+  if (h.derived && h.derived.capabilityUndated) return 'Undated (carried from the previous edition)';
+  return capOf(h) === 'unassessed' ? 'Never checked' : 'Undated';
+}
 function ageDays(dateStr) {
   if (!dateStr || !S.meta) return null;
   const a = Date.parse(dateStr.length === 7 ? dateStr + '-01' : dateStr);
@@ -428,7 +438,7 @@ function computeResults() {
   const tokens = C.tokenize(ui.q);
   const hasQuery = tokens.length > 0;
   const results = [];
-  const counts = { csc: 0, tsc: 0, psc: 0, asr: 0, none: 0, unassessed: 0, evt: 0, 'inc-unknown': 0, 'inc-excluded': 0 };
+  const counts = { csc: 0, tsc: 0, psc: 0, asr: 0, none: 0, unassessed: 0, conflicting: 0, evt: 0, 'inc-unknown': 0, 'inc-excluded': 0 };
   for (const h of S.all) {
     const scoped = inScope(h, ui, hasQuery);
     if (!isOOR(h) && !hasQuery && ui.scope === 'eligible') {
@@ -440,8 +450,10 @@ function computeResults() {
     }
     if (!scoped) continue;
     if (passesOther(h, ui, tokens, true)) {
+      // Each control's count applies every other filter but its own: tier
+      // chips respect the EVT checkbox; the EVT count respects the chips.
       const k = tierKey(h);
-      if (k && counts[k] != null) counts[k]++;
+      if (k && counts[k] != null && (!ui.evt || C.hasDocumented247Evt(h))) counts[k]++;
       if (C.hasDocumented247Evt(h) && (!ui.tiers.length || ui.tiers.includes(k))) counts.evt++;
     }
     if (passesOther(h, ui, tokens, false)) results.push(h);
@@ -484,7 +496,7 @@ function activeFilterParts() {
   const parts = [];
   if (ui.preset) parts.push('preset: ' + presetTitle(ui.preset));
   if (ui.state !== 'ALL') parts.push(STATE_NAMES[ui.state]);
-  if (ui.tiers.length) parts.push(ui.tiers.map(t => ({ none: 'none found', unassessed: 'not assessed' }[t] || t.toUpperCase())).join('/'));
+  if (ui.tiers.length) parts.push(ui.tiers.map(t => ({ none: 'none found', unassessed: 'not assessed', conflicting: 'conflicting (no tier)' }[t] || t.toUpperCase())).join('/'));
   if (ui.evt) parts.push('24/7 EVT');
   if (ui.basis) parts.push(ui.basis === 'national' ? 'national certification' : 'state designation only');
   if (ui.cah) parts.push('CAH: ' + ui.cah);
@@ -495,7 +507,7 @@ function activeFilterParts() {
 }
 function scopeLabel() {
   const ui = S.ui;
-  if (C.tokenize(ui.q).length) return 'search across all records';
+  if (C.tokenize(ui.q).length) return 'search across all records' + (activeFilterParts().length ? ', other filters applied' : '');
   if (ui.scope === 'all') return 'all facility records';
   const inc = [];
   if (ui.include.includes('unknown')) inc.push('eligibility unresolved');
@@ -663,7 +675,9 @@ function renderStatus() {
   const unloc = shown - onMap;
   const summary = $('#result-summary');
   clear(summary);
+  const fparts = activeFilterParts();
   appendAll(summary, [el('strong', { text: String(shown) }), ` of ${total} records · ${scopeLabel()}`,
+    C.tokenize(S.ui.q).length && fparts.length ? ` (${fparts.join(', ')})` : '',
     unloc ? ` · ${unloc} without a map location` : '']);
   const toggle = $('#sheet-toggle');
   if (toggle) toggle.textContent = document.body.classList.contains('sheet-open') ? 'Show map' : `Show list (${shown})`;
@@ -717,7 +731,7 @@ function glyphModel(h, opts) {
     } else m.fill = tier ? TIER_VAR[tier] : '--c-none';
   } else if (mode === 'evt-distance' || mode === 'adv-distance' || mode === 'hub-distance') {
     const r = !a ? null : mode === 'evt-distance' ? a.evt247 : mode === 'adv-distance' ? a.advanced : a.hub;
-    const bin = r ? C.distanceBin(r.miles) : 'unknown';
+    const bin = r ? C.distanceBin(r) : 'unknown';
     m.fill = { 'on-site': '--d-0', lt50: '--d-1', '50-100': '--d-2', '100-150': '--d-3', '150plus': '--d-4' }[bin] || null;
     if (!m.fill) { m.hollow = true; m.stroke = '--text-3'; }
     m.size = 14;
@@ -740,6 +754,8 @@ function glyphModel(h, opts) {
     else if (e === 'eligible') m.fill = '--c-hub';
     else if (e === 'excluded') m.fill = '--c-excluded';
     else { m.hollow = true; m.dashed = true; m.stroke = '--text-3'; }
+    // Capability assessment stays visible as a second channel, as the legend says.
+    if (capOf(h) === 'unassessed' && !isOOR(h)) m.dashOverlay = true;
   }
   if (!isOOR(h) && eligOf(h) === 'excluded' && mode !== 'eligibility') m.dim = true;
   if (opts && opts.forList) { m.selected = false; m.size = Math.min(m.size, 16); }
@@ -766,7 +782,7 @@ function glyphSvg(m) {
   const dash = m.dashed ? 'stroke-dasharray:2.6 2;' : '';
   const sw = m.hollow ? 2 : 1.6;
   parts.push(`<path d="${shapePath(m.shape, c, c, r)}" style="fill:${fill};stroke:var(${m.stroke});stroke-width:${sw};${dash}"/>`);
-  if (m.dashOverlay) parts.push(`<path d="${shapePath('circle', c, c, r + 2.4)}" style="fill:none;stroke:var(--c-unassessed);stroke-width:1.8;stroke-dasharray:2.6 2"/>`);
+  if (m.dashOverlay) parts.push(`<path data-ring="unassessed" d="${shapePath('circle', c, c, r + 2.4)}" style="fill:none;stroke:var(--c-unassessed);stroke-width:1.8;stroke-dasharray:2.6 2"/>`);
   return `<svg class="mk" width="${box}" height="${box}" viewBox="0 0 ${box} ${box}" aria-hidden="true" focusable="false">${parts.join('')}</svg>`;
 }
 
@@ -848,28 +864,48 @@ function dataBounds(records) {
   return pts.length ? L.latLngBounds(pts) : null;
 }
 
+// Padding that keeps fitted points clear of everything floating over the map
+// (status bar, legend, jump menu, the detail panel where it overlays the map,
+// the phone search bar). Each overlay pads the map edge it intrudes from least,
+// and padding never takes more than 60% of either dimension, so a fit still has
+// room at tablet and laptop widths.
+const MAP_OVERLAYS = ['#map-status', '#legend', '.map-jump', '#detail', '.search-block'];
 function mapPadding() {
-  const pad = { tl: [24, 24], br: [24, 24] };
-  if (!S.map) return pad;
-  const mapRect = S.map.getContainer().getBoundingClientRect();
-  const status = $('#map-status');
-  if (status && status.offsetParent) {
-    const r = status.getBoundingClientRect();
-    if (r.top - mapRect.top < 100) pad.tl[1] = Math.max(pad.tl[1], r.bottom - mapRect.top + 16);
+  const base = 20;
+  const pad = { top: base, right: base, bottom: base, left: base };
+  if (!S.map) return { tl: [base, base], br: [base, base] };
+  const m = S.map.getContainer().getBoundingClientRect();
+  if (!m.width || !m.height) return { tl: [base, base], br: [base, base] };
+  const near = 48;
+  for (const sel of MAP_OVERLAYS) {
+    const node = $(sel);
+    if (!node || node.hidden) continue;
+    const cs = getComputedStyle(node);
+    if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+    const r = node.getBoundingClientRect();
+    if (!r.width || !r.height) continue;
+    if (r.right <= m.left || r.left >= m.right || r.bottom <= m.top || r.top >= m.bottom) continue;
+    const cand = [];
+    if (r.left <= m.left + near) cand.push(['left', r.right - m.left]);
+    if (r.right >= m.right - near) cand.push(['right', m.right - r.left]);
+    if (r.top <= m.top + near) cand.push(['top', r.bottom - m.top]);
+    if (r.bottom >= m.bottom - near) cand.push(['bottom', m.bottom - r.top]);
+    if (!cand.length) continue;
+    cand.sort((a, b) => a[1] - b[1]);
+    const [edge, depth] = cand[0];
+    pad[edge] = Math.max(pad[edge], depth + 12);
   }
-  const legend = $('#legend');
-  if (legend && legend.offsetParent && !MOBILE_Q.matches) {
-    const r = legend.getBoundingClientRect();
-    if (r.width < mapRect.width / 2) pad.tl[0] = Math.max(pad.tl[0], r.right - mapRect.left + 16);
-  }
-  const detail = $('#detail');
-  if (detail && !detail.hidden && !MOBILE_Q.matches) {
-    const r = detail.getBoundingClientRect();
-    // On narrower desktops the panel floats over the map.
-    const overlap = mapRect.right - r.left;
-    if (overlap > 0) pad.br[0] = Math.max(pad.br[0], overlap + 24);
-  }
-  return pad;
+  const cramped = pad.left + pad.right > m.width * 0.6 || pad.top + pad.bottom > m.height * 0.6;
+  const cap = (a, b, size) => {
+    const max = size * 0.6;
+    if (pad[a] + pad[b] <= max) return;
+    const f = max / (pad[a] + pad[b]);
+    pad[a] = Math.max(base, pad[a] * f);
+    pad[b] = Math.max(base, pad[b] * f);
+  };
+  cap('left', 'right', m.width);
+  cap('top', 'bottom', m.height);
+  return { tl: [Math.round(pad.left), Math.round(pad.top)], br: [Math.round(pad.right), Math.round(pad.bottom)], cramped };
 }
 
 function fitTo(bounds, maxZoom) {
@@ -1021,8 +1057,10 @@ function selectionLines() {
   if (!sel || !isLocated(sel) || !S.ui.overlays.includes('lines')) return [];
   const a = S.access[sel.id];
   const out = [];
-  if (a.evt247.status === 'ok') out.push({ kind: 'evt', to: a.evt247.dest, miles: a.evt247.miles });
   const hub = S.ui.hub && S.byId.get(S.ui.hub);
+  // When my center is also the nearest documented 24/7 EVT center, one line
+  // carries both meanings and says so.
+  if (a.evt247.status === 'ok') out.push({ kind: 'evt', to: a.evt247.dest, miles: a.evt247.miles, alsoHub: !!(hub && hub.id === a.evt247.dest.id) });
   if (hub && a.hub && a.hub.status === 'ok' && (!a.evt247.dest || hub.id !== a.evt247.dest.id)) out.push({ kind: 'hub', to: hub, miles: a.hub.miles });
   if (S.showAdvLine && a.advanced.status === 'ok' && !out.some(x => x.to.id === a.advanced.dest.id)) out.push({ kind: 'adv', to: a.advanced.dest, miles: a.advanced.miles });
   return out;
@@ -1034,12 +1072,16 @@ function lineStyle(kind) {
   return { color: cssVar('--text-2'), weight: 2.5, opacity: 0.9, dashArray: '2 6' };
 }
 
+function lineLabel(l) {
+  return `${C.formatMiles(l.miles)} mi straight-line` + (l.kind === 'hub' ? ' · my center' : l.kind === 'adv' ? ' · CSC/TSC-level' : l.alsoHub ? ' · 24/7 EVT · my center' : ' · 24/7 EVT');
+}
+
 function renderLines() {
   if (!S.lineLayer) return;
   S.lineLayer.clearLayers();
   const sel = S.ui.selected && S.byId.get(S.ui.selected);
   for (const l of selectionLines()) {
-    const label = `${C.formatMiles(l.miles)} mi straight-line` + (l.kind === 'hub' ? ' · my center' : l.kind === 'adv' ? ' · CSC/TSC-level' : ' · 24/7 EVT');
+    const label = lineLabel(l);
     addLine(S.lineLayer, sel, l.to, lineStyle(l.kind), label);
   }
 }
@@ -1099,8 +1141,8 @@ function legendModel() {
     ], note: 'A state level is shown on the tier it maps to (display crosswalk) — not national accreditation. The list and details name the basis.' });
   } else if (mode === 'evidence') {
     groups.push({ title: 'Fill: evidence status', rows: [
-      [{ fill: '--e-assessed' }, `Assessed, checked within ${STALE_DAYS} days of the review date`],
-      [{ fill: '--e-old' }, 'Assessed, older evidence'],
+      [{ fill: '--e-assessed' }, `Assessed, oldest critical evidence checked within ${STALE_DAYS} days of the review`],
+      [{ fill: '--e-old' }, 'Assessed, older or undated evidence'],
       [{ fill: '--e-partial' }, 'Partly assessed'],
       [{ hollow: true, dashed: true, stroke: '--c-unassessed' }, 'Not assessed'],
       [{ shape: 'diamond', hollow: true, stroke: '--c-conflict' }, 'Conflicting evidence'],
@@ -1136,7 +1178,8 @@ function legendModel() {
   const lines = selectionLines();
   if (lines.length || S.ui.overlays.includes('nearest') || S.ui.overlays.includes('rings')) {
     const rows = [];
-    if (lines.some(l => l.kind === 'evt')) rows.push(['', 'Selected → nearest documented 24/7 EVT']);
+    if (lines.some(l => l.kind === 'evt' && l.alsoHub)) rows.push(['', 'Selected → my receiving center, also the nearest documented 24/7 EVT']);
+    else if (lines.some(l => l.kind === 'evt')) rows.push(['', 'Selected → nearest documented 24/7 EVT']);
     if (lines.some(l => l.kind === 'hub')) rows.push(['hub', 'Selected → my receiving center']);
     if (lines.some(l => l.kind === 'adv')) rows.push(['adv', 'Selected → nearest CSC/TSC-level center']);
     groups.push({ title: 'Lines', lines: rows, note: 'Straight-line geometry. Not road routes, transfer pathways or referral relationships.'
@@ -1164,11 +1207,15 @@ function renderLegend() {
     body.appendChild(grp);
   }
   const lg = $('#legend');
-  lg.classList.toggle('collapsed', !S.prefs.legend);
+  const open = legendExpanded();
+  lg.classList.toggle('collapsed', !open);
   const tg = $('#legend-toggle');
-  tg.setAttribute('aria-expanded', String(!!S.prefs.legend));
-  tg.setAttribute('aria-label', S.prefs.legend ? 'Collapse legend' : 'Expand legend');
+  tg.setAttribute('aria-expanded', String(open));
+  tg.setAttribute('aria-label', open ? 'Collapse legend' : 'Expand legend');
 }
+
+// The saved legend choice, unless a fit has collapsed it for this view.
+function legendExpanded() { return S.legendAuto === false ? false : !!S.prefs.legend; }
 
 // ------------------------------------------------------------------
 // Selection + detail panel
@@ -1229,13 +1276,33 @@ function closeDetail(restore) {
   }
 }
 
+// Phones: put the hospital details away (not closed: the selection and its
+// lines stay) and show the map, with a "Details: <name>" link in the status
+// bar to come back. Focus moves to that link so it is not lost on <body>.
+function minimizeDetailOnPhone(focusBack) { minimizeDetail(focusBack); }
+function minimizeDetail(focusBack) {
+  $('#detail').hidden = true;
+  document.body.classList.remove('detail-open');
+  document.body.classList.add('detail-minimized');
+  setSheet(false);
+  renderStatus();
+  if (focusBack === false) return;
+  const back = $$('#map-status .link-btn').find(b => b.textContent.startsWith('Details: '));
+  if (back) back.focus();
+}
+
 function fitConnections(closeOnMobile) {
   const h = S.byId.get(S.ui.selected);
   if (!h || !S.map || !isLocated(h)) return;
-  if (closeOnMobile && MOBILE_Q.matches) {
-    $('#detail').hidden = true;
-    document.body.classList.remove('detail-open');
-    document.body.classList.add('detail-minimized');
+  if (closeOnMobile && MOBILE_Q.matches) minimizeDetailOnPhone();
+  else if (closeOnMobile && mapPadding().cramped) {
+    // Not enough clear map beside the panels (laptop/tablet widths): put the
+    // details away (selection kept, "Details:" link to return), then, if still
+    // cramped, collapse the legend for this view without changing the saved choice.
+    const d = $('#detail').getBoundingClientRect();
+    const m = S.map.getContainer().getBoundingClientRect();
+    if (!$('#detail').hidden && d.left < m.right && d.right > m.left) minimizeDetail(true);
+    if (mapPadding().cramped && legendExpanded()) { S.legendAuto = false; renderLegend(); }
   }
   const pts = [[h.location.lat, h.location.lng]];
   for (const l of selectionLines()) pts.push([l.to.location.lat, l.to.location.lng]);
@@ -1249,7 +1316,9 @@ function claimRow(label, valueNodes, claim, extra) {
   if (claim) {
     if (claim.effective) meta.push('effective ' + claim.effective);
     if (claim.expires) meta.push('expires ' + claim.expires);
-    meta.push(claim.checked ? 'checked ' + claim.checked + (claim.method ? ' · ' + methodShort(claim.method) : '') : 'never checked');
+    meta.push(claim.checked ? 'checked ' + claim.checked + (claim.method ? ' · ' + methodShort(claim.method) : '')
+      : claim.method === 'prior-edition' ? 'carried from the previous edition · no claim-level check date' + (claim.editionAsOf ? ` (that edition is dated ${claim.editionAsOf})` : '')
+        : claim.method ? methodShort(claim.method) + ' · no check date' : 'never checked');
   }
   return el('div', { class: 'claim' }, [
     el('dt', { text: label }),
@@ -1291,10 +1360,11 @@ function renderDetail() {
     banner.appendChild(el('strong', { text: 'Receiving center outside the five WWAMI states.' }));
     banner.appendChild(el('span', { text: 'Included only so distances from border hospitals name the true nearest documented center. Not part of the WWAMI inventory or counts.' }));
   } else {
-    banner.appendChild(el('strong', { text: CAP_LABELS[cap] + (checked ? ` · last checked ${checked}${age != null ? ` (${age} days before the ${S.meta.evidence_review_date} review)` : ''}` : '') }));
+    banner.appendChild(el('strong', { text: CAP_LABELS[cap] + (checked ? ` · oldest critical evidence checked ${checked}${age != null ? ` (${age} days before the ${S.meta.evidence_review_date} review)` : ''}`
+      : h.derived.capabilityUndated ? ' · some evidence carried from the previous edition without a claim-level check date' : '') }));
     if (cap === 'unassessed') banner.appendChild(el('span', { text: 'No certification shown here means not checked — not that none exists. Confirm directly before relying on it.' }));
     if (cap === 'conflicting') banner.appendChild(el('span', { text: 'Credible sources disagree. Both are cited below; neither is shown as settled.' }));
-    banner.appendChild(el('span', { text: `${ELIG_LABELS[elig.value] || ''}: ${elig.reason || ''}` }));
+    banner.appendChild(el('span', { text: eligText(elig) }));
   }
   body.appendChild(banner);
 
@@ -1653,8 +1723,8 @@ function renderSummaryTables() {
   const dwrap = $('#distance-table');
   clear(dwrap);
   const elig = recs.filter(h => eligOf(h) === 'eligible');
-  const bins = C.DISTANCE_BINS.map(b => [b, elig.filter(h => C.distanceBin(S.access[h.id] && S.access[h.id].evt247.miles) === b.key).length]);
-  const unknown = elig.filter(h => C.distanceBin(S.access[h.id] && S.access[h.id].evt247.miles) === 'unknown').length;
+  const bins = C.DISTANCE_BINS.map(b => [b, elig.filter(h => C.distanceBin(S.access[h.id] && S.access[h.id].evt247) === b.key).length]);
+  const unknown = elig.filter(h => C.distanceBin(S.access[h.id] && S.access[h.id].evt247) === 'unknown').length;
   const max = Math.max(1, ...bins.map(x => x[1]), unknown);
   const t2 = el('table', { class: 'data' });
   t2.appendChild(el('caption', { text: `Straight-line miles to nearest documented 24/7 EVT center — ${elig.length} records in the analysis set within this scope` }));
@@ -1671,7 +1741,7 @@ function renderSummaryTables() {
 // ------------------------------------------------------------------
 // Access review dialog
 // ------------------------------------------------------------------
-const REVIEW_FIELDS = [['wGap', 'Weight: documented certification gap'], ['wEvt', 'Weight: miles to nearest 24/7 EVT'], ['wAdv', 'Weight: miles to nearest CSC/TSC-level'], ['wHub', 'Weight: miles to my center'], ['capMi', 'Distance cap (mi)'], ['desertMi', 'Flag beyond (mi) to 24/7 EVT']];
+const REVIEW_FIELDS = [['wGap', 'Weight: documented capability-tier gap'], ['wEvt', 'Weight: miles to nearest 24/7 EVT'], ['wAdv', 'Weight: miles to nearest CSC/TSC-level'], ['wHub', 'Weight: miles to my center'], ['capMi', 'Distance cap (mi)'], ['desertMi', 'Flag beyond (mi) to 24/7 EVT']];
 function buildReviewForm() {
   const f = $('#review-form');
   clear(f);
@@ -1702,7 +1772,11 @@ function renderReview() {
     sum.textContent = 'All weights are zero, so there is nothing to rank. Raise at least one weight.';
   } else {
     const beyond = res.ranked.concat(res.shortlist).filter(r => C.isNum(r.evtMi) && r.evtMi > res.params.desertMi).length;
-    sum.textContent = `${res.ranked.length} ranked (capability assessed) · ${res.shortlist.length} on the verification shortlist (capability not assessed or conflicting) · ${beyond} beyond ${res.params.desertMi} mi straight-line of a documented 24/7 EVT center · candidates from ${S.reviewScope === 'all' ? 'the whole analysis set' : 'current results'}.`;
+    const pool = reviewInput();
+    const unresolved = pool.filter(h => eligOf(h) === 'unknown').length;
+    sum.textContent = `Candidates from ${S.reviewScope === 'all' ? 'the whole dataset' : 'current results'}: campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier. ` +
+      `${res.ranked.length} ranked (capability assessed) · ${res.shortlist.length} on the verification shortlist (capability not assessed, partly assessed or conflicting) · ${beyond} beyond ${res.params.desertMi} mi straight-line of a documented 24/7 EVT center.` +
+      (unresolved ? ` ${unresolved} records in this scope have unresolved eligibility and are not ranked — see Needs verification.` : '');
   }
   renderReviewTable($('#rp-ranked'), res.ranked, sens, true);
   renderReviewTable($('#rp-short'), res.shortlist, {}, false);
@@ -1711,7 +1785,7 @@ function renderReview() {
   $('#rt-ranked').textContent = `Ranked — capability assessed (${res.ranked.length})`;
 }
 function compLabel(c) {
-  return { gap: 'Documented certification gap', evt: 'Miles to nearest 24/7 EVT', adv: 'Miles to nearest CSC/TSC-level', hub: 'Miles to my center' }[c.key];
+  return { gap: 'Documented capability-tier gap (national certification or state level)', evt: 'Miles to nearest 24/7 EVT', adv: 'Miles to nearest CSC/TSC-level', hub: 'Miles to my center' }[c.key];
 }
 function renderReviewTable(container, rows, sens, ranked) {
   clear(container);
@@ -1741,7 +1815,7 @@ function renderReviewTable(container, rows, sens, ranked) {
       S.ui.hub ? el('td', { class: 'num', text: C.formatMiles(r.access.hub && r.access.hub.miles) }) : null,
       el('td', { class: 'num', text: r.score.toFixed(0) }),
       ranked ? el('td', { class: 'num', text: range ? (range[0] === range[1] ? String(range[0]) : `${range[0]}–${range[1]}`) : '—' }) : null,
-      el('td', { text: lastCheckedOf(h) || 'never' }),
+      el('td', { text: evidenceDateText(h) }),
       el('td', null, whyBtn),
     ].filter(Boolean);
     tb.appendChild(el('tr', null, cells));
@@ -1783,21 +1857,24 @@ function renderCompareList() {
       el('button', { type: 'button', class: 'btn btn-quiet', text: 'Remove', 'aria-label': 'Remove ' + h.name + ' from comparison', on: { click: () => toggleCompare(h.id) } }),
     ]));
   }
-  for (const b of ['#compare-open', '#compare-export', '#compare-clear']) $(b).disabled = !n;
+  // A comparison needs at least two hospitals; one can still be cleared.
+  for (const b of ['#compare-open', '#compare-export']) $(b).disabled = n < 2;
+  $('#compare-clear').disabled = !n;
+  if (n === 1) list.appendChild(el('li', { class: 'hint', text: 'Add at least one more hospital to compare (up to ' + C.MAX_COMPARE + ').' }));
 }
 function compareFields() {
   const hub = S.ui.hub && S.byId.get(S.ui.hub);
   const f = [
     ['Location', h => placeLine(h)],
     ['Status', h => valueClaimText(h.status, { active: 'Active', closed: 'Closed', merged: 'Merged' })],
-    ['Analysis eligibility', h => `${ELIG_LABELS[eligOf(h)]} — ${h.derived.eligibility.reason}`],
+    ['Analysis eligibility', h => eligText(h.derived.eligibility)],
     ['Health system', h => (h.system && h.system.value) || (h.system && h.system.state === 'independent' ? 'Independent' : 'Not documented')],
     ['Critical Access Hospital', h => stOf(h.cah) === 'affirmative' ? 'Yes' : stOf(h.cah) === 'negative' ? 'No' : C.CLAIM_LABELS[stOf(h.cah)]],
     ['National certification', h => `${nationalLabel(h)}${h.national && h.national.checked ? ' (checked ' + h.national.checked + ')' : ''}`],
     ['State designation', h => `${stateLabel(h)}${h.stateDesignation && h.stateDesignation.checked ? ' (checked ' + h.stateDesignation.checked + ')' : ''}`],
     ['Thrombectomy (EVT)', h => evtLabel(h)],
     ['Tier shown (basis)', h => tierOf(h) ? `${tierOf(h)} (${h.derived.tierBasis === 'national' ? 'national' : 'state crosswalk'})` : capOf(h) === 'unassessed' ? 'Not assessed' : 'None found'],
-    ['Evidence: last checked / age', h => { const d = lastCheckedOf(h); const a = ageDays(d); return d ? `${d}${a != null ? ' (' + a + ' days)' : ''}` : 'Never checked'; }],
+    ['Oldest critical evidence (age)', h => evidenceDateText(h)],
     ['Nearest 24/7 EVT (straight-line)', h => accessText(S.access[h.id].evt247)],
     ['Nearest CSC/TSC-level (straight-line)', h => accessText(S.access[h.id].advanced)],
   ];
@@ -1810,6 +1887,20 @@ function compareFields() {
   f.push(['Needs verification', h => (h.derived.needsVerification || []).map(c => NV_LABELS[c] || c).join('; ') || '—']);
   f.push(['Record id / CCN', h => `${h.id}${h.ccn && h.ccn.value ? ' / ' + h.ccn.value + (h.ccn.relation === 'shared' ? ' (shared)' : '') : ''}`]);
   return f;
+}
+// "Label: reason", without repeating the label when the reason already starts with it.
+function eligText(e) {
+  const label = ELIG_LABELS[e && e.value] || '';
+  const reason = (e && e.reason) || '';
+  if (!reason) return label;
+  return reason.toLowerCase().startsWith(label.toLowerCase()) ? reason : `${label}: ${reason}`;
+}
+function claimSourceUrls(h) {
+  const urls = [];
+  for (const k of ['national', 'stateDesignation', 'evt', 'evt247']) {
+    for (const ev of (h[k] && h[k].evidence) || []) { const s = sourceOf(ev.src); if (s && s.url && !urls.includes(s.url)) urls.push(s.url); }
+  }
+  return urls.join(' ');
 }
 function accessText(r) {
   if (!r) return '—';
@@ -1835,6 +1926,14 @@ function openCompare() { renderCompareTable(); openDialog('dlg-compare'); }
 // ------------------------------------------------------------------
 // Data & methods view
 // ------------------------------------------------------------------
+// What the data actually holds about out-of-region destinations, for every
+// surface that mentions them.
+function neighborSentence() {
+  const nb = S.all.filter(isOOR);
+  if (!nb.length) return 'No receiving centers outside the five states are included, so a border hospital may have a closer center than the one named here.';
+  return `${nb.length} receiving centers in neighboring states (${[...new Set(nb.map(h => h.state))].join(', ')}) are included as destinations only — squares on the map, never counted in the inventory — so border hospitals are not told the nearest center is farther than it is. They sit at town centres, so distances to them are approximate. Canadian centers are not included.`;
+}
+
 function renderDataPanel() {
   const m = S.meta;
   const c = m.counts;
@@ -1858,6 +1957,9 @@ function renderDataPanel() {
   for (const h of S.all) if (!isOOR(h)) for (const code of h.derived.needsVerification || []) nv[code] = (nv[code] || 0) + 1;
   const vb = $('#verify-breakdown');
   clear(vb);
+  const inReg = S.all.filter(h => !isOOR(h));
+  const open = inReg.filter(h => (h.derived.needsVerification || []).length).length;
+  vb.appendChild(el('p', { class: 'hint', text: `Whole dataset: ${open} of ${inReg.length} facility records have at least one open item. A record can appear under several reasons.` }));
   const ul = el('ul', { class: 'checks' });
   for (const [code, n] of Object.entries(nv).sort((a, b) => b[1] - a[1])) ul.appendChild(el('li', null, [el('span', { class: 'num', text: String(n) }), el('span', { text: NV_LABELS[code] || code })]));
   vb.appendChild(ul);
@@ -1868,22 +1970,29 @@ function renderDataPanel() {
 function renderCoverage() {
   const wrap = $('#coverage');
   clear(wrap);
-  const claims = [['national', 'National cert.'], ['stateDesignation', 'State designation'], ['evt247', '24/7 EVT'], ['ed', 'Emergency dept.'], ['cah', 'CAH'], ['status', 'Status'], ['system', 'System']];
-  const methods = ['search-extract', 'nppes-api', 'manual-review', 'regulatory-inference', 'cms-dataset', 'prior-edition', null];
+  const claims = [['national', 'National cert.'], ['stateDesignation', 'State designation'], ['evt', 'EVT'], ['evt247', '24/7 EVT'], ['ed', 'Emergency dept.'],
+    ['cah', 'CAH'], ['status', 'Status'], ['address', 'Address'], ['system', 'System']];
   const recs = S.all.filter(h => !isOOR(h));
+  const unassessed = (c) => !c || (!c.method && (c.state === 'unknown' || c.value === 'unknown' || (c.state == null && c.value == null) || c.status === 'unknown'));
+  // Columns are the methods actually present, so every row adds up to the record count.
+  const order = ['search-extract', 'nppes-api', 'cms-dataset', 'regulatory-inference', 'rule-based', 'manual-review', 'derived', 'prior-edition'];
+  const present = new Set();
+  for (const h of recs) for (const [k] of claims) { const c = h[k]; if (!unassessed(c)) present.add(c.method || 'unrecorded'); }
+  const methods = order.filter(mm => present.has(mm)).concat([...present].filter(mm => !order.includes(mm)));
   const tbl = el('table', { class: 'data' });
-  tbl.appendChild(el('caption', { text: `How each claim was last established — ${recs.length} WWAMI records` }));
-  tbl.appendChild(el('thead', null, el('tr', null, [el('th', { scope: 'col', text: 'Claim' }), ...methods.map(mm => el('th', { scope: 'col', class: 'num', text: mm ? methodShort(mm) : 'not assessed' })), el('th', { scope: 'col', class: 'num', text: 'conflicting' })])));
+  tbl.appendChild(el('caption', { text: `How each claim was last established — whole dataset, ${recs.length} WWAMI records. Each row adds up to ${recs.length}; "of which conflicting" is a subset.` }));
+  tbl.appendChild(el('thead', null, el('tr', null, [el('th', { scope: 'col', text: 'Claim' }),
+    ...methods.map(mm => el('th', { scope: 'col', class: 'num', text: methodShort(mm) })),
+    el('th', { scope: 'col', class: 'num', text: 'not assessed' }), el('th', { scope: 'col', class: 'num', text: 'total' }),
+    el('th', { scope: 'col', class: 'num', text: 'of which conflicting' })])));
   const tb = el('tbody');
   for (const [k, label] of claims) {
-    const cells = methods.map(mm => recs.filter(h => {
-      const c = h[k];
-      if (!c) return mm === null;
-      const unassessed = (c.state === 'unknown' || c.value === 'unknown' || (c.state == null && c.value == null)) && !c.method;
-      return mm === null ? unassessed : (!unassessed && c.method === mm);
-    }).length);
-    const conf = recs.filter(h => h[k] && h[k].state === 'conflicting').length;
-    tb.appendChild(el('tr', null, [el('th', { scope: 'row', text: label }), ...cells.map(n => el('td', { class: 'num', text: String(n) })), el('td', { class: 'num', text: String(conf) })]));
+    const cells = methods.map(mm => recs.filter(h => !unassessed(h[k]) && (h[k].method || 'unrecorded') === mm).length);
+    const none = recs.filter(h => unassessed(h[k])).length;
+    const conf = recs.filter(h => h[k] && (h[k].state === 'conflicting' || (k === 'address' && h[k].status === 'conflicting'))).length;
+    tb.appendChild(el('tr', null, [el('th', { scope: 'row', text: label }), ...cells.map(n => el('td', { class: 'num', text: String(n) })),
+      el('td', { class: 'num', text: String(none) }), el('td', { class: 'num', text: String(cells.reduce((a, b) => a + b, 0) + none) }),
+      el('td', { class: 'num', text: String(conf) })]));
   }
   tbl.appendChild(tb);
   wrap.appendChild(tbl);
@@ -1931,9 +2040,9 @@ function buildMethods() {
     h2('Distances and destinations'),
     ul([
       'All distances are straight-line (great-circle) miles between recorded coordinates. Lines on the map are geometry, not road routes, transfer pathways or referral relationships; circles are straight-line radii, not travel-time isochrones.',
-      '“Nearest” always names its destination set: documented 24/7 EVT centers, or CSC/TSC-level centers (national certification, or a state level shown on that tier). Destinations must be active, located campuses in the analysis set, or listed neighboring-state centers.',
+      '“Nearest” always names its destination set: documented 24/7 EVT centers, or CSC/TSC-level centers (national certification, or a state level shown on that tier). Destinations must be active, located campuses that are not excluded (closed, pediatric-only, or documented without a general ED), or listed neighboring-state centers.',
       'The nearest geometric destination is not necessarily the clinically appropriate or accepting destination.',
-      'Neighboring-state centers (shown as squares) are included so border hospitals are not told the nearest center is farther than it is. Canadian centers are not included.',
+      neighborSentence(),
     ]),
     h2('Transport scenarios'),
     ul([
@@ -1944,7 +2053,7 @@ function buildMethods() {
     ]),
     h2('Access review scoring'),
     ul([
-      'Score = weighted mean (0–100) of normalised components: documented certification gap (none found 1.0 · ASR 0.65 · PSC 0.35), straight-line miles to the nearest 24/7 EVT center, to the nearest CSC/TSC-level center, and optionally to my center, each capped and divided by the cap.',
+      'Score = weighted mean (0–100) of normalised components: documented capability-tier gap — national certification or state level, whichever sets the display tier (none found 1.0 · ASR 0.65 · PSC 0.35), straight-line miles to the nearest 24/7 EVT center, to the nearest CSC/TSC-level center, and optionally to my center, each capped and divided by the cap.',
       'Only campuses in the analysis set without on-site 24/7 EVT or a CSC/TSC-level tier are candidates. Campuses whose capability was not assessed or is conflicting are never given a gap value; they appear on a separate verification shortlist ranked by geography alone.',
       'Ties (same score to 0.1) share a rank and are ordered by distance to EVT, then name. All-zero weights produce no ranking. Rank range shows sensitivity to each weight. Nothing about volumes, population, staffing, existing coverage or business opportunity is modelled.',
     ]),
@@ -2048,7 +2157,7 @@ function exportJson(scope) {
     export_scope: scopeDescription(scope), exported_on: todayStr(),
     release: S.meta.release, data_version: S.meta.data_version, evidence_review_date: S.meta.evidence_review_date,
     date_semantics: S.meta.date_semantics, claim_states: S.meta.claim_states, distance_metric: 'straight-line (great-circle) miles',
-    my_center: S.ui.hub || null, include_neighbor_centers: S.ui.neighbors, transport_assumptions: C.transportParams(S.ui.transport),
+    my_center: S.ui.hub || null, include_neighbor_centers: S.ui.neighbors && S.all.some(isOOR), neighbor_centers_in_data: S.all.filter(isOOR).length, transport_assumptions: C.transportParams(S.ui.transport),
     records: recs.map(h => {
       const r = Object.assign({}, h);
       delete r.fields;
@@ -2076,7 +2185,9 @@ function summaryMarkdown() {
   lines.push('## Scope', '');
   lines.push(`- Records in scope: **${recs.length}** — ${scopeLabel()}${activeFilterParts().length ? '; filters: ' + activeFilterParts().join(', ') : ''}.`);
   lines.push(`- My receiving center: ${hub ? hub.name + ' (' + placeLine(hub) + ')' : 'none chosen'}.`);
-  lines.push(`- Destination sets: ${S.sets.evt247.length} documented 24/7 EVT centers; ${S.sets.advanced.length} CSC/TSC-level centers${S.ui.neighbors ? ' (incl. neighboring-state centers)' : ' (neighboring-state centers excluded)'}. Distances are straight-line miles.`, '');
+  const nbIn = S.ui.neighbors ? S.sets.evt247.filter(isOOR).length + '/' + S.sets.advanced.filter(isOOR).length : null;
+  const nbText = !S.all.some(isOOR) ? ' (no out-of-region centers in the data)' : S.ui.neighbors ? ` (incl. ${nbIn.split('/')[0]} and ${nbIn.split('/')[1]} in neighboring states)` : ' (neighboring-state centers excluded)';
+  lines.push(`- Destination sets: ${S.sets.evt247.length} documented 24/7 EVT centers; ${S.sets.advanced.length} CSC/TSC-level centers${nbText}. Distances are straight-line miles.`, '');
   lines.push('## By state (records in scope)', '');
   lines.push('| Measure | WA | AK | ID | MT | WY | All |', '|---|---:|---:|---:|---:|---:|---:|');
   const per = stateTableRows(recs).map(([, hs]) => stateStats(hs));
@@ -2088,9 +2199,13 @@ function summaryMarkdown() {
   if (res.error) lines.push('All weights are zero; no ranking computed.');
   else {
     const w = res.params;
-    lines.push(`Weights: certification gap ${w.wGap}, miles to 24/7 EVT ${w.wEvt}, miles to CSC/TSC-level ${w.wAdv}${hub ? ', miles to my center ' + w.wHub : ''}; cap ${w.capMi} mi. Questions to investigate — not onboarding eligibility, feasibility or an outreach list.`, '');
+    const cands = recs.filter(h => C.isReviewCandidate(h, S.access[h.id])).length;
+    const unresolved = recs.filter(h => eligOf(h) === 'unknown').length;
+    lines.push(`Candidates: ${cands} campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier → ${res.ranked.length} ranked, ${res.shortlist.length} on the verification shortlist.` +
+      (unresolved ? ` ${unresolved} records in scope have unresolved eligibility and are not ranked (see "Unknowns" below).` : ''), '');
+    lines.push(`Weights: capability-tier gap ${w.wGap} (national certification or state level), miles to 24/7 EVT ${w.wEvt}, miles to CSC/TSC-level ${w.wAdv}${hub ? ', miles to my center ' + w.wHub : ''}; cap ${w.capMi} mi. Questions to investigate — not onboarding eligibility, feasibility or an outreach list.`, '');
     lines.push('| Rank | Hospital | State | Tier (basis) | Mi to 24/7 EVT | Score | Evidence checked |', '|---:|---|---|---|---:|---:|---|');
-    for (const r of res.ranked.slice(0, 10)) lines.push(`| ${r.rank}${r.tied ? '=' : ''} | ${esc(r.h.name)} | ${r.h.state} | ${tierOf(r.h) ? tierOf(r.h) + ' (' + (r.h.derived.tierBasis === 'national' ? 'national' : 'state') + ')' : 'none found'} | ${C.formatMiles(r.evtMi)} | ${r.score.toFixed(0)} | ${lastCheckedOf(r.h) || 'never'} |`);
+    for (const r of res.ranked.slice(0, 10)) lines.push(`| ${r.rank}${r.tied ? '=' : ''} | ${esc(r.h.name)} | ${r.h.state} | ${tierOf(r.h) ? tierOf(r.h) + ' (' + (r.h.derived.tierBasis === 'national' ? 'national' : 'state') + ')' : 'none found'} | ${C.formatMiles(r.evtMi)} | ${r.score.toFixed(0)} | ${evidenceDateText(r.h)} |`);
     lines.push('', `Verification shortlist (capability not assessed or conflicting; ranked by geography only): ${res.shortlist.slice(0, 8).map(r => esc(r.h.name) + ' (' + r.h.state + ', ' + C.formatMiles(r.evtMi) + ' mi)').join('; ') || 'none'}.`, '');
   }
   const p = C.transportParams(S.ui.transport);
@@ -2104,7 +2219,8 @@ function summaryMarkdown() {
   const methods = {};
   for (const h of recs) { const mm = (h.national && h.national.method) || 'not assessed'; methods[mm] = (methods[mm] || 0) + 1; }
   lines.push(`- National-certification claims by method: ${Object.entries(methods).map(([k, v]) => methodShort(k) + ' ' + v).join(', ')}.`);
-  lines.push('', `Source: ${location.origin}${location.pathname} · dataset hospitals.json ${m.data_version}.`);
+  saveUrlNow();
+  lines.push('', `Reproduce this view: ${location.href}`, `Dataset: hospitals.json ${m.data_version}.`);
   return lines.join('\n') + '\n';
 }
 
@@ -2174,8 +2290,19 @@ function printComparison() {
 function exportCompareCsv() {
   const hs = S.ui.compare.map(id => S.byId.get(id)).filter(Boolean);
   const fields = compareFields();
+  const hub = S.ui.hub && S.byId.get(S.ui.hub);
+  const p = C.transportParams(S.ui.transport);
   const rows = [['field'].concat(hs.map(h => h.name))].concat(fields.map(([label, fn]) => [label].concat(hs.map(fn))));
-  rows.push(['data_version'].concat(hs.map(() => stamp())), ['distance_metric'].concat(hs.map(() => 'straight-line miles')));
+  if (hub) rows.push(['my_center_minus_nearest_24_7_evt_mi'].concat(hs.map(h => { const d = C.hubDifferential(h, S.access[h.id], S.ui.transport); return d.status === 'ok' && C.isNum(d.miles) ? Math.round(d.miles * 10) / 10 : ''; })));
+  rows.push(['capability_sources'].concat(hs.map(claimSourceUrls)));
+  const meta = (k, v) => rows.push([k].concat(hs.map(() => v)));
+  meta('my_center', hub ? `${hub.name} (${hub.id})` : 'none chosen');
+  meta('distance_metric', 'straight-line miles');
+  meta('transport_assumptions', `DIDO ${p.didoMin} min; ground straight-line x${p.roadFactor} at ${p.groundMph} mph; rotor ${p.rotorMph} mph within ${p.rotorMaxMi} mi; fixed-wing ${p.fixedMph} mph + ${p.fixedGroundLegsMin} min ground legs (illustrative)`);
+  meta('data_version', S.meta.data_version);
+  meta('evidence_review_date', S.meta.evidence_review_date);
+  meta('exported_on', todayStr());
+  meta('release', S.meta.release);
   download(C.toCsv(rows), `stroke-comparison_${stamp()}.csv`, 'text/csv');
 }
 
@@ -2186,7 +2313,7 @@ async function exportPng() {
   if (!S.map) { toast('Map unavailable — nothing to draw', 'warn'); return; }
   const size = S.map.getSize();
   const legendW = 280;
-  const headH = 64;
+  const headH = 76;
   const footH = 58;
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   const W = size.x + legendW;
@@ -2237,7 +2364,7 @@ async function exportPng() {
       ctx.setLineDash([]);
       const mx = (a.x + b.x) / 2;
       const my = (a.y + b.y) / 2 + headH;
-      const label = `${C.formatMiles(l.miles)} mi straight-line`;
+      const label = lineLabel(l);
       ctx.font = '600 11px system-ui, sans-serif';
       const tw = ctx.measureText(label).width + 10;
       ctx.fillStyle = cssVar('--surface'); ctx.fillRect(mx - tw / 2, my - 9, tw, 18);
@@ -2261,6 +2388,10 @@ async function exportPng() {
     ctx.font = '12px system-ui, sans-serif'; ctx.fillStyle = cssVar('--text-2');
     const parts = activeFilterParts();
     ctx.fillText(`Map: ${MODE_LABELS[S.ui.mode]} · ${S.results.filter(isLocated).length} on map · ${scopeLabel()}${parts.length ? ' · filters: ' + parts.join(', ') : ''}`.slice(0, 170), 14, 46);
+    const selH = S.ui.selected && S.byId.get(S.ui.selected);
+    const hubH = S.ui.hub && S.byId.get(S.ui.hub);
+    const who = [selH ? 'Selected: ' + selH.name : null, hubH ? 'My receiving center: ' + hubH.name : null].filter(Boolean).join(' · ');
+    if (who) ctx.fillText(who.slice(0, 170), 14, 64);
     // Legend panel
     drawLegendPanel(ctx, size.x + 12, headH + 6, legendW - 24);
     // Footer
@@ -2390,7 +2521,12 @@ function readUrl() {
   const parsed = C.parseUrlState(location.search, { ids: new Set(S.all.map(h => h.id)), aliases, systems: new Set(S.systems.concat(['__independent', '__unknown'])) });
   S.ui = parsed.state;
   S.explicit = parsed.explicit;
-  if (!S.ui.hub && S.prefs.hub && S.byId.get(S.prefs.hub)) S.ui.hub = S.prefs.hub;
+  // My center must be a campus that can be a destination (active, located, not
+  // excluded). A link or saved choice naming anything else is set aside.
+  const canHub = (id) => { const h = id && S.byId.get(id); return !!(h && !isOOR(h) && C.canBeDestination(h)); };
+  if (S.ui.hub && !canHub(S.ui.hub)) { parsed.ignored.push('hub'); S.ui.hub = null; S.explicit.hub = false; }
+  if (S.prefs.hub && !canHub(S.prefs.hub)) S.prefs.hub = null;
+  if (!S.ui.hub && S.prefs.hub) S.ui.hub = S.prefs.hub;
   if (S.ui.mode === 'hub-distance' && !S.ui.hub) { S.ui.mode = 'capability'; parsed.ignored.push('mode'); }
   if (parsed.ignored.length) toast(`Some link settings were not recognised and were ignored (${parsed.ignored.slice(0, 4).join(', ')}${parsed.ignored.length > 4 ? '…' : ''})`, 'warn', 5000);
   return parsed;
@@ -2658,9 +2794,12 @@ function bindEvents() {
   // Data
   $('#open-methods').addEventListener('click', () => openDialog('dlg-methods'));
   $('#show-needs-verification').addEventListener('click', () => {
-    Object.assign(S.ui, { evidence: ['needs-verification'], scope: 'all', preset: null, tiers: [], evt: false });
+    // Show the whole worklist, not a slice of it: clear every other filter.
+    const d = C.defaultUiState();
+    Object.assign(S.ui, { q: '', state: 'ALL', system: null, basis: null, cah: null, evtMin: 0, include: d.include,
+      evidence: ['needs-verification'], scope: 'all', preset: null, tiers: [], evt: false });
     syncControls(); update(); switchView('find', { sheet: true });
-    toast(`${S.results.length} records need verification`);
+    toast(`${S.results.length} records need verification (whole dataset; other filters cleared)`);
   });
   $('#export-csv').addEventListener('click', () => exportCsv($('#export-scope').value));
   $('#export-json').addEventListener('click', () => exportJson($('#export-scope').value));
@@ -2679,7 +2818,7 @@ function bindEvents() {
 
   // Map chrome
   $('#jump').addEventListener('change', e => { const v = e.target.value; if (v) jumpTo(v); e.target.value = ''; });
-  $('#legend-toggle').addEventListener('click', () => { S.prefs.legend = !S.prefs.legend; S.prefs.legendChosen = true; savePrefs(); renderLegend(); });
+  $('#legend-toggle').addEventListener('click', () => { S.prefs.legend = !legendExpanded(); S.legendAuto = null; S.prefs.legendChosen = true; savePrefs(); renderLegend(); });
 
   // Detail
   $('#detail-close').addEventListener('click', () => closeDetail(true));
@@ -2740,7 +2879,13 @@ function onGlobalKey(e) {
   if (tag === 'input' || tag === 'textarea' || tag === 'select' || (t && t.isContentEditable)) return;
   if (document.querySelector('dialog[open]')) return;
   const k = e.key;
-  const run = (fn) => { e.preventDefault(); fn(); };
+  // On a phone the detail sheet covers everything; a shortcut that moves focus
+  // elsewhere first puts the sheet away so focus never lands under it.
+  const run = (fn) => {
+    e.preventDefault();
+    if (MOBILE_Q.matches && !$('#detail').hidden && k !== '?' && k.toLowerCase() !== 'd') minimizeDetailOnPhone(false);
+    fn();
+  };
   if (k === '/') return run(() => { switchView('find'); $('#search').focus(); });
   if (k === '?') return run(() => openDialog('dlg-shortcuts'));
   if (k === 'R' && e.shiftKey) return run(resetFilters);

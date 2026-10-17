@@ -261,7 +261,7 @@
   function legScenario(mode, origin, dest, miles, params) {
     const p = transportParams(params);
     if (!isNum(miles)) return { mode, minutes: null, status: 'unavailable', reason: 'Distance unknown (no verified location)' };
-    if (miles === 0) return { mode, minutes: 0, status: 'on-site', reason: 'Same campus — no interfacility transfer' };
+    if (origin && dest && origin.id === dest.id) return { mode, minutes: 0, status: 'on-site', reason: 'Same campus — no interfacility transfer' };
     if (mode === 'ground') {
       const f = groundFeasibility(origin, dest);
       if (f.status !== 'feasible') return { mode, minutes: null, status: f.status, reason: f.reason };
@@ -315,6 +315,12 @@
     }
     const sameCenter = near.dest && hub.dest && near.dest.id === hub.dest.id;
     const milesDiff = hub.miles - near.miles;
+    if (near.status === 'on-site' && !sameCenter) {
+      // A transfer compared with no transfer is not a like-for-like scenario.
+      const reason = 'Not compared: this campus is itself a documented 24/7 EVT center (no transfer)';
+      return { status: 'ok', sameCenter: false, onSite: true, miles: milesDiff, hubMiles: hub.miles, nearestMiles: 0,
+        minutes: ['ground', 'rotor', 'fixed'].map(mode => ({ mode, diff: null, reason })) };
+    }
     const minutes = ['ground', 'rotor', 'fixed'].map(mode => {
       const a = legScenario(mode, h, hub.dest, hub.miles, params);
       const b = legScenario(mode, h, near.dest, near.miles, params);
@@ -336,9 +342,18 @@
     { key: '100-150', label: '100–150 mi', test: mi => mi >= 100 && mi < 150 },
     { key: '150plus', label: '150 mi or more', test: mi => mi >= 150 },
   ];
-  function distanceBin(mi) {
-    if (!isNum(mi)) return 'unknown';
-    const b = DISTANCE_BINS.find(x => x.test(mi));
+  // Takes a nearestInSet() result ({status, miles}) or a bare number. "On site"
+  // means the same campus, not merely 0 mi: two campuses placed at one town
+  // centre are 0 mi apart and still a transfer.
+  function distanceBin(x) {
+    if (x && typeof x === 'object') {
+      if (x.status === 'on-site') return 'on-site';
+      if (!isNum(x.miles)) return 'unknown';
+      if (x.miles === 0) return 'lt50';
+      return distanceBin(x.miles);
+    }
+    if (!isNum(x)) return 'unknown';
+    const b = DISTANCE_BINS.find(d => d.test(x));
     return b ? b.key : 'unknown';
   }
 
@@ -517,15 +532,36 @@
     return {
       variants,
       name: variants.join(' '),
+      county: county ? normalizeSearch(county) : '',
+      city: addr.city ? normalizeSearch(addr.city) : '',
       all: normalizeSearch([].concat(names, [
-        addr.street, addr.city, county, county ? county + ' county' : '', h.state, addr.zip,
+        addr.street, addr.city, county, h.state, addr.zip,
         h.system && h.system.value, h.ccn && h.ccn.value, h.npi,
       ]).filter(Boolean).join(' ')),
     };
   }
 
+  // "Lewis County" / "Kenai Peninsula Borough": the words before "county" (or
+  // "borough") must be this record's county, as a phrase. Without this the
+  // word "county" would match everything and "lewis" would match any street,
+  // name or town beginning "Lewis". Returns the remaining tokens, or null when
+  // the record is in a different county; undefined when no county phrase.
+  const COUNTY_WORDS = ['county', 'borough'];
+  function countyPhrase(fields, tokens) {
+    const ci = tokens.findIndex(t => COUNTY_WORDS.includes(t));
+    if (ci < 1) return undefined;
+    for (let j = Math.min(3, ci); j >= 1; j--) {
+      if (fields.county && fields.county === tokens.slice(ci - j, ci).join(' ')) {
+        return tokens.slice(0, ci - j).concat(tokens.slice(ci + 1));
+      }
+    }
+    return null;
+  }
+
   function matchesQuery(fields, tokens) {
-    return tokens.every(t => matchesToken(fields.all, t));
+    const rest = countyPhrase(fields, tokens);
+    if (rest === null) return false;
+    return (rest || tokens).every(t => matchesToken(fields.all, t));
   }
 
   // Lower is better.
@@ -538,6 +574,9 @@
     if (variants.some(v => v.startsWith(q))) return 1;
     if (variants.some(v => v.includes(' ' + q))) return 2;
     if (tokens.every(t => matchesToken(name, t))) return 3;
+    // A town or county asked for by name outranks an incidental word match.
+    if (fields.city && fields.city === q) return 3;
+    if (countyPhrase(fields, tokens)) return 3;
     if (name.includes(q)) return 4;
     return 5;
   }
@@ -563,7 +602,7 @@
   // ------------------------------------------------------------------
   const MODES = ['capability', 'evt-distance', 'adv-distance', 'hub-distance', 'evidence', 'eligibility'];
   const VIEWS = ['find', 'explore', 'compare', 'data'];
-  const TIER_FILTERS = ['csc', 'tsc', 'psc', 'asr', 'none', 'unassessed'];
+  const TIER_FILTERS = ['csc', 'tsc', 'psc', 'asr', 'none', 'unassessed', 'conflicting'];
   const EVIDENCE_FILTERS = ['assessed', 'unassessed', 'conflicting', 'needs-verification'];
   const SCOPES = ['eligible', 'all'];
   const INCLUDES = ['excluded', 'unknown'];
@@ -571,7 +610,7 @@
   const THEMES = ['light', 'dark'];
   const BASEMAPS = ['muted', 'terrain', 'standard', 'none'];
   const CAH_FILTERS = ['yes', 'no', 'unknown'];
-  const OVERLAYS = ['lines', 'rings'];
+  const OVERLAYS = ['lines', 'nearest', 'rings'];
   const SORTS = ['relevance', 'name', 'tier', 'evt', 'hub', 'checked'];
   const PRESETS = ['telestroke', 'evt', 'state'];
   const MAX_COMPARE = 4;
@@ -647,7 +686,11 @@
       s.compare = valid.slice(0, MAX_COMPARE);
       if (valid.length > MAX_COMPARE) ignored.push('cmp:over-limit');
     }
-    if (p.has('ov')) s.overlays = list(p.get('ov')).filter(x => OVERLAYS.includes(x));
+    if (p.has('ov')) {
+      const raw = p.get('ov') === 'none' ? [] : list(p.get('ov'));
+      s.overlays = raw.filter(x => OVERLAYS.includes(x));
+      for (const x of raw) if (!OVERLAYS.includes(x)) ignored.push('ov:' + x);
+    }
     if (p.has('nb')) s.neighbors = p.get('nb') !== '0';
 
     // Old scenario links used wc for the certification-gap weight.
@@ -668,7 +711,8 @@
     if (p.has('lat') || p.has('lng') || p.has('z')) {
       const lat = parseFloat(p.get('lat'));
       const lng = parseFloat(p.get('lng'));
-      const z = parseInt(p.get('z'), 10);
+      // The map zooms in half steps; keep a shared z=7.5 at 7.5.
+      const z = snap(parseFloat(p.get('z')), 2, 18, 0.5);
       if (isNum(lat) && isNum(lng) && isNum(z) && lat >= -85 && lat <= 85 && lng >= -180 && lng <= 180 && z >= 2 && z <= 18) {
         s.view_lat = lat; s.view_lng = lng; s.view_z = z; explicit.viewport = true;
       } else ignored.push('viewport');

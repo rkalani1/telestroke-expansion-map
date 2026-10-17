@@ -123,7 +123,8 @@ def validate_claim(rid, name, c, sources, errors, kind='state'):
     st = c.get('state') if kind == 'state' else None
     if st in ('affirmative', 'negative', 'conflicting', 'no-record-found') and not c.get('evidence'):
         errors.append(f'{rid}: {name} is {st} but cites no evidence')
-    if st in ('affirmative', 'negative', 'conflicting', 'no-record-found') and not c.get('checked'):
+    if st in ('affirmative', 'negative', 'conflicting', 'no-record-found') and not c.get('checked') \
+            and not (c.get('method') == 'prior-edition' and c.get('editionAsOf')):
         errors.append(f'{rid}: {name} is {st} but has no checked date')
 
 
@@ -280,6 +281,28 @@ def last_checked(r, names):
     return max(ds) if ds else None
 
 
+def critical_claims(r):
+    names = ['national', 'evt247']
+    if state_program_applies(r):
+        names.append('stateDesignation')
+    return names
+
+
+def oldest_critical(r):
+    """(oldest check date over the documented critical claims, any undated?).
+    A documented claim with no check date makes the record's evidence age unknown."""
+    dates, undated = [], False
+    for n in critical_claims(r):
+        c = r.get(n) or {}
+        if st(c) == 'unknown' and not c.get('method'):
+            continue
+        if c.get('checked'):
+            dates.append(c['checked'])
+        else:
+            undated = True
+    return (None if undated or not dates else min(dates)), undated
+
+
 def needs_verification(r, derived, review_date):
     codes = []
     cap = derived['capability']
@@ -292,9 +315,11 @@ def needs_verification(r, derived, review_date):
     for n in ('national', 'stateDesignation', 'evt', 'evt247', 'status', 'ed'):
         if st(r.get(n)) == 'conflicting' and 'conflicting-evidence' not in codes:
             codes.append('conflicting-evidence')
-    lc = derived['capabilityChecked']
+    lc = derived.get('capabilityOldest')
     if cap in ('assessed', 'partial') and lc and days_between(lc, review_date) > STALE_DAYS:
         codes.append('evidence-stale')
+    if cap in ('assessed', 'partial', 'conflicting') and derived.get('capabilityUndated'):
+        codes.append('evidence-undated')
     if derived['eligibility']['value'] == 'unknown':
         codes.append('eligibility-unresolved')
     if not derived['located']:
@@ -353,7 +378,7 @@ CITY_TOLERANCE_MI = 15
 
 def geography(r, bounds, cities):
     loc = r.get('location')
-    out = {'county': None, 'countyFips': None, 'countyBoundaryMi': None, 'cityDistanceMi': None, 'flags': []}
+    out = {'county': None, 'countyFips': None, 'countyBoundaryMi': None, 'cityDistanceMi': None, 'nearestTown': None, 'flags': []}
     if not loc:
         return out
     if r.get('outOfRegion'):
@@ -374,6 +399,15 @@ def geography(r, bounds, cities):
         out['cityDistanceMi'] = round(d, 1)
         if d > CITY_TOLERANCE_MI:
             out['flags'].append('far-from-named-city')
+        else:
+            # The pattern behind the previous edition's Alaska errors: the point
+            # sits in one town while the record names a neighbouring one.
+            near = cities.nearest(r['state'], loc['lat'], loc['lng'])
+            if near and near[0] != hit[0] and d > 8 and near[3] < d / 3:
+                out['flags'].append('nearer-to-another-town')
+                out['nearestTown'] = near[0]
+    elif city and not hit and loc.get('method') != 'city-centroid':
+        out['flags'].append('town-not-in-gazetteer')
     if loc.get('conflict'):
         out['flags'].append('location-conflict')
     return out
@@ -391,6 +425,8 @@ def build_record(r, census, bounds, cities, review_date):
         ('tierBasis', basis),
         ('capability', 'n/a' if r.get('outOfRegion') else derive_capability(r)),
         ('capabilityChecked', last_checked(r, ('national', 'stateDesignation', 'evt', 'evt247'))),
+        ('capabilityOldest', None if r.get('outOfRegion') else oldest_critical(r)[0]),
+        ('capabilityUndated', False if r.get('outOfRegion') else oldest_critical(r)[1]),
         ('eligibility', {'value': 'not-applicable', 'code': 'out-of-region',
                          'reason': 'Receiving center outside the five states; used only as a destination'}
          if r.get('outOfRegion') else derive_eligibility(r)),
@@ -398,11 +434,14 @@ def build_record(r, census, bounds, cities, review_date):
         ('county', geo['county']),
         ('countyFips', geo['countyFips']),
         ('cityDistanceMi', geo['cityDistanceMi']),
+        ('nearestTown', geo['nearestTown']),
         ('geoFlags', geo['flags']),
     ])
     derived['needsVerification'] = [] if r.get('outOfRegion') else needs_verification(r, derived, review_date)
-    if derived['capabilityChecked']:
-        derived['capabilityAgeDays'] = days_between(derived['capabilityChecked'], review_date)
+    # Evidence age is the age of the OLDEST critical claim: one fresh re-check
+    # must not make carried-forward EVT or certification evidence look new.
+    if derived.get('capabilityOldest'):
+        derived['capabilityAgeDays'] = days_between(derived['capabilityOldest'], review_date)
     rec['cms'] = None if r.get('outOfRegion') else cms_reference(r, census)
     rec['derived'] = derived
     return rec
@@ -516,6 +555,7 @@ def write_audit(records, sources):
 
 WORK_TEXT = {
     'conflicting-evidence': ('P1', 'Resolve conflicting evidence', 'Issuer registry for the credential in conflict; hospital page'),
+    'evidence-undated': ('P2', 'Re-check capability evidence carried from the previous edition without a claim-level check date', 'Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages'),
     'capability-partial': ('P3', 'Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)', 'Hospital stroke and neurointerventional pages; issuer registries'),
     'capability-unassessed': ('P2', 'Assess stroke capability (national, state, EVT)', 'Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page'),
     'evidence-stale': ('P2', 'Re-check capability evidence (older than 12 months)', 'Issuer registries and hospital pages'),
@@ -527,6 +567,8 @@ WORK_TEXT = {
     'outside-state-boundary': ('P1', 'Coordinates fall outside the named state', 'Re-geocode from the verified address'),
     'near-state-boundary': ('P3', 'Coordinates near the state boundary (generalised coastline?)', 'Confirm against the verified address'),
     'near-county-boundary': ('P3', 'Coordinates within 1 mi of a county boundary — county assignment uncertain', 'Confirm county from the verified address'),
+    'nearer-to-another-town': ('P2', 'Coordinates sit much nearer another town than the one the address names', 'Verified street address and town, then a documented geocoder'),
+    'town-not-in-gazetteer': ('P3', 'Town not in the gazetteer, so the town check could not run', 'Confirm the town from the verified address'),
     'far-from-named-city': ('P1', 'Coordinates more than 15 mi from the town the address names', 'Verified street address, then a documented geocoder'),
     'location-conflict': ('P2', 'Two coordinate sources disagree by more than 1 mi', 'Geocode the verified street address and keep the matching point'),
     'address-conflicting': ('P2', 'NPPES and the previous edition give different street addresses', 'Hospital website contact page; state licensing roster'),

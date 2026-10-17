@@ -352,6 +352,7 @@ input[type="range"] { accent-color: var(--accent); min-height: 28px; width: 100%
 .sw-ASR { background: var(--c-asr); }
 .sw-NONE { background: var(--c-none); }
 .sw-UNASSESSED { background: transparent; border: 2px dashed var(--c-unassessed); }
+.sw-CONFLICT { background: transparent; border: 2px solid var(--c-conflict); transform: rotate(45deg) scale(.82); }
 
 .list-tools { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-4); border-bottom: 1px solid var(--border); font-size: var(--fs-sm); color: var(--text-2); }
 .list-tools select { min-height: 34px; }

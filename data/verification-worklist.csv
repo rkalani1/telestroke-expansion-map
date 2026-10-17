@@ -7,8 +7,11 @@ P1,500108,Virginia Mason Franciscan Health St. Joseph Medical Center,WA,conflict
 P1,500005,Virginia Mason Medical Center,WA,conflicting-evidence,Resolve conflicting evidence,Issuer registry for the credential in conflict; hospital page
 P1,—,ALL,—,open-item,Refresh the CMS Hospital General Information census to the current release,data.cms.gov dataset xubh-q36u (blocked from the October 2026 authoring environment)
 P2,020026,Alaska Native Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,020026,Alaska Native Medical Center,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,020017,Alaska Regional Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,020017,Alaska Regional Hospital,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,020008,Bartlett Regional Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,020008,Bartlett Regional Hospital,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,020008,Bartlett Regional Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020024,Central Peninsula Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,020024,Central Peninsula Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
@@ -16,6 +19,7 @@ P2,021307,Cordova Community Medical Center,AK,capability-unassessed,"Assess stro
 P2,021307,Cordova Community Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021307,Cordova Community Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020012,Fairbanks Memorial Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,020012,Fairbanks Memorial Hospital,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,020012,Fairbanks Memorial Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021309,Kanakanak Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,021309,Kanakanak Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
@@ -27,12 +31,16 @@ P2,020006,Mat-Su Regional Medical Center,AK,eligibility-unresolved,Confirm activ
 P2,021308,Norton Sound Regional Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,021308,Norton Sound Regional Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021308,Norton Sound Regional Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,021311,PeaceHealth Ketchikan Medical Center,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,021304,Petersburg Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,021304,Petersburg Medical Center,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,021304,Petersburg Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020001,Providence Alaska Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021302,Providence Seward Medical Center,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,021301,Providence Valdez Medical Center,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
+P2,021314,SEARHC Mt. Edgecumbe Medical Center,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,021305,SEARHC Wrangell Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,021305,SEARHC Wrangell Medical Center,AK,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,021305,SEARHC Wrangell Medical Center,AK,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
 P2,021305,SEARHC Wrangell Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021312,Samuel Simmonds Memorial Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
@@ -45,25 +53,36 @@ P2,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,eligibility-unresolved,Conf
 P2,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,131316,Bear Lake Memorial Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131316,Bear Lake Memorial Hospital,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,131317,Benewah Community Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,131325,Bingham Memorial Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131325,Bingham Memorial Hospital,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,131328,Bonner General Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,131301,Boundary Community Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,131309,Caribou Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131309,Caribou Medical Center,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,131308,Cascade Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,131326,Cassia Regional Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,131320,Clearwater Valley Hospital & Clinics,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130018,Eastern Idaho Regional Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,131327,Gritman Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130073,Grove Creek Medical Center,ID,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,130073,Grove Creek Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,130073,Grove Creek Medical Center,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,130074,Idaho Falls Community Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130074,Idaho Falls Community Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130049,Kootenai Health,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130049,Kootenai Health,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,131324,Lost Rivers Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131324,Lost Rivers Medical Center,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,130025,Madison Memorial Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,131319,Minidoka Memorial Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130065,Mountain View Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131303,Nell J. Redfield Memorial Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131303,Nell J. Redfield Memorial Hospital,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,131302,North Canyon Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131302,North Canyon Medical Center,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,130066,Northwest Specialty Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130066,Northwest Specialty Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130028,Portneuf Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,130028,Portneuf Medical Center,ID,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
 P2,131304,Power County Hospital District,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
@@ -74,19 +93,30 @@ P2,130072,Saint Alphonsus Neighborhood Hospital – South Nampa,ID,eligibility-u
 P2,130072,Saint Alphonsus Neighborhood Hospital – South Nampa,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,130007,Saint Alphonsus Regional Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,131314,Shoshone Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,131314,Shoshone Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,131314,Shoshone Medical Center,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,130003,St. Joseph Regional Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130003,St. Joseph Regional Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130006,St. Luke's Boise Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,130002,St. Luke's Magic Valley Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130002,St. Luke's Magic Valley Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130002,St. Luke's Magic Valley Medical Center,ID,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
+P2,131312,St. Luke's McCall,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130006-MERIDIAN,St. Luke's Meridian Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130006-MERIDIAN,St. Luke's Meridian Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130071,St. Luke's Nampa Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130071,St. Luke's Nampa Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,131321,St. Mary's Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,131305,Steele Memorial Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,131305,Steele Memorial Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,131305,Steele Memorial Medical Center,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,131315,Syringa General Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,131313,Teton Valley Hospital,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130063,Treasure Valley Hospital,ID,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,130063,Treasure Valley Hospital,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,130063,Treasure Valley Hospital,ID,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,130014,West Valley Medical Center,ID,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,130014,West Valley Medical Center,ID,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,130014,West Valley Medical Center,ID,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
 P2,271318,Barrett Hospital & Healthcare,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271318,Barrett Hospital & Healthcare,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
@@ -95,6 +125,7 @@ P2,271326,Beartooth Billings Clinic,MT,capability-unassessed,"Assess stroke capa
 P2,271326,Beartooth Billings Clinic,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,271326,Beartooth Billings Clinic,MT,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,270012,Benefis Health System,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,270012,Benefis Health System,MT,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,271307,Benefis Teton Medical Center,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271338,Big Horn County Memorial Hospital,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271338,Big Horn County Memorial Hospital,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
@@ -106,6 +137,7 @@ P2,271389,Big Sky Medical Center,MT,status-unknown,Confirm active / closed statu
 P2,270004,Billings Clinic,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,271333,Billings Clinic Broadwater,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,270057,Bozeman Health Deaconess Hospital,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,270057,Bozeman Health Deaconess Hospital,MT,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,271320,Cabinet Peaks Medical Center,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271345,Central Montana Medical Center,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271323,Clark Fork Valley Hospital,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
@@ -140,6 +172,7 @@ P2,271317,Livingston Healthcare,MT,capability-unassessed,"Assess stroke capabili
 P2,271317,Livingston Healthcare,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,271317,Livingston Healthcare,MT,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,270051,Logan Health Medical Center,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,270051,Logan Health Medical Center,MT,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,271329,Madison Valley Medical Center,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271328,Marias Medical Center,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271305,McCone County Health Center,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
@@ -177,6 +210,7 @@ P2,271319,Ruby Valley Medical Center,MT,capability-unassessed,"Assess stroke cap
 P2,271322,Sheridan Memorial Hospital,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271325,St. Luke Community Hospital,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,270003,St. Peter's Health,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,270003,St. Peter's Health,MT,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,271330,Stillwater Billings Clinic,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271330,Stillwater Billings Clinic,MT,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,271330,Stillwater Billings Clinic,MT,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
@@ -185,46 +219,128 @@ P2,270087,The HealthCenter,MT,eligibility-unresolved,Confirm active status and g
 P2,270087,The HealthCenter,MT,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,271341,Trinity Hospital,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,271321,Wheatland Memorial Hospital,MT,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
+P2,501319,Arbor Health Morton Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500012-ASTRIA,Astria Regional Medical Center,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500012-ASTRIA,Astria Regional Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500012-ASTRIA,Astria Regional Medical Center,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,501330,Astria Sunnyside Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500037,Astria Toppenish Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500139,Capital Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501313,Cascade Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500060,Cascade Valley Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500060,Cascade Valley Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501317,Columbia Basin Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500016,Confluence Health Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500148,Confluence Health – Wenatchee Valley Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500148,Confluence Health – Wenatchee Valley Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500148,Confluence Health – Wenatchee Valley Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,501308,Coulee Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501302,Dayton General Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501311,East Adams Rural Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500124,EvergreenHealth Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500084,EvergreenHealth Monroe,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500084,EvergreenHealth Monroe,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501322,Ferry County Memorial Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501325,Forks Community Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500138,Fred Hutchinson Cancer Center,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500138,Fred Hutchinson Cancer Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500138,Fred Hutchinson Cancer Center,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,501301,Garfield County Public Hospital District #1,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500031,Grays Harbor Community Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500064,Harborview Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500007,Island Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501323,Jefferson Healthcare,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500058,Kadlec Regional Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500052,Kaiser Permanente Central Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500052,Kaiser Permanente Central Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500052,Kaiser Permanente Central Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,501333,Kittitas Valley Community Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501316,Klickitat Valley Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501334,Lake Chelan Community Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,501334,Lake Chelan Community Hospital,WA,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
+P2,500150,Legacy Salmon Creek Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501305,Lincoln Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501337,Lourdes Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,WA-MADIGAN-AMC,Madigan Army Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,WA-MADIGAN-AMC,Madigan Army Medical Center,WA,nearer-to-another-town,Coordinates sit much nearer another town than the one the address names,"Verified street address and town, then a documented geocoder"
 P2,503301,Mary Bridge Children's Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
+P2,501336,Mason General Hospital & Family of Clinics,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501328,Mid Valley Hospital & Clinic,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500129,MultiCare Allenmore Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500129,MultiCare Allenmore Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500015,MultiCare Auburn Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500154,MultiCare Covington Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500154,MultiCare Covington Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500044,MultiCare Deaconess Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500079,MultiCare Good Samaritan Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500129-TACOMA-GENERAL,MultiCare Tacoma General Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500119,MultiCare Valley Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500119,MultiCare Valley Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500036,MultiCare Yakima Valley Memorial,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501310,Newport Community Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501321,North Valley Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501314,Ocean Beach Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501307,Odessa Memorial Healthcare Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,501307,Odessa Memorial Healthcare Center,WA,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
 P2,500072,Olympic Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500072,Olympic Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501318,Othello Community Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500051,Overlake Hospital Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501340,PeaceHealth Peace Island Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500050,PeaceHealth Southwest Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500050,PeaceHealth Southwest Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500041,PeaceHealth St. John Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500041,PeaceHealth St. John Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500030,PeaceHealth St. Joseph Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501329,PeaceHealth United General Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501312,Prosser Memorial Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500019,Providence Centralia Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500019,Providence Centralia Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500077,Providence Holy Family Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501326,Providence Mount Carmel Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500054,Providence Sacred Heart Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,501309,Providence St. Joseph Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500002,Providence St. Mary Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500024,Providence St. Peter Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501331,Pullman Regional Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501320,Quincy Valley Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500033,Samaritan Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,503300,Seattle Children's Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,503302,Shriners Hospital for Children,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,503302,Shriners Hospital for Children,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,500003,Skagit Valley Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501315,Skyline Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501338,Snoqualmie Valley Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500151,St. Anthony Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500021,St. Clare Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500021,St. Clare Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501335,St. Elizabeth Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500141,St. Francis Community Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500039,St. Michael Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501304,Summit Pacific Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500026,Swedish Edmonds Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500152,Swedish Issaquah,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500025,Swedish Medical Center – Cherry Hill,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500027,Swedish Medical Center – First Hill,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,501324,Three Rivers Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,501324,Three Rivers Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,501324,Three Rivers Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,501332,Tri-State Memorial Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500053,Trios Health,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500008,UW Medical Center – Montlake,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,500008,UW Medical Center – Montlake,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500001,UW Medical Center – Northwest,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500088,Valley Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,500011,Virginia Mason Franciscan Health St. Anne Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,500108,Virginia Mason Franciscan Health St. Joseph Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500005,Virginia Mason Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500049,Walla Walla General Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500049,Walla Walla General Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500049,Walla Walla General Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,501339,WhidbeyHealth Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+P2,501327,Whitman Hospital and Medical Center,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,501303,Willapa Harbor Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,501303,Willapa Harbor Hospital,WA,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,501303,Willapa Harbor Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,530035,Aspen Mountain Medical Center,WY,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,530035,Aspen Mountain Medical Center,WY,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
@@ -232,6 +348,7 @@ P2,530035,Aspen Mountain Medical Center,WY,status-unknown,Confirm active / close
 P2,530012,Banner Wyoming Medical Center,WY,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,530002,Campbell County Health,WY,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,530014,Cheyenne Regional Medical Center,WY,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,530014,Cheyenne Regional Medical Center,WY,evidence-undated,Re-check capability evidence carried from the previous edition without a claim-level check date,"Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
 P2,531307,Community Hospital,WY,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,531311,Crook County Hospital,WY,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,531311,Crook County Hospital,WY,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
@@ -275,24 +392,31 @@ P2,530034,Summit Medical Center,WY,eligibility-unresolved,Confirm active status 
 P2,530034,Summit Medical Center,WY,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,531306,Washakie Medical Center,WY,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,531303,Weston County Health Services,WY,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
+P3,020026,Alaska Native Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,020017,Alaska Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,020008,Bartlett Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,020024,Central Peninsula Hospital,AK,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,020024,Central Peninsula Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021307,Cordova Community Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021307,Cordova Community Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,020012,Fairbanks Memorial Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021309,Kanakanak Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021310,Maniilaq Health Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021310,Maniilaq Health Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,020006,Mat-Su Regional Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021308,Norton Sound Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021308,Norton Sound Regional Hospital,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,021311,PeaceHealth Ketchikan Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021311,PeaceHealth Ketchikan Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,021304,Petersburg Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,020001,Providence Alaska Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021306,Providence Kodiak Island Medical Center,AK,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,021306,Providence Kodiak Island Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021302,Providence Seward Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021302,Providence Seward Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,021301,Providence Valdez Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021301,Providence Valdez Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,021314,SEARHC Mt. Edgecumbe Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021305,SEARHC Wrangell Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021305,SEARHC Wrangell Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,021312,Samuel Simmonds Memorial Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
@@ -305,42 +429,63 @@ P3,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,capability-partial,"Finish 
 P3,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131316,Bear Lake Memorial Hospital,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131316,Bear Lake Memorial Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131317,Benewah Community Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131325,Bingham Memorial Hospital,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131325,Bingham Memorial Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131328,Bonner General Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131301,Boundary Community Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131309,Caribou Medical Center,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131309,Caribou Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131308,Cascade Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131326,Cassia Regional Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131320,Clearwater Valley Hospital & Clinics,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,130018,Eastern Idaho Regional Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131322,Franklin County Medical Center,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131322,Franklin County Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131327,Gritman Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130073,Grove Creek Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130074,Idaho Falls Community Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,130049,Kootenai Health,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131324,Lost Rivers Medical Center,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131324,Lost Rivers Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130025,Madison Memorial Hospital,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,130025,Madison Memorial Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131319,Minidoka Memorial Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130065,Mountain View Hospital,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,130065,Mountain View Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131303,Nell J. Redfield Memorial Hospital,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131303,Nell J. Redfield Memorial Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131302,North Canyon Medical Center,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131302,North Canyon Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,130066,Northwest Specialty Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130028,Portneuf Medical Center,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,130028,Portneuf Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131304,Power County Hospital District,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131304,Power County Hospital District,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,130013,Saint Alphonsus Medical Center – Nampa,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130072,Saint Alphonsus Neighborhood Hospital – South Nampa,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130007,Saint Alphonsus Regional Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131314,Shoshone Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,130003,St. Joseph Regional Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130003,St. Joseph Regional Medical Center,ID,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,130006,St. Luke's Boise Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131311,St. Luke's Elmore Medical Center,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131311,St. Luke's Elmore Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131310,St. Luke's Jerome,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131310,St. Luke's Jerome,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130002,St. Luke's Magic Valley Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130002,St. Luke's Magic Valley Medical Center,ID,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,131312,St. Luke's McCall,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130006-MERIDIAN,St. Luke's Meridian Medical Center,ID,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
 P3,130006-MERIDIAN,St. Luke's Meridian Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,130071,St. Luke's Nampa Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131323,St. Luke's Wood River Medical Center,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131323,St. Luke's Wood River Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131321,St. Mary's Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131321,St. Mary's Hospital,ID,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
+P3,131305,Steele Memorial Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131315,Syringa General Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,131313,Teton Valley Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,130063,Treasure Valley Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131318,Valor Health,ID,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,131318,Valor Health,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
@@ -354,10 +499,13 @@ P3,270012,Benefis Health System,MT,location-unverified,Verify campus coordinates
 P3,271307,Benefis Teton Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271338,Big Horn County Memorial Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271311,Big Sandy Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,271311,Big Sandy Medical Center,MT,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
 P3,271389,Big Sky Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,270004,Billings Clinic,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271333,Billings Clinic Broadwater,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271340,Bitterroot Health – Daly Hospital,MT,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,271340,Bitterroot Health – Daly Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,270057,Bozeman Health Deaconess Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271320,Cabinet Peaks Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271345,Central Montana Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271323,Clark Fork Valley Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
@@ -375,11 +523,15 @@ P3,271303,Granite County Medical Center,MT,location-unverified,Verify campus coo
 P3,270086,Great Falls Clinic Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271347,Holy Rosary Healthcare,MT,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,271347,Holy Rosary Healthcare,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,270017,Intermountain Health St. James Healthcare,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,270049,Intermountain Health St. Vincent Healthcare,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271334,Liberty Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271317,Livingston Healthcare,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,270051,Logan Health Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271336,Logan Health – Whitefish,MT,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,271336,Logan Health – Whitefish,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271329,Madison Valley Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,271329,Madison Valley Medical Center,MT,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
 P3,271328,Marias Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271305,McCone County Health Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271331,Mineral Community Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
@@ -390,16 +542,21 @@ P3,270032,Northern Montana Hospital,MT,location-unverified,Verify campus coordin
 P3,271337,Northern Rockies Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,270074,PHS Indian Hospital at Browning – Blackfeet,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271315,PHS Indian Hospital – Fort Belknap at Harlem,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,271315,PHS Indian Hospital – Fort Belknap at Harlem,MT,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
 P3,271312,Phillips County Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271313,Pioneer Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271324,Pondera Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271300,Poplar Community Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,271300,Poplar Community Hospital,MT,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
 P3,271309,Prairie Community Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271343,Providence St. Joseph Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,270014,Providence St. Patrick Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271308,Roosevelt Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,271308,Roosevelt Medical Center,MT,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
 P3,271327,Rosebud Health Care Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271346,Roundup Memorial Healthcare,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271319,Ruby Valley Medical Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,271319,Ruby Valley Medical Center,MT,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
 P3,271322,Sheridan Memorial Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,271344,Sidney Health Center,MT,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,271344,Sidney Health Center,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
@@ -411,54 +568,123 @@ P3,271341,Trinity Hospital,MT,location-unverified,Verify campus coordinates,"Geo
 P3,271321,Wheatland Memorial Hospital,MT,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501319,Arbor Health Morton Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500012-ASTRIA,Astria Regional Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501330,Astria Sunnyside Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500037,Astria Toppenish Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500139,Capital Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501313,Cascade Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500060,Cascade Valley Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501317,Columbia Basin Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500016,Confluence Health Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500148,Confluence Health – Wenatchee Valley Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500148,Confluence Health – Wenatchee Valley Hospital,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,501308,Coulee Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501302,Dayton General Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501311,East Adams Rural Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500124,EvergreenHealth Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500084,EvergreenHealth Monroe,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501322,Ferry County Memorial Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501325,Forks Community Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500138,Fred Hutchinson Cancer Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500138,Fred Hutchinson Cancer Center,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,501301,Garfield County Public Hospital District #1,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500031,Grays Harbor Community Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500064,Harborview Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500064,Harborview Medical Center,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,500007,Island Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501323,Jefferson Healthcare,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501323,Jefferson Healthcare,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,500058,Kadlec Regional Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500058,Kadlec Regional Medical Center,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,500052,Kaiser Permanente Central Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501333,Kittitas Valley Community Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501316,Klickitat Valley Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501334,Lake Chelan Community Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500150,Legacy Salmon Creek Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501305,Lincoln Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501337,Lourdes Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,WA-MADIGAN-AMC,Madigan Army Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,503301,Mary Bridge Children's Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,503301,Mary Bridge Children's Hospital,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,501336,Mason General Hospital & Family of Clinics,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501328,Mid Valley Hospital & Clinic,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500129,MultiCare Allenmore Hospital,WA,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
 P3,500129,MultiCare Allenmore Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500015,MultiCare Auburn Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500154,MultiCare Covington Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500044,MultiCare Deaconess Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500079,MultiCare Good Samaritan Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500129-TACOMA-GENERAL,MultiCare Tacoma General Hospital,WA,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
 P3,500129-TACOMA-GENERAL,MultiCare Tacoma General Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500119,MultiCare Valley Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500036,MultiCare Yakima Valley Memorial,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501310,Newport Community Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501310,Newport Community Hospital,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,501321,North Valley Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501314,Ocean Beach Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501314,Ocean Beach Hospital,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,501314,Ocean Beach Hospital,WA,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
 P3,501307,Odessa Memorial Healthcare Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501307,Odessa Memorial Healthcare Center,WA,town-not-in-gazetteer,"Town not in the gazetteer, so the town check could not run",Confirm the town from the verified address
+P3,500072,Olympic Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500072,Olympic Medical Center,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,501318,Othello Community Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500051,Overlake Hospital Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501340,PeaceHealth Peace Island Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500050,PeaceHealth Southwest Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500041,PeaceHealth St. John Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500030,PeaceHealth St. Joseph Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501329,PeaceHealth United General Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501312,Prosser Memorial Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500019,Providence Centralia Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500077,Providence Holy Family Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501326,Providence Mount Carmel Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500014,Providence Regional Medical Center Everett,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500054,Providence Sacred Heart Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501309,Providence St. Joseph Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500002,Providence St. Mary Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500024,Providence St. Peter Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501331,Pullman Regional Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501320,Quincy Valley Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500033,Samaritan Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,503300,Seattle Children's Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,503302,Shriners Hospital for Children,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500003,Skagit Valley Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501315,Skyline Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501338,Snoqualmie Valley Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500151,St. Anthony Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500021,St. Clare Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501335,St. Elizabeth Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500141,St. Francis Community Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500039,St. Michael Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501304,Summit Pacific Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500026,Swedish Edmonds Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500152,Swedish Issaquah,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500025,Swedish Medical Center – Cherry Hill,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500027,Swedish Medical Center – First Hill,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500027,Swedish Medical Center – First Hill,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,501324,Three Rivers Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501332,Tri-State Memorial Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501332,Tri-State Memorial Hospital,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,500053,Trios Health,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500008,UW Medical Center – Montlake,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500001,UW Medical Center – Northwest,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500088,Valley Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500011,Virginia Mason Franciscan Health St. Anne Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500108,Virginia Mason Franciscan Health St. Joseph Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,500005,Virginia Mason Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,500005,Virginia Mason Medical Center,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,500049,Walla Walla General Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501339,WhidbeyHealth Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,501339,WhidbeyHealth Medical Center,WA,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,501327,Whitman Hospital and Medical Center,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,501303,Willapa Harbor Hospital,WA,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,530035,Aspen Mountain Medical Center,WY,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,530012,Banner Wyoming Medical Center,WY,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
+P3,530012,Banner Wyoming Medical Center,WY,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,530002,Campbell County Health,WY,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,530002,Campbell County Health,WY,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,530014,Cheyenne Regional Medical Center,WY,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
+P3,530014,Cheyenne Regional Medical Center,WY,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,531312,Cody Regional Health,WY,capability-partial,"Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",Hospital stroke and neurointerventional pages; issuer registries
 P3,531312,Cody Regional Health,WY,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,531307,Community Hospital,WY,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"

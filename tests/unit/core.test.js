@@ -308,3 +308,54 @@ test('a documented receiving center is a destination even before its ED is docum
   assert.equal(C.canBeDestination(closed), false);
   assert.deepEqual(C.destinationSet([unresolved, pediatric, closed], 'evt247').map(h => h.id), ['a']);
 });
+
+test('a county phrase matches that county only, not streets or names that start the same', () => {
+  const rec = (id, name, county, street) => ({ id, name, address: { street, city: 'X' }, derived: { county } });
+  const lewis = C.buildSearchFields(rec('a', 'Arbor Health Morton Hospital', 'Lewis', '521 Adams Ave'));
+  const pierce = C.buildSearchFields(rec('b', 'Madigan Army Medical Center', 'Pierce', '9040 Jackson Ave Lewis'));
+  const nez = C.buildSearchFields(rec('c', 'St Joseph Regional Medical Center', 'Nez Perce', '415 6th St'));
+  const t = C.tokenize('Lewis County');
+  assert.equal(C.matchesQuery(lewis, t), true);
+  assert.equal(C.matchesQuery(pierce, t), false);
+  assert.equal(C.matchesQuery(nez, C.tokenize('nez perce county')), true);
+  const garfield = C.buildSearchFields(rec('d', 'Garfield County Health Center', 'Garfield', '332 Leavitt Ave'));
+  assert.equal(C.matchesQuery(garfield, C.tokenize('county')), true, 'a bare "county" is an ordinary word in names');
+  assert.equal(C.matchesQuery(nez, C.tokenize('county')), false, 'and does not match every record');
+  assert.equal(C.searchRank(lewis, 'Lewis County', t) < C.searchRank(pierce, 'Lewis', C.tokenize('Lewis')), true);
+});
+
+test('overlays, including modeled nearest lines, round-trip; unknown overlays are reported', () => {
+  const s = C.defaultUiState();
+  s.overlays = ['lines', 'nearest', 'rings'];
+  const q = C.serializeUrlState(s);
+  assert.deepEqual(C.parseUrlState('?' + q).state.overlays, ['lines', 'nearest', 'rings']);
+  const r = C.parseUrlState('?ov=nearest,bogus');
+  assert.deepEqual(r.state.overlays, ['nearest']);
+  assert.ok(r.ignored.includes('ov:bogus'));
+});
+
+test('a half-step zoom in a link is kept', () => {
+  const r = C.parseUrlState('?lat=47.5&lng=-120.5&z=7.5');
+  assert.equal(r.state.view_z, 7.5);
+  assert.equal(C.parseUrlState('?lat=47.5&lng=-120.5&z=7.3').state.view_z, 7.5);
+});
+
+test('two campuses at one point are 0 mi apart but still a transfer, not "on site"', () => {
+  const a = { id: 'A', location: { lat: 45, lng: -110 }, roadNetwork: { value: 'contiguous-us' } };
+  const b = { id: 'B', location: { lat: 45, lng: -110 }, roadNetwork: { value: 'contiguous-us' } };
+  const leg = C.legScenario('ground', a, b, 0);
+  assert.equal(leg.status, 'scenario');
+  assert.ok(leg.minutes > 0);
+  assert.equal(C.legScenario('ground', a, a, 0).status, 'on-site');
+  assert.equal(C.distanceBin({ status: 'ok', miles: 0 }), 'lt50');
+  assert.equal(C.distanceBin({ status: 'on-site', miles: 0 }), 'on-site');
+});
+
+test('a hospital that is itself a 24/7 EVT center gets no minute comparison with my center', () => {
+  const me = { id: 'A', location: { lat: 61.2, lng: -149.8 }, roadNetwork: { value: 'ak-railbelt' } };
+  const hub = { id: 'H', location: { lat: 47.6, lng: -122.3 }, roadNetwork: { value: 'contiguous-us' } };
+  const access = { evt247: { status: 'on-site', dest: me, miles: 0 }, hub: { status: 'ok', dest: hub, miles: 1432 } };
+  const d = C.hubDifferential(me, access);
+  assert.equal(d.miles, 1432);
+  assert.ok(d.minutes.every(m => m.diff === null && /no transfer/.test(m.reason)));
+});

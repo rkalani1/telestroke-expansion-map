@@ -19,7 +19,7 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from geo import Boundaries, haversine_mi  # noqa: E402
+from geo import Boundaries, Cities, haversine_mi  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 STATES = ('WA', 'AK', 'ID', 'MT', 'WY')
@@ -124,7 +124,7 @@ def main():
             if s in DOCUMENTED:
                 if not c.get('evidence'):
                     p.append(f'{r["id"]}.{name}: {s} with no evidence')
-                if not c.get('checked'):
+                if not c.get('checked') and not (c.get('method') == 'prior-edition' and c.get('editionAsOf')):
                     p.append(f'{r["id"]}.{name}: {s} with no checked date')
             for ev in c.get('evidence') or []:
                 if ev.get('src') not in sources:
@@ -135,10 +135,15 @@ def main():
                     p.append(f'{r["id"]}.{name}.{k}: bad date {d!r}')
             if c.get('checked') and c['checked'] > review:
                 p.append(f'{r["id"]}.{name}: checked {c["checked"]} after the review date {review}')
+            if c.get('method') == 'prior-edition' and c.get('checked') == '2026-07-04':
+                p.append(f'{r["id"]}.{name}: carries the previous edition\'s dataset-wide date as a claim check date')
             if c.get('method') == 'prior-edition' and c.get('checked') and c['checked'] > PRIOR_EDITION_MAX:
                 # Carried-forward evidence keeps the date it was last checked;
                 # the build must never re-stamp it.
                 p.append(f'{r["id"]}.{name}: prior-edition claim stamped {c["checked"]}')
+            n = c.get('note') or ''
+            if len(n) in (379, 380, 399, 400, 419, 420) and n[-1:].isalpha():
+                p.append(f'{r["id"]}.{name}: note looks cut at a fixed length ("…{n[-30:]}")')
             if c.get('checked') and not c.get('method'):
                 p.append(f'{r["id"]}.{name}: checked date without a method')
     for sid, s in sources.items():
@@ -258,6 +263,15 @@ def main():
             d = haversine_mi(lat, lng, r['location']['lat'], r['location']['lng'])
             if d > 25 and 'location-unverified' not in r['derived']['needsVerification']:
                 p.append(f'{r["id"]} {r["name"]}: {d:.0f} mi from other {city.title()}, {s} records')
+    # The town check must still catch the previous edition's own errors.
+    cities = Cities()
+    for label, lat, lng, town in (('South Peninsula as "Anchor Point"', 59.652133, -151.550296, 'Anchor Point'),
+                                  ('Central Peninsula as "Sterling"', 60.493865, -151.077658, 'Sterling')):
+        hit = cities.lookup('AK', town, near=(lat, lng))
+        near = cities.nearest('AK', lat, lng)
+        d = haversine_mi(lat, lng, hit[1], hit[2]) if hit else 0
+        if not (hit and near and near[0] != hit[0] and d > 8 and near[3] < d / 3):
+            p.append(f'town check no longer flags {label}')
     report('Regressions: known city/coordinate errors stay fixed', p)
 
     # -- counts ---------------------------------------------------------------------
