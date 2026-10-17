@@ -527,6 +527,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2007-01-02."
  },
+ "nppes-1013905660": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1013905660 — PROVIDENCE HEALTH & SERVICES WASHINGTON",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1013905660",
+  "published": "2025-05-13",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-10-07."
+ },
  "nppes-1013919794": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1013919794 — SOUTH BIG HORN COUNTY HOSPITAL DISTRICT",
@@ -604,6 +615,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-06-03."
  },
+ "nppes-1053363119": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1053363119 — PROVIDENCE HEALTH & SERVICES WASHINGTON",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1053363119",
+  "published": "2026-10-02",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-17."
+ },
  "nppes-1053373480": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1053373480 — YAKIMA VALLEY MEMORIAL HOSPITAL ASSOCIATION",
@@ -658,6 +680,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-07-06."
+ },
+ "nppes-1063567691": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1063567691 — YUKON-KUSKOKWIM HEALTH CORPORATION",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1063567691",
+  "published": "2023-03-07",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2007-01-24."
  },
  "nppes-1073510277": {
   "type": "nppes",
@@ -757,6 +790,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2017-06-14."
+ },
+ "nppes-1093924458": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1093924458 — ALASKA NATIVE TRIBAL HEALTH CONSORTIUM",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1093924458",
+  "published": "2026-03-13",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2007-05-22."
  },
  "nppes-1104295864": {
   "type": "nppes",
@@ -1000,6 +1044,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-15."
  },
+ "nppes-1215035787": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1215035787 — CORDOVA COMMUNITY MEDICAL CENTER",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1215035787",
+  "published": "2022-10-04",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-09-20."
+ },
  "nppes-1225033814": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1225033814 — SUNNYSIDE COMMUNITY HOSPITAL ASSOCIATION",
@@ -1032,6 +1087,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-04-06."
+ },
+ "nppes-1225101041": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1225101041 — NORTON SOUND HEALTH CORPORATION",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1225101041",
+  "published": "2018-03-14",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-11-17."
  },
  "nppes-1225289895": {
   "type": "nppes",
@@ -1264,6 +1330,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-12."
  },
+ "nppes-1306933643": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1306933643 — ARCTIC SLOPE NATIVE ASSOCIATION LTD",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1306933643",
+  "published": "2017-08-03",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-10-06."
+ },
  "nppes-1306952726": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1306952726 — MULTICARE HEALTH SYSTEM",
@@ -1296,6 +1373,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-07-17."
+ },
+ "nppes-1316995210": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1316995210 — MANIILAQ ASSOCIATION",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1316995210",
+  "published": "2011-10-19",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-04."
  },
  "nppes-1326002049": {
   "type": "nppes",
@@ -1616,6 +1704,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2009-12-17."
  },
+ "nppes-1396705539": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1396705539 — PEACEHEALTH",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1396705539",
+  "published": "2026-04-16",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-03-23."
+ },
  "nppes-1396710851": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1396710851 — LOGAN HEALTH - WHITEFISH",
@@ -1638,6 +1737,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-07-21."
  },
+ "nppes-1396858155": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1396858155 — CITY OF SEWARD",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1396858155",
+  "published": "2025-05-12",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-08-16."
+ },
  "nppes-1417945627": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1417945627 — KALISPELL REGIONAL MEDICAL CENTER INC",
@@ -1648,6 +1758,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-10-11."
+ },
+ "nppes-1417975061": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1417975061 — MAT-SU VALLEY MEDICAL CENTER LLC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1417975061",
+  "published": "2025-09-02",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-07-18."
  },
  "nppes-1427059070": {
   "type": "nppes",
@@ -1670,6 +1791,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-06-14."
+ },
+ "nppes-1437122843": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1437122843 — THE PETERSBURG MEDICAL CENTER",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1437122843",
+  "published": "2023-12-19",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-02-08."
  },
  "nppes-1447245857": {
   "type": "nppes",
@@ -1890,6 +2022,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-03-15."
+ },
+ "nppes-1528062429": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1528062429 — CENTRAL PENINSULA GENERAL HOSPITAL INC.",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1528062429",
+  "published": "2012-02-25",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-06-08."
  },
  "nppes-1538345251": {
   "type": "nppes",
@@ -2166,6 +2309,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-01-18."
  },
+ "nppes-1679566269": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1679566269 — SOUTH PENINSULA HOSPITAL, INC.",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1679566269",
+  "published": "2026-06-22",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-08-29."
+ },
  "nppes-1689685323": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1689685323 — FRANCES MAHON DEACONESS HOSPITAL",
@@ -2209,6 +2363,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2008-10-07."
+ },
+ "nppes-1700364627": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1700364627 — SOUTHEAST ALASKA REGIONAL HEALTH CONSORTIUM",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1700364627",
+  "published": "2023-03-13",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2018-08-02."
  },
  "nppes-1700809829": {
   "type": "nppes",
@@ -2276,6 +2441,28 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-04-03."
  },
+ "nppes-1720062524": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1720062524 — SOUTHEAST ALASKA REGIONAL HEALTH CONSORTIUM",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1720062524",
+  "published": "2026-04-02",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-12-05."
+ },
+ "nppes-1720537178": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1720537178 — FAIRBANKS MEMORIAL HOSPITAL, LLC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1720537178",
+  "published": "2023-10-02",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2016-09-27."
+ },
  "nppes-1730129305": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1730129305 — BIG SANDY MEDICAL CENTER INC",
@@ -2330,6 +2517,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-22."
+ },
+ "nppes-1750485488": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1750485488 — CITY OF VALDEZ",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1750485488",
+  "published": "2025-05-13",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-09-12."
  },
  "nppes-1750532321": {
   "type": "nppes",
@@ -2418,6 +2616,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-05-23."
+ },
+ "nppes-1780085381": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1780085381 — SITKA COMMUNITY HOSPITAL",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1780085381",
+  "published": "2014-09-15",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2014-09-15."
  },
  "nppes-1780778423": {
   "type": "nppes",
@@ -2561,6 +2770,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-20."
+ },
+ "nppes-1831255421": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1831255421 — BRISTOL BAY AREA HEALTH CORPORATION",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1831255421",
+  "published": "2020-08-22",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-12-28."
  },
  "nppes-1831284280": {
   "type": "nppes",
@@ -2793,6 +3013,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-31."
  },
+ "nppes-1891849261": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1891849261 — BARTLETT REGIONAL HOSPITAL",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1891849261",
+  "published": "2023-11-21",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2007-01-23."
+ },
  "nppes-1891879680": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1891879680 — CLALLAM COUNTY PUBLIC HOSPITAL DISTRICT NO 1",
@@ -2913,6 +3144,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-08-11."
+ },
+ "nppes-1952348047": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1952348047 — GALEN HOSPITAL ALASKA, INC.",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1952348047",
+  "published": "2025-11-12",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-31."
  },
  "nppes-1952379547": {
   "type": "nppes",

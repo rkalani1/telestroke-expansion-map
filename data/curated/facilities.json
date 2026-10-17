@@ -17,53 +17,80 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1053363119",
   "state": "AK",
   "address": {
-   "street": "3200 PROVIDENCE DRIVE",
-   "city": "Anchorage",
-   "zip": "99508",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1053363119",
+     "supports": "Practice location: 3200 PROVIDENCE DR, ANCHORAGE, AK 995084661"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "3200 PROVIDENCE DRIVE",
+   "city": "Anchorage",
+   "zip": "99508",
+   "status": "corroborated"
   },
   "location": {
    "lat": 61.1871675,
    "lng": -149.8194391,
-   "method": "legacy-geocode",
-   "precision": "unknown",
+   "method": "rule-based",
+   "precision": "street",
    "evidence": [
     {
      "src": "prior-edition-v3",
      "supports": "v3 geocodeSource: None"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "CMS coordinates 61.18980, -149.81762"
     }
    ],
-   "checked": null,
-   "note": null
+   "checked": "2026-10-17",
+   "note": "Previous-edition geocode (OpenStreetMap Nominatim) and CMS coordinates agree within 1011 ft; street address corroborated by NPPES."
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1053363119",
+     "supports": "NPI active; last updated 2026-10-02"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2026-10-02; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1053363119",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282N00000X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -77,6 +104,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1053363119",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -95,6 +126,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020001"
+    },
+    {
+     "src": "nppes-1053363119",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -121,6 +156,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Church"
+    },
+    {
+     "src": "nppes-1053363119",
+     "supports": "Legal business name: PROVIDENCE HEALTH & SERVICES WASHINGTON"
     }
    ],
    "checked": "2026-10-17",
@@ -135,12 +174,23 @@
    }
   },
   "system": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "v3 guessed \"Providence\" from the facility name",
-   "value": null,
-   "state": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1053363119",
+     "supports": "Organization name in NPPES: PROVIDENCE HEALTH & SERVICES WASHINGTON"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Corporate affiliation shown by the legal or DBA name. Affiliation does not imply a referral, transfer or telestroke relationship.",
+   "state": "affiliated",
+   "value": "Providence",
+   "changedFrom": {
+    "state": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "national": {
    "evidence": [
@@ -222,53 +272,80 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1417975061",
   "state": "AK",
   "address": {
-   "street": "2500 S WOODWORTH LOOP",
-   "city": "Palmer",
-   "zip": "99645",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1417975061",
+     "supports": "Practice location: 2500 S WOODWORTH LOOP, PALMER, AK 996458984"
     }
    ],
-   "checked": "2026-09-12",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "2500 S WOODWORTH LOOP",
+   "city": "Palmer",
+   "zip": "99645",
+   "status": "corroborated"
   },
   "location": {
    "lat": 61.5627638,
    "lng": -149.2578912,
-   "method": "legacy-geocode",
-   "precision": "unknown",
+   "method": "rule-based",
+   "precision": "street",
    "evidence": [
     {
      "src": "prior-edition-v3",
      "supports": "v3 geocodeSource: None"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "CMS coordinates 61.56122, -149.25872"
     }
    ],
-   "checked": null,
-   "note": null
+   "checked": "2026-10-17",
+   "note": "Previous-edition geocode (OpenStreetMap Nominatim) and CMS coordinates agree within 582 ft; street address corroborated by NPPES."
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1417975061",
+     "supports": "NPI active; last updated 2025-09-02"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2025-09-02; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1417975061",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282N00000X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -282,6 +359,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1417975061",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -300,6 +381,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020006"
+    },
+    {
+     "src": "nppes-1417975061",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -326,6 +411,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Private"
+    },
+    {
+     "src": "nppes-1417975061",
+     "supports": "Legal business name: MAT-SU VALLEY MEDICAL CENTER LLC"
     }
    ],
    "checked": "2026-10-17",
@@ -427,35 +516,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1891849261",
   "state": "AK",
   "address": {
-   "street": "3260 HOSPITAL DR",
-   "city": "Juneau",
-   "zip": "99801",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1891849261",
+     "supports": "Practice location: 3260 HOSPITAL DRIVE, JUNEAU, AK 998017808"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "3260 HOSPITAL DR",
+   "city": "Juneau",
+   "zip": "99801",
+   "status": "corroborated"
   },
   "location": {
    "lat": 58.329234,
    "lng": -134.468424,
-   "method": "legacy-geocode",
-   "precision": "unknown",
+   "method": "rule-based",
+   "precision": "street",
    "evidence": [
     {
      "src": "prior-edition-v3",
      "supports": "v3 geocodeSource: Nominatim/OpenStreetMap"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "CMS coordinates 58.32870, -134.46683"
     }
    ],
-   "checked": null,
-   "note": null
+   "checked": "2026-10-17",
+   "note": "Previous-edition geocode (OpenStreetMap Nominatim) and CMS coordinates agree within 363 ft; street address corroborated by NPPES."
   },
   "status": {
    "evidence": [],
@@ -469,11 +566,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1891849261",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282N00000X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -487,6 +588,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1891849261",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -505,6 +610,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020008"
+    },
+    {
+     "src": "nppes-1891849261",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -531,6 +640,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Local"
+    },
+    {
+     "src": "nppes-1891849261",
+     "supports": "Legal business name: BARTLETT REGIONAL HOSPITAL"
     }
    ],
    "checked": "2026-10-17",
@@ -632,35 +745,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1720537178",
   "state": "AK",
   "address": {
-   "street": "1650 COWLES ST",
-   "city": "Fairbanks",
-   "zip": "99701",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1720537178",
+     "supports": "Practice location: 1650 COWLES ST, FAIRBANKS, AK 997015907"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "1650 COWLES ST",
+   "city": "Fairbanks",
+   "zip": "99701",
+   "status": "corroborated"
   },
   "location": {
    "lat": 64.8332,
    "lng": -147.7408,
-   "method": "legacy-geocode",
-   "precision": "unknown",
+   "method": "rule-based",
+   "precision": "street",
    "evidence": [
     {
      "src": "prior-edition-v3",
      "supports": "v3 geocodeSource: Nominatim/OpenStreetMap"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "CMS coordinates 64.83141, -147.73625"
     }
    ],
-   "checked": null,
-   "note": null
+   "checked": "2026-10-17",
+   "note": "Previous-edition geocode (OpenStreetMap Nominatim) and CMS coordinates agree within 962 ft; street address corroborated by NPPES."
   },
   "status": {
    "evidence": [],
@@ -674,11 +795,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1720537178",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282N00000X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -692,6 +817,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1720537178",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -710,6 +839,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020012"
+    },
+    {
+     "src": "nppes-1720537178",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -736,6 +869,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Other"
+    },
+    {
+     "src": "nppes-1720537178",
+     "supports": "Legal business name: FAIRBANKS MEMORIAL HOSPITAL, LLC"
     }
    ],
    "checked": "2026-10-17",
@@ -837,21 +974,25 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1952348047",
   "state": "AK",
   "address": {
-   "street": "2801 DEBARR ROAD",
-   "city": "Anchorage",
-   "zip": "99508",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1952348047",
+     "supports": "Practice location: 2801 DEBARR RD, ANCHORAGE, AK 995082932"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "2801 DEBARR ROAD",
+   "city": "Anchorage",
+   "zip": "99508",
+   "status": "corroborated"
   },
   "location": {
    "lat": 61.2048,
@@ -868,22 +1009,41 @@
    "note": null
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1952348047",
+     "supports": "NPI active; last updated 2025-11-12"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2025-11-12; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1952348047",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282N00000X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -897,6 +1057,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1952348047",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -915,6 +1079,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020017"
+    },
+    {
+     "src": "nppes-1952348047",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -941,6 +1109,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Proprietary"
+    },
+    {
+     "src": "nppes-1952348047",
+     "supports": "Legal business name: GALEN HOSPITAL ALASKA, INC."
     }
    ],
    "checked": "2026-10-17",
@@ -1042,19 +1214,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1063567691",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
-   "method": null,
-   "evidence": [],
-   "checked": null,
-   "note": null
+   "evidence": [
+    {
+     "src": "nppes-1063567691",
+     "supports": "Practice location: 700 CHIEF EDDIE HOFFMAN HWY, BETHEL, AK 99559"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "700 CHIEF EDDIE HOFFMAN HWY",
+   "city": "Bethel",
+   "zip": "99559",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
-  "location": null,
+  "location": {
+   "lat": 60.79222,
+   "lng": -161.75583,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Bethel, AK"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Bethel (town named by the address); no cited campus coordinates. Distances from this point are approximate."
+  },
   "status": {
    "evidence": [],
    "checked": null,
@@ -1067,11 +1263,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1063567691",
+     "supports": "Primary taxonomy 282NR1301X General Acute Care Hospital, Rural"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282NR1301X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -1085,6 +1285,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1063567691",
+     "supports": "Primary taxonomy 282NR1301X General Acute Care Hospital, Rural"
     }
    ],
    "checked": "2026-10-17",
@@ -1103,6 +1307,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020018"
+    },
+    {
+     "src": "nppes-1063567691",
+     "supports": "Primary taxonomy 282NR1301X General Acute Care Hospital, Rural"
     }
    ],
    "checked": "2026-10-17",
@@ -1129,6 +1337,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Tribal"
+    },
+    {
+     "src": "nppes-1063567691",
+     "supports": "Legal business name: YUKON-KUSKOKWIM HEALTH CORPORATION"
     }
    ],
    "checked": "2026-10-17",
@@ -1201,11 +1413,12 @@
  {
   "id": "020024",
   "previousIds": [],
-  "name": "Central Peninsula General Hospital",
+  "name": "Central Peninsula Hospital",
   "officialName": null,
   "formerNames": [],
   "aliases": [
-   "CPGH"
+   "CPGH",
+   "Central Peninsula General Hospital"
   ],
   "ccn": {
    "value": "020024",
@@ -1214,21 +1427,28 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1528062429",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": "Sterling",
-   "zip": "99672",
-   "status": "coordinate-derived",
    "evidence": [
     {
-     "src": "cms-hgi-2023-10-archive"
+     "src": "nppes-1528062429",
+     "supports": "Practice location: 250 HOSPITAL PL, SOLDOTNA, AK 996697559"
     }
    ],
-   "checked": null,
-   "note": "v3 inferred this city from the CMS coordinates against a ZIP database (cityConfidence: coordinate-derived)",
-   "method": "derived"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street and a city inferred from coordinates (Sterling).",
+   "street": "250 HOSPITAL PL",
+   "city": "Soldotna",
+   "zip": "99669",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "coordinate-derived",
+    "checked": null,
+    "method": "derived",
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "location": {
    "lat": 60.493865,
@@ -1256,11 +1476,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1528062429",
+     "supports": "Primary taxonomy 282NR1301X General Acute Care Hospital, Rural"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282NR1301X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -1274,6 +1498,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1528062429",
+     "supports": "Primary taxonomy 282NR1301X General Acute Care Hospital, Rural"
     }
    ],
    "checked": "2026-10-17",
@@ -1292,6 +1520,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020024"
+    },
+    {
+     "src": "nppes-1528062429",
+     "supports": "Primary taxonomy 282NR1301X General Acute Care Hospital, Rural"
     }
    ],
    "checked": "2026-10-17",
@@ -1318,6 +1550,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Other"
+    },
+    {
+     "src": "nppes-1528062429",
+     "supports": "Legal business name: CENTRAL PENINSULA GENERAL HOSPITAL INC."
     }
    ],
    "checked": "2026-10-17",
@@ -1401,53 +1637,80 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1093924458",
   "state": "AK",
   "address": {
-   "street": "4315 DIPLOMACY DR",
-   "city": "Anchorage",
-   "zip": "99508",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1093924458",
+     "supports": "Practice location: 4315 DIPLOMACY DR, ANCHORAGE, AK 995085926"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "4315 DIPLOMACY DR",
+   "city": "Anchorage",
+   "zip": "99508",
+   "status": "corroborated"
   },
   "location": {
    "lat": 61.183,
    "lng": -149.7997,
-   "method": "legacy-geocode",
-   "precision": "unknown",
+   "method": "rule-based",
+   "precision": "street",
    "evidence": [
     {
      "src": "prior-edition-v3",
      "supports": "v3 geocodeSource: Nominatim/OpenStreetMap"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "CMS coordinates 61.18189, -149.80058"
     }
    ],
-   "checked": null,
-   "note": null
+   "checked": "2026-10-17",
+   "note": "Previous-edition geocode (OpenStreetMap Nominatim) and CMS coordinates agree within 433 ft; street address corroborated by NPPES."
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1093924458",
+     "supports": "NPI active; last updated 2026-03-13"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2026-03-13; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1093924458",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Acute Care\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Acute Care\" and NPPES primary taxonomy 282N00000X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -1461,6 +1724,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Acute Care"
+    },
+    {
+     "src": "nppes-1093924458",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -1479,6 +1746,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Acute Care\" (2023-10); CCN 020026"
+    },
+    {
+     "src": "nppes-1093924458",
+     "supports": "Primary taxonomy 282N00000X General Acute Care Hospital"
     }
    ],
    "checked": "2026-10-17",
@@ -1505,6 +1776,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Federal"
+    },
+    {
+     "src": "nppes-1093924458",
+     "supports": "Legal business name: ALASKA NATIVE TRIBAL HEALTH CONSORTIUM"
     }
    ],
    "checked": "2026-10-17",
@@ -1598,36 +1873,79 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1750485488",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
-   "method": null,
-   "evidence": [],
-   "checked": null,
-   "note": null
+   "evidence": [
+    {
+     "src": "nppes-1750485488",
+     "supports": "Practice location: 911 MEALS, VALDEZ, AK 996860550"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "911 MEALS",
+   "city": "Valdez",
+   "zip": "99686",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
-  "location": null,
+  "location": {
+   "lat": 61.13083,
+   "lng": -146.34833,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Valdez, AK"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Valdez (town named by the address); no cited campus coordinates. Distances from this point are approximate."
+  },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1750485488",
+     "supports": "NPI active; last updated 2025-05-13"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2025-05-13; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1750485488",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -1641,6 +1959,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1750485488",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -1659,6 +1981,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021301 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1750485488",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -1700,6 +2026,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Local"
+    },
+    {
+     "src": "nppes-1750485488",
+     "supports": "Legal business name: CITY OF VALDEZ"
     }
    ],
    "checked": "2026-10-17",
@@ -1714,12 +2044,23 @@
    }
   },
   "system": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": null,
-   "value": null,
-   "state": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1750485488",
+     "supports": "Organization name in NPPES: PROVIDENCE VALDEZ MEDICAL CENTER"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Corporate affiliation shown by the legal or DBA name. Affiliation does not imply a referral, transfer or telestroke relationship.",
+   "state": "affiliated",
+   "value": "Providence",
+   "changedFrom": {
+    "state": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "national": {
    "evidence": [],
@@ -1772,12 +2113,13 @@
  {
   "id": "021302",
   "previousIds": [],
-  "name": "Providence Seward Hospital",
+  "name": "Providence Seward Medical Center",
   "officialName": null,
   "formerNames": [],
   "aliases": [
    "PSH",
-   "Seward Hospital"
+   "Seward Hospital",
+   "Providence Seward Hospital"
   ],
   "ccn": {
    "value": "021302",
@@ -1786,21 +2128,28 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1396858155",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
    "evidence": [
     {
-     "src": "cms-hgi-2023-10-archive"
+     "src": "nppes-1396858155",
+     "supports": "Practice location: 417 FIRST AVENUE, SEWARD, AK 996640417"
     }
    ],
-   "checked": null,
-   "note": null,
-   "method": null
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "417 FIRST AVENUE",
+   "city": "Seward",
+   "zip": "99664",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "location": {
    "lat": 60.105046,
@@ -1817,22 +2166,41 @@
    "note": null
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1396858155",
+     "supports": "NPI active; last updated 2025-05-12"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2025-05-12; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1396858155",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -1846,6 +2214,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1396858155",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -1864,6 +2236,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021302 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1396858155",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -1905,6 +2281,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Local"
+    },
+    {
+     "src": "nppes-1396858155",
+     "supports": "Legal business name: CITY OF SEWARD"
     }
    ],
    "checked": "2026-10-17",
@@ -1919,12 +2299,23 @@
    }
   },
   "system": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "v3 guessed \"Providence\" from the facility name",
-   "value": null,
-   "state": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1396858155",
+     "supports": "Organization name in NPPES: PROVIDENCE SEWARD MEDICAL CENTER"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Corporate affiliation shown by the legal or DBA name. Affiliation does not imply a referral, transfer or telestroke relationship.",
+   "state": "affiliated",
+   "value": "Providence",
+   "changedFrom": {
+    "state": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "national": {
    "evidence": [],
@@ -1986,19 +2377,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1780085381",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
-   "method": null,
-   "evidence": [],
-   "checked": null,
-   "note": null
+   "evidence": [
+    {
+     "src": "nppes-1780085381",
+     "supports": "Practice location: 209 MOLLER AVE, SITKA, AK 998357142"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "209 MOLLER AVE",
+   "city": "Sitka",
+   "zip": "99835",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
-  "location": null,
+  "location": {
+   "lat": 57.05315,
+   "lng": -135.33088,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Sitka, AK"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Sitka (town named by the address); no cited campus coordinates. Distances from this point are approximate."
+  },
   "status": {
    "evidence": [],
    "checked": null,
@@ -2011,11 +2426,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1780085381",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -2029,6 +2448,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1780085381",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2047,6 +2470,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2020-01); CCN 021303 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1780085381",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2088,6 +2515,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Local"
+    },
+    {
+     "src": "nppes-1780085381",
+     "supports": "Legal business name: SITKA COMMUNITY HOSPITAL"
     }
    ],
    "checked": "2026-10-17",
@@ -2171,21 +2602,28 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1437122843",
   "state": "AK",
   "address": {
-   "street": "PO BOX 589",
-   "city": "Petersburg",
-   "zip": "99833",
-   "status": "prior-edition",
    "evidence": [
     {
-     "src": "prior-edition-v3"
+     "src": "nppes-1437122843",
+     "supports": "Practice location: 103 FRAM STREET, PETERSBURG, AK 998330589"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had only \"PO BOX 589\".",
+   "street": "103 FRAM STREET",
+   "city": "Petersburg",
+   "zip": "99833",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "prior-edition",
+    "checked": "2026-07-04",
+    "method": "prior-edition",
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "location": {
    "lat": 56.8125,
@@ -2213,11 +2651,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1437122843",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -2231,6 +2673,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1437122843",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2249,6 +2695,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021304 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1437122843",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2290,6 +2740,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Local"
+    },
+    {
+     "src": "nppes-1437122843",
+     "supports": "Legal business name: THE PETERSBURG MEDICAL CENTER"
     }
    ],
    "checked": "2026-10-17",
@@ -2392,21 +2846,25 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1700364627",
   "state": "AK",
   "address": {
-   "street": "232 WOOD STREET",
-   "city": "Wrangell",
-   "zip": "99929",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1700364627",
+     "supports": "Practice location: 232 WOOD STREET, WRANGELL, AK 99929"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "232 WOOD STREET",
+   "city": "Wrangell",
+   "zip": "99929",
+   "status": "corroborated"
   },
   "location": {
    "lat": 56.454866,
@@ -2440,11 +2898,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1700364627",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -2458,6 +2920,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1700364627",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2476,6 +2942,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021305 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1700364627",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2517,6 +2987,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Local"
+    },
+    {
+     "src": "nppes-1700364627",
+     "supports": "Legal business name: SOUTHEAST ALASKA REGIONAL HEALTH CONSORTIUM"
     }
    ],
    "checked": "2026-10-17",
@@ -2531,12 +3005,23 @@
    }
   },
   "system": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "v3 guessed \"SEARHC\" from the facility name",
-   "value": null,
-   "state": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1700364627",
+     "supports": "Organization name in NPPES: SOUTHEAST ALASKA REGIONAL HEALTH CONSORTIUM"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Corporate affiliation shown by the legal or DBA name. Affiliation does not imply a referral, transfer or telestroke relationship.",
+   "state": "affiliated",
+   "value": "SEARHC",
+   "changedFrom": {
+    "state": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "national": {
    "evidence": [
@@ -2620,21 +3105,28 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1013905660",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": "Kodiak",
-   "zip": "99619",
-   "status": "coordinate-derived",
    "evidence": [
     {
-     "src": "cms-hgi-2023-10-archive"
+     "src": "nppes-1013905660",
+     "supports": "Practice location: 1915 E REZANOF DR, KODIAK, AK 996156602"
     }
    ],
-   "checked": null,
-   "note": "v3 inferred this city from the CMS coordinates against a ZIP database (cityConfidence: name-corroborated)",
-   "method": "derived"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street and a city inferred from coordinates (Kodiak).",
+   "street": "1915 E REZANOF DR",
+   "city": "Kodiak",
+   "zip": "99615",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "coordinate-derived",
+    "checked": null,
+    "method": "derived",
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "location": {
    "lat": 57.800835,
@@ -2651,22 +3143,41 @@
    "note": null
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1013905660",
+     "supports": "NPI active; last updated 2025-05-13"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2025-05-13; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1013905660",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -2680,6 +3191,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1013905660",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2698,6 +3213,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021306 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1013905660",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2739,6 +3258,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Church"
+    },
+    {
+     "src": "nppes-1013905660",
+     "supports": "Legal business name: PROVIDENCE HEALTH & SERVICES WASHINGTON"
     }
    ],
    "checked": "2026-10-17",
@@ -2753,12 +3276,23 @@
    }
   },
   "system": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "v3 guessed \"Providence\" from the facility name",
-   "value": null,
-   "state": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1013905660",
+     "supports": "Organization name in NPPES: PROVIDENCE HEALTH & SERVICES WASHINGTON"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Corporate affiliation shown by the legal or DBA name. Affiliation does not imply a referral, transfer or telestroke relationship.",
+   "state": "affiliated",
+   "value": "Providence",
+   "changedFrom": {
+    "state": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "national": {
    "evidence": [],
@@ -2820,19 +3354,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1215035787",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
-   "method": null,
-   "evidence": [],
-   "checked": null,
-   "note": null
+   "evidence": [
+    {
+     "src": "nppes-1215035787",
+     "supports": "Practice location: 602 CHASE AVE, CORDOVA, AK 995740160"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "602 CHASE AVE",
+   "city": "Cordova",
+   "zip": "99574",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
-  "location": null,
+  "location": {
+   "lat": 60.5432,
+   "lng": -145.75867,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Cordova, AK"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Cordova (town named by the address); no cited campus coordinates. Distances from this point are approximate."
+  },
   "status": {
    "evidence": [],
    "checked": null,
@@ -2845,11 +3403,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1215035787",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -2863,6 +3425,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1215035787",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2881,6 +3447,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021307 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1215035787",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -2922,6 +3492,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Local"
+    },
+    {
+     "src": "nppes-1215035787",
+     "supports": "Legal business name: CORDOVA COMMUNITY MEDICAL CENTER"
     }
    ],
    "checked": "2026-10-17",
@@ -3005,19 +3579,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1225101041",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
-   "method": null,
-   "evidence": [],
-   "checked": null,
-   "note": null
+   "evidence": [
+    {
+     "src": "nppes-1225101041",
+     "supports": "Practice location: 1000 GREG KRUSCHEK AVE, NOME, AK 997620966"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "1000 GREG KRUSCHEK AVE",
+   "city": "Nome",
+   "zip": "99762",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
-  "location": null,
+  "location": {
+   "lat": 64.50111,
+   "lng": -165.40639,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Nome, AK"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Nome (town named by the address); no cited campus coordinates. Distances from this point are approximate."
+  },
   "status": {
    "evidence": [],
    "checked": null,
@@ -3030,11 +3628,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1225101041",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -3048,6 +3650,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1225101041",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3066,6 +3672,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021308 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1225101041",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3107,6 +3717,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Tribal"
+    },
+    {
+     "src": "nppes-1225101041",
+     "supports": "Legal business name: NORTON SOUND HEALTH CORPORATION"
     }
    ],
    "checked": "2026-10-17",
@@ -3192,19 +3806,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1831255421",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
-   "method": null,
-   "evidence": [],
-   "checked": null,
-   "note": null
+   "evidence": [
+    {
+     "src": "nppes-1831255421",
+     "supports": "Practice location: 6000 KANAKANAK RD, DILLINGHAM, AK 99576"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "6000 KANAKANAK RD",
+   "city": "Dillingham",
+   "zip": "99576",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
-  "location": null,
+  "location": {
+   "lat": 59.03972,
+   "lng": -158.4575,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Dillingham, AK"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Dillingham (town named by the address); no cited campus coordinates. Distances from this point are approximate."
+  },
   "status": {
    "evidence": [],
    "checked": null,
@@ -3217,11 +3855,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1831255421",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -3235,6 +3877,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1831255421",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3253,6 +3899,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021309 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1831255421",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3294,6 +3944,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Private"
+    },
+    {
+     "src": "nppes-1831255421",
+     "supports": "Legal business name: BRISTOL BAY AREA HEALTH CORPORATION"
     }
    ],
    "checked": "2026-10-17",
@@ -3377,19 +4031,43 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1316995210",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
-   "method": null,
-   "evidence": [],
-   "checked": null,
-   "note": null
+   "evidence": [
+    {
+     "src": "nppes-1316995210",
+     "supports": "Practice location: 436 5TH & TED STEVENS WAY, KOTZEBUE, AK 997520043"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "436 5TH & TED STEVENS WAY",
+   "city": "Kotzebue",
+   "zip": "99752",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
-  "location": null,
+  "location": {
+   "lat": 66.89846,
+   "lng": -162.59809,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Kotzebue, AK"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Kotzebue (town named by the address); no cited campus coordinates. Distances from this point are approximate."
+  },
   "status": {
    "evidence": [],
    "checked": null,
@@ -3402,11 +4080,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1316995210",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -3420,6 +4102,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1316995210",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3438,6 +4124,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021310 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1316995210",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3479,6 +4169,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Tribal"
+    },
+    {
+     "src": "nppes-1316995210",
+     "supports": "Legal business name: MANIILAQ ASSOCIATION"
     }
    ],
    "checked": "2026-10-17",
@@ -3565,53 +4259,80 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1396705539",
   "state": "AK",
   "address": {
-   "street": "3100 TONGASS AVENUE",
-   "city": "Ketchikan",
-   "zip": "99901",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1396705539",
+     "supports": "Practice location: 3100 TONGASS AVE, KETCHIKAN, AK 999015746"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "3100 TONGASS AVENUE",
+   "city": "Ketchikan",
+   "zip": "99901",
+   "status": "corroborated"
   },
   "location": {
    "lat": 55.353523,
    "lng": -131.687022,
-   "method": "legacy-geocode",
-   "precision": "unknown",
+   "method": "rule-based",
+   "precision": "street",
    "evidence": [
     {
      "src": "prior-edition-v3",
      "supports": "v3 geocodeSource: Nominatim/OpenStreetMap"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "CMS coordinates 55.35272, -131.68605"
     }
    ],
-   "checked": null,
-   "note": null
+   "checked": "2026-10-17",
+   "note": "Previous-edition geocode (OpenStreetMap Nominatim) and CMS coordinates agree within 357 ft; street address corroborated by NPPES."
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1396705539",
+     "supports": "NPI active; last updated 2026-04-16"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2026-04-16; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1396705539",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -3625,6 +4346,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1396705539",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3643,6 +4368,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021311 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1396705539",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3684,6 +4413,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Church"
+    },
+    {
+     "src": "nppes-1396705539",
+     "supports": "Legal business name: PEACEHEALTH"
     }
    ],
    "checked": "2026-10-17",
@@ -3698,12 +4431,23 @@
    }
   },
   "system": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "v3 guessed \"PeaceHealth\" from the facility name",
-   "value": null,
-   "state": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1396705539",
+     "supports": "Organization name in NPPES: PEACEHEALTH"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Corporate affiliation shown by the legal or DBA name. Affiliation does not imply a referral, transfer or telestroke relationship.",
+   "state": "affiliated",
+   "value": "PeaceHealth",
+   "changedFrom": {
+    "state": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "national": {
    "evidence": [
@@ -3785,21 +4529,28 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1306933643",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": null,
-   "zip": null,
-   "status": "unknown",
    "evidence": [
     {
-     "src": "cms-hgi-2023-10-archive"
+     "src": "nppes-1306933643",
+     "supports": "Practice location: 7000 UULA STREET, BARROW, AK 99723"
     }
    ],
-   "checked": null,
-   "note": null,
-   "method": null
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street.",
+   "street": "7000 UULA STREET",
+   "city": "Utqiaġvik",
+   "zip": "99723",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "location": {
    "lat": 71.298135,
@@ -3827,11 +4578,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1306933643",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -3845,6 +4600,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1306933643",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3863,6 +4622,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021312 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1306933643",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -3904,6 +4667,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Government - Federal"
+    },
+    {
+     "src": "nppes-1306933643",
+     "supports": "Legal business name: ARCTIC SLOPE NATIVE ASSOCIATION LTD"
     }
    ],
    "checked": "2026-10-17",
@@ -3981,21 +4748,28 @@
    "note": null,
    "correctedFrom": null
   },
-  "npi": null,
+  "npi": "1679566269",
   "state": "AK",
   "address": {
-   "street": null,
-   "city": "Anchor Point",
-   "zip": "99556",
-   "status": "coordinate-derived",
    "evidence": [
     {
-     "src": "cms-hgi-2023-10-archive"
+     "src": "nppes-1679566269",
+     "supports": "Practice location: 4300 BARTLETT STREET, HOMER, AK 996037005"
     }
    ],
-   "checked": null,
-   "note": "v3 inferred this city from the CMS coordinates against a ZIP database (cityConfidence: coordinate-derived)",
-   "method": "derived"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Street and city from the NPPES practice location; the previous edition had no street and a city inferred from coordinates (Anchor Point).",
+   "street": "4300 BARTLETT STREET",
+   "city": "Homer",
+   "zip": "99603",
+   "status": "source-reported",
+   "changedFrom": {
+    "status": "coordinate-derived",
+    "checked": null,
+    "method": "derived",
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "location": {
    "lat": 59.652133,
@@ -4012,22 +4786,41 @@
    "note": null
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1679566269",
+     "supports": "NPI active; last updated 2026-06-22"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2026-06-22; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1679566269",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -4041,6 +4834,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1679566269",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -4059,6 +4856,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021313 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1679566269",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -4100,6 +4901,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Private"
+    },
+    {
+     "src": "nppes-1679566269",
+     "supports": "Legal business name: SOUTH PENINSULA HOSPITAL, INC."
     }
    ],
    "checked": "2026-10-17",
@@ -4193,53 +4998,80 @@
     }
    ]
   },
-  "npi": null,
+  "npi": "1720062524",
   "state": "AK",
   "address": {
-   "street": "222 TONGASS DR",
-   "city": "Sitka",
-   "zip": "99835",
-   "status": "prior-edition",
    "evidence": [
     {
      "src": "prior-edition-v3"
+    },
+    {
+     "src": "nppes-1720062524",
+     "supports": "Practice location: 222 TONGASS DR, SITKA, AK 998359416"
     }
    ],
-   "checked": "2026-07-04",
-   "note": null,
-   "method": "prior-edition"
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Previous edition (CMS address) and the NPPES practice location agree.",
+   "street": "222 TONGASS DR",
+   "city": "Sitka",
+   "zip": "99835",
+   "status": "corroborated"
   },
   "location": {
    "lat": 57.051696,
    "lng": -135.355061,
-   "method": "legacy-geocode",
-   "precision": "unknown",
+   "method": "rule-based",
+   "precision": "street",
    "evidence": [
     {
      "src": "prior-edition-v3",
      "supports": "v3 geocodeSource: Nominatim/OpenStreetMap"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "CMS coordinates 57.05201, -135.35635"
     }
    ],
-   "checked": null,
-   "note": null
+   "checked": "2026-10-17",
+   "note": "Previous-edition geocode (OpenStreetMap Nominatim) and CMS coordinates agree within 281 ft; street address corroborated by NPPES."
   },
   "status": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "Not enough current evidence to call active (listed in the CMS October 2023 snapshot). Needs a state licensing check.",
-   "value": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1720062524",
+     "supports": "NPI active; last updated 2026-04-02"
+    },
+    {
+     "src": "cms-hgi-2023-10-archive",
+     "supports": "Listed in the October 2023 snapshot"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: NPPES record active and updated 2026-04-02; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "value": "active",
+   "changedFrom": {
+    "value": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "serviceType": {
    "evidence": [
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1720062524",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "General acute care hospital by CMS type \"Critical Access\". A licensing class: it does not by itself establish a 24/7 emergency department.",
+   "note": "General acute care hospital by CMS type \"Critical Access\" and NPPES primary taxonomy 282NC0060X. A licensing class: it does not by itself establish a 24/7 emergency department.",
    "value": "general-acute",
    "changedFrom": {
     "value": "unknown",
@@ -4253,6 +5085,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type: Critical Access"
+    },
+    {
+     "src": "nppes-1720062524",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -4271,6 +5107,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Hospital type \"Critical Access\" (2023-10); CCN 021314 is in the CAH range 1300–1399"
+    },
+    {
+     "src": "nppes-1720062524",
+     "supports": "Primary taxonomy 282NC0060X General Acute Care Hospital, Critical Access"
     }
    ],
    "checked": "2026-10-17",
@@ -4312,6 +5152,10 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Ownership: Voluntary non-profit - Private"
+    },
+    {
+     "src": "nppes-1720062524",
+     "supports": "Legal business name: SOUTHEAST ALASKA REGIONAL HEALTH CONSORTIUM"
     }
    ],
    "checked": "2026-10-17",
@@ -4326,12 +5170,23 @@
    }
   },
   "system": {
-   "evidence": [],
-   "checked": null,
-   "method": null,
-   "note": "v3 guessed \"SEARHC\" from the facility name",
-   "value": null,
-   "state": "unknown"
+   "evidence": [
+    {
+     "src": "nppes-1720062524",
+     "supports": "Organization name in NPPES: SOUTHEAST ALASKA REGIONAL HEALTH CONSORTIUM"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "nppes-api",
+   "note": "Corporate affiliation shown by the legal or DBA name. Affiliation does not imply a referral, transfer or telestroke relationship.",
+   "state": "affiliated",
+   "value": "SEARHC",
+   "changedFrom": {
+    "state": "unknown",
+    "checked": null,
+    "method": null,
+    "edition": "v3 (data 2026.09.13.1)"
+   }
   },
   "national": {
    "evidence": [
@@ -42904,11 +43759,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Listed in the October 2023 snapshot"
+    },
+    {
+     "src": "multicare-primary-stroke-center-certification-0118e",
+     "supports": "Current description of the stroke certification"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "Active by rule: NPPES record active and updated 2025-08-04; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "note": "Active by rule: NPPES record active and updated 2025-08-04; listed in the CMS October 2023 snapshot; DNV PSC certification described in sources read in this pass. Administrative records, not an observation of operations.",
    "value": "active",
    "changedFrom": {
     "value": "unknown",
@@ -45310,11 +46169,15 @@
     {
      "src": "cms-hgi-2023-10-archive",
      "supports": "Listed in the October 2023 snapshot"
+    },
+    {
+     "src": "multicare-services-neuroscience-stroke-dc6e7",
+     "supports": "Current description of the stroke certification"
     }
    ],
    "checked": "2026-10-17",
    "method": "rule-based",
-   "note": "Active by rule: NPPES record active and updated 2025-08-04; listed in the CMS October 2023 snapshot. Administrative records, not an observation of operations.",
+   "note": "Active by rule: NPPES record active and updated 2025-08-04; listed in the CMS October 2023 snapshot; DNV ASR certification described in sources read in this pass. Administrative records, not an observation of operations.",
    "value": "active",
    "changedFrom": {
     "value": "unknown",

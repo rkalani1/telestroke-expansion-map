@@ -1,11 +1,4 @@
 priority,id,name,state,code,item,source_to_check
-P1,021307,Cordova Community Medical Center,AK,unlocated,Locate campus (no verified coordinates),"Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
-P1,021309,Kanakanak Hospital,AK,unlocated,Locate campus (no verified coordinates),"Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
-P1,021310,Maniilaq Health Center,AK,unlocated,Locate campus (no verified coordinates),"Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
-P1,021308,Norton Sound Regional Hospital,AK,unlocated,Locate campus (no verified coordinates),"Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
-P1,021301,Providence Valdez Medical Center,AK,unlocated,Locate campus (no verified coordinates),"Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
-P1,021303,Sitka Community Hospital,AK,unlocated,Locate campus (no verified coordinates),"Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
-P1,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,unlocated,Locate campus (no verified coordinates),"Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
 P1,500129,MultiCare Allenmore Hospital,WA,conflicting-evidence,Resolve conflicting evidence,Issuer registry for the credential in conflict; hospital page
 P1,500014,Providence Regional Medical Center Everett,WA,conflicting-evidence,Resolve conflicting evidence,Issuer registry for the credential in conflict; hospital page
 P1,500027,Swedish Medical Center – First Hill,WA,conflicting-evidence,Resolve conflicting evidence,Issuer registry for the credential in conflict; hospital page
@@ -13,14 +6,12 @@ P1,500108,Virginia Mason Franciscan Health St. Joseph Medical Center,WA,conflict
 P1,500005,Virginia Mason Medical Center,WA,conflicting-evidence,Resolve conflicting evidence,Issuer registry for the credential in conflict; hospital page
 P1,—,ALL,—,open-item,Refresh the CMS Hospital General Information census to the current release,data.cms.gov dataset xubh-q36u (blocked from the October 2026 authoring environment)
 P2,020026,Alaska Native Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,020026,Alaska Native Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020017,Alaska Regional Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,020017,Alaska Regional Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020008,Bartlett Regional Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,020008,Bartlett Regional Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,020024,Central Peninsula General Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
-P2,020024,Central Peninsula General Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,020024,Central Peninsula General Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,020024,Central Peninsula Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
+P2,020024,Central Peninsula Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
+P2,020024,Central Peninsula Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021307,Cordova Community Medical Center,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,021307,Cordova Community Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021307,Cordova Community Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
@@ -33,27 +24,15 @@ P2,021310,Maniilaq Health Center,AK,capability-unassessed,"Assess stroke capabil
 P2,021310,Maniilaq Health Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021310,Maniilaq Health Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020006,Mat-Su Regional Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,020006,Mat-Su Regional Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021308,Norton Sound Regional Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,021308,Norton Sound Regional Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021308,Norton Sound Regional Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,021311,PeaceHealth Ketchikan Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,021311,PeaceHealth Ketchikan Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021304,Petersburg Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021304,Petersburg Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020001,Providence Alaska Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,020001,Providence Alaska Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021306,Providence Kodiak Island Medical Center,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
-P2,021306,Providence Kodiak Island Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,021306,Providence Kodiak Island Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,021302,Providence Seward Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
-P2,021302,Providence Seward Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,021302,Providence Seward Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
+P2,021302,Providence Seward Medical Center,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,021301,Providence Valdez Medical Center,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
-P2,021301,Providence Valdez Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,021301,Providence Valdez Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,021314,SEARHC Mt. Edgecumbe Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,021314,SEARHC Mt. Edgecumbe Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021305,SEARHC Wrangell Medical Center,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021305,SEARHC Wrangell Medical Center,AK,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
 P2,021305,SEARHC Wrangell Medical Center,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
@@ -64,8 +43,6 @@ P2,021303,Sitka Community Hospital,AK,capability-unassessed,"Assess stroke capab
 P2,021303,Sitka Community Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,021303,Sitka Community Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,021313,South Peninsula Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
-P2,021313,South Peninsula Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,021313,South Peninsula Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
@@ -361,48 +338,30 @@ P2,530034,Summit Medical Center,WY,eligibility-unresolved,Confirm active status 
 P2,530034,Summit Medical Center,WY,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,531306,Washakie Medical Center,WY,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,531303,Weston County Health Services,WY,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
-P3,020026,Alaska Native Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020026,Alaska Native Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,020017,Alaska Regional Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
 P3,020017,Alaska Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,020008,Bartlett Regional Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020008,Bartlett Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,020024,Central Peninsula General Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020024,Central Peninsula General Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,021307,Cordova Community Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020012,Fairbanks Memorial Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020012,Fairbanks Memorial Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,021309,Kanakanak Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,021310,Maniilaq Health Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020006,Mat-Su Regional Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020006,Mat-Su Regional Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,021308,Norton Sound Regional Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,021311,PeaceHealth Ketchikan Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,021311,PeaceHealth Ketchikan Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,020024,Central Peninsula Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,021307,Cordova Community Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,021307,Cordova Community Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,021309,Kanakanak Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,021310,Maniilaq Health Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,021310,Maniilaq Health Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,021308,Norton Sound Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,021308,Norton Sound Regional Hospital,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,021311,PeaceHealth Ketchikan Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
-P3,021304,Petersburg Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
 P3,021304,Petersburg Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,020001,Providence Alaska Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,020001,Providence Alaska Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,021306,Providence Kodiak Island Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
 P3,021306,Providence Kodiak Island Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,021302,Providence Seward Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,021302,Providence Seward Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,021302,Providence Seward Hospital,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
-P3,021301,Providence Valdez Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,021314,SEARHC Mt. Edgecumbe Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,021314,SEARHC Mt. Edgecumbe Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
-P3,021305,SEARHC Wrangell Medical Center,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
+P3,021302,Providence Seward Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,021302,Providence Seward Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
+P3,021301,Providence Valdez Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
+P3,021301,Providence Valdez Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
 P3,021305,SEARHC Wrangell Medical Center,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021305,SEARHC Wrangell Medical Center,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
-P3,021312,Samuel Simmonds Memorial Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
 P3,021312,Samuel Simmonds Memorial Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021312,Samuel Simmonds Memorial Hospital,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
-P3,021303,Sitka Community Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
-P3,021313,South Peninsula Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
+P3,021303,Sitka Community Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021313,South Peninsula Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,021313,South Peninsula Hospital,AK,near-county-boundary,Coordinates within 1 mi of a county boundary — county assignment uncertain,Confirm county from the verified address
-P3,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,address-unverified,Verify physical campus address,NPPES organization record (282N taxonomy) and the hospital website
+P3,020018,Yukon-Kuskokwim Delta Regional Hospital,AK,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131316,Bear Lake Memorial Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131325,Bingham Memorial Hospital,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"
 P3,131309,Caribou Medical Center,ID,location-unverified,Verify campus coordinates,"Geocode the verified street address; record geocoder, query and match type"

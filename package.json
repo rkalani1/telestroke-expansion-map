@@ -1,5 +1,6 @@
 {
   "name": "telestroke-expansion-map",
+  "version": "4.0.0",
   "private": true,
   "description": "Test tooling only. The site is static and has no build step or runtime dependencies.",
   "license": "MIT",

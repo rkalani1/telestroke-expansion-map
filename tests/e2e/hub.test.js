@@ -54,11 +54,18 @@ test('Harborview preset sets my center; detail shows distances and a same-metric
 });
 
 test('when my center is the nearest 24/7 EVT center, the difference is zero and one line is drawn', async () => {
-  const { page, context } = await openApp(browser, srv.base, '?hub=500064');
-  const near = await pick(page, (S) => {
-    const h = S.all.find(x => !x.outOfRegion && x.location && S.access[x.id].evt247.status === 'ok' && S.access[x.id].evt247.dest.id === '500064');
-    return h && { id: h.id, name: h.name };
+  // Find a pair in the data: a hospital whose nearest documented 24/7 EVT
+  // center is another in-region campus, then make that campus "my center".
+  const probe = await openApp(browser, srv.base);
+  const pair = await pick(probe.page, (S, C) => {
+    const h = S.all.find(x => !x.outOfRegion && x.location && S.access[x.id].evt247.status === 'ok'
+      && !S.access[x.id].evt247.dest.outOfRegion && C.canBeDestination(S.access[x.id].evt247.dest));
+    return h && { id: h.id, name: h.name, hub: S.access[h.id].evt247.dest.id };
   });
+  await probe.context.close();
+  assert.ok(pair, 'some hospital has an in-region nearest 24/7 EVT center');
+  const { page, context } = await openApp(browser, srv.base, '?hub=' + encodeURIComponent(pair.hub));
+  const near = { id: pair.id, name: pair.name };
   await search(page, near.name);
   await page.click(`#results .result[data-id="${near.id}"]`);
   await page.waitForSelector('#detail:not([hidden])');

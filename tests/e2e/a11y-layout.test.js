@@ -3,7 +3,6 @@
 // and element geometry (no screenshots).
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const path = require('node:path');
 const { startServer, launch, openApp, search } = require('./helpers');
 
 const AXE = require.resolve('axe-core/axe.min.js');

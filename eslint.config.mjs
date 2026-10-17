@@ -18,5 +18,7 @@ const rules = {
 export default [
   { files: ['app.js'], languageOptions: { ecmaVersion: 2022, sourceType: 'script', globals: browser }, rules },
   { files: ['core.js'], languageOptions: { ecmaVersion: 2022, sourceType: 'script', globals: { self: 'readonly', module: 'writable', URLSearchParams: 'readonly' } }, rules },
-  { files: ['tests/**/*.js'], languageOptions: { ecmaVersion: 2022, sourceType: 'commonjs', globals: { require: 'readonly', module: 'writable', __dirname: 'readonly', process: 'readonly', console: 'readonly', setTimeout: 'readonly', URL: 'readonly' } }, rules },
+  // Test files run in Node, but the callbacks they pass to page.evaluate() run
+  // in the browser, so both sets of globals apply.
+  { files: ['tests/**/*.js'], languageOptions: { ecmaVersion: 2022, sourceType: 'commonjs', globals: Object.assign({}, browser, { require: 'readonly', module: 'writable', __dirname: 'readonly', process: 'readonly', Buffer: 'readonly', localStorage: 'readonly', sessionStorage: 'readonly', getSelection: 'readonly', KeyboardEvent: 'readonly', DOMException: 'readonly', innerWidth: 'readonly', innerHeight: 'readonly', Element: 'readonly', HTMLElement: 'readonly', MutationObserver: 'readonly' }) }, rules },
 ];

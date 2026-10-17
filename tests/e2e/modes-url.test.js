@@ -113,7 +113,7 @@ test('links from earlier versions still work (pill flags, dark=1, scenario keys,
 
 test('explicit theme in a link wins over a saved preference, without overwriting it', async () => {
   const { page, context } = await openApp(browser, srv.base, '?theme=dark', {
-    initScript: () => { try { localStorage.setItem('stroke-atlas-prefs-v4', JSON.stringify({ theme: 'light' })); } catch (e) { /* ignore */ } },
+    initScript: () => { try { localStorage.setItem('stroke-atlas-prefs-v4', JSON.stringify({ theme: 'light' })); } catch { /* ignore */ } },
   });
   assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark');
   assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('stroke-atlas-prefs-v4')).theme), 'light');

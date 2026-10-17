@@ -278,3 +278,33 @@ test('distance bins keep zero and unknown distinct', () => {
   assert.equal(C.distanceBin(49.9), 'lt50');
   assert.equal(C.distanceBin(150), '150plus');
 });
+
+test('formatStreet title-cases registry capitals and leaves mixed case alone', () => {
+  assert.equal(C.formatStreet('915 ANDERSON DR'), '915 Anderson Dr');
+  assert.equal(C.formatStreet('1201 S MILLER ST'), '1201 S Miller St');
+  assert.equal(C.formatStreet('401 15TH AVE SE'), '401 15th Ave SE');
+  assert.equal(C.formatStreet('600 MT HWY 91 SOUTH'), '600 MT Hwy 91 South');
+  assert.equal(C.formatStreet('1901 South Union Avenue'), '1901 South Union Avenue');
+  assert.equal(C.formatStreet(null), '');
+});
+
+test('retired ids in share links open the record that replaced them', () => {
+  const ids = new Set(['500129-TACOMA-GENERAL', '500129']);
+  const aliases = new Map([['500012', '500129-TACOMA-GENERAL']]);
+  const r = C.parseUrlState('?h=500012&cmp=500012,500129,zzz&hub=500012', { ids, aliases });
+  assert.equal(r.state.selected, '500129-TACOMA-GENERAL');
+  assert.equal(r.state.hub, '500129-TACOMA-GENERAL');
+  assert.deepEqual(r.state.compare, ['500129-TACOMA-GENERAL', '500129']);
+  assert.ok(r.ignored.includes('cmp:zzz'));
+});
+
+test('a documented receiving center is a destination even before its ED is documented; an excluded one is not', () => {
+  const base = { location: { lat: 47.6, lng: -122.3 }, status: { value: 'active' }, evt247: { state: 'affirmative' } };
+  const unresolved = Object.assign({ id: 'a', derived: { eligibility: { value: 'unknown' } } }, base);
+  const pediatric = Object.assign({ id: 'b', derived: { eligibility: { value: 'excluded', code: 'pediatric' } } }, base);
+  const closed = Object.assign({}, unresolved, { id: 'c', status: { value: 'closed' } });
+  assert.equal(C.canBeDestination(unresolved), true);
+  assert.equal(C.canBeDestination(pediatric), false);
+  assert.equal(C.canBeDestination(closed), false);
+  assert.deepEqual(C.destinationSet([unresolved, pediatric, closed], 'evt247').map(h => h.id), ['a']);
+});

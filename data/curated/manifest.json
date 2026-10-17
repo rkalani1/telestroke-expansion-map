@@ -35,10 +35,11 @@
   "prior-edition": "Carried forward from the previous edition (v3, data 2026.09.13.1) with that edition's own check date and source text. Not re-observed in the current pass unless a later claim says so.",
   "search-extract": "Observed through a web search tool's extraction of the cited page. Direct page fetching was blocked in the authoring environment, so the page itself was not opened; treat as weaker than a direct reading.",
   "nppes-api": "Retrieved from the CMS NPPES NPI Registry API (organization record).",
-  "cms-dataset": "Read from the vendored CMS Hospital General Information snapshot.",
+  "cms-dataset": "Read from the vendored CMS Hospital General Information snapshot (October 2023; earlier snapshots for CCNs no longer listed).",
   "regulatory-inference": "Follows from a cited regulation given another documented fact (e.g. CAH conditions of participation require 24-hour emergency services).",
   "manual-review": "Reconciled by the maintainer from the cited sources.",
-  "derived": "Computed by the build from other claims."
+  "derived": "Computed by the build from other claims.",
+  "rule-based": "Assigned by a documented rule applied to the cited sources; the rule is written in the claim note (for example: active status from a current registry record plus a CMS listing, or coordinates where two independent sources agree)."
  },
  "census_snapshot": {
   "source": "CMS Hospital General Information, October 2023 snapshot (archived copy via klocey/hospitals-data-archive)",
@@ -62,6 +63,11 @@
   "EVT": "Endovascular thrombectomy. Recorded as its own documented capability, separately from any certification tier. '24/7' only when explicitly documented or entailed by a current credential, which is named."
  },
  "openItems": [
-  {"priority": "P1", "scope": "ALL", "question": "Refresh the CMS Hospital General Information census to the current release", "nextCheck": "data.cms.gov dataset xubh-q36u (blocked from the October 2026 authoring environment)"}
+  {
+   "priority": "P1",
+   "scope": "ALL",
+   "question": "Refresh the CMS Hospital General Information census to the current release",
+   "nextCheck": "data.cms.gov dataset xubh-q36u (blocked from the October 2026 authoring environment)"
+  }
  ]
 }

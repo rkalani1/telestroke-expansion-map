@@ -64,6 +64,20 @@
     return String(Math.round(mi));
   }
 
+  // Registry addresses arrive in capitals ("915 ANDERSON DR"). Title-case them
+  // for reading, keeping directionals, ordinals, PO and route codes as written.
+  const STREET_UPPER = new Set(['N', 'S', 'E', 'W', 'NE', 'NW', 'SE', 'SW', 'PO', 'US', 'SR', 'MT', 'II', 'III']);
+  function formatStreet(s) {
+    if (typeof s !== 'string' || !s.trim()) return '';
+    if (/[a-z]/.test(s)) return s.trim();
+    return s.trim().split(/\s+/).map(w => {
+      if (STREET_UPPER.has(w.replace(/[.,]/g, ''))) return w;
+      if (/^\d+(ST|ND|RD|TH)$/.test(w)) return w.toLowerCase();
+      if (/^\d/.test(w)) return w;
+      return w.split('-').map(p => p.charAt(0) + p.slice(1).toLowerCase()).join('-');
+    }).join(' ');
+  }
+
   function formatMinutes(min) {
     if (!isNum(min) || min < 0) return '—';
     return String(Math.round(min));
@@ -124,11 +138,19 @@
     return !!(h && h.status && h.status.value === 'active');
   }
 
-  // A destination must be an active, located campus that could receive an
-  // emergency patient. Out-of-region neighbours are included only when the
-  // caller asks for them, so "nearest" always names the set it searched.
+  function isExcluded(h) {
+    return !!(h && h.derived && h.derived.eligibility && h.derived.eligibility.value === 'excluded');
+  }
+
+  // A destination must be an active, located campus that is not excluded
+  // (closed, pediatric-only, or documented without a general ED). A documented
+  // ED is required of a sending hospital in the analysis set, not of a
+  // receiving center whose stroke credential is itself documented; the set's
+  // own test (24/7 EVT, CSC/TSC level) does the rest. Out-of-region
+  // neighbours are included only when the caller asks for them, so "nearest"
+  // always names the set it searched.
   function canBeDestination(h) {
-    return !!(h && locationOf(h) && isActive(h) && (h.outOfRegion || isEligible(h)));
+    return !!(h && locationOf(h) && isActive(h) && !isExcluded(h));
   }
 
   function hasDocumented247Evt(h) {
@@ -579,13 +601,16 @@
   // malformed is dropped and reported in `ignored`, never thrown.
   function parseUrlState(search, ctx) {
     const ids = (ctx && ctx.ids) || new Set();
+    // Retired ids (a record re-identified after a CCN correction) still open
+    // the record they now belong to.
+    const aliases = (ctx && ctx.aliases) || new Map();
     const systems = (ctx && ctx.systems) || new Set();
     const p = new URLSearchParams(search || '');
     const s = defaultUiState();
     const ignored = [];
     const explicit = {};
     const list = (v) => String(v || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean);
-    const id = (v) => { const x = String(v || '').trim(); return ids.has(x) ? x : null; };
+    const id = (v) => { const x = String(v || '').trim(); return ids.has(x) ? x : aliases.get(x) || null; };
 
     if (p.has('view')) { const v = p.get('view'); if (VIEWS.includes(v)) s.view = v; else ignored.push('view'); }
     if (p.has('mode')) { const v = p.get('mode'); if (MODES.includes(v)) s.mode = v; else ignored.push('mode'); }
@@ -618,7 +643,7 @@
     if (p.has('cmp')) {
       const raw = String(p.get('cmp')).split(',').map(x => x.trim()).filter(Boolean);
       const valid = [];
-      for (const x of raw) { if (ids.has(x) && !valid.includes(x)) valid.push(x); else ignored.push('cmp:' + x); }
+      for (const x of raw) { const v = id(x); if (v && !valid.includes(v)) valid.push(v); else ignored.push('cmp:' + x); }
       s.compare = valid.slice(0, MAX_COMPARE);
       if (valid.length > MAX_COMPARE) ignored.push('cmp:over-limit');
     }
@@ -699,9 +724,9 @@
     TIERS, TIER_NAMES, CLAIM_STATES, CLAIM_LABELS, STATE_CROSSWALK,
     TRANSPORT_DEFAULTS, TRANSPORT_RANGES, REVIEW_DEFAULTS, REVIEW_RANGES, GAP_VALUES,
     DISTANCE_BINS, DESTINATION_SETS, MODES, VIEWS, TIER_FILTERS, EVIDENCE_FILTERS, PRESETS, MAX_COMPARE,
-    isNum, formatMiles, formatMinutes, formatSignedMiles,
+    isNum, formatMiles, formatMinutes, formatSignedMiles, formatStreet,
     haversineMi, locationOf, distanceBetween,
-    claimState, displayTier, isEligible, isActive, canBeDestination, hasDocumented247Evt, isAdvancedCenter,
+    claimState, displayTier, isEligible, isExcluded, isActive, canBeDestination, hasDocumented247Evt, isAdvancedCenter,
     destinationSet, nearestInSet, computeAccess, hubDifferential,
     groundFeasibility, transportParams, legScenario, transferScenario,
     distanceBin, reviewParams, gapComponent, capabilityAssessed, isReviewCandidate, accessReview, rankSensitivity, rankRows,

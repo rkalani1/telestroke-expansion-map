@@ -50,6 +50,17 @@ const NV_LABELS = {
   'outside-state-boundary': 'Coordinates outside the named state',
   'near-state-boundary': 'Coordinates at the state boundary',
   'near-county-boundary': 'County assignment uncertain (near a boundary)',
+  'far-from-named-city': 'Coordinates far from the town the address names',
+  'location-conflict': 'Two coordinate sources disagree',
+  'address-conflicting': 'Address sources disagree',
+};
+const ADDRESS_STATUS = {
+  corroborated: 'Two registries agree (previous edition and NPPES)',
+  'source-reported': 'From one registry record (NPPES or CMS)',
+  'prior-edition': 'Carried from the previous edition',
+  'coordinate-derived': 'Town inferred from coordinates in the previous edition',
+  conflicting: 'Sources give different addresses',
+  unknown: 'Not documented',
 };
 const METRO = [
   { key: 'm-seattle', label: 'Seattle–Tacoma–Everett', lat: 47.45, lng: -122.3, mi: 32 },
@@ -1233,7 +1244,7 @@ function claimRow(label, valueNodes, claim, extra) {
   ]);
 }
 function methodShort(m) {
-  return { 'prior-edition': 'carried from previous edition', 'search-extract': 'web search extract', 'nppes-api': 'NPPES API', 'cms-dataset': 'CMS dataset', 'regulatory-inference': 'regulatory inference', 'manual-review': 'maintainer review', derived: 'derived' }[m] || m;
+  return { 'prior-edition': 'carried from previous edition', 'search-extract': 'web search extract', 'nppes-api': 'NPPES API', 'cms-dataset': 'CMS dataset', 'regulatory-inference': 'regulatory inference', 'rule-based': 'documented rule', 'manual-review': 'maintainer review', derived: 'derived' }[m] || m;
 }
 function valueClaimText(c, map) {
   if (!c) return '—';
@@ -1289,12 +1300,14 @@ function renderDetail() {
   const idl = el('dl', { class: 'claims' });
   const addr = h.address || {};
   idl.appendChild(claimRow('Status', valueClaimText(h.status, { active: 'Active', closed: 'Closed', merged: 'Merged into another campus' }), h.status));
-  idl.appendChild(claimRow('Address', [addr.street, [addr.city, h.state, addr.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ') || 'Not documented', null,
-    `Address ${addr.status === 'verified' ? 'verified' : 'not verified'}${addr.checked ? ' · checked ' + addr.checked : ''}`));
+  idl.appendChild(claimRow('Address', [C.formatStreet(addr.street), [addr.city, h.state, addr.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ') || 'Not documented', addr,
+    ADDRESS_STATUS[addr.status] || null));
   idl.appendChild(claimRow('County / borough', h.derived.county ? h.derived.county + (h.derived.geoFlags.includes('near-county-boundary') ? ' (near a boundary — uncertain)' : '') : '—', null, 'Derived from the coordinates (2017 Census boundaries).'));
   const loc = h.location;
-  idl.appendChild(claimRow('Map location', loc ? `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}` : 'No verified location — not drawn on the map', null,
-    loc ? `Method: ${locMethod(loc.method)} · precision: ${loc.precision}` + (loc.note ? ' · ' + loc.note : '') : null));
+  idl.appendChild(claimRow('Map location', loc ? `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}` + (loc.precision === 'city' ? ' (town centre — approximate)' : '') : 'No cited location — not drawn on the map', null,
+    loc ? [`Method: ${locMethod(loc.method)} · precision: ${loc.precision}`, loc.note,
+      loc.conflict ? `A second source puts it at ${loc.conflict.lat.toFixed(4)}, ${loc.conflict.lng.toFixed(4)} (${loc.conflict.distanceMi} mi away).` : null,
+      h.derived.cityDistanceMi != null ? `${h.derived.cityDistanceMi} mi from the centre of ${addr.city}.` : null].filter(Boolean).join(' · ') : null));
   if (!isOOR(h)) {
     idl.appendChild(claimRow('Emergency department', h.ed ? (stOf(h.ed) === 'affirmative' ? 'Documented: ' + (h.ed.scope || '24/7 general ED') : C.CLAIM_LABELS[stOf(h.ed)]) : '—', h.ed));
     idl.appendChild(claimRow('Population served', valueClaimText(h.population, { 'all-ages': 'All ages', adult: 'Adults', pediatric: 'Pediatric' }), h.population));
@@ -1305,7 +1318,9 @@ function renderDetail() {
       'Public affiliation only — it does not establish telestroke, referral or contract relationships.'));
     const ccn = h.ccn || {};
     idl.appendChild(claimRow('CMS Certification Number', ccn.value ? ccn.value + (ccn.relation === 'shared' ? ' (shared with another campus)' : '') : ccn.relation === 'none' ? 'None (not a Medicare-certified provider)' : 'Unknown', null,
-      [ccn.note, ccn.correctedFrom ? 'Corrected from ' + ccn.correctedFrom : null, h.cms ? `CMS name (${h.cms.asOf}): ${h.cms.name}; type ${h.cms.hospitalType || '—'}` + (h.cms.beds != null ? `; ${h.cms.beds} beds (${h.cms.bedsScope})` : '') : null].filter(Boolean).join(' · ') || null));
+      [ccn.note, ccn.correctedFrom ? 'Corrected from ' + ccn.correctedFrom : null,
+        (ccn.previous || []).length ? 'Earlier CCN: ' + ccn.previous.map(p => `${p.value}${p.cmsName ? ' (' + p.cmsName + ', last listed ' + p.lastListed + ')' : ''}`).join('; ') : null,
+        (h.previousIds || []).length ? 'Earlier record id: ' + h.previousIds.join(', ') : null, h.cms ? `CMS name (${h.cms.asOf}): ${h.cms.name}; type ${h.cms.hospitalType || '—'}` + (h.cms.beds != null ? `; ${h.cms.beds} beds (${h.cms.bedsScope})` : '') : null].filter(Boolean).join(' · ') || null));
     if (h.npi) idl.appendChild(claimRow('NPI', h.npi, null, 'NPPES organization record'));
     if ((h.formerNames || []).length || (h.aliases || []).length) idl.appendChild(claimRow('Also searched as', [].concat(h.formerNames || [], h.aliases || []).join(' · '), null));
   }
@@ -1321,7 +1336,7 @@ function renderDetail() {
 }
 
 function locMethod(m) {
-  return { 'cms-dataset': 'CMS-supplied coordinates (geocoding method not documented by CMS)', 'legacy-geocode': 'earlier-edition geocode (geocoder, query and match type not recorded)', 'city-centroid': 'city centroid (approximate)', 'source-reported': 'coordinates stated by the cited source', 'manual-review': 'maintainer review against the cited source' }[m] || m;
+  return { 'rule-based': 'two independent coordinate sources agree (see note)', 'cms-dataset': 'CMS-supplied coordinates (geocoding method not documented by CMS)', 'legacy-geocode': 'earlier-edition geocode (geocoder, query and match type not recorded)', 'city-centroid': 'town centre from the GeoNames gazetteer (approximate)', 'source-reported': 'coordinates stated by the cited source', 'manual-review': 'maintainer review against the cited source' }[m] || m;
 }
 
 function renderDetailActions(h) {
@@ -1331,7 +1346,7 @@ function renderDetailActions(h) {
   if (isLocated(h) && S.map) {
     bar.appendChild(el('button', { type: 'button', class: 'btn', text: MOBILE_Q.matches ? 'Show on map' : 'Fit connections', on: { click: () => fitConnections(true) } }));
   }
-  if (!isOOR(h) && (h.status && h.status.value) === 'active' && isLocated(h)) {
+  if (!isOOR(h) && C.canBeDestination(h)) {
     const isHub = S.ui.hub === h.id;
     bar.appendChild(el('button', { type: 'button', class: 'btn', 'aria-pressed': String(isHub), text: isHub ? 'My receiving center ✓' : 'Set as my receiving center', on: { click: () => setHub(isHub ? null : h.id, true) } }));
   }
@@ -1477,7 +1492,7 @@ function renderNearby(h) {
 // Hub (my receiving center)
 // ------------------------------------------------------------------
 function hubCandidates() {
-  return S.all.filter(h => !isOOR(h) && isLocated(h) && (h.status && h.status.value) === 'active' && eligOf(h) === 'eligible')
+  return S.all.filter(h => !isOOR(h) && C.canBeDestination(h))
     .sort((a, b) => a.state.localeCompare(b.state) || a.name.localeCompare(b.name));
 }
 function populateHubSelect() {
@@ -1493,7 +1508,7 @@ function populateHubSelect() {
     sel.appendChild(g);
   }
   const hv = S.byId.get(HARBORVIEW_ID);
-  const ok = hv && eligOf(hv) === 'eligible' && isLocated(hv);
+  const ok = hv && C.canBeDestination(hv);
   $('#hub-preset').hidden = !ok;
 }
 function setHub(id, persist) {
@@ -2346,7 +2361,9 @@ function saveUrlNow() {
   try { history.replaceState(null, '', qs ? '?' + qs : location.pathname); } catch { /* sandboxed */ }
 }
 function readUrl() {
-  const parsed = C.parseUrlState(location.search, { ids: new Set(S.all.map(h => h.id)), systems: new Set(S.systems.concat(['__independent', '__unknown'])) });
+  const aliases = new Map();
+  for (const h of S.all) for (const old of h.previousIds || []) aliases.set(old, h.id);
+  const parsed = C.parseUrlState(location.search, { ids: new Set(S.all.map(h => h.id)), aliases, systems: new Set(S.systems.concat(['__independent', '__unknown'])) });
   S.ui = parsed.state;
   S.explicit = parsed.explicit;
   if (!S.ui.hub && S.prefs.hub && S.byId.get(S.prefs.hub)) S.ui.hub = S.prefs.hub;

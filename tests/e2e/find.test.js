@@ -74,6 +74,8 @@ test('keyboard: arrow into results, move, open, escape restores focus', async ()
   assert.equal(await page.evaluate(() => document.activeElement.id), 'detail-title');
   await page.keyboard.press('Escape');
   await page.waitForSelector('#detail', { state: 'hidden' });
+  // Focus returns after the list re-renders (two animation frames).
+  await page.waitForFunction((id) => document.activeElement && document.activeElement.dataset.id === id, secondId, { timeout: 2000 }).catch(() => {});
   assert.equal(await page.evaluate(() => document.activeElement.dataset.id), secondId);
 });
 
@@ -95,7 +97,7 @@ test('unlocated records stay searchable and say why there is no marker', async (
   assert.match(await row.textContent(), /No map location/);
   await row.click();
   await page.waitForSelector('#detail:not([hidden])');
-  assert.match(await page.textContent('#detail-body'), /No verified location/);
+  assert.match(await page.textContent('#detail-body'), /No cited location/);
   await page.click('#detail-close');
 });
 
