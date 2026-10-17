@@ -426,23 +426,64 @@ def claim_value(name, c):
     return str(c.get('value') if 'value' in c else '')
 
 
-def audit_outcome(c):
-    """Classify what this pass did with the claim."""
+def _key(name, c):
+    """The substantive content of a claim, for comparing it with its earlier value."""
+    if c is None:
+        return None
+    if name in ('status', 'serviceType', 'population', 'governance'):
+        return c.get('value')
+    if name == 'system':
+        return (c.get('state'), c.get('value'))
+    if name == 'national':
+        return (c.get('state'), c.get('tier'), c.get('body'))
+    if name == 'stateDesignation':
+        return (c.get('state'), c.get('system'), c.get('level'))
+    if name == 'address':
+        return (c.get('street'), (c.get('city') or '').lower() or None)
+    return c.get('state')
+
+
+def _blank(name, key):
+    if key in (None, 'unknown'):
+        return True
+    if isinstance(key, tuple):
+        return key[0] in (None, 'unknown') if name != 'address' else not any(key)
+    return False
+
+
+def audit_outcome(name, c):
+    """What this review did with the claim (see docs/EVIDENCE-AUDIT-2026-10.md)."""
     if c is None:
         return 'missing'
-    if c.get('changedFrom') is not None:
-        return 'corrected'
-    m = c.get('method')
-    state = c.get('state')
-    if state == 'conflicting':
-        return 'conflicting'
-    if m == 'prior-edition':
-        return 'carried-forward'
-    if m is None and state in (None, 'unknown') and (c.get('value') in (None, 'unknown')):
-        return 'not-assessed'
     if c.get('inaccessible'):
         return 'inaccessible'
-    return 'confirmed' if m else 'not-assessed'
+    m = c.get('method')
+    if c.get('state') == 'conflicting' or (name == 'address' and c.get('status') == 'conflicting') \
+            or (name == 'location' and c.get('conflict')):
+        return 'conflicting'
+    if name == 'location':
+        if m == 'legacy-geocode' or (m in ('cms-dataset', 'city-centroid') and not c.get('checked')):
+            return 'carried-forward'
+        if m in ('rule-based',):
+            return 'confirmed'
+        if m == 'city-centroid':
+            return 'established'
+        return 'corrected' if c.get('previous') or 'replaced' in (c.get('note') or '') or 'Restored' in (c.get('note') or '') else 'confirmed'
+    if m == 'prior-edition' or (name == 'address' and c.get('status') == 'prior-edition'):
+        return 'carried-forward'
+    if not m:
+        return 'not-assessed'
+    prev = c.get('changedFrom')
+    if prev is None:
+        return 'confirmed'
+    before, after = _key(name, prev), _key(name, c)
+    if before == after:
+        return 'confirmed'
+    if name == 'address' and not before[0] and before[1] == after[1]:
+        return 'established'   # a street added to the town already recorded
+    if _blank(name, before):
+        return 'established'
+    return 'corrected'
 
 
 def write_audit(records, sources):
@@ -457,7 +498,7 @@ def write_audit(records, sources):
             c = r.get(name)
             prev = (c or {}).get('changedFrom')
             w.writerow([
-                r['id'], r['name'], r['state'], name, audit_outcome(c),
+                r['id'], r['name'], r['state'], name, audit_outcome(name, c),
                 (c or {}).get('state', ''), claim_value(name, c), (c or {}).get('method') or '',
                 (c or {}).get('checked') or '',
                 json.dumps(prev, ensure_ascii=False, sort_keys=True) if prev is not None else '',
@@ -548,12 +589,27 @@ def counts_sentence(c, manifest):
             f"Data {manifest['data_version']}, evidence review {manifest['evidence_review_date']}.")
 
 
-DOC_TARGETS = ('README.md', 'METHODOLOGY.md', 'llms.txt', 'index.html')
+def audit_table(records):
+    """Markdown table: claim x audit outcome counts, in-region records only."""
+    outcomes = ('confirmed', 'established', 'corrected', 'carried-forward', 'conflicting', 'inaccessible', 'not-assessed', 'missing')
+    rows = []
+    totals = Counter()
+    for name in AUDIT_CLAIMS:
+        c = Counter(audit_outcome(name, r.get(name)) for r in records if not r.get('outOfRegion'))
+        totals.update(c)
+        rows.append('| `' + name + '` | ' + ' | '.join(str(c[o]) for o in outcomes) + ' |')
+    head = '| Claim | ' + ' | '.join(outcomes) + ' |\n|---|' + '---:|' * len(outcomes)
+    tot = '| **All claims** | ' + ' | '.join(f'**{totals[o]}**' for o in outcomes) + ' |'
+    return '\n'.join([head] + rows + [tot])
+
+
+DOC_TARGETS = ('README.md', 'METHODOLOGY.md', 'llms.txt', 'index.html', 'docs/EVIDENCE-AUDIT-2026-10.md')
+AUDIT_MARK = re.compile(r'(<!-- audit-table:start -->)(.*?)(<!-- audit-table:end -->)', re.S)
 MARK = re.compile(r'(<!-- counts:start -->)(.*?)(<!-- counts:end -->)', re.S)
 JSONLD = re.compile(r'("description": ")([^"]*)(")')
 
 
-def render_docs(sentence):
+def render_docs(sentence, table):
     out = {}
     for name in DOC_TARGETS:
         p = ROOT / name
@@ -561,6 +617,7 @@ def render_docs(sentence):
             continue
         text = p.read_text()
         new = MARK.sub(lambda m: m.group(1) + sentence + m.group(3), text)
+        new = AUDIT_MARK.sub(lambda m: m.group(1) + '\n' + table + '\n' + m.group(3), new)
         if name == 'index.html':
             new = re.sub(r'(<script type="application/ld\+json">.*?"description": ")[^"]*(")',
                          lambda m: m.group(1) + 'Public-source reference dataset: ' + sentence.replace('"', "'") + m.group(2),
@@ -624,7 +681,7 @@ def main():
     }
     work_text, work_rows = write_worklist(records, manifest)
     outputs[OUT_WORK] = work_text
-    for name, (old, new) in render_docs(counts_sentence(counts, manifest)).items():
+    for name, (old, new) in render_docs(counts_sentence(counts, manifest), audit_table(records)).items():
         outputs[ROOT / name] = new
 
     changed = []

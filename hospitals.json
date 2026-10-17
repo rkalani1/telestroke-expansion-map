@@ -5951,6 +5951,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Anchor Point",
+     "zip": "99556",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -6876,6 +6878,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Kodiak",
+     "zip": "99619",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -8059,6 +8063,9 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "prior-edition",
+     "street": "PO BOX 589",
+     "city": "Petersburg",
+     "zip": "99833",
      "checked": "2026-07-04",
      "method": "prior-edition",
      "edition": "v3 (data 2026.09.13.1)"
@@ -9297,6 +9304,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Sterling",
+     "zip": "99672",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -10484,6 +10493,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "American Falls",
+     "zip": "83211",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -10762,6 +10773,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Moore",
+     "zip": "83255",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -11038,6 +11051,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Blackfoot",
+     "zip": "83221",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -11319,6 +11334,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Blackfoot",
+     "zip": "83221",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -12163,6 +12180,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Boise",
+     "zip": "83704",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -14489,6 +14508,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Emmett",
+     "zip": "83617",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -14778,6 +14799,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Gooding",
+     "zip": "83330",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -15928,6 +15951,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Idaho Falls",
+     "zip": "83406",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -16201,6 +16226,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Jerome",
+     "zip": "83338",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -16779,6 +16806,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Ketchum",
+     "zip": "83340",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -17369,6 +17398,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Clifton",
+     "zip": "83228",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -18249,6 +18280,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Montpelier",
+     "zip": "83254",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -18817,6 +18850,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Mountain Home",
+     "zip": "83647",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -20891,6 +20926,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Franklin",
+     "zip": "83237",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -21176,6 +21213,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Rexburg",
+     "zip": "83440",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -22329,6 +22368,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Soda Springs",
+     "zip": "83276",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -23212,6 +23253,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Weiser",
+     "zip": "83672",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -23502,6 +23545,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Anaconda",
+     "zip": "59711",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -23773,6 +23818,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Baker",
+     "zip": "59313",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -24042,6 +24089,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Big Sandy",
+     "zip": "59520",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -24333,6 +24382,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Big Sky",
+     "zip": "59716",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -24613,6 +24664,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Big Timber",
+     "zip": "59011",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -26358,6 +26411,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Chester",
+     "zip": "59522",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -26655,6 +26710,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Choteau",
+     "zip": "59422",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -26952,6 +27009,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Circle",
+     "zip": "59215",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -27236,6 +27295,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Columbus",
+     "zip": "59019",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -27516,6 +27577,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Conrad",
+     "zip": "59425",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -28097,6 +28160,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Culbertson",
+     "zip": "59218",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -28368,6 +28433,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Cut Bank",
+     "zip": "59427",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -28665,6 +28732,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Deer Lodge",
+     "zip": "59722",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -28953,6 +29022,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Dillon",
+     "zip": "59725",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -29228,6 +29299,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Ekalaka",
+     "zip": "59324",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -29514,6 +29587,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Ennis",
+     "zip": "59729",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -29798,6 +29873,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Forsyth",
+     "zip": "59327",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -30364,6 +30441,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Glasgow",
+     "zip": "59230",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -30646,6 +30725,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Glendive",
+     "zip": "59330",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -31216,6 +31297,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Great Falls",
+     "zip": "59405",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -31474,6 +31557,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Hamilton",
+     "zip": "59840",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -31774,6 +31859,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Hardin",
+     "zip": "59034",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -32047,6 +32134,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Harlem",
+     "zip": "59526",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -32329,6 +32418,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Harlowton",
+     "zip": "59036",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -32613,6 +32704,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Havre",
+     "zip": "59501",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -33171,6 +33264,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Jordan",
+     "zip": "59337",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -33756,6 +33851,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Kalispell",
+     "zip": "59901",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -34014,6 +34111,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Lewistown",
+     "zip": "59457",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -34298,6 +34397,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Libby",
+     "zip": "59923",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -34580,6 +34681,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Livingston",
+     "zip": "59047",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -34851,6 +34954,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Malta",
+     "zip": "59538",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -35124,6 +35229,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Miles City",
+     "zip": "59301",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -36004,6 +36111,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Philipsburg",
+     "zip": "59858",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -36275,6 +36384,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Plains",
+     "zip": "59859",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -36546,6 +36657,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Plentywood",
+     "zip": "59254",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -36831,6 +36944,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Polson",
+     "zip": "59860",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -37124,6 +37239,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Poplar",
+     "zip": "59255",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -37408,6 +37525,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Red Lodge",
+     "zip": "59068",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -37690,6 +37809,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Ronan",
+     "zip": "59864",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -37974,6 +38095,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Roundup",
+     "zip": "59072",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -38245,6 +38368,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Scobey",
+     "zip": "59263",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -38527,6 +38652,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Shelby",
+     "zip": "59474",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -38824,6 +38951,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Sheridan",
+     "zip": "59749",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -39110,6 +39239,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Sidney",
+     "zip": "59270",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -39394,6 +39525,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Superior",
+     "zip": "59872",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -39668,6 +39801,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Terry",
+     "zip": "59349",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -39956,6 +40091,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Townsend",
+     "zip": "59644",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -40240,6 +40377,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "White Sulphur Springs",
+     "zip": "59645",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -40526,6 +40665,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Whitefish",
+     "zip": "59937",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -40821,6 +40962,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Wolf Point",
+     "zip": "59201",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -47603,6 +47746,9 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "prior-edition",
+     "street": "1450 BATTERSBY AVENUE",
+     "city": "Enumclaw",
+     "zip": "98022",
      "checked": "2026-07-04",
      "method": "prior-edition",
      "edition": "v3 (data 2026.09.13.1)"
@@ -51067,6 +51213,9 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "prior-edition",
+     "street": "3780 PLAZA WAY",
+     "city": "Kennewick",
+     "zip": "99338",
      "checked": "2026-07-04",
      "method": "prior-edition",
      "edition": "v3 (data 2026.09.13.1)"
@@ -53208,6 +53357,9 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "prior-edition",
+     "street": "801 EAST WHEELER ROAD",
+     "city": "Moses Lake",
+     "zip": "98837",
      "checked": "2026-07-04",
      "method": "prior-edition",
      "edition": "v3 (data 2026.09.13.1)"
@@ -56956,6 +57108,9 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "prior-edition",
+     "street": "723 MEMORIAL STREET",
+     "city": "Prosser",
+     "zip": "99350",
      "checked": "2026-07-04",
      "method": "prior-edition",
      "edition": "v3 (data 2026.09.13.1)"
@@ -60355,6 +60510,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Seattle",
+     "zip": "98105",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -63859,6 +64016,9 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "prior-edition",
+     "street": "W 800 FIFTH AVENUE",
+     "city": "Spokane",
+     "zip": "99210",
      "checked": "2026-07-04",
      "method": "prior-edition",
      "edition": "v3 (data 2026.09.13.1)"
@@ -64882,6 +65042,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Spokane",
+     "zip": "99204",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -69516,6 +69678,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Wenatchee",
+     "zip": "98801",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -70612,6 +70776,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Afton",
+     "zip": "83110",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -70895,6 +71061,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Basin",
+     "zip": "82410",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -71165,6 +71333,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Buffalo",
+     "zip": "82834",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -71984,6 +72154,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Casper",
+     "zip": "82609",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -72522,6 +72694,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Cody",
+     "zip": "82414",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -72803,6 +72977,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Douglas",
+     "zip": "82633",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -73071,6 +73247,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Evanston",
+     "zip": "82930",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -73338,6 +73516,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Gillette",
+     "zip": "82716",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -73605,6 +73785,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Jackson",
+     "zip": "83001",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -73872,6 +74054,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Kemmerer",
+     "zip": "83101",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -74445,6 +74629,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Laramie",
+     "zip": "82071",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -74712,6 +74898,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Lovell",
+     "zip": "82431",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -74995,6 +75183,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Lusk",
+     "zip": "82225",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -75265,6 +75455,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Newcastle",
+     "zip": "82701",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -75546,6 +75738,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Powell",
+     "zip": "82435",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -75812,6 +76006,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Rawlins",
+     "zip": "82301",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -76097,6 +76293,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Arapahoe",
+     "zip": "82510",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -76377,6 +76575,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Rock Springs",
+     "zip": "82901",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -76633,6 +76833,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Rock Springs",
+     "zip": "82901",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -76900,6 +77102,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Sheridan",
+     "zip": "82801",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -77153,6 +77357,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Sundance",
+     "zip": "82729",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -77423,6 +77629,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Kirby",
+     "zip": "82430",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -77691,6 +77899,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Torrington",
+     "zip": "82240",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -77972,6 +78182,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Wheatland",
+     "zip": "82201",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
@@ -78238,6 +78450,8 @@
     "status": "source-reported",
     "changedFrom": {
      "status": "coordinate-derived",
+     "city": "Worland",
+     "zip": "82401",
      "checked": null,
      "method": "derived",
      "edition": "v3 (data 2026.09.13.1)"
