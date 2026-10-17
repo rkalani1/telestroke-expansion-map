@@ -31,11 +31,11 @@ Then update the version in this file and smoke-test the map.
 
 ## Still remote
 
-- **Basemap tiles** — `tile.openstreetmap.org` (CARTO's `basemaps.cartocdn.com`
-  was dropped in 3.1.3 when it began stamping unkeyed tiles "API KEY
-  REQUIRED"). A map without tiles still shows
-  markers, the sidebar, distances and every analysis tool, so this degrades
-  gracefully rather than failing hard.
-- **`html2canvas`** — loaded on demand from `cdnjs.cloudflare.com` only when
-  the user exports a PNG, and already guarded with a user-visible error toast.
-- **Fonts** — Google Fonts, with a system-font fallback in `app.css`.
+- **Basemap tiles** — `tile.openstreetmap.org`, under the OSM tile usage policy
+  (attribution shown on the map; no key). When tiles fail to load, a banner says
+  so and the markers, list, evidence, distances and every analysis view keep
+  working; the basemap can also be switched off in Data & methods.
+
+Nothing else is loaded from another host: fonts are the system stack, and the
+PNG export draws the map with the browser's own canvas (earlier versions fetched
+`html2canvas` from a CDN at export time).

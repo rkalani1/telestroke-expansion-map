@@ -20,4 +20,6 @@ Allowed public content:
 
 Deployment rule: real clinical, patient-facing, trainee-record, research-participant, or internal-planning use must move to an approved controlled environment with access control, approved storage, security review, incident-response path, and owner governance.
 
+Browser storage and links: the app keeps only display preferences in `localStorage` (theme, colour-vision palette, basemap, legend state, keyboard-shortcut setting, and the id of the user's chosen "my receiving center", a public hospital record). It stores no notes, patient or operational data, and browser storage is not access control. Share links carry the same public view state and nothing else.
+
 Review cadence: review before every public Pages deployment and after any change that adds forms, uploads, local storage, exports, contact workflows, clinical recommendations, study recruitment language, or organizational branding.

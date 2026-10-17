@@ -1,166 +1,113 @@
-# Regional Hospital Stroke Capabilities
+# Regional Hospital Stroke Capabilities — WWAMI atlas
 
-Interactive map of stroke-center certifications and acute-care hospitals across the WWAMI region (Washington · Alaska · Idaho · Montana · Wyoming), built so a vascular neurologist, fellow, or resident on call can look up **any** hospital in the region and get its capability and transfer picture in one view. (The repository name, `telestroke-expansion-map`, reflects the planning use case; the product itself is a public-source capability reference.)
+A public-source reference and planning atlas of hospital stroke capability across Washington, Alaska, Idaho, Montana and Wyoming. It is built for clinicians at a comprehensive stroke center who need to look up a hospital, see what is documented about it and how current that is, compare straight-line access to receiving centers, and explore transparent network-planning questions. (The repository name, `telestroke-expansion-map`, reflects the original planning use.)
 
 **Live site:** https://rkalani1.github.io/telestroke-expansion-map/
 
 <!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 102 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 148 with eligibility unresolved; 0 not yet located. Stroke capability: 130 assessed, 1 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
 
-![Map screenshot](https://img.shields.io/badge/status-live-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Data](https://img.shields.io/badge/data-verified%20July%202026-informational) ![Records](https://img.shields.io/badge/hospitals-236-blue)
+> Public-source planning reference. Not a clinical decision aid, not dispatch or patient-routing guidance, and not an official product of any health department or accreditor. It records no institutional approval, affiliation, referral agreement, contract or real-time availability. Unknown means not documented — never "none".
 
 ---
 
-## Two classes of record
+## What you can do
 
-Every hospital on the map is one of two kinds, and the difference is stated everywhere it matters — marker shape, list badge, detail banner, exports, and every statistic:
+| View | For |
+|---|---|
+| **Find** | Search by current or former name, nickname or abbreviation (`HMC`, `St V`), city, county, health system or CCN/NPI; filter by tier, documented 24/7 EVT, state, system, Critical Access status, evidence state and analysis scope; sort; open a hospital. |
+| **Hospital detail** | Identity and campus; national certification and state designation shown separately with their evidence state, sources, excerpts and check dates; documented thrombectomy and 24/7 basis; nearest documented 24/7 EVT and CSC/TSC-level centers (straight-line, set named); my receiving center and the difference; illustrative transfer scenarios; nearby hospitals. Side panel on desktop, full sheet on phones. |
+| **Explore** | Choose *my receiving center* (Harborview is a one-click preset; nothing is chosen for you). Switch the map between capability, distance-to-EVT, distance-to-CSC/TSC, distance-to-my-center, evidence and eligibility modes, each with its own legend. Presets for *Telestroke access review*, *EVT capability assessment* and *State designation review*. Adjust transport assumptions. State summary and distance tables. The access review with its separate verification shortlist. |
+| **Compare** | Two to four hospitals side by side with evidence age, unknowns and distances; print or CSV. |
+| **Data & methods** | Coverage of evidence by claim, the needs-verification breakdown, structural checks (labelled as not factual verification), methods, exports (CSV, JSON, Markdown summary, PNG map, print one-pager) with an explicit scope, share link, theme, basemap, colour-vision palette and keyboard-shortcut settings. |
 
-| Class | What it means | Count |
-|-------|---------------|-------|
-| **Stroke capability** | Certification individually verified against primary sources. A blank certification here means *checked, none found*. | 136 |
-| **Acute-care census** | Facility identity from the CMS acute-care census, so every hospital in the region is findable. Stroke capability **has not been assessed** — blank means *unknown*, not *none*. | 100 |
+Every view states its scope (filtered results, selected hospitals or whole dataset) and computes its counts from the data it shows. Share links restore the selected hospital, my center, comparison set, mode, overlays, filters, scenario, viewport and any explicit display choice; a link's explicit settings win over saved preferences without overwriting them, and links from earlier versions keep working.
 
-Census records never assert a tier or an EVT flag, are excluded from every capability statistic and from expansion-candidate scoring, and still get full transport analysis — the geometry is known even where the capability is not.
+## What the data says — and how sure it is
 
-## What it does
+Each hospital is a **campus** record with separate, individually sourced claims: status, address, coordinates, service type, population served, Critical Access designation, emergency department, governance, health system — and, for stroke, **national certification**, **state designation**, **thrombectomy** and **24/7 thrombectomy**. Each claim has a state (*documented*, *verified absent within a scope*, *no record found in reviewed sources*, *not assessed*, *conflicting*, *not applicable*), the sources it rests on, the method used to observe them, and the date it was checked. The build never stamps dates or promotes claims.
 
-- Maps every hospital in the dataset with color-coded markers by certification tier (CSC / TSC / PSC / ASR) and visible badges for 24/7 thrombectomy (EVT) capability.
-- **Separates national accreditation from state designation.** 67 of the 136 assessed records display a tier derived from a WA ECS or Idaho TSE state designation alone, with no national accreditation on record. The detail view says so in as many words, and the list row carries a dashed state badge — a WA ECS Level III should never be read as a Joint Commission ASR.
-- **Finds hospitals by what clinicians actually call them.** Search covers spoken shorthand (`HMC`, `Harborview`, `Sacred Heart`, `St V`), county, health system, facility type, and city — not just the official CMS name.
-- Computes, for each hospital, distance and estimated ground/air transport time to the nearest CSC/TSC and nearest EVT center.
-- Identifies hospitals beyond a configurable straight-line distance from documented 24/7 thrombectomy, and separates "no certification found" from "not assessed".
-- **Expansion candidates (press `E`)**: ranks non-EVT, non-CSC/TSC hospitals by a transparent planning heuristic (certification gap, distance to EVT, distance to CSC/TSC), with a per-site "Why?" breakdown showing exactly how each score was computed, nearest-center names, and ground/air estimates.
-- **Scenario mode**: adjust the scoring weights, EVT-desert threshold, and distance cap with sliders and watch the ranking re-order live. Scenario settings are display-layer only — the source dataset is never modified — and are encoded in the URL so a scenario can be shared as a link.
-- **Data quality panel (press `Q`)**: data version, verification date, per-field completeness, integrity checks run live in the browser, model assumptions, and primary-source list.
-- Exports: CSV of the **currently filtered** hospitals, CSV of the ranked expansion candidates (scenario-stamped filename), CSV of the full distance matrix, PNG of the current map view, and an executive summary as `.txt`, clipboard, or **print one-pager**.
-- Shareable URL: every filter, search term, scenario parameter, palette, and viewport is encoded in the query string.
+- **National and state are never merged.** Washington ECS levels and Idaho TSE levels are shown on the national colour ladder only through an explicit crosswalk, and every such tier says it rests on a state level.
+- **The analysis set** (eligible adult emergency-stroke campuses) requires an active campus with a documented 24/7 general emergency department serving adults. Everything else is *excluded with a reason* or *unresolved*, and stays searchable. A name like "Clinic" never excludes a hospital.
+- **Distances are straight-line miles.** Lines are geometry, not routes or referral relationships. Transport times are adjustable, illustrative scenarios (ground, rotor-wing, fixed-wing) and never compared with treatment-time targets.
 
-## Certification tiers
-
-| Tier | Meaning | Certifying bodies |
-|------|---------|-------------------|
-| **CSC** | Comprehensive Stroke Center — 24/7 neurosurgery, neuro-ICU, EVT, complex cases | Joint Commission · DNV · ACHC |
-| **TSC** | Thrombectomy-Capable Stroke Center — 24/7 mechanical thrombectomy, ≥15 EVT/yr/physician | Joint Commission · ACHC · (DNV "PSC+") |
-| **PSC** | Primary Stroke Center — rapid CT, IV thrombolysis, dedicated stroke team | Joint Commission · DNV · ACHC · CIHQ |
-| **ASR** | Acute Stroke Ready — stabilization, IV lytic, teleneurology, transfer protocols | Joint Commission ("ASRH") · DNV · ACHC · CIHQ |
-| **EVT** | Endovascular thrombectomy capability (not a tier — a capability flagged at each hospital) | N/A |
-
-Washington State runs an independent Level I/II/III ECS system; Idaho runs a TSE Level I/II/III system. Some hospitals (e.g., Kootenai Health) hold only state designations, not national accreditation.
-
-## Data
-
-- **Coverage:** 236 hospitals across WA (91), MT (59), ID (44), WY (27), AK (15) — 136 with verified stroke capability, 100 acute-care census records.
-- **Stroke capability last verified:** 2026-07-04 (full dataset) · 2026-07-18, 2026-08-15, 2026-09-12 (targeted re-checks of open items + five-state press sweeps) · 2026-09-13 (record-text and worklist accuracy pass) · 2026-09-19 (press sweep, no changes)
-- **Census snapshot:** CMS Hospital General Information, Oct 2023. Used for facility identity, type, ownership and bed counts only — no stroke claim is derived from it.
-- **Open items:** [`data/verification-worklist.csv`](./data/verification-worklist.csv) ranks the 59 items that still need a primary-source check, each naming the directory or registry that can settle it.
-- **Methodology:** see [METHODOLOGY.md](./METHODOLOGY.md)
-- **Changelog:** see [CHANGELOG.md](./CHANGELOG.md)
-
-## Transport-time model
-
-Distances are great-circle (haversine). Ground transfer time = (haversine × 1.25) / 55 mph + 8 min overhead. Air transfer time = haversine / 150 mph + 25 min dispatch/takeoff/landing overhead. These are **planning estimates** only. Real transfer times depend on weather, traffic, staffing, and specific asset availability.
-
-## Expansion-candidate scoring
-
-The candidates view scores each non-EVT, non-CSC/TSC hospital 0–100 from three normalized signals under user-adjustable weights (defaults in parentheses):
-
-| Signal | Meaning | Default weight |
-|--------|---------|----------------|
-| Certification gap | No certification 1.0 · ASR 0.65 · PSC 0.35 | 40 |
-| EVT distance | Miles to nearest 24/7 EVT center, capped at 200 mi | 40 |
-| CSC/TSC distance | Miles to nearest CSC/TSC, capped at 200 mi | 20 |
-
-Records flagged air-only receive a flat +8 for transport fragility. **The score is a planning heuristic computed in the browser from the public dataset. It does not assess clinical operations, staffing, case volume, or telestroke contract status, and it never modifies the source data.** Full details in [METHODOLOGY.md](./METHODOLOGY.md).
+[METHODOLOGY.md](METHODOLOGY.md) explains all of it; [docs/SCHEMA.md](docs/SCHEMA.md) lists every field; [docs/EVIDENCE-AUDIT-2026-10.md](docs/EVIDENCE-AUDIT-2026-10.md) reports what the October 2026 review checked, corrected and left open; [data/audit/evidence-audit.csv](data/audit/evidence-audit.csv) is the claim-by-claim inventory and [data/verification-worklist.csv](data/verification-worklist.csv) the ranked list of open checks.
 
 ## Running locally
 
-Because the site fetches `hospitals.json`, browsers block `file://` loads. Serve via any local web server:
+The site is static. Serve the folder (browsers block `fetch` from `file://`):
 
 ```bash
-cd telestroke-expansion-map
-python3 -m http.server 8000
-# then open http://localhost:8000
+python3 -m http.server 8000      # then open http://localhost:8000
 ```
 
-## Verification (before any deploy)
-
-There is intentionally no build step or test framework. Four lightweight checks cover the moving parts:
+## Checks
 
 ```bash
-python3 scripts/verify-data.py       # 17 dataset integrity checks (mirrors METHODOLOGY.md §7)
-node --check app.js                  # JS syntax
-npx --yes html-validate@8 index.html # markup and ARIA validity (.htmlvalidate.json)
-npx --yes eslint@9 app.js            # undefined globals, unused variables, unreachable code (eslint.config.mjs)
+python3 scripts/build-dataset.py --check   # committed outputs match the curated inputs
+python3 scripts/verify-data.py             # independent structural, provenance and geography checks
+node --check core.js && node --check app.js
+npx --yes html-validate@8 index.html
+npx --yes eslint@9 core.js app.js tests
+npm ci && npm test                         # unit tests + headless end-to-end tests (Node 22+)
 ```
 
-`verify-data.py` runs without dependencies; installing `zipcodes` (`pip install zipcodes`)
-additionally enables the check that every record's coordinates agree with the city it names.
+The end-to-end tests run Chromium headlessly through Playwright (`npx playwright install chromium` once, or set `CHROMIUM_PATH`). They inspect the DOM, accessibility tree, computed styles, layout geometry, console and downloaded files; they take no screenshots. CI runs all of the above on every pull request.
 
-To rebuild the dataset after editing curated records or refreshing the census:
+## Updating the data
+
+Edit the curated inputs in `data/curated/` (one claim at a time, with its source and check date), then:
 
 ```bash
-pip install zipcodes
-python3 scripts/build-dataset.py   # normalise + merge census (idempotent)
-python3 scripts/build-worklist.py  # regenerate the verification queue
+python3 scripts/build-dataset.py   # writes hospitals.json, the audit CSV, the worklist and the count sentences
+python3 scripts/verify-data.py
 ```
 
-Then smoke-test in a browser (see [docs/DEPLOY-CHECKLIST.md](./docs/DEPLOY-CHECKLIST.md) for the full list).
+The build is deterministic: no clock, no network, identical bytes on every run. [docs/SOURCE-MAINTENANCE.md](docs/SOURCE-MAINTENANCE.md) covers re-checking a claim, adding a source, refreshing the CMS census and the boundary and gazetteer files, and cutting a release.
 
-## Keyboard shortcuts
+## Keyboard
+
+Shortcuts can be switched off in Data & methods; none overrides browser find (Ctrl/⌘+F).
 
 | Key | Action |
-|-----|--------|
-| `/` or `Ctrl+F` | Focus search |
-| `L` | Focus the hospital list |
-| `M` | Focus the map (then Enter for map mode) |
-| `G` | Open the dashboard |
-| `T` | Open the tools menu |
-| `E` | Open expansion candidates |
-| `Q` | Open data quality panel |
-| `D` | Toggle dark mode |
-| `Shift+R` | Reset all filters + scenario |
-| `?` | Open methods/certification info (includes this list) |
-| `Esc` | Close modal / drawer / tools menu / map mode |
-
-Single-key shortcuts are suppressed while a dialog is open. Reset is `Shift+R` rather than `R`, because the hospital list is keyboard-navigable and a stray keypress there used to clear every filter with no undo.
+|---|---|
+| `/` | Focus hospital search |
+| `L` | Focus the hospital list (arrow keys move, Enter opens) |
+| `M` | Focus the map |
+| `F` `E` `C` `Q` | Find · Explore · Compare · Data & methods |
+| `G` | Summary by state |
+| `D` | Toggle light/dark theme |
+| `Shift+R` | Reset filters |
+| `?` | Shortcut list |
+| `Esc` | Close the dialog, hospital details or mobile sheet (focus returns where it was) |
 
 ## Accessibility
 
-- Every interactive element is keyboard-reachable; focus rings use a high-contrast indigo (`--accent`).
-- Filter pills expose `aria-pressed`; dashboard charts provide `role="img"` + aria-labels.
-- Optional colour-blind–safe palette (Okabe-Ito-inspired) via the tools menu.
-- Dark mode is a full-app theme, not just map tiles.
-- Respects `user-scalable`; there is no zoom lock on the viewport.
+Built to WCAG 2.2 AA and tested headlessly with axe-core in both themes, by keyboard, and at 320–1920 px, short landscape and 200% text: semantic controls, visible focus, focus restoration, non-colour status cues (marker shape, outline and ring carry assessment state), 24 px minimum targets, reduced-motion support, and an optional colour-vision-safe palette. The hospital list and all evidence work with map tiles, fonts or scripts from other hosts blocked. Criteria that need human judgement (for example the clarity of wording to a screen-reader user) have not been formally user-tested.
 
-## File layout
+## Files
 
 ```
-index.html                        Semantic shell
-app.css                           All styles (tokens + components + responsive + print)
-app.js                            Application logic (data load, map, filters, scoring, exports)
-hospitals.json                    Data + metadata (schema, sources, cert definitions)
-vendor/leaflet/                   Leaflet 1.9.4, vendored — see vendor/leaflet/README.md
-data/cms-census-wwami-2023-10.csv CMS acute-care census subset for the five states
-data/verification-worklist.csv    Ranked queue of records needing a primary-source check
-llms.txt                          Plain-text site/dataset description for machine readers
-scripts/build-dataset.py          Rebuild hospitals.json (normalise + merge census)
-scripts/build-worklist.py         Regenerate the verification queue
-scripts/verify-data.py            Dataset integrity checks
-METHODOLOGY.md                    Data sourcing + certification standards + scoring model
-CHANGELOG.md                      Release history
-docs/                             Deploy checklist + improvement notes
+index.html  app.css  app.js       The app (static; no build step)
+core.js                           Pure logic shared by the app and the unit tests
+hospitals.json                    The dataset the app loads (generated)
+data/curated/                     Curated inputs: manifest, sources, facilities, neighbors
+data/audit/evidence-audit.csv     Claim-level audit inventory (generated)
+data/verification-worklist.csv    Ranked open checks (generated)
+data/cms-census-wwami-2023-10.csv CMS Hospital General Information snapshot, five states
+data/geo/                         Census boundaries and the GeoNames town gazetteer extract
+scripts/                          build-dataset, verify-data, build-geo, build-cities, geo helpers, migrations
+tests/unit  tests/e2e             node:test unit tests; Playwright headless end-to-end tests
+vendor/leaflet/                   Leaflet 1.9.4, vendored
+docs/                             Schema, source maintenance, evidence audit, deploy checklist
 ```
 
-## License
+## Attribution and licence
 
-MIT — see [LICENSE](./LICENSE).
+MIT — see [LICENSE](LICENSE).
 
-## Attribution
-
-- Basemap tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (standard tile layer, no API key; see the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/))
-- Mapping library: [Leaflet](https://leafletjs.com/) (BSD-2-Clause, vendored in `vendor/leaflet/`)
-- Acute-care census derived from CMS Hospital General Information
-- PNG export: [html2canvas](https://html2canvas.hertzen.com/)
-
----
-
-*Built for stroke network planning. Feedback and PRs welcome.*
+- Map tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, used under the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/); the map degrades to a list-and-evidence view when tiles are unavailable.
+- [Leaflet](https://leafletjs.com/) (BSD-2-Clause), vendored.
+- Hospital identity: CMS Hospital General Information and the CMS NPPES NPI Registry (public domain).
+- County and state boundaries: US Census Bureau cartographic boundary files via the `us-atlas` package (ISC).
+- Town points: [GeoNames](https://www.geonames.org) via the `cities.json` package, CC BY 4.0.
+- Certification and designation evidence: the issuing bodies and hospitals cited per claim in `hospitals.json`.
