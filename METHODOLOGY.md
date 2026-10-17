@@ -84,7 +84,7 @@ The crosswalk exists so state-designated sites can be coloured alongside nationa
 
 ### Assessment state of a record
 
-`derived.capability` summarises the capability claims (national certification, thrombectomy, 24/7 thrombectomy, and the state designation where the state has a program): **assessed** when every one is documented (any state but unknown), **partial** when some are documented and some unknown, **not assessed** when none was looked at, and **conflicting** when any is conflicting. "Not assessed" is never shown as "none".
+`derived.capability` summarises the capability claims (national certification, thrombectomy, 24/7 thrombectomy, and the state designation where the state has a program): **assessed** when every one is documented (any state but unknown), **partial** when some are documented and some unknown, **not assessed** when none was looked at, and **conflicting** when any is conflicting. "Not assessed" is never shown as "none". A record with no display tier is shown as *none found* only when it is assessed; a partly assessed record without a tier is shown as *partly assessed* (grey fill with a dashed purple ring), because the credential that would give it a tier may simply not have been checked yet (`derived.tierClass`).
 
 ## 4. Evidence and provenance
 
@@ -160,7 +160,7 @@ A destination must be an active, located campus that is not excluded (closed, pe
 | Fixed-wing leg | departure → arrival, including ground legs to/from airports | 250 mph + 40 min ground legs + 20 min handling |
 | Receiving-center intervals | arrival → treatment | **not modeled** |
 
-Ground transfer is modeled only between campuses on the **same documented road network** (`roadNetwork`): the contiguous-US road network; the Alaska Railbelt (treated as separate — the cross-border road is not an acute transfer route); isolated local networks; and ferry-dependent sites (no ground model across a ferry). Unknown connectivity shows ground as unavailable, never as a plausible time. Weather, staffing, asset availability, airport/landing access and acceptance are not modeled.
+Ground transfer is modeled only between campuses on the **same documented road network** (`roadNetwork`): the contiguous-US road network; the Alaska Railbelt (treated as separate — the cross-border road is not an acute transfer route); isolated local networks; and ferry-dependent sites (no ground model across a ferry). Unknown connectivity shows ground as unavailable, never as a plausible time. Weather, staffing, asset availability, airport/landing access and acceptance are not modeled. Every number in the table — speeds, the road factor, the rotor-wing range and each mode's fixed handover or handling time — is adjustable in Explore → Transport scenario assumptions and carried in share links; the assumptions sentence under each scenario table states all of them, so the minutes shown can be reproduced from it.
 
 No total is compared with a treatment-time target, and no on-target/over-target judgement is made: the spoke-arrival-to-receiving-arrival clock is not a door-to-needle or door-to-device interval, treatment may begin at the sending hospital, and eligibility for treatment depends on clinical information this map does not hold.
 
@@ -174,8 +174,9 @@ The access review ranks **questions to investigate**, not hospitals to approach.
   - straight-line miles to the nearest documented 24/7 EVT center, capped and divided by the cap;
   - straight-line miles to the nearest CSC/TSC-level center, capped;
   - optionally, miles to my receiving center, capped.
-- **Missing evidence never becomes a gap.** Candidates whose capability is unassessed or conflicting get no gap value; they go to a separate **verification shortlist**, ranked by geography alone.
-- **Ties** (same score to 0.1) share a rank and are ordered by distance to EVT, then name, then id. **All-zero weights** produce no ranking and say so. **Sensitivity**: each candidate's rank range when each non-zero weight is halved or increased by half in turn.
+- **Missing evidence never becomes a gap.** Candidates whose capability is unassessed, partly assessed or conflicting get no gap value; they go to a separate **verification shortlist**, ranked by geography alone. Shortlist membership depends only on the evidence, never on the weights, so it is still listed (and exported) when every weight is zero.
+- **Transfer scenario, not scored.** Beside the score, each candidate shows what the scenario model can say about a transfer to its nearest documented 24/7 EVT center: ground on a documented road network or not (or unknown), rotor-wing within or beyond the scenario range, fixed-wing with airport access not assessed. It is carried into the summary and the CSV and never enters the score.
+- **Ties** (same score to 0.1) share a rank and are ordered by distance to EVT, then name, then id. **All-zero weights** produce no ranking and say so. **Sensitivity**: each candidate's rank range when each non-zero weight is halved or increased by half in turn (increasing one weight by half is done by scaling the others to two-thirds, which is the same for a weighted mean and stays inside the slider range).
 - The score uses only public geometry and documented capability. It does not model operations, staffing, volumes, population, payer mix, existing telestroke coverage, contracts or business opportunity, and it never changes the data.
 
 **Presets** frame common questions with transparent filters: *Telestroke access review*, *EVT capability assessment*, *State designation review*. None establishes onboarding eligibility, certification eligibility, the feasibility of an EVT program, or an outreach list.
