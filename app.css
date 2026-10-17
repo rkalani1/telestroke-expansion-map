@@ -470,6 +470,9 @@ table.matrix .link-btn { min-height: 24px; padding: 0; text-align: left; }
   /* Room for rows: a tighter dialog header, and a wider hospital column so names wrap less. */
   #dlg-matrix .dlg-head { padding-block: var(--sp-1); }
   table.matrix th[scope="row"] { min-width: 20ch; }
+  /* The reading note follows the table on short screens (it stays first in
+     reading order), so rows are in view as the dialog opens. */
+  #dlg-matrix .note { order: 1; }
 }
 
 /* ---------- compare + data ---------- */
