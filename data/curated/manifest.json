@@ -51,8 +51,8 @@
  "road_networks": {
   "contiguous-us": "Road network of the contiguous United States (includes Whidbey and Camano Islands by bridge).",
   "ak-railbelt": "Alaska road system connecting Anchorage, Mat-Su, the Kenai Peninsula, Fairbanks and Valdez. Treated as separate from contiguous-us: the cross-border road route is not modelled as an acute transfer.",
-  "isolated": "A local road network not connected to other hospitals in this dataset (value is ak-isolated:<community> or similar).",
-  "ferry": "Reachable by road only via a ferry crossing (value ends in -ferry). Ground transfer is not modelled across a ferry.",
+  "isolated": "ak-isolated:<community> — a community with no road link to any other hospital in the dataset (local roads at most); reached by air, or seasonally by sea or river.",
+  "ferry": "<community>-ferry — reached from other hospitals' road networks only by ferry. Ground transfer is not modelled across a ferry; campuses in the same community share its local roads.",
   "unknown": "Not documented; ground transfer is shown as unavailable."
  },
  "certification_definitions": {

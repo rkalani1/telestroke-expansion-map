@@ -219,7 +219,10 @@ def derive_tier(r):
 
 
 def state_program_applies(r):
-    return r.get('state') in ('WA', 'ID')
+    # States that designate hospital stroke centers: Washington (ECS
+    # categorization), Idaho (TSE designation) and Wyoming (WDH Heart and Stroke
+    # Center designation). Montana and Alaska had no operating program (2026 review).
+    return r.get('state') in ('WA', 'ID', 'WY')
 
 
 def derive_capability(r):

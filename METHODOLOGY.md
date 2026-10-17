@@ -2,7 +2,7 @@
 
 *Schema 4.0.0 · release 4.0.0 · evidence review 2026-10-17. Counts below are generated from the data by `scripts/build-dataset.py`.*
 
-<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 102 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 148 with eligibility unresolved; 0 not yet located. Stroke capability: 130 assessed, 1 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
+<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 133 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 117 with eligibility unresolved; 0 not yet located. Stroke capability: 128 assessed, 3 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
 
 This document explains what the dataset contains, how each kind of claim is established, what the dates mean, how distances and transport scenarios are computed, how the access review is scored, and what the data cannot tell you. It is a public-source planning reference: not a clinical decision aid, not dispatch or patient-routing guidance, and not an official product of any health department or accreditor. It represents no institutional approval, affiliation, referral agreement or real-time availability.
 
@@ -41,7 +41,7 @@ The NPPES NPI Registry (CMS) was queried for every state's hospital organization
 | `serviceType`, `population` | CMS hospital type and NPPES primary taxonomy; children's hospitals are `pediatric`; other general acute hospitals are taken to serve all ages (`rule-based`). |
 | `system` | Only when the NPPES legal or trade name names the system. |
 | `status` | `active` when an NPPES record updated since January 2024 and the CMS October 2023 snapshot both list the campus, or a current state roster lists it, or a credential for it was described in sources read in this pass; otherwise `unknown` with the reason. These are administrative records, not observations of operations. |
-| `ed` | Documented directly, or inferred for a Critical Access Hospital from the Condition of Participation requiring 24-hour emergency services (42 CFR 485.618). |
+| `ed` | Documented directly; or inferred for a Critical Access Hospital from the Condition of Participation requiring 24-hour emergency services (42 CFR 485.618; a Rural Emergency Hospital must also staff an ED 24/7); or inferred for a current Washington ECS **Level II** stroke center, whose categorization criteria require "Emergency Department personnel trained in diagnosing and treating acute stroke 24 hours a day, seven days a week". The Level I and III criteria retrieved did not state an ED requirement, and no ED requirement was found for Idaho TSE levels or Joint Commission/DNV certifications, so those credentials alone do not document an ED. |
 
 ## 3. Separate dimensions
 
@@ -54,11 +54,11 @@ Stroke capability is four more, also kept separate everywhere — schema, map, l
 | Claim | What it records |
 |---|---|
 | `national` | National certification: accrediting body (Joint Commission, DNV, ACHC, CIHQ), program as the body names it, tier, effective/expiry dates when known. |
-| `stateDesignation` | State designation: issuing authority, system (Washington ECS categorization; Idaho TSE designation), level exactly as issued (e.g. Idaho **Level II+**), status including pending. Montana, Wyoming and Alaska are recorded as `not-applicable` only where no state program was found. |
+| `stateDesignation` | State designation: issuing authority, system (Washington ECS categorization; Idaho TSE designation; Wyoming Department of Health Heart and Stroke Center designation, which follows national accreditation), level exactly as issued (e.g. Idaho **Level II+**), status including pending. No hospital stroke designation program was found in operation in Montana or Alaska (October 2026; an Alaska bill passed the Legislature in May 2026), so those records say "no state program found" rather than "not designated". The current Wyoming designated list was not found, so Wyoming designations are not assessed. |
 | `evt` | Endovascular thrombectomy capability documented for this campus. |
 | `evt247` | 24/7 thrombectomy documented explicitly, or entailed by a named current credential (`basis` says which). |
 
-A Primary Stroke Center may document 24/7 thrombectomy; certification alone does not establish current service availability; absence from a directory is not proof of absent capability.
+A Primary Stroke Center may document 24/7 thrombectomy; certification alone does not establish current service availability; absence from a directory is not proof of absent capability. What a credential entails was checked against the program's own materials: Joint Commission Thrombectomy-Capable and Comprehensive Stroke Centers require documented 24/7 neurointerventional coverage, and a Washington ECS asterisk means Level I/II with all aspects of large-vessel-occlusion therapy available 24/7, so either can be the `basis` for `evt247`. DNV's Primary Stroke Center Plus and Idaho TSE Level II+ require thrombectomy capability, but no text was found requiring it 24/7, so they document `evt`, not `evt247`, on their own.
 
 ### Claim states
 
@@ -150,7 +150,7 @@ A destination must be an active, located campus that is not excluded (closed, pe
 
 | Interval | Start → end | Scenario default |
 |---|---|---|
-| DIDO (sending hospital) | ED arrival → departure. Transport activation and loading happen inside it, so they are not added again. | 60 min (input, not a benchmark) |
+| DIDO (sending hospital) | ED arrival → departure from the first hospital, as Get With The Guidelines–Stroke defines door-in-door-out. Transport activation and loading happen inside it, so they are not added again. | 60 min (input, not a benchmark) |
 | Ground leg | departure → arrival at the receiving hospital | straight-line × 1.25 road factor at 55 mph + 8 min handover |
 | Rotor-wing leg | departure → arrival | 140 mph + 15 min, within a 150-mi scenario range |
 | Fixed-wing leg | departure → arrival, including ground legs to/from airports | 250 mph + 40 min ground legs + 20 min handling |

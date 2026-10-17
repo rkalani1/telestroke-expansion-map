@@ -569,7 +569,7 @@
   const INCLUDES = ['excluded', 'unknown'];
   const STATES = ['WA', 'AK', 'ID', 'MT', 'WY'];
   const THEMES = ['light', 'dark'];
-  const BASEMAPS = ['muted', 'standard', 'none'];
+  const BASEMAPS = ['muted', 'terrain', 'standard', 'none'];
   const CAH_FILTERS = ['yes', 'no', 'unknown'];
   const OVERLAYS = ['lines', 'rings'];
   const SORTS = ['relevance', 'name', 'tier', 'evt', 'hub', 'checked'];

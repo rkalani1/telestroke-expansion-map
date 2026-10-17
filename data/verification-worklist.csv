@@ -211,68 +211,37 @@ P2,271321,Wheatland Memorial Hospital,MT,capability-unassessed,"Assess stroke ca
 P2,500012-ASTRIA,Astria Regional Medical Center,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500012-ASTRIA,Astria Regional Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500012-ASTRIA,Astria Regional Medical Center,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,500037,Astria Toppenish Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500139,Capital Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500060,Cascade Valley Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500016,Confluence Health Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500148,Confluence Health – Wenatchee Valley Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500148,Confluence Health – Wenatchee Valley Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500148,Confluence Health – Wenatchee Valley Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,500124,EvergreenHealth Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500084,EvergreenHealth Monroe,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500138,Fred Hutchinson Cancer Center,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500138,Fred Hutchinson Cancer Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500138,Fred Hutchinson Cancer Center,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,500031,Grays Harbor Community Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500064,Harborview Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500007,Island Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500058,Kadlec Regional Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500052,Kaiser Permanente Central Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500052,Kaiser Permanente Central Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
 P2,501334,Lake Chelan Community Hospital,WA,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
-P2,500150,Legacy Salmon Creek Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,WA-MADIGAN-AMC,Madigan Army Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,503301,Mary Bridge Children's Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,500129,MultiCare Allenmore Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500015,MultiCare Auburn Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500154,MultiCare Covington Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500044,MultiCare Deaconess Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500079,MultiCare Good Samaritan Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500129-TACOMA-GENERAL,MultiCare Tacoma General Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500119,MultiCare Valley Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500036,MultiCare Yakima Valley Memorial,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,501307,Odessa Memorial Healthcare Center,WA,location-conflict,Two coordinate sources disagree by more than 1 mi,Geocode the verified street address and keep the matching point
 P2,500072,Olympic Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500051,Overlake Hospital Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500050,PeaceHealth Southwest Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500041,PeaceHealth St. John Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500030,PeaceHealth St. Joseph Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500019,Providence Centralia Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500077,Providence Holy Family Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500014,Providence Regional Medical Center Everett,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500054,Providence Sacred Heart Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500002,Providence St. Mary Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500024,Providence St. Peter Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500033,Samaritan Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,503300,Seattle Children's Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,503302,Shriners Hospital for Children,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
 P2,503302,Shriners Hospital for Children,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,500003,Skagit Valley Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500151,St. Anthony Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500021,St. Clare Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500141,St. Francis Community Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500039,St. Michael Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500026,Swedish Edmonds Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500152,Swedish Issaquah,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500025,Swedish Medical Center – Cherry Hill,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500027,Swedish Medical Center – First Hill,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,501324,Three Rivers Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,501324,Three Rivers Hospital,WA,status-unknown,Confirm active / closed status,State hospital licensing roster; CMS Hospital General Information (current)
-P2,500053,Trios Health,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500008,UW Medical Center – Montlake,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500001,UW Medical Center – Northwest,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500088,Valley Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
-P2,500011,Virginia Mason Franciscan Health St. Anne Hospital,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500108,Virginia Mason Franciscan Health St. Joseph Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500005,Virginia Mason Medical Center,WA,eligibility-unresolved,Confirm active status and general 24/7 emergency department,Hospital emergency services page; state licensing roster
 P2,500049,Walla Walla General Hospital,WA,capability-unassessed,"Assess stroke capability (national, state, EVT)","Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"

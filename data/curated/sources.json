@@ -1,4 +1,37 @@
 {
+ "aagrapevine-apr-no-roads-bethel-1c9ea": {
+  "type": "other",
+  "title": "No roads to Bethel (AA Grapevine, April 2014)",
+  "publisher": "AA Grapevine",
+  "url": "https://www.aagrapevine.org/magazine/2014/apr/no-roads-bethel",
+  "published": "2014-04",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2014-04 (published)."
+ },
+ "akleg-basis-get-documents-asp-06ba8": {
+  "type": "government",
+  "title": "HB 27 (34-LS0277\\A) bill text",
+  "publisher": "Alaska State Legislature",
+  "url": "https://www.akleg.gov/basis/get_documents.asp?session=34&docid=3115",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "alaskabeacon-stroke-heart-attack-emergencies-98308": {
+  "type": "news",
+  "title": "Alaska Legislature votes to improve preparedness and response for stroke, heart attack emergencies",
+  "publisher": "Alaska Beacon",
+  "url": "https://alaskabeacon.com/2026/05/29/alaska-legislature-votes-to-improve-preparedness-and-response-for-stroke-heart-attack-emergencies/",
+  "published": "2026-05-29",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-05-29 (published)."
+ },
  "blog-providence-a-comprehensive-stroke-center-a9fbc": {
   "type": "official-facility",
   "title": "Joint Commission Designates Providence Sacred Heart Medical Center as a Comprehensive Stroke Center",
@@ -153,6 +186,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "dillinghamak-node-104-99f5f": {
+  "type": "government",
+  "title": "City of Dillingham (official site)",
+  "publisher": "City of Dillingham",
+  "url": "https://www.dillinghamak.us/node/104",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "doh-wa-03-evaldor22-04-pdf-d2476": {
   "type": "government",
   "title": "https://doh.wa.gov/sites/default/files/2022-03/EvalDOR22-04.pdf",
@@ -230,6 +274,50 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-07 (published)."
  },
+ "dot-alaska-afr-2025-final-pdf-a5476": {
+  "type": "government",
+  "title": "AMHS 2024-2025 Annual Financial Report",
+  "publisher": "Alaska DOT&PF / AMHS",
+  "url": "https://dot.alaska.gov/amhs/doc/AFR/afr_2025_FINAL.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "dot-alaska-amhs-route-shtml-d4218": {
+  "type": "government",
+  "title": "Route Guide - Alaska Marine Highway System",
+  "publisher": "Alaska DOT&PF / AMHS",
+  "url": "https://dot.alaska.gov/amhs/route.shtml",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "dphhs-mt-publichealth-cardiovascular-65b18": {
+  "type": "government",
+  "title": "Cardiovascular Health",
+  "publisher": "Montana DPHHS",
+  "url": "https://dphhs.mt.gov/publichealth/cardiovascular/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "dphhs-mt-publichealth-emsts-trauma-designation-a76f2": {
+  "type": "government",
+  "title": "Trauma Designation",
+  "publisher": "Montana DPHHS EMS & Trauma Systems",
+  "url": "https://dphhs.mt.gov/publichealth/emsts/trauma/designation",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "ecfr-42-cfr-485-618": {
   "type": "regulation",
   "title": "42 CFR 485.618 — Condition of participation: Emergency services (Critical Access Hospitals)",
@@ -241,11 +329,33 @@
   "access": "citation",
   "note": "§485.618(a): \"Emergency services must be available on a 24-hours a day basis.\" Cited as the basis for inferring a 24/7 emergency department at a documented Critical Access Hospital; not a campus observation."
  },
+ "en-wikipedia-e2-80-93council-highway-7bc11": {
+  "type": "tertiary",
+  "title": "Nome–Council Highway",
+  "publisher": "Wikipedia",
+  "url": "https://en.wikipedia.org/wiki/Nome%E2%80%93Council_Highway",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "en-wikipedia-peacehealth-southwest-medical-center-301c3": {
   "type": "tertiary",
   "title": "PeaceHealth Southwest Medical Center",
   "publisher": "Wikipedia",
   "url": "https://en.wikipedia.org/wiki/PeaceHealth_Southwest_Medical_Center",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "en-wikipedia-wiki-bush-alaska-93916": {
+  "type": "tertiary",
+  "title": "The Bush (Alaska)",
+  "publisher": "Wikipedia",
+  "url": "https://EN.wikipedia.com/wiki/Bush_Alaska",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -318,6 +428,50 @@
   "access": "snapshot",
   "note": "Vendored at data/geo/cities-wwami.json by scripts/build-cities.py. Town-centre points, not hospital campuses."
  },
+ "hcn-lifeline-for-rural-alaskans-b52f8": {
+  "type": "news",
+  "title": "Cordova's longest road, just 36 miles, provides a lifeline for rural Alaskans",
+  "publisher": "High Country News",
+  "url": "https://www.hcn.org/articles/photos-transportation-cordovas-longest-road-just-36-miles-provides-a-lifeline-for-rural-alaskans/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "health-alaska-center-verification-and-designation-9117f": {
+  "type": "government",
+  "title": "Trauma Center Designation",
+  "publisher": "Alaska Department of Health",
+  "url": "https://health.alaska.gov/en/services/trauma-center-verification-and-designation/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "health-wyo-application-template-1-pdf-a9f3f": {
+  "type": "government",
+  "title": "Letter of Completion and Application",
+  "publisher": "Wyoming Department of Health",
+  "url": "https://health.wyo.gov/wp-content/uploads/2026/05/Letter_of_Completion_and_Application_Template-1.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "health-wyo-special-projects-686-2-5db89": {
+  "type": "government",
+  "title": "Heart and Stroke Center Designation - Wyoming Department of Health",
+  "publisher": "Wyoming Department of Health",
+  "url": "https://health.wyo.gov/publichealth/ems/special-projects/686-2/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "idaho-tse-designations": {
   "type": "issuer-registry",
   "title": "Idaho Time Sensitive Emergency System — Facility Designations (TSE Designated Centers by Region)",
@@ -339,6 +493,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2011-12 (published)."
+ },
+ "mil-wa-asset-5ba421340b219-283af": {
+  "type": "government",
+  "title": "Washington Military Department / Emergency Management document",
+  "publisher": "Washington Military Department",
+  "url": "https://mil.wa.gov/asset/5ba421340b219",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "multicare-about-annual-report-b1b23": {
   "type": "official-facility",
@@ -3255,6 +3420,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2007-02-14."
  },
+ "nsbsd-north-slope-borough-1d6fd0c2-0e38e": {
+  "type": "government",
+  "title": "North Slope Borough (North Slope Borough School District)",
+  "publisher": "North Slope Borough School District",
+  "url": "https://www.nsbsd.org/north-slope-borough-1d6fd0c2",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "olympicmedical-acute-stroke-ready-center-746cb": {
   "type": "official-facility",
   "title": "Acute Stroke Ready Center",
@@ -3326,6 +3502,17 @@
   "title": "Stroke and Neurovascular Disorders",
   "publisher": "PeaceHealth",
   "url": "https://www.peacehealth.org/stroke",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "ports-marinelink-ports-port-kotzebue-4f6bc": {
+  "type": "other",
+  "title": "Port of Kotzebue",
+  "publisher": "MarineLink",
+  "url": "https://ports.marinelink.com/ports/port/kotzebue",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -3562,5 +3749,71 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Current list read only through web-search extracts (~50 queries); the PDF table text extracts imperfectly. Revision reported as May 2026 in 4 of 6 date probes (not independently confirmed); the 2022-02 path is an upload folder, not a revision date. The asterisk marks hospitals meeting Level I/II stroke requirements with all aspects of ELVO therapy 24/7 (list footnote, as extracted)."
+ },
+ "wa-doh-ecs-stroke-level2-application": {
+  "type": "issuer-registry",
+  "title": "Washington ECS — Level II Stroke Center categorization application (DOH 346-063)",
+  "publisher": "Washington State Department of Health",
+  "url": "https://doh.wa.gov/sites/default/files/2026-02/346063-StrokeLevel2.pdf",
+  "published": "2026-02",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Criteria checklist read through search extracts. The hospital attests it \"meets the criteria to be categorized as a Level II Stroke Center ... and provides these services 24/7\", including \"Emergency Department personnel trained in diagnosing and treating acute stroke 24 hours a day, seven days a week\". The 2026-02 path is an upload folder; the form shows no revision date."
+ },
+ "whidbeynewstimes-12-17-for-paving-5ff02": {
+  "type": "news",
+  "title": "Deception Pass Bridge closed nightly July 12-17 for paving",
+  "publisher": "Whidbey News-Times",
+  "url": "https://www.whidbeynewstimes.com/2015/06/30/deception-pass-bridge-closed-nightly-july-12-17-for-paving/",
+  "published": "2015-06-30",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2015-06-30 (published)."
+ },
+ "wiki-aaroads-e2-80-93teller-highway-92e19": {
+  "type": "tertiary",
+  "title": "Nome–Teller Highway",
+  "publisher": "AARoads Wiki",
+  "url": "https://wiki.aaroads.com/wiki/Nome%E2%80%93Teller_Highway",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "wiki-aaroads-wiki-copper-river-highway-1e621": {
+  "type": "tertiary",
+  "title": "Copper River Highway",
+  "publisher": "AARoads Wiki",
+  "url": "https://wiki.aaroads.com/wiki/Copper_River_Highway",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "wsdot-ferries-schedule-scheduledetailbyroute-aspx-e7f21": {
+  "type": "government",
+  "title": "WSDOT - Ferries - Schedule: Fall 2026 Sailing Schedule for Anacortes / San Juan Islands",
+  "publisher": "WSDOT / Washington State Ferries",
+  "url": "https://wsdot.com/ferries/schedule/scheduledetailbyroute.aspx?route=ana-sj",
+  "published": null,
+  "effective": "2026-09-20",
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-09-20 (effective)."
+ },
+ "wsdot-ferries-vesselwatch-terminaldetail-aspx-3ad04": {
+  "type": "government",
+  "title": "WSDOT - Ferries - Friday Harbor Ferry Terminal",
+  "publisher": "WSDOT / Washington State Ferries",
+  "url": "https://wsdot.com/ferries/vesselwatch/terminaldetail.aspx?terminalid=10",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  }
 }

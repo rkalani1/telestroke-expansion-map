@@ -6,7 +6,7 @@ state stroke designation, documented thrombectomy (EVT) and 24/7 EVT, kept as
 separate claims with sources and check dates, plus straight-line access to
 receiving centers and transparent, adjustable planning scenarios.
 
-<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 102 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 148 with eligibility unresolved; 0 not yet located. Stroke capability: 130 assessed, 1 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
+<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 133 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 117 with eligibility unresolved; 0 not yet located. Stroke capability: 128 assessed, 3 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
 
 - Site: https://rkalani1.github.io/telestroke-expansion-map/
 - Source: https://github.com/rkalani1/telestroke-expansion-map

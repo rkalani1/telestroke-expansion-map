@@ -58,7 +58,7 @@ async function openApp(browser, base, query, options) {
     if (/Failed to load resource/.test(t)) return; // network failures are asserted explicitly where relevant
     errors.push('console: ' + t);
   });
-  await page.route(/tile\.openstreetmap\.org/, route => (o.tiles === 'ok'
+  await page.route(/tile\.openstreetmap\.org|basemap\.nationalmap\.gov/, route => (o.tiles === 'ok'
     ? route.fulfill({ status: 200, body: TILE, headers: { 'Content-Type': 'image/png', 'Access-Control-Allow-Origin': '*' } })
     : route.abort()));
   if (o.routes) for (const [pattern, handler] of o.routes) await page.route(pattern, handler);

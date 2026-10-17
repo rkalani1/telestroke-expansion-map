@@ -434,8 +434,11 @@ table.data tfoot td { font-weight: 650; border-top: 1px solid var(--border-stron
 .map:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
 .leaflet-container { font-family: var(--font); background: var(--surface-3); }
 /* Muted basemap: the same OpenStreetMap tiles, desaturated so the data reads first. */
-.map.bm-muted .leaflet-tile-pane { filter: saturate(.25) contrast(.9) brightness(1.06); }
+.map.bm-muted .leaflet-tile-pane,
+.map.bm-terrain .leaflet-tile-pane { filter: saturate(.25) contrast(.9) brightness(1.06); }
+.map .relief-layer { mix-blend-mode: multiply; }
 html[data-theme="dark"] .map.bm-muted .leaflet-tile-pane,
+html[data-theme="dark"] .map.bm-terrain .leaflet-tile-pane,
 html[data-theme="dark"] .map.bm-standard .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) saturate(.25) brightness(.85) contrast(.9); }
 .map.bm-none .leaflet-tile-pane { display: none; }
 .leaflet-control-attribution { font-size: 11px; background: color-mix(in srgb, var(--surface) 88%, transparent) !important; color: var(--text-2); }

@@ -84,3 +84,16 @@ test('storage that throws (privacy mode) does not break startup', async () => {
   assert.deepEqual(errors, []);
   await context.close();
 });
+
+test('terrain shading is an opt-in basemap with its own attribution, restorable from a link', async () => {
+  const { page, context, errors } = await openApp(browser, srv.base, '?bm=terrain');
+  await page.waitForSelector('.relief-layer', { state: 'attached' });
+  assert.match(await page.textContent('.leaflet-control-attribution'), /USGS The National Map/);
+  assert.match(await page.textContent('.leaflet-control-attribution'), /OpenStreetMap/);
+  await page.click('#tab-data');
+  await page.selectOption('#basemap-select', 'none');
+  assert.equal(await page.$('.relief-layer'), null);
+  assert.doesNotMatch(await page.textContent('.leaflet-control-attribution'), /USGS/);
+  assert.deepEqual(errors, []);
+  await context.close();
+});

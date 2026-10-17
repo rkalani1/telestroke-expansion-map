@@ -19,6 +19,10 @@ const PREFS_KEY = 'stroke-atlas-prefs-v4';
 const LEGACY_KEYS = ['stroke-dark', 'stroke-cb', 'stroke-dashboard'];
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+// Optional terrain shading: USGS The National Map shaded relief (3DEP), public
+// domain, no key. Drawn over the muted basemap at low opacity.
+const RELIEF_URL = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSShadedReliefOnly/MapServer/tile/{z}/{y}/{x}';
+const RELIEF_ATTRIBUTION = 'Relief: <a href="https://www.usgs.gov/programs/national-geospatial-program/national-map">USGS The National Map</a> (3DEP)';
 const REDUCED_MOTION = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MOBILE_Q = typeof matchMedia === 'function' ? matchMedia('(max-width: 767px)') : { matches: false, addEventListener() {} };
 const STALE_DAYS = 365;
@@ -247,9 +251,10 @@ function stateLabel(h) {
     return s.status && s.status !== 'designated' ? `${lvl} (${s.status})` : lvl;
   }
   if (st === 'not-applicable') return s.note || 'No state stroke-designation program identified for this state';
-  if (st === 'no-record-found') return `Not found on the ${s.system || 'state'} roster as reviewed`;
+  if (st === 'no-record-found') return s.system ? `Not found on the ${s.system} roster as reviewed` : `No state stroke-designation program found${s.authority ? ' (' + s.authority + ')' : ''}`;
   if (st === 'negative') return `Not designated (${s.system || 'state'} roster, as reviewed)`;
   if (st === 'conflicting') return 'Conflicting evidence';
+  if (s.system) return `Not assessed (${s.system})`;
   return 'Not assessed';
 }
 function evtLabel(h) {
@@ -802,12 +807,22 @@ function setBasemap() {
   if (!S.map) return;
   const bm = currentBasemap();
   const mapEl = S.map.getContainer();
-  mapEl.classList.remove('bm-muted', 'bm-standard', 'bm-none');
+  mapEl.classList.remove('bm-muted', 'bm-terrain', 'bm-standard', 'bm-none');
   mapEl.classList.add('bm-' + bm);
+  if (bm !== 'terrain' && S.relief) { S.map.removeLayer(S.relief); S.relief = null; }
   if (bm === 'none') {
     if (S.tiles) { S.map.removeLayer(S.tiles); S.tiles = null; }
     S.map.attributionControl.removeAttribution(TILE_ATTRIBUTION);
     return;
+  }
+  if (bm === 'terrain' && !S.relief) {
+    S.relief = L.tileLayer(RELIEF_URL, { maxZoom: 19, maxNativeZoom: 16, opacity: 0.4, className: 'relief-layer', crossOrigin: 'anonymous', attribution: RELIEF_ATTRIBUTION }).addTo(S.map);
+    let ok = 0, err = 0, warned = false;
+    S.relief.on('tileload', () => { ok++; });
+    S.relief.on('tileerror', () => {
+      err++;
+      if (err >= 6 && ok === 0 && !warned) { warned = true; toast('Terrain shading could not be loaded; the basemap and markers still work.'); }
+    });
   }
   if (!S.tiles) {
     // crossOrigin lets the PNG export draw tiles without tainting the canvas;
@@ -2192,14 +2207,19 @@ async function exportPng() {
       ctx.save();
       ctx.beginPath(); ctx.rect(0, headH, size.x, size.y); ctx.clip();
       const bm = currentBasemap();
-      if (bm === 'muted') ctx.filter = effectiveTheme() === 'dark' ? 'invert(1) hue-rotate(180deg) saturate(.25) brightness(.85) contrast(.9)' : 'saturate(.25) contrast(.9) brightness(1.06)';
+      if (bm === 'muted' || bm === 'terrain') ctx.filter = effectiveTheme() === 'dark' ? 'invert(1) hue-rotate(180deg) saturate(.25) brightness(.85) contrast(.9)' : 'saturate(.25) contrast(.9) brightness(1.06)';
       else if (effectiveTheme() === 'dark') ctx.filter = 'invert(1) hue-rotate(180deg) saturate(.25) brightness(.85) contrast(.9)';
       for (const img of S.map.getContainer().querySelectorAll('.leaflet-tile-pane img.leaflet-tile-loaded')) {
         const r = img.getBoundingClientRect();
         if (r.right < rect.left || r.left > rect.right || r.bottom < rect.top || r.top > rect.bottom) continue;
+        const relief = !!img.closest('.relief-layer');
+        ctx.globalAlpha = relief ? 0.4 : 1;
+        ctx.globalCompositeOperation = relief ? 'multiply' : 'source-over';
         ctx.drawImage(img, r.left - rect.left, r.top - rect.top + headH, r.width, r.height);
         tiles++;
       }
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
       ctx.restore();
     }
     // Lines
