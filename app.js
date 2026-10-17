@@ -1164,6 +1164,9 @@ function selectHospital(id, opts) {
   if (o.source !== 'url') S.detailOpener = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
   S.ui.selected = id;
   S.showAdvLine = false;
+  // Fill the panel before revealing it, so it never shows a placeholder title
+  // or an empty body for a frame (the scheduled render repeats this harmlessly).
+  renderDetail();
   openDetail();
   update();
   if (S.map && isLocated(h) && o.source !== 'url-keep-view') {
@@ -2557,7 +2560,11 @@ function bindEvents() {
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (MOBILE_Q.matches) setSheet(true);
-      requestAnimationFrame(() => { const f = $('.result'); if (f) f.focus(); });
+      // The list already reflects the query (typing re-renders it), so focus
+      // now: a deferred focus would drop a quick second ArrowDown.
+      const f = $('#results .result[tabindex="0"]') || $('#results .result');
+      if (f) f.focus();
+      else requestAnimationFrame(() => { const g = $('#results .result'); if (g) g.focus(); });
     } else if (e.key === 'Escape' && search.value) {
       e.preventDefault(); e.stopPropagation();
       search.value = ''; S.ui.q = ''; $('#search-clear').hidden = true; update();

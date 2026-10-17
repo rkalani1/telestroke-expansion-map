@@ -43,6 +43,13 @@ async function openApp(browser, base, query, options) {
     reducedMotion: o.reducedMotion || 'no-preference', colorScheme: o.colorScheme || 'light', hasTouch: !!o.touch, isMobile: !!o.mobile });
   if (o.initScript) await context.addInitScript(o.initScript);
   const page = await context.newPage();
+  // E2E_CPU_THROTTLE=4 slows the page's CPU (Chromium only) to shake out
+  // timing assumptions that a fast workstation hides and a CI runner exposes.
+  const throttle = Number(process.env.E2E_CPU_THROTTLE || 0);
+  if (throttle > 1) {
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: throttle });
+  }
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => {
@@ -90,10 +97,17 @@ async function pick(page, fnSource) {
   return page.evaluate(`(() => { const S = window.__strokeAtlas; const C = window.StrokeCore; return (${fnSource})(S, C); })()`);
 }
 
+// Type a query and wait until the rendered list reflects it (first row is the
+// first computed result, or the empty state when nothing matches).
 async function search(page, text) {
   await page.fill('#search', text);
-  await page.waitForFunction((t) => window.__strokeAtlas.ui.q === t, text);
-  await page.waitForTimeout(80);
+  await page.waitForFunction((t) => {
+    const S = window.__strokeAtlas;
+    if (S.ui.q !== t) return false;
+    const first = document.querySelector('#results .result');
+    if (!S.results.length) return !first && !!document.querySelector('#results .empty');
+    return !!first && first.dataset.id === S.results[0].id;
+  }, text);
 }
 
 module.exports = { startServer, launch, openApp, readDownload, parseCsv, pick, search, ROOT };

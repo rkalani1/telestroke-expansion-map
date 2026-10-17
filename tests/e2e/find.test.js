@@ -63,6 +63,7 @@ test('keyboard: arrow into results, move, open, escape restores focus', async ()
   await search(page, 'spokane');
   await page.focus('#search');
   await page.keyboard.press('ArrowDown');
+  await page.waitForFunction(() => document.activeElement.classList.contains('result'), null, { timeout: 2000 }).catch(() => {});
   assert.equal(await page.evaluate(() => document.activeElement.classList.contains('result')), true);
   const firstId = await page.evaluate(() => document.activeElement.dataset.id);
   await page.keyboard.press('ArrowDown');
