@@ -1,6 +1,6 @@
 # Evidence audit — October 2026
 
-<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 133 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 117 with eligibility unresolved; 0 not yet located. Stroke capability: 128 assessed, 3 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
+<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 133 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 117 with eligibility unresolved; 0 not yet located. Stroke capability: 127 assessed, 36 partly assessed, 84 not assessed, 6 with conflicting evidence; 19 with documented 24/7 thrombectomy. 8 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
 
 ## Claim inventory
 
@@ -18,11 +18,11 @@ Every in-region record's thirteen audited claims, by what this review did with t
 | `cah` | 0 | 251 | 0 | 0 | 2 | 0 | 0 | 0 |
 | `governance` | 2 | 251 | 0 | 0 | 0 | 0 | 0 | 0 |
 | `system` | 0 | 84 | 0 | 0 | 0 | 0 | 169 | 0 |
-| `national` | 18 | 0 | 1 | 113 | 4 | 0 | 117 | 0 |
+| `national` | 46 | 22 | 2 | 83 | 5 | 0 | 95 | 0 |
 | `stateDesignation` | 156 | 15 | 37 | 5 | 1 | 0 | 39 | 0 |
-| `evt` | 9 | 0 | 2 | 125 | 0 | 0 | 117 | 0 |
-| `evt247` | 7 | 0 | 1 | 127 | 0 | 0 | 118 | 0 |
-| **All claims** | **422** | **1598** | **61** | **495** | **13** | **0** | **700** | **0** |
+| `evt` | 21 | 0 | 2 | 113 | 0 | 0 | 117 | 0 |
+| `evt247` | 15 | 0 | 3 | 118 | 0 | 0 | 117 | 0 |
+| **All claims** | **470** | **1620** | **64** | **444** | **14** | **0** | **677** | **0** |
 <!-- audit-table:end -->
 
 *confirmed* — observed in a source during this review and unchanged (method and date on the claim). *established* — the previous edition had nothing (unknown, or a town with no street) and this review documented a value. *corrected* — this review changed a value the previous edition stated (`changedFrom` keeps the old one). *carried-forward* — taken from the previous edition with that edition's date, not re-observed. *conflicting* — credible sources disagree. *inaccessible* — the needed source could not be reached. *not-assessed* — no evidence either way.

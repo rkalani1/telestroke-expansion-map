@@ -2,7 +2,7 @@
 
 *Schema 4.0.0 · release 4.0.0 · evidence review 2026-10-17. Counts below are generated from the data by `scripts/build-dataset.py`.*
 
-<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 133 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 117 with eligibility unresolved; 0 not yet located. Stroke capability: 128 assessed, 3 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
+<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 133 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 117 with eligibility unresolved; 0 not yet located. Stroke capability: 127 assessed, 36 partly assessed, 84 not assessed, 6 with conflicting evidence; 19 with documented 24/7 thrombectomy. 8 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
 
 This document explains what the dataset contains, how each kind of claim is established, what the dates mean, how distances and transport scenarios are computed, how the access review is scored, and what the data cannot tell you. It is a public-source planning reference: not a clinical decision aid, not dispatch or patient-routing guidance, and not an official product of any health department or accreditor. It represents no institutional approval, affiliation, referral agreement or real-time availability.
 

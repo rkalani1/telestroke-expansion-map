@@ -1,1 +1,1155 @@
-[]
+[
+ {
+  "id": "OR-OHSU",
+  "previousIds": [],
+  "name": "OHSU Hospital",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "OR",
+  "address": {
+   "street": "3181 SW Sam Jackson Park Rd",
+   "city": "Portland",
+   "zip": "97239",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 45.52345,
+   "lng": -122.67621,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Portland, OR"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Portland; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "ohsu-1-25-24-pdf-a9e90",
+     "excerpt": "Board document lists DNV recertification of Hip & Knee Replacement Program, Comprehensive Stroke Center, Cardiac.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification (current as of 2024)"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "ohsu-1-25-24-pdf-a9e90",
+     "excerpt": "Board document lists DNV recertification of Hip & Knee Replacement Program, Comprehensive Stroke Center, Cardiac.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification (current as of 2024)"
+    },
+    {
+     "src": "news-ohsu-and-appointments-march-20-759a5",
+     "excerpt": "Stroke program completed its fifth DNV survey with few findings and 16 commendations; expected to maintain CSC certification.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC surveys"
+    },
+    {
+     "src": "ohsu-stroke-and-related-disorders-b22db",
+     "excerpt": "Page shows a badge reading 'DNV-GL Certified Comprehensive Stroke Center'.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Comprehensive Stroke Center. OHSU's own January 2024 board document lists a DNV recertification of the Comprehensive Stroke Center, and the Brain Institute page shows a DNV-GL Certified CSC badge. Earlier (2013) the CSC certification was from TJC. Some OHSU faculty pages still name TJC. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "DNV",
+   "program": "Comprehensive Stroke Center",
+   "tier": "CSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "ohsu-1-25-24-pdf-a9e90",
+     "excerpt": "Board document lists DNV recertification of Hip & Knee Replacement Program, Comprehensive Stroke Center, Cardiac.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification (current as of 2024)"
+    },
+    {
+     "src": "news-ohsu-and-appointments-march-20-759a5",
+     "excerpt": "Stroke program completed its fifth DNV survey with few findings and 16 commendations; expected to maintain CSC certification.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC surveys"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential.",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [
+    {
+     "src": "ohsu-1-25-24-pdf-a9e90",
+     "excerpt": "Board document lists DNV recertification of Hip & Knee Replacement Program, Comprehensive Stroke Center, Cardiac.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification (current as of 2024)"
+    },
+    {
+     "src": "news-ohsu-and-appointments-march-20-759a5",
+     "excerpt": "Stroke program completed its fifth DNV survey with few findings and 16 commendations; expected to maintain CSC certification.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC surveys"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": null,
+   "state": "affirmative",
+   "basis": "DNV Comprehensive Stroke Center (DNV CSC requirements include 24/7 neurointerventional availability)"
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ },
+ {
+  "id": "OR-LEGACY-EMANUEL",
+  "previousIds": [],
+  "name": "Legacy Emanuel Medical Center",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "OR",
+  "address": {
+   "street": "2801 N Gantenbein Ave",
+   "city": "Portland",
+   "zip": "97227",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 45.52345,
+   "lng": -122.67621,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Portland, OR"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Portland; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "legacyhealth-care-national-recognition-aspx-6af28",
+     "excerpt": "Legacy Emanuel listed as Comprehensive Stroke Center (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "legacyhealth-care-national-recognition-aspx-6af28",
+     "excerpt": "Legacy Emanuel listed as Comprehensive Stroke Center (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC"
+    },
+    {
+     "src": "legacyhealth-stroke-care-quickly-matters-e8017",
+     "excerpt": "Describes Legacy Emanuel as a certified comprehensive stroke center.",
+     "kind": "paraphrase",
+     "supports": "CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Legacy's stroke recognition page lists Legacy Emanuel as a Comprehensive Stroke Center accredited by DNV. A June 2022 Legacy patient story also calls it a certified comprehensive stroke center. No issuer or third-party source was found. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "DNV",
+   "program": "Comprehensive Stroke Center",
+   "tier": "CSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "legacyhealth-care-national-recognition-aspx-6af28",
+     "excerpt": "Legacy Emanuel listed as Comprehensive Stroke Center (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC"
+    },
+    {
+     "src": "legacyhealth-stroke-care-quickly-matters-e8017",
+     "excerpt": "Describes Legacy Emanuel as a certified comprehensive stroke center.",
+     "kind": "paraphrase",
+     "supports": "CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential.",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [
+    {
+     "src": "legacyhealth-care-national-recognition-aspx-6af28",
+     "excerpt": "Legacy Emanuel listed as Comprehensive Stroke Center (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC"
+    },
+    {
+     "src": "legacyhealth-stroke-care-quickly-matters-e8017",
+     "excerpt": "Describes Legacy Emanuel as a certified comprehensive stroke center.",
+     "kind": "paraphrase",
+     "supports": "CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": null,
+   "state": "affirmative",
+   "basis": "DNV Comprehensive Stroke Center (DNV CSC requirements include 24/7 neurointerventional availability)"
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ },
+ {
+  "id": "OR-PEACEHEALTH-RIVERBEND",
+  "previousIds": [],
+  "name": "PeaceHealth Sacred Heart Medical Center at RiverBend",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "OR",
+  "address": {
+   "street": "3333 RiverBend Dr",
+   "city": "Springfield",
+   "zip": "97477",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 44.04624,
+   "lng": -123.02203,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Springfield, OR"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Springfield; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "peacehealth-heart-riverbend-stroke-center-f77cb",
+     "excerpt": "Accredited Comprehensive Stroke Center by Det Norske Veritas (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC (current page)"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "peacehealth-heart-riverbend-stroke-center-f77cb",
+     "excerpt": "Accredited Comprehensive Stroke Center by Det Norske Veritas (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC (current page)"
+    },
+    {
+     "src": "peacehealth-earns-top-honors-stroke-ac978",
+     "excerpt": "RiverBend's Stroke Center achieved Comprehensive Stroke Center certification from DNV Healthcare in 2019.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC since 2019"
+    },
+    {
+     "src": "peacehealth-riverbends-comprehensive-stroke-center-9f419",
+     "excerpt": "Earned CSC certification from DNV GL-Healthcare; only such center between Sacramento and Portland.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Comprehensive Stroke Center certified by DNV since 2019, per PeaceHealth releases from 2020 and 2021. Current PeaceHealth stroke-center pages still state DNV CSC accreditation. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "DNV",
+   "program": "Comprehensive Stroke Center",
+   "tier": "CSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "peacehealth-heart-riverbend-stroke-center-f77cb",
+     "excerpt": "Accredited Comprehensive Stroke Center by Det Norske Veritas (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC (current page)"
+    },
+    {
+     "src": "peacehealth-earns-top-honors-stroke-ac978",
+     "excerpt": "RiverBend's Stroke Center achieved Comprehensive Stroke Center certification from DNV Healthcare in 2019.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC since 2019"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential.",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [
+    {
+     "src": "peacehealth-heart-riverbend-stroke-center-f77cb",
+     "excerpt": "Accredited Comprehensive Stroke Center by Det Norske Veritas (DNV).",
+     "kind": "paraphrase",
+     "supports": "DNV CSC (current page)"
+    },
+    {
+     "src": "peacehealth-earns-top-honors-stroke-ac978",
+     "excerpt": "RiverBend's Stroke Center achieved Comprehensive Stroke Center certification from DNV Healthcare in 2019.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC since 2019"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": null,
+   "state": "affirmative",
+   "basis": "DNV Comprehensive Stroke Center (DNV CSC requirements include 24/7 neurointerventional availability)"
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ },
+ {
+  "id": "UT-UNIVERSITY-OF-UTAH",
+  "previousIds": [],
+  "name": "University of Utah Hospital",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "UT",
+  "address": {
+   "street": "50 N Medical Dr",
+   "city": "Salt Lake City",
+   "zip": "84132",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 40.76078,
+   "lng": -111.89105,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Salt Lake City, UT"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Salt Lake City; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "healthcare-utah-center-receives-remarkable-achievements-06f07",
+     "excerpt": "First Comprehensive Stroke Center in the state and second nationally certified by DNV; has held this standard for 12 years.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification 2025"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "healthcare-utah-center-receives-remarkable-achievements-06f07",
+     "excerpt": "First Comprehensive Stroke Center in the state and second nationally certified by DNV; has held this standard for 12 years.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification 2025"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "University of Utah Hospital listed under Comprehensive Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "DNV Comprehensive Stroke Center, recertified by DNV per a June 2025 U of U Health release (the release says it has held the standard 12 years). The 2025 State of Utah stroke facility list also shows it in the Comprehensive tier. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "DNV",
+   "program": "Comprehensive Stroke Center",
+   "tier": "CSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "healthcare-utah-center-receives-remarkable-achievements-06f07",
+     "excerpt": "First Comprehensive Stroke Center in the state and second nationally certified by DNV; has held this standard for 12 years.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification 2025"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "University of Utah Hospital listed under Comprehensive Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential.",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [
+    {
+     "src": "healthcare-utah-center-receives-remarkable-achievements-06f07",
+     "excerpt": "First Comprehensive Stroke Center in the state and second nationally certified by DNV; has held this standard for 12 years.",
+     "kind": "paraphrase",
+     "supports": "DNV CSC recertification 2025"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "University of Utah Hospital listed under Comprehensive Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": null,
+   "state": "affirmative",
+   "basis": "DNV Comprehensive Stroke Center, recertified 2025; Utah state list, Comprehensive tier"
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ },
+ {
+  "id": "UT-INTERMOUNTAIN-MEDICAL-CENTER",
+  "previousIds": [],
+  "name": "Intermountain Medical Center",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "UT",
+  "address": {
+   "street": "5121 S Cottonwood St",
+   "city": "Murray",
+   "zip": "84107",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 40.66689,
+   "lng": -111.88799,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Murray, UT"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Murray; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-imed-patient-outcomes-ashx-f1f9a",
+     "excerpt": "Lists The Joint Commission Advanced Comprehensive Stroke Center designation.",
+     "kind": "paraphrase",
+     "supports": "TJC CSC (2026)"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-imed-patient-outcomes-ashx-f1f9a",
+     "excerpt": "Lists The Joint Commission Advanced Comprehensive Stroke Center designation.",
+     "kind": "paraphrase",
+     "supports": "TJC CSC (2026)"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "Intermountain Medical Center listed under Comprehensive Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list CSC"
+    },
+    {
+     "src": "news-intermountainhealth-accreditation-from-joint-commis-f656b",
+     "excerpt": "First hospital in Utah and the Intermountain West to earn TJC CSC.",
+     "kind": "paraphrase",
+     "supports": "TJC CSC history"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "TJC Comprehensive Stroke Center. The 2025 Utah state list shows the Comprehensive tier, and a 2026 Intermountain outcomes sheet lists TJC 'Advanced Comprehensive Stroke Center'. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "Joint Commission",
+   "program": "Comprehensive Stroke Center",
+   "tier": "CSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-imed-patient-outcomes-ashx-f1f9a",
+     "excerpt": "Lists The Joint Commission Advanced Comprehensive Stroke Center designation.",
+     "kind": "paraphrase",
+     "supports": "TJC CSC (2026)"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "Intermountain Medical Center listed under Comprehensive Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential.",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-imed-patient-outcomes-ashx-f1f9a",
+     "excerpt": "Lists The Joint Commission Advanced Comprehensive Stroke Center designation.",
+     "kind": "paraphrase",
+     "supports": "TJC CSC (2026)"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "Intermountain Medical Center listed under Comprehensive Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list CSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": null,
+   "state": "affirmative",
+   "basis": "Joint Commission Comprehensive Stroke Center (24/7 thrombectomy required)"
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ },
+ {
+  "id": "UT-MCKAY-DEE",
+  "previousIds": [],
+  "name": "Intermountain McKay-Dee Hospital",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "UT",
+  "address": {
+   "street": "4401 Harrison Blvd",
+   "city": "Ogden",
+   "zip": "84403",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 41.223,
+   "lng": -111.97383,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Ogden, UT"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Ogden; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-dee-hospital-stroke-care-15b91",
+     "excerpt": "Only Joint Commission-certified thrombectomy-capable center in Northern Utah.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-dee-hospital-stroke-care-15b91",
+     "excerpt": "Only Joint Commission-certified thrombectomy-capable center in Northern Utah.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "McKay-Dee listed under Thrombectomy Capable; McKay-Dee Hospital Center also appears under Primary Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list TSC (with ambiguity)"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Intermountain's McKay-Dee stroke page calls it the only TJC-certified thrombectomy-capable center in Northern Utah. The 2025 Utah state list places it under Thrombectomy Capable but also lists 'McKay-Dee Hospital Center' under Primary. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "Joint Commission",
+   "program": "Thrombectomy-Capable Stroke Center",
+   "tier": "TSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-dee-hospital-stroke-care-15b91",
+     "excerpt": "Only Joint Commission-certified thrombectomy-capable center in Northern Utah.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "McKay-Dee listed under Thrombectomy Capable; McKay-Dee Hospital Center also appears under Primary Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list TSC (with ambiguity)"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential.",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [
+    {
+     "src": "intermountainhealthcare-dee-hospital-stroke-care-15b91",
+     "excerpt": "Only Joint Commission-certified thrombectomy-capable center in Northern Utah.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    },
+    {
+     "src": "ems-utah-list-only-2-pdf-7b50f",
+     "excerpt": "McKay-Dee listed under Thrombectomy Capable; McKay-Dee Hospital Center also appears under Primary Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "State list TSC (with ambiguity)"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": null,
+   "state": "affirmative",
+   "basis": "Joint Commission Thrombectomy-Capable Stroke Center (24/7 thrombectomy required)"
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ },
+ {
+  "id": "CO-UCHEALTH-MCR",
+  "previousIds": [],
+  "name": "UCHealth Medical Center of the Rockies",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "CO",
+  "address": {
+   "street": "2500 Rocky Mountain Ave",
+   "city": "Loveland",
+   "zip": "80538",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 40.39776,
+   "lng": -105.07498,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Loveland, CO"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Loveland; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "uchealth-higher-stroke-center-designation-942b0",
+     "excerpt": "Received Thrombectomy-Capable designation from The Joint Commission, first in northern Colorado; began mechanical thrombectomy late 2023; only hospital between Denver and Casper offering it.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "uchealth-higher-stroke-center-designation-942b0",
+     "excerpt": "Received Thrombectomy-Capable designation from The Joint Commission, first in northern Colorado; began mechanical thrombectomy late 2023; only hospital between Denver and Casper offering it.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "UCHealth's 2025 newsroom release says MCR received TJC Thrombectomy-Capable Stroke Center certification, the first in northern Colorado. It has offered mechanical thrombectomy since late 2023 and is described as the only hospital between Denver and Casper, WY, offering it. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "Joint Commission",
+   "program": "Thrombectomy-Capable Stroke Center",
+   "tier": "TSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "uchealth-higher-stroke-center-designation-942b0",
+     "excerpt": "Received Thrombectomy-Capable designation from The Joint Commission, first in northern Colorado; began mechanical thrombectomy late 2023; only hospital between Denver and Casper offering it.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential.",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [
+    {
+     "src": "uchealth-higher-stroke-center-designation-942b0",
+     "excerpt": "Received Thrombectomy-Capable designation from The Joint Commission, first in northern Colorado; began mechanical thrombectomy late 2023; only hospital between Denver and Casper offering it.",
+     "kind": "paraphrase",
+     "supports": "TJC TSC"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": null,
+   "state": "affirmative",
+   "basis": "Joint Commission Thrombectomy-Capable Stroke Center, 2025 (24/7 thrombectomy required)"
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ },
+ {
+  "id": "ND-SANFORD-BISMARCK",
+  "previousIds": [],
+  "name": "Sanford Bismarck Medical Center",
+  "officialName": null,
+  "formerNames": [],
+  "aliases": [],
+  "outOfRegion": true,
+  "ccn": {
+   "value": null,
+   "relation": "unknown",
+   "parentId": null,
+   "note": "Out-of-region destination; CCN not recorded.",
+   "correctedFrom": null
+  },
+  "npi": null,
+  "state": "ND",
+  "address": {
+   "street": "300 N 7th St",
+   "city": "Bismarck",
+   "zip": "58501",
+   "status": "source-reported",
+   "method": "nppes-api",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "note": "Street and ZIP from the NPPES organization record, as reported by the research pass."
+  },
+  "location": {
+   "lat": 46.80833,
+   "lng": -100.78374,
+   "method": "city-centroid",
+   "precision": "city",
+   "evidence": [
+    {
+     "src": "geonames-cities-wwami",
+     "supports": "GeoNames point for Bismarck, ND"
+    }
+   ],
+   "checked": "2026-10-17",
+   "note": "Placed at the centre of Bismarck; no cited campus coordinates. Distances to it are approximate (a few miles in a large city)."
+  },
+  "status": {
+   "evidence": [
+    {
+     "src": "news-sanfordhealth-plus-stroke-center-certification-57c4a",
+     "excerpt": "Sanford Health in Bismarck received certification from DNV GL Healthcare as a Primary Plus Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "DNV PSC+"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Active by rule: a current (2024–2026) description of its stroke certification.",
+   "value": "active"
+  },
+  "national": {
+   "evidence": [
+    {
+     "src": "news-sanfordhealth-plus-stroke-center-certification-57c4a",
+     "excerpt": "Sanford Health in Bismarck received certification from DNV GL Healthcare as a Primary Plus Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "DNV PSC+"
+    },
+    {
+     "src": "sanfordhealth-services-brain-and-spine-000c4",
+     "excerpt": "Sanford Bismarck Medical Center is designated as a primary plus stroke center.",
+     "kind": "paraphrase",
+     "supports": "PSC+ (current page)"
+    },
+    {
+     "src": "hhs-nd-asrh-20designation-20list-pdf-6dff5",
+     "excerpt": "Sanford Health Bismarck listed under Designated North Dakota Primary Plus Stroke Centers - Accredited by DNV.",
+     "kind": "paraphrase",
+     "supports": "State list PSC+"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "DNV Primary Plus Stroke Center. Sanford announced the certification in 2020, the ND state list (revised January 2021) shows it under 'Primary Plus Stroke Centers - Accredited by DNV', and Sanford's current Brain and Spine page still calls it a primary plus stroke center. Issuer directories were not reachable.",
+   "state": "affirmative",
+   "body": "DNV",
+   "program": "Primary Stroke Center Plus",
+   "tier": "TSC",
+   "effective": null,
+   "expires": null
+  },
+  "stateDesignation": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "State designations are not recorded for out-of-region destinations.",
+   "state": "not-applicable",
+   "authority": null,
+   "system": null,
+   "level": null,
+   "status": "none",
+   "effective": null,
+   "expires": null
+  },
+  "evt": {
+   "evidence": [
+    {
+     "src": "news-sanfordhealth-plus-stroke-center-certification-57c4a",
+     "excerpt": "Sanford Health in Bismarck received certification from DNV GL Healthcare as a Primary Plus Stroke Center.",
+     "kind": "paraphrase",
+     "supports": "DNV PSC+"
+    },
+    {
+     "src": "sanfordhealth-services-brain-and-spine-000c4",
+     "excerpt": "Sanford Bismarck Medical Center is designated as a primary plus stroke center.",
+     "kind": "paraphrase",
+     "supports": "PSC+ (current page)"
+    }
+   ],
+   "checked": "2026-10-17",
+   "method": "search-extract",
+   "note": "Thrombectomy capability entailed by the credential (DNV PSC+ requires thrombectomy capability).",
+   "state": "affirmative"
+  },
+  "evt247": {
+   "evidence": [],
+   "checked": null,
+   "method": null,
+   "note": "DNV PSC+ requires thrombectomy capability, but no source states it is available 24/7.",
+   "state": "unknown",
+   "basis": null
+  },
+  "roadNetwork": {
+   "value": "contiguous-us",
+   "evidence": [],
+   "checked": "2026-10-17",
+   "method": "rule-based",
+   "note": "Contiguous United States."
+  },
+  "notes": [
+   "Included as a destination only, so that border hospitals see the true nearest documented center. Not part of the WWAMI inventory or counts."
+  ]
+ }
+]

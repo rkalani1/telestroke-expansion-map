@@ -226,13 +226,17 @@ def state_program_applies(r):
 
 
 def derive_capability(r):
-    claims = [r.get('national'), r.get('evt247')]
+    """assessed: every capability claim documented (any state but unknown);
+    partial: some documented, some unknown; unassessed: none was looked at;
+    conflicting: any claim conflicting."""
+    claims = [r.get('national'), r.get('evt'), r.get('evt247')]
     if state_program_applies(r):
         claims.append(r.get('stateDesignation'))
     states = [st(c) for c in claims]
     if 'conflicting' in states:
         return 'conflicting'
-    if st(r.get('national')) == 'unknown':
+    looked = [c for c in claims if st(c) != 'unknown' or (c or {}).get('method')]
+    if not looked:
         return 'unassessed'
     if 'unknown' in states:
         return 'partial'
@@ -283,6 +287,8 @@ def needs_verification(r, derived, review_date):
         codes.append('capability-unassessed')
     if cap == 'conflicting':
         codes.append('conflicting-evidence')
+    if cap == 'partial':
+        codes.append('capability-partial')
     for n in ('national', 'stateDesignation', 'evt', 'evt247', 'status', 'ed'):
         if st(r.get(n)) == 'conflicting' and 'conflicting-evidence' not in codes:
             codes.append('conflicting-evidence')
@@ -510,6 +516,7 @@ def write_audit(records, sources):
 
 WORK_TEXT = {
     'conflicting-evidence': ('P1', 'Resolve conflicting evidence', 'Issuer registry for the credential in conflict; hospital page'),
+    'capability-partial': ('P3', 'Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)', 'Hospital stroke and neurointerventional pages; issuer registries'),
     'capability-unassessed': ('P2', 'Assess stroke capability (national, state, EVT)', 'Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page'),
     'evidence-stale': ('P2', 'Re-check capability evidence (older than 12 months)', 'Issuer registries and hospital pages'),
     'eligibility-unresolved': ('P2', 'Confirm active status and general 24/7 emergency department', 'Hospital emergency services page; state licensing roster'),

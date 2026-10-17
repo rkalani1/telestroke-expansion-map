@@ -44,6 +44,7 @@ const ELIG_LABELS = { eligible: 'In analysis set', excluded: 'Excluded', unknown
 const CAP_LABELS = { assessed: 'Capability assessed', partial: 'Capability partly assessed', unassessed: 'Capability not assessed', conflicting: 'Conflicting evidence', 'n/a': 'Outside WWAMI' };
 const NV_LABELS = {
   'capability-unassessed': 'Stroke capability not assessed',
+  'capability-partial': 'Stroke capability partly assessed',
   'conflicting-evidence': 'Conflicting evidence',
   'evidence-stale': 'Capability evidence older than 12 months',
   'eligibility-unresolved': 'Analysis eligibility unresolved',
