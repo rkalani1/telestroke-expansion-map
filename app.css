@@ -672,6 +672,7 @@ table.scenario { font-size: var(--fs-xs); }
 .prose th, .prose td { border: 1px solid var(--border); padding: 3px 6px; text-align: left; }
 .prose code { font-family: var(--mono); font-size: .92em; background: var(--surface-2); padding: 0 3px; border-radius: 3px; }
 .summary-preview { max-height: 60vh; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--sp-3); }
+.summary-preview p, .summary-preview li { min-width: 0; overflow-wrap: anywhere; }
 
 /* ---------- footer, toasts, boot ---------- */
 .provenance {
@@ -734,7 +735,9 @@ table.scenario { font-size: var(--fs-xs); }
   .jump-select { width: 132px; }
   /* The status bar wraps on narrow screens: its measured height (--status-h, app.js) places the legend. */
   .legend { left: var(--sp-2); right: auto; bottom: calc(var(--sp-2) + var(--status-h, 56px) + 6px); width: min(260px, calc(100% - 72px));
-    max-height: min(42%, calc(100% - var(--sheet-top, 132px) - var(--status-h, 56px) - 6px - 2 * var(--sp-2))); }
+    /* Never shorter than its own toggle, even when a tall status bar leaves little room. */
+    min-height: 46px;
+    max-height: max(46px, min(42%, calc(100% - var(--sheet-top, 132px) - var(--status-h, 56px) - 6px - 2 * var(--sp-2)))); }
   .map-banner { top: calc(var(--sheet-top, 132px) + 48px); }
   .legend.collapsed { width: auto; }
   .leaflet-bottom.leaflet-right { margin-bottom: 4px; }

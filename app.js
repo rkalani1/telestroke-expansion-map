@@ -272,6 +272,11 @@ const cityOf = h => (h && h.address && h.address.city) || null;
 function placeLine(h) {
   return [cityOf(h), h.state].filter(Boolean).join(', ');
 }
+// The reason a capability claim does not apply, from the record's own status.
+function closedNote(h) {
+  const v = h.status && h.status.value;
+  return v === 'closed' ? ' (closed campus)' : v === 'merged' ? ' (merged campus)' : '';
+}
 function nationalLabel(h) {
   const n = h.national || {};
   switch (stOf(n)) {
@@ -279,7 +284,7 @@ function nationalLabel(h) {
     case 'negative': return 'Verified: no national stroke certification' + (n.note ? ` (${n.note})` : '');
     case 'no-record-found': return 'No national stroke certification found in reviewed sources';
     case 'conflicting': return 'Conflicting evidence';
-    case 'not-applicable': return 'Not applicable (closed or merged campus)';
+    case 'not-applicable': return 'Not applicable' + closedNote(h);
     default: return 'Not assessed';
   }
 }
@@ -293,7 +298,7 @@ function stateLabel(h) {
   if (st === 'not-applicable') return s.note || 'No state stroke-designation program identified for this state';
   // Wyoming designation requires national accreditation and has no public
   // roster: its no-record-found is inferred from the national claim, not read off a roster.
-  if (st === 'no-record-found' && s.method === 'regulatory-inference') return `None found (inferred: ${s.system || 'the state program'} requires a national accreditation that was not found; no roster available)`;
+  if (st === 'no-record-found' && s.method === 'regulatory-inference') return `None found (inferred from the ${s.system || 'state'} rule; see the note — no roster was available)`;
   if (st === 'no-record-found') return s.system ? `Not found on the ${s.system} roster as reviewed` : `No state stroke-designation program found${s.authority ? ' (' + s.authority + ')' : ''}`;
   if (st === 'negative') return `Not designated (${s.system || 'state'} roster, as reviewed)`;
   if (st === 'conflicting') return 'Conflicting evidence';
@@ -308,7 +313,7 @@ function evtLabel(h) {
   if (e === 'conflicting' || e24 === 'conflicting') return 'Conflicting evidence';
   if (e === 'no-record-found' || e24 === 'no-record-found') return 'No thrombectomy program found in reviewed sources';
   if (e === 'negative') return 'Verified: no thrombectomy program';
-  if (e === 'not-applicable' || e24 === 'not-applicable') return 'Not applicable (closed or merged campus)';
+  if (e === 'not-applicable' || e24 === 'not-applicable') return 'Not applicable' + closedNote(h);
   return 'Not assessed';
 }
 // Evidence age is the OLDEST critical claim's check date (national
@@ -429,7 +434,7 @@ function tierKey(h) {
   if (isOOR(h)) return null;
   return (h.derived && h.derived.tierClass) || (tierOf(h) ? tierOf(h).toLowerCase() : 'unassessed');
 }
-const TIER_CLASS_TEXT = { none: 'None found in reviewed sources', partial: 'Partly assessed — no tier found so far', unassessed: 'Not assessed', conflicting: 'Conflicting evidence' };
+const TIER_CLASS_TEXT = { none: 'None found in reviewed sources', partial: 'Partly assessed, no tier yet', unassessed: 'Not assessed', conflicting: 'Conflicting evidence' };
 function tierText(h, short) {
   const t = tierOf(h);
   if (t) return `${t} (${h.derived.tierBasis === 'national' ? 'national' : short ? 'state' : 'state crosswalk'})`;
@@ -683,7 +688,7 @@ function renderResults() {
     if (inList) requestAnimationFrame(() => { if (document.activeElement === document.body) $('#search').focus({ preventScroll: true }); });
     const li = el('li', { class: 'empty' }, [
       el('p', { text: S.ui.q ? `No hospitals match “${S.ui.q}”${filtersActive() ? ' with the current filters' : ''}.` : 'No hospitals match the current filters.' }),
-      filtersActive() ? el('button', { type: 'button', class: 'btn', text: 'Reset filters', on: { click: resetFilters } }) : null,
+      filtersActive() ? el('button', { type: 'button', class: 'btn', text: 'Reset filters', on: { click: () => resetFilters(['#search']) } }) : null,
       S.ui.q ? el('p', { class: 'hint', text: 'Search matches whole-word beginnings across names, former names, nicknames, city, county, system and CMS number.' }) : null,
     ]);
     list.appendChild(li);
@@ -826,7 +831,8 @@ function resetFilters(fallback) {
   update();
   toast('Filters reset');
   // Queued after the render that update() queued, so it sees the result.
-  if (fallback) requestAnimationFrame(() => { if (focusLost()) focusFirst(...fallback); });
+  // Only a list of selectors moves focus (an event passed by a click handler does not).
+  if (Array.isArray(fallback)) requestAnimationFrame(() => { if (focusLost()) focusFirst(...fallback); });
 }
 
 // ------------------------------------------------------------------
@@ -2238,6 +2244,8 @@ function renderMatrix(focusKey) {
   const cols = matrixColumns(hub);
   if (!cols.some(c => c.key === S.matrixSort.key)) S.matrixSort = { key: 'name', dir: 1 };
   const recs = matrixSorted(cols);
+  // An empty table has nothing to export; a disabled button says so where a toast behind the modal could not.
+  $('#matrix-export').disabled = !recs.length;
   const tbl = el('table', { class: 'data matrix' });
   tbl.appendChild(el('caption', { text: `Current results: ${recs.length} hospitals (${resultsScopeText()}). “EVT” = nearest documented 24/7 EVT center; “CSC/TSC” = nearest CSC/TSC-level center; mi = straight-line miles${hub ? '; my center: ' + hub.name : ''}.` }));
   const hr = el('tr');
@@ -2611,7 +2619,7 @@ function buildMethods() {
     h2('Limits'),
     ul([
       'Primary registries (Joint Commission Quality Check, DNV certificate checker, WA DOH, Idaho TSE, data.cms.gov) could not be opened directly from the authoring environment in the October 2026 pass. Claims checked then were observed through web-search extracts of the cited pages or the NPPES API, and say so.',
-      'Values carried forward from the previous edition keep that edition’s date (shown as “as of”), not a claim-level check date; they are not re-verified by being carried forward.',
+      'Values carried forward from the previous edition keep that edition’s date (editionAsOf), not a claim-level check date; they are not re-verified by being carried forward.',
       'Unknown is a valid answer and is shown as unknown. Structural checks passing does not certify factual accuracy.',
     ]),
     h2('Sources'), el('p', null, [el('a', { href: 'https://github.com/rkalani1/telestroke-expansion-map/blob/main/METHODOLOGY.md', target: '_blank', rel: 'noopener noreferrer', text: 'Full methodology' }), ' · ',
@@ -3603,7 +3611,8 @@ async function boot() {
   recomputeAccess();
   settleUrl(parsed);
   syncControls();
-  switchView(S.ui.view, { sheet: false });
+  // On phones a restored non-Find view is shown as the open sheet, so what it covers is inert.
+  switchView(S.ui.view, { sheet: MOBILE_Q.matches && S.ui.view !== 'find' ? true : false });
   if (mapOk) {
     if (S.explicit.viewport) S.map.setView([S.ui.view_lat, S.ui.view_lng], S.ui.view_z);
     // No explicit view: show what the link filters to (a one-state filter fits

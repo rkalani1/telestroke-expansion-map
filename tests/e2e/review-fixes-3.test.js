@@ -380,7 +380,7 @@ test('detail and labels: partly assessed tier row matches the list wording; "doc
   const { page, context } = await openApp(browser, srv.base, `?h=${part}`);
   await page.waitForSelector('#detail:not([hidden])');
   const tier = await page.evaluate(() => Array.from(document.querySelectorAll('#detail-body .claim')).find(c => c.querySelector('dt').textContent === 'Tier shown on map').querySelector('.c-value').textContent);
-  assert.equal(tier, 'Partly assessed — no tier found so far');
+  assert.equal(tier, 'Partly assessed, no tier yet');
   await context.close();
 
   const a = await openApp(browser, srv.base, '?hub=500064');

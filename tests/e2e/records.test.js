@@ -71,7 +71,7 @@ test('partly assessed: its own badge and dotted ring, beside "none found" or a t
   assert.ok(await page.$(`#results .result[data-id="${R.partial.id}"] .glyph svg [data-ring="partial"]`), 'the list glyph has the dotted ring');
   let d = await detail();
   assert.match(d.bannerHead, /^Capability partly assessed/);
-  assert.equal(d.claims['Tier shown on map'].value, 'Partly assessed — no tier found so far');
+  assert.equal(d.claims['Tier shown on map'].value, 'Partly assessed, no tier yet');
   await addToComparison();
 
   // "None found" so far and still partly assessed: both are said.
@@ -189,7 +189,7 @@ test('comparison: four added through the buttons, a fifth refused; the table and
   });
   assert.deepEqual(t.names, [R.partial.name, R.unassessed.name, R.conflicting.name, R.onSite.name]);
   const tier = t.rows['Tier shown (basis)'];
-  assert.equal(tier[0], 'Partly assessed — no tier found so far');
+  assert.equal(tier[0], 'Partly assessed, no tier yet');
   assert.equal(tier[1], 'Not assessed');
   assert.equal(tier[2], `${R.conflicting.tier} (${R.conflicting.basis === 'national' ? 'national' : 'state crosswalk'})`);
   assert.equal(tier[3], 'CSC (national)');

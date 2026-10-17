@@ -59,17 +59,18 @@ by the build. COUNTS_PLACEHOLDER
 - **Distance table** (Explore): a sortable, scoped table of nearest documented 24/7 EVT,
   CSC/TSC-level and my-center distances, with its own CSV — the v3 distance matrix, restored
   without its zero-as-missing bug.
-- Fit view keeps the selected hospital and its destinations clear of every panel, on selection
-  and on demand, from 320 px phones to wide desktops; on tablets the detail covers the tool column
-  instead of the map.
+- Fit view keeps the selected hospital and its destinations clear of the panels, on selection and
+  on demand, at phone, tablet and desktop sizes; where a very small screen leaves no clear area the
+  status bar says so. On tablets the detail covers the tool column instead of the map.
 - Overlapping markers carry a count badge; marker outlines and rings meet 3:1 contrast in light,
   dark and colour-vision palettes; optional USGS terrain shading.
 - Share links restore selection, my center, comparison, mode, overlays, filters (including one
   needs-verification reason, `ev=nv:<code>`), summary and review scopes (`ss`, `rc`), the
   CSC/TSC line (`adv`), scenario and viewport; links from earlier versions keep working and
   unrecognised settings are reported.
-- WCAG 2.2 AA work throughout: names, landmarks, focus order, focus never lost or obscured,
-  reflow at 320 px, inert content under sheets, 24 px targets.
+- WCAG 2.2 AA work throughout: accessible names, landmarks, focus order and focus handoff after
+  re-renders, reflow at 320 px, inert content under sheets, 24 px targets; checked with axe-core
+  and keyboard-path tests.
 - PNG export drawn without any library, with legend, provenance and attribution; print one-pagers.
 
 ### Exports (changed columns)
