@@ -51,8 +51,10 @@ const NV_LABELS = {
   'capability-partial': 'Stroke capability partly assessed',
   'evidence-undated': 'Capability evidence has no claim-level check date',
   'conflicting-evidence': 'Conflicting evidence',
+  'conflicting-identity': 'Conflicting status, emergency department, Critical Access or address evidence',
   'evidence-stale': 'Capability evidence older than 12 months',
   'eligibility-unresolved': 'Analysis eligibility unresolved',
+  'federal-ed-access': 'Federal emergency department — civilian access not documented',
   unlocated: 'No verified map location',
   'location-unverified': 'Coordinates not verified to the campus',
   'address-unverified': 'Physical address not verified',
@@ -62,7 +64,6 @@ const NV_LABELS = {
   'near-county-boundary': 'County assignment uncertain (near a boundary)',
   'far-from-named-city': 'Coordinates far from the town the address names',
   'location-conflict': 'Two coordinate sources disagree',
-  'address-conflicting': 'Address sources disagree',
   'nearer-to-another-town': 'Coordinates much nearer another town than the one named',
   'town-not-in-gazetteer': 'Town not in the gazetteer — town check not run',
 };

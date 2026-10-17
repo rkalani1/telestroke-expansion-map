@@ -10,6 +10,28 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2014-04 (published)."
  },
+ "ahd-center-rock-springs-wyoming-184fc": {
+  "type": "tertiary",
+  "title": "Aspen Mountain Medical Center profile",
+  "publisher": "American Hospital Directory",
+  "url": "https://www.ahd.com/free_profile/530035/Aspen_Mountain_Medical_Center/Rock_Springs/Wyoming/",
+  "published": "2024-02",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-02 (updated)."
+ },
+ "ahd-regional-hospital-nome-alaska-6ec5b": {
+  "type": "tertiary",
+  "title": "Norton Sound Regional Hospital - Identification and Characteristics",
+  "publisher": "American Hospital Directory",
+  "url": "https://ahd.com/free_profile/021308/Norton_Sound_Regional_Hospital/Nome/Alaska",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "akbizmag-comprehensive-stroke-center-certification-6ec34": {
   "type": "news",
   "title": "Providence Alaska Medical Center earns Comprehensive Stroke Center certification",
@@ -32,6 +54,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "akleg-committee-20fiche-12485-pdf-6419a": {
+  "type": "government",
+  "title": "Alaska Legislature committee document",
+  "publisher": "Alaska State Legislature",
+  "url": "https://www.akleg.gov/pdf/billfiles/Committee%20Bill%20Files/Standing%20Committees/Committee%20Fiche-12485.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "alaskabeacon-stroke-heart-attack-emergencies-98308": {
   "type": "news",
   "title": "Alaska Legislature votes to improve preparedness and response for stroke, heart attack emergencies",
@@ -48,6 +81,39 @@
   "title": "Awards and recognition",
   "publisher": "Alaska Regional Hospital",
   "url": "https://www.alaskaregional.com/about-us/awards-and-recognition",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "army-mil-for-outstanding-stroke-care-4d572": {
+  "type": "government",
+  "title": "Madigan Healthcare System earns Gold Award for outstanding stroke care",
+  "publisher": "U.S. Army",
+  "url": "https://www.army.mil/article/30716/madigan_healthcare_system_earns_gold_award_for_outstanding_stroke_care",
+  "published": "2009",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2009 (published)."
+ },
+ "army-mil-two-army-neurointerventional-surgeons-1a8c3": {
+  "type": "government",
+  "title": "Madigan doctor one of only two Army neurointerventional surgeons",
+  "publisher": "U.S. Army",
+  "url": "https://www.army.mil/article/34485/madigan_doctor_one_of_only_two_army_neurointerventional_surgeons",
+  "published": "2010",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2010 (published)."
+ },
+ "atoday-general-hospital-officially-closed-384c6": {
+  "type": "news",
+  "title": "Walla Walla General Hospital Officially Closed",
+  "publisher": "Adventist Today",
+  "url": "https://atoday.org/walla-walla-general-hospital-officially-closed/",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -98,6 +164,39 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "bassett-wainwright-tricare-mil-health-services-c5c01": {
+  "type": "official-facility",
+  "title": "Health Services - Bassett Army Community Hospital",
+  "publisher": "Bassett Army Community Hospital (TRICARE)",
+  "url": "https://bassett-wainwright.tricare.mil/Health-Services",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Found by a targeted search in the October 2026 new-records step."
+ },
+ "bassett-wainwright-tricare-mil-services-lab-tests-radiol-24dda": {
+  "type": "official-facility",
+  "title": "Lab Tests & Radiology - Bassett Army Community Hospital",
+  "publisher": "Bassett Army Community Hospital (TRICARE)",
+  "url": "https://bassett-wainwright.tricare.mil/Health-Services/Lab-Tests-Radiology",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Found by a targeted search in the October 2026 new-records step."
+ },
+ "bassett-wainwright-tricare-mil-services-urgent-emergency-eb2a4": {
+  "type": "official-facility",
+  "title": "Urgent & Emergency Care",
+  "publisher": "Bassett Army Community Hospital (TRICARE)",
+  "url": "https://bassett-wainwright.tricare.mil/Health-Services/Urgent-Emergency-Care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "beckersasc-238fb": {
   "type": "news",
   "title": "St. Luke's Wood River Receives Joint Commission's Gold Seal",
@@ -114,6 +213,72 @@
   "title": "Bartlett Regional Hospital in Alaska earns Joint Commission accreditation",
   "publisher": "Becker's",
   "url": "https://beckersasc.com/asc-accreditation-and-patient-safety/bartlett-regional-hospital-in-alaska-earns-joint-commission-accreditation.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "beckershospitalreview-4-things-to-know-f710d": {
+  "type": "news",
+  "title": "Washington hospital closes: 4 things to know",
+  "publisher": "Becker's Hospital Review",
+  "url": "https://www.beckershospitalreview.com/finance/washington-hospital-closes-4-things-to-know",
+  "published": "2020-01",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020-01 (published)."
+ },
+ "beckershospitalreview-alaska-hospital-closes-073019-7bc4b": {
+  "type": "news",
+  "title": "Alaska hospital closes",
+  "publisher": "Becker's Hospital Review",
+  "url": "https://www.beckershospitalreview.com/finance/alaska-hospital-closes-073019",
+  "published": "2019-07-30",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2019-07-30 (published)."
+ },
+ "beckershospitalreview-emergency-hospitals-by-state-657bb": {
+  "type": "news",
+  "title": "The 54 rural emergency hospitals by state",
+  "publisher": "Becker's Hospital Review",
+  "url": "https://www.beckershospitalreview.com/rural-health/the-54-rural-emergency-hospitals-by-state/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "beckershospitalreview-health-closes-washington-hospital-5fb8b": {
+  "type": "news",
+  "title": "Adventist Health closes Washington hospital",
+  "publisher": "Becker's Hospital Review",
+  "url": "https://www.beckershospitalreview.com/finance/adventist-health-closes-washington-hospital",
+  "published": "2017-07",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2017-07 (published)."
+ },
+ "beckershospitalreview-lays-off-463-employees-db6c1": {
+  "type": "news",
+  "title": "Washington hospital closes ER, lays off 463 employees",
+  "publisher": "Becker's Hospital Review",
+  "url": "https://www.beckershospitalreview.com/finance/washington-hospital-closes-er-lays-off-463-employees/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "beckersspine-services-6-insights-html-83266": {
+  "type": "news",
+  "title": "Wyoming Medical Center acquired neurosurgeon-owned facility for added beds, not services",
+  "publisher": "Becker's Spine Review",
+  "url": "https://beckersspine.com/orthopedic-spine-practices-improving-profits/43264-wyoming-medical-center-acquired-neurosurgeon-owned-facility-for-added-beds-not-services-6-insights.html",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -164,6 +329,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025 (published)."
  },
+ "billingsclinic-clinic-broadwater-emergency-services-3e35f": {
+  "type": "official-facility",
+  "title": "Billings Clinic Broadwater Emergency Services",
+  "publisher": "Billings Clinic",
+  "url": "https://www.billingsclinic.com/care-at-billings-clinic/care-locations-and-directions/location-profile/billings-clinic-broadwater-emergency-services/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "billingsclinic-comprehensive-stroke-center-certification-2d381": {
   "type": "official-facility",
   "title": "Billings Clinic Earns Comprehensive Stroke Center Certification From DNV",
@@ -174,6 +350,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2023-02 (published)."
+ },
+ "billingsclinic-neurosciences-neurology-stroke-care-78764": {
+  "type": "official-facility",
+  "title": "Stroke Care",
+  "publisher": "Billings Clinic",
+  "url": "https://www.billingsclinic.com/services-specialties/neurosciences/neurology/stroke-care/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "billingsclinic-provider-directory-screenres-pdf-e831a": {
   "type": "official-facility",
@@ -186,6 +373,28 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026 (published)."
  },
+ "binghammemorial-emergency-department-c8559": {
+  "type": "official-facility",
+  "title": "Emergency Department - Bingham Memorial Hospital",
+  "publisher": "Bingham Memorial Hospital",
+  "url": "https://binghammemorial.org/emergency-department/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "bitterrootstar-57828": {
+  "type": "news",
+  "title": "Bitterroot Health recognized with Stroke Recognition Award",
+  "publisher": "Bitterroot Star",
+  "url": "https://bitterrootstar.com/?p=47477",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "blog-providence-a-comprehensive-stroke-center-a9fbc": {
   "type": "official-facility",
   "title": "Joint Commission Designates Providence Sacred Heart Medical Center as a Comprehensive Stroke Center",
@@ -196,6 +405,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "blog-providence-advancing-rural-stroke-care-f1221": {
+  "type": "official-facility",
+  "title": "Providence Kodiak Island Medical Center recognized for advancing rural stroke care",
+  "publisher": "Providence",
+  "url": "https://blog.providence.org/alaska/providence-kodiak-island-medical-center-recognized-for-advancing-rural-stroke-care",
+  "published": "2026-07",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-07 (published)."
  },
  "blog-providence-comprehensive-stroke-center-certificatio-c74a9": {
   "type": "official-facility",
@@ -218,6 +438,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2019-05-01 (published)."
+ },
+ "blog-providence-gold-achievement-awards-2-31ca4": {
+  "type": "official-facility",
+  "title": "Providence's Stroke Program Honored with Gold Achievement Awards",
+  "publisher": "Providence",
+  "url": "https://blog.providence.org/eastern-washington/providence-s-stroke-program-honored-with-gold-achievement-awards-2",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "blog-providence-medical-group-olympia-neurology-21b94": {
   "type": "official-facility",
@@ -274,6 +505,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024 (published)."
  },
+ "blog-swedish-high-quality-stroke-care-dc030": {
+  "type": "official-facility",
+  "title": "Providence Swedish is nationally recognized for providing high-quality stroke care",
+  "publisher": "Providence Swedish",
+  "url": "https://blog.swedish.org/swedish-news/providence-swedish-is-nationally-recognized-for-providing-high-quality-stroke-care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "blog-swedish-hill-stroke-center-accreditation-aea32": {
   "type": "official-facility",
   "title": "Cherry Hill receives comprehensive stroke center certification",
@@ -295,6 +537,28 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020 (published)."
+ },
+ "bozemanhealth-awards-and-accreditations-86838": {
+  "type": "official-facility",
+  "title": "Awards and Accreditations",
+  "publisher": "Bozeman Health",
+  "url": "https://bozemanhealth.org/awards-and-accreditations/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "bozemanhealth-big-sky-medical-center-d88b1": {
+  "type": "official-facility",
+  "title": "Bozeman Health Big Sky Medical Center",
+  "publisher": "Bozeman Health",
+  "url": "https://bozemanhealth.org/locations/bozeman-health-big-sky-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "bozemanhealth-us-awards-and-accreditations-ce126": {
   "type": "official-facility",
@@ -329,6 +593,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020-11-09 (published)."
  },
+ "businesswire-stroke-treatment-to-alaskans-5d1ec": {
+  "type": "news",
+  "title": "RapidAI and Alaska Stroke Coalition Join Forces to Overcome Distance Barriers and Deliver Equitable Stroke Treatment to Alaskans",
+  "publisher": "RapidAI / Alaska Stroke Coalition (Business Wire release)",
+  "url": "https://www.businesswire.com/news/home/20240904697280/en/RapidAI-and-Alaska-Stroke-Coalition-Join-Forces-to-Overcome-Distance-Barriers-and-Deliver-Equitable-Stroke-Treatment-to-Alaskans",
+  "published": "2024-09-04",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-09-04 (published)."
+ },
  "careercenter-aorn-central-peninsula-hospital-58742-3a439": {
   "type": "other",
   "title": "Central Peninsula Hospital profile",
@@ -362,6 +637,39 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "cdapress-falls-er-hospital-opens-feba9": {
+  "type": "news",
+  "title": "Post Falls ER & Hospital opens",
+  "publisher": "Coeur d'Alene Press",
+  "url": "https://cdapress.com/news/2024/aug/04/bits-post-falls-er-hospital-opens",
+  "published": "2024-08-04",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-08-04 (published)."
+ },
+ "cdc-mt-drivetime-thrombectomy-html-cd098": {
+  "type": "government",
+  "title": "One-way 180-Minute Drive Time to Mechanical Thrombectomy in Montana",
+  "publisher": "CDC Chronic Disease Map Gallery",
+  "url": "https://www.cdc.gov/heart-disease-and-stroke-data/data-vis/mt-drivetime-thrombectomy.html",
+  "published": null,
+  "effective": "2018",
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2018 (effective)."
+ },
+ "cdn-amegroups-cn-24-45-1-pdf-d4350": {
+  "type": "tertiary",
+  "title": "Accredited thrombectomy-capable and comprehensive stroke centers in the U.S. (supplementary table)",
+  "publisher": "AME Publishing Company (supplement to an AME Surgical Journal neurovascular surgery review)",
+  "url": "https://cdn.amegroups.cn/static/public/asj-24-45-1.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "cheyenneregional-primary-stroke-center-recertification-b0ba0": {
   "type": "official-facility",
   "title": "Cheyenne Regional Medical Center Receives Advanced Primary Stroke Center Recertification",
@@ -378,6 +686,17 @@
   "title": "Stroke Care Services",
   "publisher": "Cheyenne Regional Medical Center",
   "url": "https://www.cheyenneregional.org/service/stroke-care-services/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "cityofcordova-b27af": {
+  "type": "government",
+  "title": "Services in Cordova",
+  "publisher": "City of Cordova",
+  "url": "https://www.cityofcordova.net/?p=166",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -428,6 +747,105 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "confluencehealth-awards-press-release-pdf-cf678": {
+  "type": "official-facility",
+  "title": "2023.08.24 Stroke Program Awards Press Release",
+  "publisher": "Confluence Health",
+  "url": "https://www.confluencehealth.org/documents/press%20release/2023.08.24-Stroke-Program-Awards-Press-Release.pdf",
+  "published": "2023-08-24",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2023-08-24 (published)."
+ },
+ "confluencehealth-changes-press-release-pdf-cb7d3": {
+  "type": "official-facility",
+  "title": "2023.06.26 SEI Naming Convention Changes Press Release",
+  "publisher": "Confluence Health",
+  "url": "https://www.confluencehealth.org/documents/press%20release/2023.06.26-SEI-Naming-Convention-Changes-Press-Release.pdf",
+  "published": "2023-06-26",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2023-06-26 (published)."
+ },
+ "confluencehealth-health-hospital-central-campus-a6729": {
+  "type": "official-facility",
+  "title": "Confluence Health Hospital (Central Campus)",
+  "publisher": "Confluence Health",
+  "url": "https://www.confluencehealth.org/locations/confluence-health-hospital-central-campus/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "confluencehealth-health-hospital-mares-campus-e45c9": {
+  "type": "official-facility",
+  "title": "Confluence Health Hospital (Mares Campus)",
+  "publisher": "Confluence Health",
+  "url": "https://www.confluencehealth.org/locations/confluence-health-hospital-mares-campus/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "confluencehealth-of-new-24-7-1c337": {
+  "type": "official-facility",
+  "title": "Confluence Health announces opening of new 24/7 [emergency department]",
+  "publisher": "Confluence Health",
+  "url": "https://confluencehealth.org/news/2020/october/confluence-health-announces-opening-of-new-24-7-",
+  "published": "2020-10",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020-10 (published)."
+ },
+ "confluencehealth-stroke-treatment-0ff72": {
+  "type": "official-facility",
+  "title": "Stroke Treatment - Confluence Health",
+  "publisher": "Confluence Health",
+  "url": "https://www.confluencehealth.org/stroke-treatment/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "confluencehealth-with-guidelines-awards-pdf-0b8dd": {
+  "type": "official-facility",
+  "title": "2026.07.21 AHA Get with Guidelines Awards",
+  "publisher": "Confluence Health",
+  "url": "https://www.confluencehealth.org/wp-content/uploads/2026.07.21_AHA_Get_with_Guidelines_Awards.pdf",
+  "published": "2026-07-21",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-07-21 (published)."
+ },
+ "county10-visits-sagewest-health-care-048dc": {
+  "type": "news",
+  "title": "County 10 — report on a 2021 visit by the governor to SageWest Health Care",
+  "publisher": "County 10",
+  "url": "https://county10.com/governor-gordon-visits-sagewest-health-care/",
+  "published": "2021",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2021 (published)."
+ },
+ "cph-flippublication-4f9d-a5b2f87df4e0bf17-spring2021-7-abbf9": {
+  "type": "official-facility",
+  "title": "Central Peninsula Hospital | Pulse | Spring 2021",
+  "publisher": "Central Peninsula Hospital",
+  "url": "https://cph.flippublication.com/issue/a609715d-f4ec-4f9d-a5b2f87df4e0bf17/spring2021/7/",
+  "published": "2021",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2021 (published)."
+ },
  "dillinghamak-node-104-99f5f": {
   "type": "government",
   "title": "City of Dillingham (official site)",
@@ -450,8 +868,19 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "dnv-care-certification-programs-219582-acaf4": {
+  "type": "other",
+  "title": "DNV Healthcare Stroke Care Certification Program",
+  "publisher": "DNV",
+  "url": "https://www.dnv.us/services/stroke-care-certification-programs-219582/",
+  "published": null,
+  "effective": "2025-08-01",
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-08-01 (effective). An issuer's program page describing its stroke certification requirements, not a directory of certified organizations."
+ },
  "dnv-centre-plus-psc-certification-31275": {
-  "type": "issuer-registry",
+  "type": "other",
   "title": "Primary Stroke Centre Plus (PSC+) Certification",
   "publisher": "DNV",
   "url": "https://www.dnv.com/services/primary-stroke-centre-plus-psc-certification/",
@@ -459,11 +888,11 @@
   "effective": null,
   "accessed": "2026-10-17",
   "access": "search-extract",
-  "note": "Observed through a web-search extract; the page was not opened directly."
+  "note": "Observed through a web-search extract; the page was not opened directly. An issuer's program page defining Primary Stroke Centre Plus, not a directory of certified organizations."
  },
  "doh-wa-03-evaldor22-04-pdf-d2476": {
   "type": "government",
-  "title": "https://doh.wa.gov/sites/default/files/2022-03/EvalDOR22-04.pdf",
+  "title": "Washington State Department of Health — certificate of need evaluation DOR22-04 (UW Medical Center)",
   "publisher": "doh.wa.gov",
   "url": "https://doh.wa.gov/sites/default/files/2022-03/EvalDOR22-04.pdf",
   "published": null,
@@ -472,20 +901,9 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2022-03 (unknown)."
  },
- "doh-wa-2022-02-345299-pdf-767ce": {
-  "type": "issuer-registry",
-  "title": "https://doh.wa.gov/sites/default/files/2022-02/345299.pdf",
-  "publisher": "doh.wa.gov",
-  "url": "https://doh.wa.gov/sites/default/files/2022-02/345299.pdf",
-  "published": null,
-  "effective": null,
-  "accessed": "2026-10-17",
-  "access": "search-extract",
-  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-05 (None)."
- },
  "doh-wa-er-plan25-27-pdf-ff815": {
   "type": "government",
-  "title": "https://doh.wa.gov/sites/default/files/2025-07/ER-Plan25-27.pdf",
+  "title": "Washington State Department of Health — East Region plan 2025–2027 (ECS hospital appendix)",
   "publisher": "doh.wa.gov",
   "url": "https://doh.wa.gov/sites/default/files/2025-07/ER-Plan25-27.pdf",
   "published": "2025-07",
@@ -496,7 +914,7 @@
  },
  "doh-wa-nc-plan25-27-pdf-1f06e": {
   "type": "government",
-  "title": "https://doh.wa.gov/sites/default/files/2025-07/NC-Plan25-27.pdf",
+  "title": "Washington State Department of Health — North Central Region plan 2025–2027 (ECS hospital appendix)",
   "publisher": "doh.wa.gov",
   "url": "https://doh.wa.gov/sites/default/files/2025-07/NC-Plan25-27.pdf",
   "published": "2025-07",
@@ -507,7 +925,7 @@
  },
  "doh-wa-scr-plan25-27-pdf-6194d": {
   "type": "government",
-  "title": "https://doh.wa.gov/sites/default/files/2025-07/SCR-Plan25-27.pdf",
+  "title": "Washington State Department of Health — South Central Region plan 2025–2027 (ECS hospital appendix)",
   "publisher": "doh.wa.gov",
   "url": "https://doh.wa.gov/sites/default/files/2025-07/SCR-Plan25-27.pdf",
   "published": "2025-07",
@@ -516,9 +934,20 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-07 (published)."
  },
+ "doh-wa-stroke-system-categorization-applications-e03f8": {
+  "type": "government",
+  "title": "Emergency Cardiac and Stroke (ECS) System - Categorization applications",
+  "publisher": "Washington State Department of Health",
+  "url": "https://doh.wa.gov/public-health-provider-resources/emergency-medical-services-ems-and-trauma-care-system/emergency-cardiac-and-stroke-system/categorization-applications",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "doh-wa-swr-plan25-27-pdf-d6d0e": {
   "type": "government",
-  "title": "https://doh.wa.gov/sites/default/files/2025-07/SWR-Plan25-27.pdf",
+  "title": "Washington State Department of Health — Southwest Region plan 2025–2027 (ECS hospital appendix)",
   "publisher": "doh.wa.gov",
   "url": "https://doh.wa.gov/sites/default/files/2025-07/SWR-Plan25-27.pdf",
   "published": "2025-07",
@@ -529,7 +958,7 @@
  },
  "doh-wa-wr-plan25-27-pdf-1ce8f": {
   "type": "government",
-  "title": "https://doh.wa.gov/sites/default/files/2025-07/WR-Plan25-27.pdf",
+  "title": "Washington State Department of Health — West Region plan 2025–2027 (ECS hospital appendix)",
   "publisher": "doh.wa.gov",
   "url": "https://doh.wa.gov/sites/default/files/2025-07/WR-Plan25-27.pdf",
   "published": "2025-07",
@@ -560,6 +989,28 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "douglas-budget-million-deal-on-friday-b7be6": {
+  "type": "news",
+  "title": "Douglas Budget — report on the purchase of the Summit building in Casper",
+  "publisher": "Douglas Budget",
+  "url": "https://www.douglas-budget.com/article/1378,mhcc-buys-summit-building-in-29-6-million-deal-on-friday",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "douglas-budget-summit-property-in-casper-eb52a": {
+  "type": "news",
+  "title": "Douglas Budget — report on the Douglas hospital's purchase of the Summit property in Casper",
+  "publisher": "Douglas Budget",
+  "url": "https://www.douglas-budget.com/article/1346,douglas-hospital-closes-deal-on-summit-property-in-casper",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "dphhs-mt-publichealth-cardiovascular-65b18": {
   "type": "government",
   "title": "Cardiovascular Health",
@@ -581,6 +1032,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "ecfr-42-cfr-485-528": {
+  "type": "regulation",
+  "title": "42 CFR 485.528 — Condition of participation: Staffing and staff responsibilities (Rural Emergency Hospitals)",
+  "publisher": "Electronic Code of Federal Regulations (eCFR)",
+  "url": "https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-485/subpart-E/section-485.528",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "citation",
+  "note": "§485.528(a), Standard: Emergency department staffing: \"The emergency department of the REH must be staffed 24 hours a day, 7 days a week by an individual or individuals competent in the skills needed to address emergency medical care.\" The wording was confirmed through web-search extracts in October 2026; the eCFR page could not be opened from the authoring environment. Cited as the basis for inferring a 24/7 emergency department at a documented Rural Emergency Hospital. The rule does not require a physician on site at all hours. Not a campus observation."
  },
  "ecfr-42-cfr-485-618": {
   "type": "regulation",
@@ -615,6 +1077,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "ems-idaho-2025-1-final-pdf-0c02e": {
+  "type": "government",
+  "title": "Time Sensitive Emergency System State of Idaho - Standards Manual, Edition 2025-1",
+  "publisher": "Idaho TSE System Council / Idaho Bureau of EMS",
+  "url": "https://ems.idaho.gov/wp-content/uploads/2026/07/TSE_Standards-Manual_2025-1_FINAL.pdf",
+  "published": null,
+  "effective": "2025-07-01",
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-07-01 (effective)."
+ },
  "ems-utah-list-only-2-pdf-7b50f": {
   "type": "government",
   "title": "2025 State of Utah Stroke Facilities",
@@ -626,11 +1099,55 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025 (published)."
  },
+ "en-wikipedia-673d-air-base-wing-ebb74": {
+  "type": "tertiary",
+  "title": "673d Air Base Wing",
+  "publisher": "Wikipedia",
+  "url": "https://en.wikipedia.org/wiki/673d_Air_Base_Wing",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "en-wikipedia-astria-regional-medical-center-5f157": {
+  "type": "tertiary",
+  "title": "Astria Regional Medical Center (Wikipedia)",
+  "publisher": "Wikipedia",
+  "url": "https://en.wikipedia.org/wiki/Astria_Regional_Medical_Center",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "en-wikipedia-e2-80-93council-highway-7bc11": {
   "type": "tertiary",
   "title": "Nome–Council Highway",
   "publisher": "Wikipedia",
   "url": "https://en.wikipedia.org/wiki/Nome%E2%80%93Council_Highway",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "en-wikipedia-of-hospitals-in-idaho-930f8": {
+  "type": "tertiary",
+  "title": "List of hospitals in Idaho",
+  "publisher": "Wikipedia",
+  "url": "https://en.wikipedia.org/wiki/List_of_hospitals_in_Idaho",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "en-wikipedia-of-hospitals-in-wyoming-0221e": {
+  "type": "tertiary",
+  "title": "List of hospitals in Wyoming",
+  "publisher": "Wikipedia",
+  "url": "https://en.wikipedia.org/wiki/List_of_hospitals_in_Wyoming",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -648,6 +1165,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "en-wikipedia-walla-walla-general-hospital-57a1a": {
+  "type": "tertiary",
+  "title": "Walla Walla General Hospital (Wikipedia)",
+  "publisher": "Wikipedia",
+  "url": "https://en.wikipedia.org/wiki/Walla_Walla_General_Hospital",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "en-wikipedia-wiki-bush-alaska-93916": {
   "type": "tertiary",
   "title": "The Bush (Alaska)",
@@ -658,6 +1186,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "en-wikipedia-wiki-fort-wainwright-58f33": {
+  "type": "tertiary",
+  "title": "Fort Wainwright",
+  "publisher": "Wikipedia",
+  "url": "https://en.wikipedia.org/wiki/Fort_Wainwright",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Found by a targeted search in the October 2026 new-records step."
  },
  "engage-healthtrustjobs-idaho-regional-medical-center-52cc3": {
   "type": "other",
@@ -703,6 +1242,28 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "fcmc-fcmc-service-emergency-care-04e64": {
+  "type": "official-facility",
+  "title": "Emergency Care - Franklin County Medical Center",
+  "publisher": "Franklin County Medical Center",
+  "url": "https://fcmc.org/fcmc_service/emergency-care/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "fcmc-franklin-county-medical-center-8af87": {
+  "type": "official-facility",
+  "title": "Franklin County Medical Center",
+  "publisher": "Franklin County Medical Center",
+  "url": "https://fcmc.org/franklin-county-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "fiercehealthcare-level-1-stroke-centers-9c277": {
   "type": "news",
   "title": "Harborview Medical Center and Northwest Hospital Named Level 1 Stroke Centers",
@@ -714,11 +1275,99 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "financialcontent-stroke-care-across-wyoming-0ca50": {
+  "type": "other",
+  "title": "$5.2 Million Commitment Will Expand and Enhance Stroke Care Across Wyoming",
+  "publisher": "American Heart Association / Helmsley Charitable Trust (newswire release)",
+  "url": "https://www.financialcontent.com/article/newmediawire-2026-8-17-52-million-commitment-will-expand-and-enhance-stroke-care-across-wyoming",
+  "published": "2026-08-17",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-08-17 (published)."
+ },
+ "find-human-services-kingcounty-2b63-5f2c-8927-ad8fbd4a19-69e41": {
+  "type": "tertiary",
+  "title": "Emergency Department offered by Swedish Medical Center in Ballard",
+  "publisher": "King County human services directory",
+  "url": "https://find-human-services.kingcounty.gov/search/d03cfd72-2b63-5f2c-8927-ad8fbd4a19d2",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "fmdh-h18094-a-003-pdf-6620d": {
+  "type": "official-facility",
+  "title": "Frances Mahon Deaconess Hospital Annual Report 2017",
+  "publisher": "Frances Mahon Deaconess Hospital",
+  "url": "https://www.fmdh.org/documents/content/Proof-4-Frances-Mahon-2017-AR-H18094-A-003.pdf",
+  "published": "2017",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2017 (published)."
+ },
  "foundation-providence-everett-our-priorities-neuroscienc-bc855": {
   "type": "official-facility",
   "title": "Neurosciences",
   "publisher": "Providence Foundation",
   "url": "https://foundation.providence.org/wa/everett/our-priorities/neurosciences",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "foundation-providence-st-joseph-medical-center-05258": {
+  "type": "official-facility",
+  "title": "St. Joseph Medical Center",
+  "publisher": "Providence Montana Foundation",
+  "url": "https://foundation.providence.org/montana/our-priorities/st-joseph-medical-center",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "fredhutch-fred-hutch-locations-html-9d3ae": {
+  "type": "official-facility",
+  "title": "Fred Hutch Locations",
+  "publisher": "Fred Hutchinson Cancer Center",
+  "url": "https://www.fredhutch.org/en/about/fred-hutch-locations.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "fredhutch-locations-sloan-clinic-html-2a3bc": {
+  "type": "official-facility",
+  "title": "Sloan Clinic",
+  "publisher": "Fred Hutchinson Cancer Center",
+  "url": "https://www.fredhutch.org/en/about/fred-hutch-locations/sloan-clinic.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "fredhutch-overnight-hospital-stay-html-095b7": {
+  "type": "official-facility",
+  "title": "Overnight Hospital Stay",
+  "publisher": "Fred Hutchinson Cancer Center",
+  "url": "https://www.fredhutch.org/en/patient-care/new-patients/overnight-hospital-stay.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "fredhutch-where-to-call-html-d11ed": {
+  "type": "official-facility",
+  "title": "Where to Call About Medical Problems",
+  "publisher": "Fred Hutchinson Cancer Center",
+  "url": "https://www.fredhutch.org/en/patient-care/new-patients/where-to-call.html",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -736,6 +1385,72 @@
   "access": "snapshot",
   "note": "Vendored at data/geo/cities-wwami.json by scripts/build-cities.py. Town-centre points, not hospital campuses."
  },
+ "gfclinic-department-emergency-medicine-6f69d": {
+  "type": "official-facility",
+  "title": "Emergency Medicine in Great Falls, MT",
+  "publisher": "Great Falls Clinic",
+  "url": "https://gfclinic.com/department/emergency-medicine/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "gfclinic-department-radiology-9b73f": {
+  "type": "official-facility",
+  "title": "Radiology",
+  "publisher": "Great Falls Clinic",
+  "url": "https://gfclinic.com/department/radiology/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "gfclinic-heart-center-a1270": {
+  "type": "official-facility",
+  "title": "Heart Center",
+  "publisher": "Great Falls Clinic",
+  "url": "https://gfclinic.com/heart-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "glasgowcourier-recognition-award-5789-html-6589b": {
+  "type": "news",
+  "title": "FMDH receives Stroke Recognition Award",
+  "publisher": "Glasgow Courier",
+  "url": "https://www.glasgowcourier.com/story/2018/01/17/news/fmdh-receives-stroke-recognition-award/5789.html",
+  "published": "2018-01-17",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2018-01-17 (published)."
+ },
+ "gmc-center-receives-cardiac-recogni-f6513": {
+  "type": "official-facility",
+  "title": "Glendive Medical Center Receives Cardiac Recognition Award",
+  "publisher": "Glendive Medical Center",
+  "url": "https://www.gmc.org/blog/2017/september/glendive-medical-center-receives-cardiac-recogni/",
+  "published": "2017-09",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2017-09 (published)."
+ },
+ "grovecreekmc-1d6a3": {
+  "type": "official-facility",
+  "title": "Grove Creek Medical Center",
+  "publisher": "Grove Creek Medical Center",
+  "url": "https://grovecreekmc.org/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "hcn-lifeline-for-rural-alaskans-b52f8": {
   "type": "news",
   "title": "Cordova's longest road, just 36 miles, provides a lifeline for rural Alaskans",
@@ -746,6 +1461,28 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "health-alaska-20net-20directory-northern-pdf-2ce35": {
+  "type": "government",
+  "title": "Safety Net Directory - Northern region",
+  "publisher": "Alaska DHSS",
+  "url": "https://health.alaska.gov/dph/Emergency/Documents/healthcare/Safety%20Net%20Directory/Northern.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "health-alaska-center-designation-status-pdf-71dbf": {
+  "type": "government",
+  "title": "Alaska Trauma Center Designation Status Updated March, 2025",
+  "publisher": "Alaska Department of Health",
+  "url": "https://health.alaska.gov/media/zauhtdgf/alaska-trauma-center-designation-status.pdf",
+  "published": "2025-03",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-03 (updated)."
  },
  "health-alaska-center-verification-and-designation-9117f": {
   "type": "government",
@@ -758,11 +1495,33 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "health-alaska-rural-health-plan-pdf-86cd9": {
+  "type": "government",
+  "title": "ALASKA RURAL HEALTH PLAN",
+  "publisher": "Alaska Department of Health",
+  "url": "https://health.alaska.gov/media/ozqb5y1b/rural_health_plan.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "health-wyo-application-template-1-pdf-a9f3f": {
   "type": "government",
   "title": "Letter of Completion and Application",
   "publisher": "Wyoming Department of Health",
   "url": "https://health.wyo.gov/wp-content/uploads/2026/05/Letter_of_Completion_and_Application_Template-1.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "health-wyo-officeofruralhealth-critical-access-hospitals-5fc2f": {
+  "type": "government",
+  "title": "Wyoming Department of Health — Office of Rural Health, critical access hospitals page",
+  "publisher": "Wyoming Department of Health",
+  "url": "https://health.wyo.gov/publichealth/rural/officeofruralhealth/critical-access-hospitals/",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -791,11 +1550,99 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-06 (published)."
  },
+ "healthcaredesignmagazine-f7fb6": {
+  "type": "news",
+  "title": "Mary Bridge Children's Hospital Nears Opening In Tacoma, Washington",
+  "publisher": "Healthcare Design",
+  "url": "https://healthcaredesignmagazine.com/?p=164053",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "healthcarefinancenews-strain-mounting-financial-issues-ea893": {
+  "type": "news",
+  "title": "Adventist Health closes Walla Walla General Hospital under strain of mounting financial issues",
+  "publisher": "Healthcare Finance News",
+  "url": "https://www.healthcarefinancenews.com/news/adventist-health-closes-walla-walla-general-hospital-under-strain-mounting-financial-issues",
+  "published": "2017-07",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2017-07 (published)."
+ },
  "healthexec-proposes-requirements-new-stroke-0e647": {
   "type": "news",
   "title": "Joint Commission proposes requirements for new stroke certification",
   "publisher": "HealthExec",
   "url": "https://healthexec.com/topics/healthcare-management/healthcare-quality/joint-commission-proposes-requirements-new-stroke",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "healthexec-shutters-financially-troubled-washington-0f247": {
+  "type": "news",
+  "title": "Adventist Health shutters financially troubled Washington hospital",
+  "publisher": "HealthExec",
+  "url": "https://healthexec.com/topics/patient-care/precision-medicine/adventist-health-shutters-financially-troubled-washington",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "healthgrades-mountain-view-hospital-fcc0e9-f5c7d": {
+  "type": "tertiary",
+  "title": "Mountain View Hospital - Idaho Falls, ID",
+  "publisher": "Healthgrades",
+  "url": "https://www.healthgrades.com/hospital/mountain-view-hospital-fcc0e9",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "healthinfo-montana-data-hub-index-html-c77fc": {
+  "type": "government",
+  "title": "CHSD data hub",
+  "publisher": "Montana Office of Rural Health and Area Health Education Center (Montana State University)",
+  "url": "https://healthinfo.montana.edu/chsd/data-hub/index.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "healthy-kaiserpermanente-emergency-medicine-dlp-321075-cb3ff": {
+  "type": "official-facility",
+  "title": "Emergency Department at Capitol Hill Main Building",
+  "publisher": "Kaiser Permanente Washington",
+  "url": "https://healthy.kaiserpermanente.org/washington/facilities/capitol-hill-main-building-338935/departments/emergency-medicine-dlp-321075",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "healthy-kaiserpermanente-permanente-central-hospital-340-9ed4e": {
+  "type": "official-facility",
+  "title": "Kaiser Permanente Central Hospital",
+  "publisher": "Kaiser Permanente Washington",
+  "url": "https://healthy.kaiserpermanente.org/washington/facilities/kaiser-permanente-central-hospital-340035",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "healthy-kaiserpermanente-urgent-care-dlp-180167-0e0b3": {
+  "type": "official-facility",
+  "title": "Urgent Care Center at Capitol Hill Main Building",
+  "publisher": "Kaiser Permanente Washington",
+  "url": "https://healthy.kaiserpermanente.org/washington/facilities/Capitol-Hill-Main-Building-338935/departments/urgent-care-dlp-180167",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -824,6 +1671,28 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2021-01 (updated)."
  },
+ "hospitalcompare-io-creek-medical-center-id-f7d1d": {
+  "type": "tertiary",
+  "title": "Grove Creek Medical Center - Hospital Compare",
+  "publisher": "hospitalcompare.io",
+  "url": "https://hospitalcompare.io/profile/grove-creek-medical-center-id",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "hospitalinspections-state-wy-131c2": {
+  "type": "tertiary",
+  "title": "HospitalInspections.org — Wyoming hospital inspection listings",
+  "publisher": "HospitalInspections.org",
+  "url": "http://www.hospitalinspections.org/state/wy",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "idaho-tse-designations": {
   "type": "issuer-registry",
   "title": "Idaho Time Sensitive Emergency System — Facility Designations (TSE Designated Centers by Region)",
@@ -845,6 +1714,127 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2021-05 (published)."
+ },
+ "idahopress-11e4-8c90-332528ae81d6-html-6fd7c": {
+  "type": "news",
+  "title": "New Saint Alphonsus to replace existing Nampa hospital",
+  "publisher": "Idaho Press",
+  "url": "https://www.idahopress.com/news/local/new-saint-alphonsus-to-replace-existing-nampa-hospital/article_1c65fe1e-bde5-11e4-8c90-332528ae81d6.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. The article identifier in the URL is a time-based UUID dated 2015-02-26, so the article is from February 2015; the page's own date was not seen. It describes the planned replacement of the Nampa hospital, not an opening."
+ },
+ "ihs-2000-2009-prov0509-pdf-eba50": {
+  "type": "government",
+  "title": "The IHS Primary Care Provider, May 2009",
+  "publisher": "Indian Health Service",
+  "url": "https://www.ihs.gov/sites/provider/themes/responsive2017/display_objects/documents/2000_2009/PROV0509.pdf",
+  "published": "2009-05",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2009-05 (published)."
+ },
+ "ihs-billings-healthcarefacilities-blackfeet-ae697": {
+  "type": "government",
+  "title": "Blackfeet Service Unit",
+  "publisher": "Indian Health Service",
+  "url": "https://www.ihs.gov/billings/healthcarefacilities/blackfeet/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "ihs-billings-healthcarefacilities-crow-10544": {
+  "type": "government",
+  "title": "Crow Service Unit",
+  "publisher": "Indian Health Service",
+  "url": "https://www.ihs.gov/Billings/healthcarefacilities/crow",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "ihs-billings-healthcarefacilities-ftbelknap-34e13": {
+  "type": "government",
+  "title": "Fort Belknap Service Unit",
+  "publisher": "Indian Health Service",
+  "url": "https://www.ihs.gov/Billings/healthcarefacilities/ftbelknap",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "ihs-federally-operated-ihs-facilities-7c676": {
+  "type": "government",
+  "title": "Health Care Accreditation Status of Federally Operated IHS Facilities",
+  "publisher": "Indian Health Service",
+  "url": "https://www.ihs.gov/quality/national-accountability-dashboard-for-quality/health-care-accreditation-status-of-federally-operated-ihs-facilities/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "ihs-service-unit-browning-montana-423fc": {
+  "type": "government",
+  "title": "IHS announces new CEO of Blackfeet Service Unit, Browning, Montana",
+  "publisher": "Indian Health Service",
+  "url": "https://www.ihs.gov/newsroom/pressreleases/2015pressreleases/ihs-announces-new-ceo-of-blackfeet-service-unit-browning-montana/",
+  "published": "2015",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2015 (published)."
+ },
+ "info-pullmanregional-acute-stroke-ready-certification-75fa2": {
+  "type": "official-facility",
+  "title": "Pullman Regional Hospital earns Acute Stroke Ready certification",
+  "publisher": "Pullman Regional Hospital",
+  "url": "https://info.pullmanregional.org/hospital-news-briefs/pullman-regional-hospital-earns-acute-stroke-ready-certification",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "info-pullmanregional-for-fifth-consecutive-year-dae27": {
+  "type": "official-facility",
+  "title": "Pullman Regional earns Acute Stroke Ready recertification for fifth consecutive year",
+  "publisher": "Pullman Regional Hospital",
+  "url": "https://info.pullmanregional.org/hospital-news-briefs/pullman-regional-earns-acute-stroke-ready-recertification-for-fifth-consecutive-year",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "installations-militaryonesource-mil-afb-health-health-ca-e01a7": {
+  "type": "government",
+  "title": "Eielson AFB health care",
+  "publisher": "Military OneSource",
+  "url": "https://installations.militaryonesource.mil/military-installation/eielson-afb/health/health-care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "installations-militaryonesource-mil-jber-health-health-c-885a7": {
+  "type": "government",
+  "title": "JBER health care",
+  "publisher": "Military OneSource",
+  "url": "https://installations.militaryonesource.mil/military-installation/joint-base-elmendorf-richardson-jber/health/health-care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "intermountainhealthcare-dee-hospital-stroke-care-15b91": {
   "type": "official-facility",
@@ -890,6 +1880,39 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "islandhealth-provider-recruitment-27ea7": {
+  "type": "official-facility",
+  "title": "Award-winning hospital in beautiful Pacific Northwest",
+  "publisher": "Island Health",
+  "url": "https://islandhealth.org/provider-recruitment/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "islandhealth-updated-5-2024-pdf-220f2": {
+  "type": "official-facility",
+  "title": "Fact Sheet 2023 Updated 5 2024",
+  "publisher": "Island Health",
+  "url": "https://islandhealth.org/wp-content/uploads/Fact_Sheet-2023-Updated-5-2024.pdf",
+  "published": "2024-05",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-05 (updated)."
+ },
+ "jems-for-micro-hospital-advance-a2e72": {
+  "type": "news",
+  "title": "After Pushback From ID Insurer, Plans for 'Micro-Hospital' Advance",
+  "publisher": "JEMS",
+  "url": "https://www.jems.com/ems-operations/after-pushback-from-id-insurer-plans-for-micro-hospital-advance/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Found by a targeted search in the October 2026 new-records step."
+ },
  "jobs-scct-interventional-radiology-opportunity-83031568-0b968": {
   "type": "other",
   "title": "Interventional Radiology Opportunity (Trinity Health/Saint Alphonsus)",
@@ -902,10 +1925,21 @@
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "jointcommission-hospital-excel-certification-options-e30c3": {
-  "type": "issuer-registry",
+  "type": "other",
   "title": "Critical Access Hospital certification options",
   "publisher": "The Joint Commission",
   "url": "https://jointcommission.org/what-we-offer/accreditation/health-care-settings/critical-access-hospital/excel/certification-options",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. An issuer's page describing the certifications offered to critical access hospitals, not a directory of certified organizations."
+ },
+ "juneauindependent-age-hospital-in-sitka-24804": {
+  "type": "news",
+  "title": "SEARHC opens $300M hospital in Sitka",
+  "publisher": "Juneau Independent",
+  "url": "https://juneauindependent.com/post/searhc-opens-300m-space-age-hospital-in-sitka",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -922,6 +1956,28 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2011-12 (published)."
+ },
+ "kcaw-sitka-community-to-searhc-f0cc9": {
+  "type": "news",
+  "title": "Sitka Assembly votes 6-1 to negotiate sale of Sitka Community Hospital to SEARHC",
+  "publisher": "KCAW Raven Radio",
+  "url": "https://www.kcaw.org/2018/08/29/by-6-1-assembly-vote-city-negotiate-sale-sitka-community-to-searhc/",
+  "published": "2018-08-29",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2018-08-29 (published)."
+ },
+ "kcaw-transition-delayed-until-august-6c776": {
+  "type": "news",
+  "title": "Hospital transition delayed until August",
+  "publisher": "KCAW Raven Radio",
+  "url": "https://www.kcaw.org/2019/06/03/hospital-transition-delayed-until-august/",
+  "published": "2019-06-03",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2019-06-03 (published)."
  },
  "kh-level-ii-stroke-center-40542": {
   "type": "official-facility",
@@ -945,11 +2001,44 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "kivitv-alphonsus-nampa-building-underway-32c7a": {
+  "type": "news",
+  "title": "Demolition of former Saint Alphonsus Nampa building underway",
+  "publisher": "KIVI",
+  "url": "https://www.kivitv.com/news/demolition-of-former-saint-alphonsus-nampa-building-underway",
+  "published": "2026",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026 (published)."
+ },
  "kivitv-new-care-level-designation-fb49c": {
   "type": "news",
   "title": "Advanced stroke care available at Nampa Saint Alphonsus thanks to new care level designation",
   "publisher": "KIVI-TV",
   "url": "https://www.kivitv.com/news/advanced-stroke-care-available-at-nampa-saint-alphonsus-thanks-to-new-care-level-designation",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "kodiakdailymirror-4055-a308-b413b60e2d0c-html-89d9b": {
+  "type": "news",
+  "title": "Kodiak Daily Mirror report on Providence Kodiak GWTG-Stroke Rural Recognition",
+  "publisher": "Kodiak Daily Mirror",
+  "url": "https://www.kodiakdailymirror.com/news/article_aeda5e6e-1ca9-4055-a308-b413b60e2d0c.html",
+  "published": "2026",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026 (published)."
+ },
+ "kpq-opens-2nd-emergency-department-fe473": {
+  "type": "news",
+  "title": "Confluence Health opens 2nd emergency department",
+  "publisher": "KPQ",
+  "url": "https://kpq.com/confluence-health-opens-2nd-emergency-department/",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -978,11 +2067,33 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "legacyhealth-and-treatments-stroke-care-5f5db": {
+  "type": "official-facility",
+  "title": "Stroke care",
+  "publisher": "Legacy Health",
+  "url": "https://www.legacyhealth.org/Services-and-Resources/services/adult/neurosciences/services-and-treatments/stroke-care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "legacyhealth-care-national-recognition-aspx-6af28": {
   "type": "official-facility",
   "title": "Stroke Care Nationally Recognized",
   "publisher": "Legacy Health",
   "url": "https://www.legacyhealth.org/services-and-resources/services/adult/neurosciences/services-and-treatments/stroke-care/stroke-care-national-recognition.aspx",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "legacyhealth-stroke-care-national-recognition-d4834": {
+  "type": "official-facility",
+  "title": "Stroke care",
+  "publisher": "Legacy Health",
+  "url": "https://legacyhealth.org/services-and-resources/services/adult/neurosciences/services-and-treatments/stroke-care/stroke-care-national-recognition",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -999,6 +2110,28 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2022-06 (published)."
+ },
+ "lmtribune-become-rural-emergency-hospital98003d2c-23018": {
+  "type": "news",
+  "title": "Regional news roundup: Cascade facility to become rural emergency hospital",
+  "publisher": "Lewiston Tribune",
+  "url": "https://lmtribune.com/northwest/regional-news-roundup-cascade-facility-to-become-rural-emergency-hospital98003d2c",
+  "published": "2024-06-02",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-06-02 (published)."
+ },
+ "lmtribune-stroke-ready-status-18707974-98810": {
+  "type": "news",
+  "title": "Pullman hospital earns acute stroke ready status",
+  "publisher": "Lewiston Tribune",
+  "url": "https://lmtribune.com/local-news/pullman-hospital-earns-acute-stroke-ready-status-18707974",
+  "published": "2025-02-06",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-02-06 (published)."
  },
  "logan-and-spine-stroke-care-6a275": {
   "type": "official-facility",
@@ -1033,6 +2166,50 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "logan-receives-stroke-hero-award-5a601": {
+  "type": "official-facility",
+  "title": "Logan Health Whitefish receives Stroke Hero Award",
+  "publisher": "Logan Health",
+  "url": "https://www.logan.org/logan-health-whitefish-receives-stroke-hero-award/",
+  "published": "2026-05",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-05 (published)."
+ },
+ "madisonhealth-dnv-accreditation-cert-pdf-08d5b": {
+  "type": "official-facility",
+  "title": "DNV Healthcare Certificate (NIAHO hospital accreditation)",
+  "publisher": "DNV (hosted by Madison Health)",
+  "url": "https://madisonhealth.org/wp-content/uploads/2026/04/DNV-Accreditation-Cert.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. A DNV NIAHO hospital accreditation certificate hosted on the hospital's own site (upload folder 2026/04, not a document date): a hospital accreditation, not a stroke certification, and not a DNV directory entry."
+ },
+ "madisonhealth-locations-madison-memorial-hospital-57ae3": {
+  "type": "official-facility",
+  "title": "Rexburg's Madison Memorial Hospital",
+  "publisher": "Madison Health",
+  "url": "https://madisonhealth.org/locations/madison-memorial-hospital/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "madisonhealth-specialties-neurological-rehabilitation-e0f5c": {
+  "type": "official-facility",
+  "title": "Neurological Rehabilitation - Madison Health",
+  "publisher": "Madison Health",
+  "url": "https://madisonhealth.org/specialties/neurological-rehabilitation/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "matsuregional-news-room-20809-3e837": {
   "type": "official-facility",
   "title": "Mat-Su Regional Medical Center Celebrates Stroke Program",
@@ -1044,11 +2221,77 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "medicare-hospital-130073-view-all-96ed5": {
+  "type": "government",
+  "title": "Grove Creek Medical Center - Medicare Care Compare",
+  "publisher": "Centers for Medicare & Medicaid Services",
+  "url": "https://www.medicare.gov/care-compare/details/hospital/130073/view-all?city=Blackfoot&state=ID&zipcode=",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "mil-wa-asset-5ba421340b219-283af": {
   "type": "government",
   "title": "Washington Military Department / Emergency Management document",
   "publisher": "Washington Military Department",
   "url": "https://mil.wa.gov/asset/5ba421340b219",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "montanastroke-rapid-resources-1-c5029": {
+  "type": "other",
+  "title": "RAPID RESOURCES - Montana Stroke Initiative",
+  "publisher": "Montana Stroke Initiative (DPHHS / American Stroke Association collaborative)",
+  "url": "https://www.montanastroke.org/rapid-resources-1",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "mountainviewhospital-services-surgery-498e1": {
+  "type": "official-facility",
+  "title": "Surgery - Mountain View Hospital",
+  "publisher": "Mountain View Hospital",
+  "url": "https://www.mountainviewhospital.org/services/surgery/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "mtha-about-mha-mha-members-77143": {
+  "type": "other",
+  "title": "MHA Members",
+  "publisher": "Montana Hospital Association",
+  "url": "https://mtha.org/about-mha/mha-members/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "mtha-member-livingston-healthcare-ce1be": {
+  "type": "other",
+  "title": "Livingston HealthCare - Montana Hospital Association",
+  "publisher": "Montana Hospital Association",
+  "url": "https://mtha.org/member/livingston-healthcare/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "mtha-member-mineral-community-hospital-5eb04": {
+  "type": "other",
+  "title": "Mineral Community Hospital - Montana Hospital Association",
+  "publisher": "Montana Hospital Association",
+  "url": "https://mtha.org/member/mineral-community-hospital/",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -1176,6 +2419,28 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "myhospitalnow-hospitals-treasure-valley-hospital-e57b1": {
+  "type": "tertiary",
+  "title": "Treasure Valley Hospital (directory profile)",
+  "publisher": "myhospitalnow.com",
+  "url": "https://www.myhospitalnow.com/hospitals/treasure-valley-hospital",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "nbcrightnow-40fe-b0ac-3176abfcdc61-html-2853b": {
+  "type": "news",
+  "title": "Moses Lake's new Samaritan hospital campus to open March 7",
+  "publisher": "NBC Right Now",
+  "url": "https://www.nbcrightnow.com/news/moses-lakes-new-samaritan-hospital-campus-to-open-march-7/article_b72ad844-a6a3-40fe-b0ac-3176abfcdc61.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "neurology-uw-mc-and-uw-medicine-b85e5": {
   "type": "official-facility",
   "title": "Congratulations Harborview MC and UW Medicine",
@@ -1209,6 +2474,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "news-intermountainhealth-from-the-joint-commission-37087": {
+  "type": "official-facility",
+  "title": "Intermountain Health St. James Hospital in Butte, Montana, Earns Primary Stroke Certification from The Joint Commission",
+  "publisher": "Intermountain Health",
+  "url": "https://news.intermountainhealth.org/intermountain-health-st-james-hospital-earns-primary-stroke-certification-from-the-joint-commission",
+  "published": "2026-05",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-05 (published)."
+ },
  "news-intermountainhealth-from-the-joint-commission-505ba": {
   "type": "official-facility",
   "title": "St. Vincent Healthcare Receives Certification in Advanced Stroke Treatment from The Joint Commission",
@@ -1219,6 +2495,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "news-intermountainhealth-montana-mission-lifeline-stroke-5a805": {
+  "type": "official-facility",
+  "title": "Holy Rosary Healthcare now a part of Montana Mission: Lifeline Stroke",
+  "publisher": "Intermountain Health",
+  "url": "https://news.intermountainhealth.org/holy-rosary-healthcare-now-a-part-of-montana-mission-lifeline-stroke/",
+  "published": "2021",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2021 (published)."
  },
  "news-ohsu-and-appointments-march-20-759a5": {
   "type": "official-facility",
@@ -1241,6 +2528,39 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020 (published)."
+ },
+ "newslj-opens-first-hospital-er-88a91": {
+  "type": "news",
+  "title": "100 years in the making: Sublette County opens first hospital, ER",
+  "publisher": "News Letter Journal",
+  "url": "https://www.newslj.com/100-years-making-sublette-county-opens-first-hospital-er",
+  "published": "2025-08",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-08 (published)."
+ },
+ "nmhcare-about-us-00615": {
+  "type": "official-facility",
+  "title": "About NMHC - Northern Montana Health Care",
+  "publisher": "Northern Montana Health Care",
+  "url": "https://nmhcare.org/about-us/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "nmhcare-departments-rehabilitation-services-4e14d": {
+  "type": "official-facility",
+  "title": "Physical and Speech Therapy",
+  "publisher": "Northern Montana Health Care",
+  "url": "https://nmhcare.org/departments/rehabilitation-services/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "nppes-1003067679": {
   "type": "nppes",
@@ -1583,6 +2903,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-07-08."
  },
+ "nppes-1114443660": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1114443660 — SHC MEDICAL CENTER - YAKIMA",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1114443660",
+  "published": "2024-10-09",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2017-08-16. DBA YAKIMA REGIONAL MEDICAL AND CARDIAC CENTER."
+ },
  "nppes-1114481447": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1114481447 — IDAHO FALLS COMMUNITY HOSPITAL LLC",
@@ -1637,6 +2968,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-09."
+ },
+ "nppes-1144279910": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1144279910 — MONTANA VAMC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1144279910",
+  "published": "2017-11-30",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A."
  },
  "nppes-1144471715": {
   "type": "nppes",
@@ -1714,6 +3056,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2023-07-19."
+ },
+ "nppes-1164471991": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1164471991 — CHEYENNE VAMC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1164471991",
+  "published": "2017-12-12",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-09."
  },
  "nppes-1164493847": {
   "type": "nppes",
@@ -2419,6 +3772,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-10-18."
  },
+ "nppes-1386405454": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1386405454 — ANCHORAGE VAMC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1386405454",
+  "published": "2024-01-17",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2024-01-17."
+ },
  "nppes-1386689487": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1386689487 — KLICKITAT COUNTY PUBLIC HOSPITAL DISTRICT NO 1",
@@ -2793,6 +4157,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2005-06-08."
  },
+ "nppes-1528826179": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1528826179 — POST FALLS HOSPITAL, LLC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1528826179",
+  "published": "2024-03-08",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2024-03-08."
+ },
  "nppes-1538345251": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1538345251 — MULTICARE HEALTH SYSTEM",
@@ -2913,6 +4288,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2018-07-26."
+ },
+ "nppes-1598577611": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1598577611 — SUBLETTE COUNTY HOSPITAL DISTRICT",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1598577611",
+  "published": "2026-07-14",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2025-01-24."
  },
  "nppes-1598874232": {
   "type": "nppes",
@@ -3111,6 +4497,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2013-01-28."
+ },
+ "nppes-1699877993": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1699877993 — ACH BASSETT-WAINWRIGHT",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1699877993",
+  "published": "2025-05-21",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-09-05."
  },
  "nppes-1700037801": {
   "type": "nppes",
@@ -3365,6 +4762,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-10-31."
  },
+ "nppes-1770533218": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1770533218 — SEATTLE VAMC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1770533218",
+  "published": "2025-02-21",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A."
+ },
  "nppes-1770586794": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1770586794 — ST LUKES REGIONAL MEDICAL CENTER",
@@ -3430,6 +4838,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2007-03-26."
+ },
+ "nppes-1801734983": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1801734983 — ADAMS COUNTY PUBLIC HOSPITAL DISTRICT 2",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1801734983",
+  "published": "2026-03-23",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) as reported by the October 2026 research pass (NPPES API); self-reported by the provider. \"published\" is the enumeration date."
  },
  "nppes-1801835475": {
   "type": "nppes",
@@ -3684,6 +5103,17 @@
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-06-08."
  },
+ "nppes-1861441867": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1861441867 — BOISE VAMC",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1861441867",
+  "published": "2022-02-10",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-05-08."
+ },
  "nppes-1861522088": {
   "type": "nppes",
   "title": "NPPES NPI Registry record 1861522088 — KAISER FOUNDATION HEALTH PLAN OF WASHINGTON",
@@ -3793,6 +5223,17 @@
   "accessed": "2026-10-17",
   "access": "api",
   "note": "Organization record (NPI-2) retrieved through the NPPES API; self-reported by the provider. \"published\" is the record's last-updated date. Status A, enumerated 2006-10-25."
+ },
+ "nppes-1902355654": {
+  "type": "nppes",
+  "title": "NPPES NPI Registry record 1902355654 — SWEDISH HEALTH SERVICES (psychiatric unit)",
+  "publisher": "CMS National Plan and Provider Enumeration System",
+  "url": "https://npiregistry.cms.hhs.gov/provider-view/1902355654",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "api",
+  "note": "Organization record (NPI-2), taxonomy 273R00000X Psychiatric Unit, at 5300 Tallman Ave NW, Seattle 98107; retrieved through the NPPES API in the October 2026 WA review; self-reported by the provider. NPPES returned no general acute care hospital record for ZIP 98107."
  },
  "nppes-1902818883": {
   "type": "nppes",
@@ -4025,6 +5466,39 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "nutexhealth-first-hospital-in-idaho-c7742": {
+  "type": "official-facility",
+  "title": "Nutex Health opens Post Falls ER & Hospital, its first hospital in Idaho",
+  "publisher": "Nutex Health",
+  "url": "https://www.nutexhealth.com/nutex-health-opens-post-falls-er-hospital-its-first-hospital-in-idaho",
+  "published": "2024-08-26",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-08-26 (published)."
+ },
+ "nwhc-health-care-services-html-564e3": {
+  "type": "official-facility",
+  "title": "Health care services - Kalispell Regional Healthcare",
+  "publisher": "Kalispell Regional Healthcare (now Logan Health)",
+  "url": "https://nwhc.org/krmc/health-care-services.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "nwhc-physician-employment-opportunities-html-0895a": {
+  "type": "official-facility",
+  "title": "Kalispell Regional Healthcare — physician employment opportunities page",
+  "publisher": "Kalispell Regional Healthcare (nwhc.org)",
+  "url": "https://nwhc.org/nwhc/jobs/physician-employment-opportunities.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "ohsu-1-25-24-pdf-a9e90": {
   "type": "official-facility",
   "title": "OHSU Public Board of Directors Meeting, January 25, 2024",
@@ -4124,6 +5598,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2021-09-09 (published)."
  },
+ "peacehealth-fact-sheets-0-pdf-2ea57": {
+  "type": "official-facility",
+  "title": "PeaceHealth St. Joseph Medical Center (fact sheet)",
+  "publisher": "PeaceHealth",
+  "url": "https://www.peacehealth.org/sites/default/files/2026-01/St-Joes-Fact-Sheets_0.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-01 (unknown)."
+ },
  "peacehealth-heart-riverbend-stroke-center-f77cb": {
   "type": "official-facility",
   "title": "Stroke center",
@@ -4157,11 +5642,77 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020-08-06 (published)."
  },
+ "peacehealth-services-emergency-medicine-998d9": {
+  "type": "official-facility",
+  "title": "Emergency Medicine",
+  "publisher": "PeaceHealth",
+  "url": "https://www.peacehealth.org/services/emergency-medicine",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "peacehealth-stroke-8460e": {
   "type": "official-facility",
   "title": "Stroke and Neurovascular Disorders",
   "publisher": "PeaceHealth",
   "url": "https://www.peacehealth.org/stroke",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "peacehealth-stroke-care-10th-year-c2a24": {
+  "type": "official-facility",
+  "title": "PeaceHealth St. Joseph recognized for commitment to excellence in stroke care for 10th year straight",
+  "publisher": "PeaceHealth",
+  "url": "https://www.peacehealth.org/news/2026-07-29/peacehealth-st-joseph-recognized-commitment-excellence-stroke-care-10th-year",
+  "published": "2026-07-29",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-07-29 (published)."
+ },
+ "peninsuladailynews-jefferson-healthcare-receives-awards-6ad43": {
+  "type": "news",
+  "title": "Jefferson Healthcare receives awards",
+  "publisher": "Peninsula Daily News",
+  "url": "https://peninsuladailynews.com/business/jefferson-healthcare-receives-awards",
+  "published": "2019",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2019 (published)."
+ },
+ "pinedaleonline-2025-08-whichdoortousesublet-htm-8c664": {
+  "type": "news",
+  "title": "Which door to use: Sublette County Health emergency room and urgent care entrances",
+  "publisher": "Pinedale Online",
+  "url": "https://www.pinedaleonline.com/news/2025/08/WHICHDOORTOUSESublet.htm",
+  "published": "2025-08",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-08 (published). Found by a targeted search in the October 2026 new-records step."
+ },
+ "pinedalewyoming-2025-09-sublette-hospital-ribbon-cutting-fe7b0": {
+  "type": "news",
+  "title": "Pinedale Online — notice of the Sublette County Hospital ribbon cutting (September 2025)",
+  "publisher": "Pinedale Online",
+  "url": "https://pinedalewyoming.com/news/2025/09/GovernorMarkGordonto.htm",
+  "published": "2025-09",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-09 (published)."
+ },
+ "portneuf-campaigns-were-with-you-478ee": {
+  "type": "official-facility",
+  "title": "Brand - Portneuf Health",
+  "publisher": "Portneuf Health",
+  "url": "https://www.portneuf.org/campaigns/were-with-you/",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4201,6 +5752,28 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "premieralts-companies-treasure-valley-hospital-3c5a7": {
+  "type": "tertiary",
+  "title": "Premier Alts — company profile of Treasure Valley Hospital",
+  "publisher": "premieralts.com",
+  "url": "https://www.premieralts.com/companies/treasure-valley-hospital",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "prior-edition-review-notes-2026-07-04": {
+  "type": "prior-edition",
+  "title": "Previous edition's review notes: pending-items resolution of 2026-07-04 (docs/IMPROVEMENTS-2026-07-03.md)",
+  "publisher": "This project",
+  "url": "https://github.com/rkalani1/telestroke-expansion-map/blob/33b535b83f07c4d33f48949006f4912899c4541c/docs/IMPROVEMENTS-2026-07-03.md",
+  "published": "2026-07-04",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "snapshot",
+  "note": "The previous edition's own review log, as committed with that edition. It reports, without a link or date, what the hospital's site said then; the hospital page itself was not seen in this review."
+ },
  "prior-edition-v3": {
   "type": "prior-edition",
   "title": "Regional Hospital Stroke Capabilities dataset, previous edition (schema 3.0.0, data 2026.09.13.1)",
@@ -4217,6 +5790,28 @@
   "title": "Neurosciences Center",
   "publisher": "Providence",
   "url": "https://www.providence.org/locations/wa/providence-regional-medical-center-everett/neuroscience-center",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "providence-center-everett-trauma-center-2f2f6": {
+  "type": "official-facility",
+  "title": "Trauma Center",
+  "publisher": "Providence",
+  "url": "https://www.providence.org/locations/wa/providence-regional-medical-center-everett/trauma-center",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "providence-family-hospital-about-us-2d010": {
+  "type": "official-facility",
+  "title": "About Us",
+  "publisher": "Providence",
+  "url": "https://www.providence.org/locations/wa/holy-family-hospital/about-us",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4245,6 +5840,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-02-26 (published)."
  },
+ "providence-medical-center-emergency-department-67d0e": {
+  "type": "official-facility",
+  "title": "Emergency Department - Providence St. Joseph Medical Center (Polson)",
+  "publisher": "Providence",
+  "url": "https://www.providence.org/locations/mt/st-joseph-medical-center/emergency-department",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "providence-medical-center-emergency-services-ef1dd": {
   "type": "official-facility",
   "title": "Emergency Services - Kadlec Regional Medical Center",
@@ -4261,6 +5867,17 @@
   "title": "Neurology - Providence Regional Medical Center Everett",
   "publisher": "Providence",
   "url": "https://www.providence.org/locations/wa/providence-regional-medical-center-everett/neurology",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "providence-medical-center-stroke-center-35763": {
+  "type": "official-facility",
+  "title": "Stroke Center - Providence Saint Joseph Medical Center (Burbank, CA)",
+  "publisher": "Providence",
+  "url": "https://www.providence.org/locations/socal/saint-joseph-medical-center/stroke-center",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4311,11 +5928,44 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2022 (published)."
  },
+ "radiologybusiness-ai-and-ct-imaging-65968": {
+  "type": "news",
+  "title": "Revolutionizing stroke care in rural Alaska with AI and CT imaging",
+  "publisher": "Radiology Business",
+  "url": "https://radiologybusiness.com/topics/clinical/stroke/revolutionizing-stroke-care-rural-alaska-ai-and-ct-imaging",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "regulations-justia-13-section-13-2-4b1c7": {
   "type": "other",
   "title": "WY stroke center rules",
   "publisher": "Wyoming Administrative Code (via Justia)",
   "url": "https://regulations.justia.com/states/wyoming/agency-048/sub-agency-0023/chapter-13/section-13-2",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "rhtcompass-wy-afd9f": {
+  "type": "tertiary",
+  "title": "Wyoming: 36 Hospitals, 0 Deserts",
+  "publisher": "rhtcompass.com",
+  "url": "https://rhtcompass.com/wy",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "saintalphonsus-alphonsus-medical-center-nampa-56967": {
+  "type": "official-facility",
+  "title": "Saint Alphonsus Nampa Medical Center",
+  "publisher": "Saint Alphonsus Health System",
+  "url": "https://www.saintalphonsus.org/location/saint-alphonsus-medical-center-nampa",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4333,6 +5983,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020-11-18 (published)."
  },
+ "saintalphonsus-emergency-nampa-12th-avenue-0c1d7": {
+  "type": "official-facility",
+  "title": "Saint Alphonsus Emergency - Nampa 12th Avenue",
+  "publisher": "Saint Alphonsus Health System",
+  "url": "https://www.saintalphonsus.org/location/saint-alphonsus-emergency-nampa-12th-avenue",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "saintalphonsus-ii-stroke-center-designation-3dcf7": {
   "type": "official-facility",
   "title": "State Designation Reflects Increased Level of Stroke Care in Nampa",
@@ -4344,11 +6005,55 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "saintalphonsus-on-nampa-neighborhood-hospital-74fca": {
+  "type": "official-facility",
+  "title": "Saint Alphonsus Breaks Ground on Nampa Neighborhood Hospital",
+  "publisher": "Saint Alphonsus Health System",
+  "url": "https://www.saintalphonsus.org/news/saint-alphonsus-breaks-ground-on-nampa-neighborhood-hospital",
+  "published": "2016",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2016 (published)."
+ },
  "saintalphonsus-services-neurosciences-stroke-c57d6": {
   "type": "official-facility",
   "title": "Stroke - Neurosciences",
   "publisher": "Saint Alphonsus Health System",
   "url": "https://www.saintalphonsus.org/services/neurosciences/stroke",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "samaritanhealthcare-emergency-department-72350": {
+  "type": "official-facility",
+  "title": "Emergency Department",
+  "publisher": "Samaritan Healthcare",
+  "url": "https://www.samaritanhealthcare.com/emergency-department/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "samaritanhealthcare-ourfuturecommunityhospital-33752": {
+  "type": "official-facility",
+  "title": "Our Future Community Hospital",
+  "publisher": "Samaritan Healthcare",
+  "url": "https://www.samaritanhealthcare.com/ourfuturecommunityhospital/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "samaritanhealthcare-v2-final-webversion-pdf-f96fd": {
+  "type": "official-facility",
+  "title": "Samaritan Healthcare newsletter (Spring 2025 file)",
+  "publisher": "Samaritan Healthcare",
+  "url": "https://www.samaritanhealthcare.com/wp-content/uploads/2025/12/25_0057_SMH_Newsletter_Spring25_v2_FINAL_WebVersion.pdf",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4366,6 +6071,61 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "search-wa211-7e11-5a6c-8b6a-40bdf0a82276-2bead": {
+  "type": "tertiary",
+  "title": "WhidbeyHealth Medical Center emergency department (Washington 211 listing)",
+  "publisher": "Washington 211",
+  "url": "https://search.wa211.org/search/39b0c75d-7e11-5a6c-8b6a-40bdf0a82276",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "seattleschild-1b9c1": {
+  "type": "news",
+  "title": "Mary Bridge Children's opens May 16",
+  "publisher": "Seattle's Child",
+  "url": "https://www.seattleschild.com/?p=110193",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "senate-rural-emergency-hospitals-communities-2025-09-2c1c5": {
+  "type": "government",
+  "title": "How Rural Emergency Hospitals Are Benefiting Rural Communities (updated September 2025)",
+  "publisher": "Office of a U.S. Senator (Senate Finance Committee member)",
+  "url": "https://www.grassley.senate.gov/download/how-rural-emergency-hospitals-are-benefiting-rural-communities_-updated-september-2025?download=1",
+  "published": "2025-09",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-09 (updated)."
+ },
+ "shepscenter-unc-health-rural-emergency-hospitals-294aa": {
+  "type": "tertiary",
+  "title": "Rural Emergency Hospitals",
+  "publisher": "UNC Cecil G. Sheps Center for Health Services Research",
+  "url": "https://www.shepscenter.unc.edu/programs-projects/rural-health/rural-emergency-hospitals/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "sheridanhospital-017cb": {
+  "type": "official-facility",
+  "title": "Sheridan Memorial Hospital physician post on emergency stroke care",
+  "publisher": "Sheridan Memorial Hospital",
+  "url": "https://sheridanhospital.org/?p=572",
+  "published": "2019",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2019 (published)."
+ },
  "sheridanhospital-about-us-awards-73d6f": {
   "type": "official-facility",
   "title": "Awards",
@@ -4376,6 +6136,17 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "sidneyhealth-cardiac-and-stroke-efforts-78e99": {
+  "type": "official-facility",
+  "title": "Sidney Health Center receives 3 Montana awards for cardiac and stroke efforts",
+  "publisher": "Sidney Health Center",
+  "url": "https://sidneyhealth.org/News/Sidney-Health-Center-receives-3-Montana-awards-for-cardiac-and-stroke-efforts",
+  "published": "2019-10",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2019-10 (published)."
  },
  "sidneyhealth-receives-stroke-recognition-award-d9c85": {
   "type": "official-facility",
@@ -4398,6 +6169,28 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-09 (published)."
+ },
+ "skagitregionalhealth-excellence-in-stroke-care-fc88f": {
+  "type": "official-facility",
+  "title": "Skagit Valley Hospital nationally recognized for commitment to excellence in stroke care",
+  "publisher": "Skagit Regional Health",
+  "url": "https://www.skagitregionalhealth.org/healthquest/blog/blog/2026/08/06/skagit-valley-hospital-nationally-recognized-for-commitment-to-excellence-in-stroke-care",
+  "published": "2026-08-06",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-08-06 (published)."
+ },
+ "skagitregionalhealth-us-quality-and-safety-e2f8d": {
+  "type": "official-facility",
+  "title": "Quality and Safety",
+  "publisher": "Skagit Regional Health",
+  "url": "https://www.skagitregionalhealth.org/about-us/quality-and-safety",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "sphealth-global-accrediting-agency-dnv-3c6b9": {
   "type": "official-facility",
@@ -4432,6 +6225,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2010 (published)."
  },
+ "spokanepublicradio-more-stable-for-now-71ca3": {
+  "type": "news",
+  "title": "Ritzville's hospital came within a few weeks of closing; its prognosis is more stable for now",
+  "publisher": "Spokane Public Radio",
+  "url": "https://www.spokanepublicradio.org/regional-news/2026-03-29/ritzvilles-hospital-came-with-a-few-weeks-of-closing-its-prognosis-is-more-stable-for-now",
+  "published": "2026-03-29",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-03-29 (published)."
+ },
  "spokesman-expects-emergency-rural-ho-260df": {
   "type": "news",
   "title": "East Adams Rural Health expects emergency rural hospital approval soon",
@@ -4465,11 +6269,77 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "stacks-cdc-view-cdc-165930-8ca50": {
+  "type": "government",
+  "title": "ID: Congressional District 02, Stroke and Stroke Centers Map [118th Congress]",
+  "publisher": "CDC (CDC STACKS)",
+  "url": "https://stacks.cdc.gov/view/cdc/165930",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stacks-cdc-view-cdc-254027-e203d": {
+  "type": "government",
+  "title": "WY: Congressional District 01, Stroke and Stroke Centers Map [119th Congress]",
+  "publisher": "CDC (CDC STACKS)",
+  "url": "https://stacks.cdc.gov/view/cdc/254027",
+  "published": "2026-06-24",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-06-24 (published). Data vintage not confirmed: CDC's Interactive Atlas stroke-center layer is dated 2022."
+ },
+ "stjohns-health-locations-emergency-room-f5397": {
+  "type": "official-facility",
+  "title": "Emergency Room",
+  "publisher": "St. John's Health (Jackson, WY)",
+  "url": "https://www.stjohns.health/locations/emergency-room/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stlukehealthcare-news-25e2c": {
+  "type": "official-facility",
+  "title": "News - St. Luke Community Healthcare",
+  "publisher": "St. Luke Community Healthcare",
+  "url": "https://stlukehealthcare.org/news/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "stlukesonline-at-st-lukes-boise-0d221": {
   "type": "official-facility",
   "title": "Emergency Care at St. Luke's Boise",
   "publisher": "St. Luke's Health System",
   "url": "https://stlukesonline.org/en/get-care/locations/emergency-care/emergency-care-at-st-lukes-boise/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stlukesonline-at-st-lukes-elmore-ba7c1": {
+  "type": "official-facility",
+  "title": "Emergency Care at St. Luke's Elmore",
+  "publisher": "St. Luke's Health System",
+  "url": "https://stlukesonline.org/en/get-care/locations/emergency-care/emergency-care-at-st-lukes-elmore/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stlukesonline-at-st-lukes-jerome-2225d": {
+  "type": "official-facility",
+  "title": "Emergency Care at St. Luke's Jerome",
+  "publisher": "St. Luke's Health System",
+  "url": "https://stlukesonline.org/en/get-care/locations/emergency-care/emergency-care-at-st-lukes-jerome/",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4509,11 +6379,88 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "stlukesonline-lukes-elmore-medical-center-4df17": {
+  "type": "official-facility",
+  "title": "St. Luke's Elmore Medical Center",
+  "publisher": "St. Luke's Health System",
+  "url": "https://stlukesonline.org/en/get-care/locations/medical-centers/st-lukes-elmore-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stlukesonline-lukes-jerome-medical-center-ed631": {
+  "type": "official-facility",
+  "title": "St. Luke's Jerome Medical Center",
+  "publisher": "St. Luke's Health System",
+  "url": "https://stlukesonline.org/en/get-care/locations/medical-centers/st-lukes-jerome-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stlukesonline-specialties-services-brain-hemorrhage-fbb72": {
+  "type": "official-facility",
+  "title": "Brain Hemorrhage Care at St. Luke's",
+  "publisher": "St. Luke's Health System",
+  "url": "https://stlukesonline.org/en/specialties-services/brain-hemorrhage/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stlukesonline-st-lukes-wood-river-5dc65": {
+  "type": "official-facility",
+  "title": "Emergency Care at St Luke's Wood River",
+  "publisher": "St. Luke's Health System",
+  "url": "https://stlukesonline.org/en/get-care/locations/emergency-care/emergency-care-at-st-lukes-wood-river/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "stlukesonline-wood-river-medical-center-603f9": {
+  "type": "official-facility",
+  "title": "St. Luke's Wood River Medical Center",
+  "publisher": "St. Luke's Health System",
+  "url": "https://stlukesonline.org/en/get-care/locations/medical-centers/st-lukes-wood-river-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "swedish-about-facts-and-figures-50a39": {
   "type": "official-facility",
   "title": "Facts & Figures",
   "publisher": "Providence Swedish",
   "url": "https://www.swedish.org/about/facts-and-figures",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "swedish-ballard-campus-emergency-room-69bb3": {
+  "type": "official-facility",
+  "title": "Emergency Room",
+  "publisher": "Providence Swedish",
+  "url": "https://www.swedish.org/locations/ballard-campus/emergency-room",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "swedish-locations-ballard-campus-c9903": {
+  "type": "official-facility",
+  "title": "Ballard Campus",
+  "publisher": "Providence Swedish",
+  "url": "https://www.swedish.org/locations/ballard-campus",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4542,6 +6489,127 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-11-15 (published)."
  },
+ "swedish-stroke-and-tia-clinic-376be": {
+  "type": "official-facility",
+  "title": "Stroke and TIA Clinic",
+  "publisher": "Providence Swedish",
+  "url": "https://www.swedish.org/locations/cherry-hill-campus/stroke-and-tia-clinic",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "sweetwaternow-9674f": {
+  "type": "news",
+  "title": "Aspen Mountain Medical Center Welcomes Orthopedic Team",
+  "publisher": "SweetwaterNOW",
+  "url": "https://www.sweetwaternow.com/?p=433005",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "teamiha-cah-critical-access-hospital-eba95": {
+  "type": "other",
+  "title": "CAH (Critical Access Hospital)",
+  "publisher": "Idaho Hospital Association",
+  "url": "https://teamiha.org/facility-type/cah-critical-access-hospital/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "thewesternnews-stroke-recognition-award-12-bd3b1": {
+  "type": "news",
+  "title": "SJLH gets stroke recognition award",
+  "publisher": "The Western News (Libby)",
+  "url": "https://thewesternnews.com/news/2011/nov/03/sjlh-gets-stroke-recognition-award-12/",
+  "published": "2011-11-03",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2011-11-03 (published)."
+ },
+ "thewesternnews-stroke-treatment-service-12-2a994": {
+  "type": "news",
+  "title": "Award given for stroke treatment service",
+  "publisher": "The Western News (Libby)",
+  "url": "https://thewesternnews.com/news/2019/oct/25/award-given-for-stroke-treatment-service-12",
+  "published": "2019-10-25",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2019-10-25 (published)."
+ },
+ "treasurevalleyhospital-about-us-d854b": {
+  "type": "official-facility",
+  "title": "About Treasure Valley Hospital",
+  "publisher": "Treasure Valley Hospital",
+  "url": "https://treasurevalleyhospital.com/about-us/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "treasurevalleyhospital-why-choose-tvh-945ae": {
+  "type": "official-facility",
+  "title": "Why Patients Choose Treasure Valley Hospital in Boise",
+  "publisher": "Treasure Valley Hospital",
+  "url": "https://treasurevalleyhospital.com/why-choose-tvh/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "trib-56bb-b36a-dbb7dc494417-html-f60ec": {
+  "type": "news",
+  "title": "Wyoming Medical Center to acquire Mountain View Regional Hospital",
+  "publisher": "Casper Star-Tribune",
+  "url": "https://trib.com/news/local/casper/wyoming-medical-center-to-acquire-mountain-view-regional-hospital/article_2fb990c0-5421-56bb-b36a-dbb7dc494417.html",
+  "published": "2018-04",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2018-04 (published)."
+ },
+ "tricare-mil-bassett-army-community-hospital-755c9": {
+  "type": "official-facility",
+  "title": "Find a Military Hospital or Clinic - Bassett ACH",
+  "publisher": "TRICARE / Defense Health Agency",
+  "url": "https://www.tricare.mil/GettingCare/FindDoctor/MTF/Facilities/Bassett-Army-Community-Hospital",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "tricare-mil-facilities-673rd-medical-group-ffdba": {
+  "type": "official-facility",
+  "title": "Find a Military Hospital or Clinic - 673rd Medical Group",
+  "publisher": "TRICARE / Defense Health Agency",
+  "url": "https://tricare.mil/GettingCare/FindDoctor/MTF/Facilities/673rd-Medical-Group",
+  "published": "2024-01-26",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2024-01-26 (updated). Found by a targeted search in the October 2026 new-records step."
+ },
+ "turquoise-health-community-medical-center-information-45660": {
+  "type": "tertiary",
+  "title": "Cordova Community Medical Center",
+  "publisher": "Turquoise Health",
+  "url": "https://turquoise.health/providers/cordova-community-medical-center/information",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "uchealth-higher-stroke-center-designation-942b0": {
   "type": "official-facility",
   "title": "UCHealth Medical Center of the Rockies earns higher stroke center designation",
@@ -4552,6 +6620,28 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025 (published)."
+ },
+ "uchealth-treatment-to-northern-colorado-3d9c7": {
+  "type": "official-facility",
+  "title": "UCHealth brings game-changing stroke treatment to northern Colorado",
+  "publisher": "UCHealth",
+  "url": "https://www.uchealth.org/newsroom/uchealth-brings-game-changing-stroke-treatment-to-northern-colorado/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "usajobs-job-848584600-354b0": {
+  "type": "government",
+  "title": "Emergency medicine posting, Bassett ACH",
+  "publisher": "USAJOBS",
+  "url": "https://www.usajobs.gov/job/848584600",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "uwmedicine-about-awards-joint-commission-f0c70": {
   "type": "official-facility",
@@ -4575,6 +6665,94 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "va-boise-va-medical-center-51472": {
+  "type": "official-facility",
+  "title": "Boise VA Medical Center",
+  "publisher": "U.S. Department of Veterans Affairs",
+  "url": "https://www.va.gov/boise-health-care/locations/boise-va-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "va-cheyenne-va-medical-center-76b1c": {
+  "type": "official-facility",
+  "title": "Cheyenne VA Medical Center",
+  "publisher": "U.S. Department of Veterans Affairs",
+  "url": "https://www.va.gov/cheyenne-health-care/locations/cheyenne-va-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "va-for-new-emergency-department-c0c75": {
+  "type": "official-facility",
+  "title": "Cheyenne VA announces groundbreaking for new emergency department",
+  "publisher": "U.S. Department of Veterans Affairs",
+  "url": "https://www.va.gov/cheyenne-health-care/news-releases/cheyenne-va-announces-groundbreaking-for-new-emergency-department/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Found by a targeted search in the October 2026 new-records step."
+ },
+ "va-harrison-va-medical-center-64b5c": {
+  "type": "official-facility",
+  "title": "Fort Harrison VA Medical Center",
+  "publisher": "U.S. Department of Veterans Affairs",
+  "url": "https://www.va.gov/montana-health-care/locations/fort-harrison-va-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "va-healthcare-on-federal-holidays-ea6e4": {
+  "type": "official-facility",
+  "title": "Connect to your VA healthcare on federal holidays!",
+  "publisher": "U.S. Department of Veterans Affairs",
+  "url": "https://www.va.gov/montana-health-care/stories/connect-to-your-va-healthcare-on-federal-holidays/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "va-richardson-va-medical-center-49042": {
+  "type": "official-facility",
+  "title": "Joint Base Elmendorf-Richardson VA Medical Center",
+  "publisher": "U.S. Department of Veterans Affairs",
+  "url": "https://www.va.gov/alaska-health-care/locations/joint-base-elmendorf-richardson-va-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Found by a targeted search in the October 2026 new-records step."
+ },
+ "va-seattle-va-medical-center-1a450": {
+  "type": "official-facility",
+  "title": "Seattle VA Medical Center",
+  "publisher": "U.S. Department of Veterans Affairs",
+  "url": "https://www.va.gov/puget-sound-health-care/locations/seattle-va-medical-center/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "valleyjournal-with-acute-stroke-patients-03b0c": {
+  "type": "news",
+  "title": "St. Luke receives award for work with acute stroke patients",
+  "publisher": "Valley Journal",
+  "url": "https://valleyjournal.net/Article/27213/St-Luke-receives-award-for-work-with-acute-stroke-patients",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "valleymed-stroke-d1494": {
   "type": "official-facility",
   "title": "Stroke program",
@@ -4586,11 +6764,88 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "valorhealth-level-iv-trauma-certification-5782c": {
+  "type": "official-facility",
+  "title": "Level IV Trauma Certification - Valor Health",
+  "publisher": "Valor Health",
+  "url": "https://www.valorhealth.org/level-iv-trauma-certification",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "valorhealth-services-emergency-care-6b14f": {
+  "type": "official-facility",
+  "title": "Emergency Services in Gem County, Emmett - Available 24/7",
+  "publisher": "Valor Health",
+  "url": "https://www.valorhealth.org/services/emergency-care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "veterans-senate-a924-4ad8-a2f2-1a0710fbbd1a-623f4": {
+  "type": "government",
+  "title": "Senate Veterans Affairs Committee document (Alaska VA)",
+  "publisher": "U.S. Senate Committee on Veterans Affairs",
+  "url": "https://veterans.senate.gov/services/files/D65442C7-A924-4AD8-A2F2-1A0710FBBD1A",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "virginiamason-comprehensive-stroke-center-certification-999a1": {
+  "type": "official-facility",
+  "title": "Stroke Center",
+  "publisher": "Virginia Mason Franciscan Health",
+  "url": "https://www.virginiamason.org/comprehensive-stroke-center-certification",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "visitmt-and-towns-fort-harrison-79f56": {
+  "type": "government",
+  "title": "Fort Harrison, Montana",
+  "publisher": "Visit Montana (Montana Office of Tourism)",
+  "url": "https://www.visitmt.com/places-to-go/cities-and-towns/fort-harrison",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Found by a targeted search in the October 2026 new-records step."
+ },
  "vmfh-anne-hospital-emergency-care-a1252": {
   "type": "official-facility",
   "title": "Emergency Care - St. Anne Hospital",
   "publisher": "Virginia Mason Franciscan Health",
   "url": "https://www.vmfh.org/our-hospitals/st-anne-hospital/emergency-care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "vmfh-clare-hospital-emergency-care-5b96f": {
+  "type": "official-facility",
+  "title": "Emergency Care - St. Clare Hospital",
+  "publisher": "Virginia Mason Franciscan Health",
+  "url": "https://www.vmfh.org/our-hospitals/st-clare-hospital/emergency-care",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "vmfh-francis-hospital-emergency-care-a657c": {
+  "type": "official-facility",
+  "title": "St. Francis Hospital - Emergency Care in Federal Way",
+  "publisher": "Virginia Mason Franciscan Health",
+  "url": "https://www.vmfh.org/our-hospitals/st-francis-hospital/emergency-care",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4619,11 +6874,44 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "vmfh-medicine-residency-st-joseph-9bc0f": {
+  "type": "official-facility",
+  "title": "Internal Medicine Residency: St. Joseph Medical Center",
+  "publisher": "Virginia Mason Franciscan Health",
+  "url": "https://www.vmfh.org/residencies-fellowships-and-training/post-graduate-residency-programs/internal-medicine-residency-st-joseph",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "vmfh-pharmacy-residency-overview-pdf-65e30": {
+  "type": "official-facility",
+  "title": "RESIDENCY YEAR 2025-2026 (SMMC PGY1 Pharmacy Residency Overview)",
+  "publisher": "Virginia Mason Franciscan Health",
+  "url": "https://www.vmfh.org/content/dam/vmfhorg/pdf/legacy-chi/website-files/residencies/pharmacy-residency/SMMC-PGY1-Pharmacy-Residency-Overview.pdf",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "vmfh-spine-neurology-stroke-center-c9a3f": {
   "type": "official-facility",
   "title": "Stroke Center",
   "publisher": "www.vmfh.org",
   "url": "https://www.vmfh.org/our-services/neurosciences-spine/neurology/stroke-center",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "vmfh-st-michael-medical-center-42260": {
+  "type": "official-facility",
+  "title": "St. Michael Medical Center in Silverdale",
+  "publisher": "Virginia Mason Franciscan Health",
+  "url": "https://www.vmfh.org/our-hospitals/st-michael-medical-center",
   "published": null,
   "effective": null,
   "accessed": "2026-10-17",
@@ -4642,7 +6930,7 @@
   "note": "Current list read only through web-search extracts (~50 queries); the PDF table text extracts imperfectly. Revision reported as May 2026 in 4 of 6 date probes (not independently confirmed); the 2022-02 path is an upload folder, not a revision date. The asterisk marks hospitals meeting Level I/II stroke requirements with all aspects of ELVO therapy 24/7 (list footnote, as extracted)."
  },
  "wa-doh-ecs-stroke-level2-application": {
-  "type": "issuer-registry",
+  "type": "government",
   "title": "Washington ECS — Level II Stroke Center categorization application (DOH 346-063)",
   "publisher": "Washington State Department of Health",
   "url": "https://doh.wa.gov/sites/default/files/2026-02/346063-StrokeLevel2.pdf",
@@ -4650,7 +6938,29 @@
   "effective": null,
   "accessed": "2026-10-17",
   "access": "search-extract",
-  "note": "Criteria checklist read through search extracts. The hospital attests it \"meets the criteria to be categorized as a Level II Stroke Center ... and provides these services 24/7\", including \"Emergency Department personnel trained in diagnosing and treating acute stroke 24 hours a day, seven days a week\". The 2026-02 path is an upload folder; the form shows no revision date."
+  "note": "Criteria checklist read through search extracts. The hospital attests it \"meets the criteria to be categorized as a Level II Stroke Center ... and provides these services 24/7\", including \"Emergency Department personnel trained in diagnosing and treating acute stroke 24 hours a day, seven days a week\". The 2026-02 path is an upload folder; the form shows no revision date. The Department of Health's categorization criteria and application form, not the list of categorized hospitals (that is DOH 345-299)."
+ },
+ "wcgazette-ready-recertification-43179-html-34e0a": {
+  "type": "news",
+  "title": "Pullman Regional renews stroke ready recertification",
+  "publisher": "Whitman County Gazette",
+  "url": "https://www.wcgazette.com/story/2025/02/06/news/pullman-regional-renews-stroke-ready-recertification/43179.html",
+  "published": "2025-02-06",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2025-02-06 (published)."
+ },
+ "whidbeyhealth-services-emergency-care-3b1d8": {
+  "type": "official-facility",
+  "title": "Emergency Care",
+  "publisher": "WhidbeyHealth",
+  "url": "https://whidbeyhealth.org/services/emergency-care/",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  },
  "whidbeynewstimes-12-17-for-paving-5ff02": {
   "type": "news",
@@ -4663,6 +6973,17 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2015-06-30 (published)."
  },
+ "whitefishpilot-receives-stroke-hero-award-c716d": {
+  "type": "news",
+  "title": "Logan Health Whitefish receives Stroke Hero Award",
+  "publisher": "Whitefish Pilot",
+  "url": "https://whitefishpilot.com/news/2026/may/27/logan-health-whitefish-receives-stroke-hero-award/",
+  "published": "2026-05-27",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-05-27 (published)."
+ },
  "whitehallledger-joint-commission-11134-html-44ed4": {
   "type": "news",
   "title": "Intermountain earns primary stroke certification from Joint Commission",
@@ -4672,7 +6993,18 @@
   "effective": null,
   "accessed": "2026-10-17",
   "access": "search-extract",
-  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-05-20 (published)."
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2026-05-20 (published). The same story id (11134) also appears under a 2022/05/20 URL path, so the publication date is to be rechecked."
+ },
+ "whitehallledger-recognition-award-5632-html-cfc63": {
+  "type": "news",
+  "title": "Ruby Valley Medical Center Receives Stroke Recognition Award",
+  "publisher": "The Whitehall Ledger",
+  "url": "https://whitehallledger.com/story/2022/10/26/community/ruby-valley-medical-center-receives-stroke-recognition-award/5632.html",
+  "published": "2022-10-26",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2022-10-26 (published)."
  },
  "wiki-aaroads-e2-80-93teller-highway-92e19": {
   "type": "tertiary",
@@ -4718,6 +7050,72 @@
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly."
  },
+ "wy-ems-rules-ch13": {
+  "type": "regulation",
+  "title": "Wyoming Department of Health, Office of Emergency Medical Services Rules, Chapter 13 — Designation of Heart Attack and Stroke Centers",
+  "publisher": "Wyoming Administrative Rules (Justia mirror)",
+  "url": "https://regulations.justia.com/states/wyoming/agency-048/sub-agency-0023/chapter-13/section-13-4",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Authority W.S. 35-2-1001 (enacted by S.F. 147, 2013; S.F. 88, 2015 added Acute Stroke Ready Centers). Categories include Comprehensive Stroke Center, Primary Stroke Center and Acute Stroke Ready Center, plus heart attack receiving and referring centers. Designation \"shall be contingent on the accreditation of the facility by an accrediting agency\" (the American Heart Association, the Society of Cardiovascular Patient Care or The Joint Commission), and the Office of EMS answers an application within 30 days with a letter of recognition or a request for more documentation. Wording seen only through web-search extracts of this mirror (sections 13-2, 13-4, 13-5) in October 2026; the official text on rules.wyo.gov was not opened. Cited as the basis for inferring that a Wyoming hospital with no national stroke accreditation found has no state designation found; not a campus observation."
+ },
+ "wyoleg-10-20200529jtlhssmay292020allpublictestimonycombi-db3ba": {
+  "type": "government",
+  "title": "Joint Labor, Health & Social Services Committee public testimony, May 29, 2020",
+  "publisher": "Wyoming Legislature (public testimony)",
+  "url": "https://wyoleg.gov/InterimCommittee/2020/10-20200529JtLHSSMay292020AllPublicTestimonyCombined_Redacted.pdf",
+  "published": "2020-05-29",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020-05-29 (published)."
+ },
+ "wyomingnews-5b0c-b03d-7222d2ecfcd2-html-c0d58": {
+  "type": "news",
+  "title": "Wyoming Medical Center will acquire Mountain View surgical center",
+  "publisher": "Wyoming Business Report",
+  "url": "https://www.wyomingnews.com/wyomingbusinessreport/industry_news/health_care/wyoming-medical-center-will-acquire-mountain-view-surgical-center/article_bb04b82a-df1a-5b0c-b03d-7222d2ecfcd2.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "yakimaherald-5009-b549-5645a323d4ff-html-b14d9": {
+  "type": "news",
+  "title": "Uncertainty on the horizon",
+  "publisher": "Yakima Herald-Republic",
+  "url": "https://www.yakimaherald.com/news/local/uncertainty-on-the-horizon-how-regionals-closure-fits-into-bigger-trends/article_0f8a9240-68e5-5009-b549-5645a323d4ff.html",
+  "published": "2020-01",
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2020-01 (published)."
+ },
+ "yakimaherald-59c2-b4bb-ed678db1627e-html-bd092": {
+  "type": "news",
+  "title": "Ritzville expects emergency rural hospital approval soon",
+  "publisher": "Yakima Herald-Republic",
+  "url": "https://www.yakimaherald.com/news/northwest/ritzville-expects-emergency-rural-hospital-approval-soon/article_6c7904ee-0cd7-59c2-b4bb-ed678db1627e.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "yakimaherald-5ebd-a953-d32bf8f85ea1-html-e8160": {
+  "type": "news",
+  "title": "Astria Health says Regional's emergency department to close",
+  "publisher": "Yakima Herald-Republic",
+  "url": "https://www.yakimaherald.com/news/local/astria-health-says-regional-s-emergency-department-to-close-at/article_d0346af4-0d5f-5ebd-a953-d32bf8f85ea1.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
  "yk-health-7-29-17-pdf-3c9aa": {
   "type": "other",
   "title": "Alaska Stroke Systems of Care",
@@ -4728,5 +7126,38 @@
   "accessed": "2026-10-17",
   "access": "search-extract",
   "note": "Observed through a web-search extract; the page was not opened directly. Document date as reported: 2017-07-29 (published)."
+ },
+ "yoursourceone-4b72-abdc-5944de6da024-html-b996b": {
+  "type": "news",
+  "title": "Moses Lake Samaritan Hospital's ER sees early surge in patient volume",
+  "publisher": "Columbia Basin Herald / Your Source One",
+  "url": "https://www.yoursourceone.com/columbia_basin/moses-lake-samaritan-hospital-s-er-sees-early-surge-in-patient-volume/article_16a76d26-e06a-4b72-abdc-5944de6da024.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "yoursourceone-4cd5-98a3-52218559a88e-html-53330": {
+  "type": "news",
+  "title": "New $225M Samaritan hospital in Moses Lake to open Saturday morning",
+  "publisher": "Columbia Basin Herald / Your Source One",
+  "url": "https://www.yoursourceone.com/columbia_basin/new-225m-samaritan-hospital-in-moses-lake-to-open-saturday-morning-expanding-regional-health-care/article_1e4f0947-65c3-4cd5-98a3-52218559a88e.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
+ },
+ "yourwyominglink-4d1f-8d89-a8e870c05b8d-html-fa507": {
+  "type": "news",
+  "title": "New emergency room opens at Summit Medical Center in Casper",
+  "publisher": "K2 / Your Wyoming Link",
+  "url": "https://www.yourwyominglink.com/news/local/new-emergency-room-opens-at-summit-medical-center-in-casper/article_6175f33e-9899-4d1f-8d89-a8e870c05b8d.html",
+  "published": null,
+  "effective": null,
+  "accessed": "2026-10-17",
+  "access": "search-extract",
+  "note": "Observed through a web-search extract; the page was not opened directly."
  }
 }

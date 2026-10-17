@@ -20,6 +20,8 @@ Allowed public content:
 
 Deployment rule: real clinical, patient-facing, trainee-record, research-participant, or internal-planning use must move to an approved controlled environment with access control, approved storage, security review, incident-response path, and owner governance.
 
+Source citations: every source is cited by its web address exactly as the publisher published it, and those addresses are kept as published citations. A few public addresses contain a person's name: a U.S. Senator's office domain, a news story about a governor's visit, and a hospital announcement welcoming a named physician. The dataset's source ids, titles, publishers, record notes and excerpts name no individual, and nothing private is recorded (no contact details, patient, personnel or operational information); `scripts/verify-data.py` checks the ids, titles, notes and excerpts.
+
 Browser storage and links: the app keeps only display preferences in `localStorage` (theme, colour-vision palette, basemap, legend state, keyboard-shortcut setting, and the id of the user's chosen "my receiving center", a public hospital record). It stores no notes, patient or operational data, and browser storage is not access control. Share links carry the same public view state and nothing else.
 
 Review cadence: review before every public Pages deployment and after any change that adds forms, uploads, local storage, exports, contact workflows, clinical recommendations, study recruitment language, or organizational branding.

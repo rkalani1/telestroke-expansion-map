@@ -19,7 +19,7 @@
 | `geography` | Boundary source and notes. |
 | `road_networks` | Meaning of each `roadNetwork` value. |
 | `certification_definitions` | What each display tier stands for. |
-| `counts` | Counts computed by the build (records by state, status, eligibility, unlocated, capability, tiers, 24/7 EVT). |
+| `counts` | Counts computed by the build (records by state, status, eligibility, unlocated, capability, tiers, 24/7 EVT; `eligible_ed_basis`: how the eligible records' emergency departments are known — documented for the campus, or inferred, by the rule source cited). |
 | `sources` | Source registry: `{id: {type, title, publisher, url, published, effective, accessed, access, note}}`. Only sources cited by some record are published. |
 | `hospitals` | Records, sorted by state, town, name, id. In-region records first; out-of-region destinations (`outOfRegion: true`) last. |
 
@@ -44,27 +44,27 @@
 | `state` | Two-letter state. |
 | `address` | `{street, city, zip, status, method, evidence, checked, note}` — physical campus address. `status`: corroborated, source-reported, prior-edition, coordinate-derived, conflicting, unknown. |
 | `location` | `{lat, lng, method, precision, evidence, checked, note, conflict?, previous?}` or `null` (not located). `method`: cms-dataset, legacy-geocode, city-centroid, source-reported, rule-based, manual-review. `precision`: campus, street, city, unknown. `conflict` holds a second source's point when two disagree. |
-| `status` | Claim with `value`: active, closed, merged, unknown. |
-| `serviceType` | Claim with `value`: general-acute, specialty-surgical, specialty-cancer, specialty-other, rural-emergency-hospital, unknown. |
+| `status` | Claim with `value`: active, closed, merged, unknown, and optional `effective`: the date a closure or merger took effect (or a new hospital opened), as the cited source dates it. Every closed or merged campus has it; its other dates (for example the end of acute care before a merger) are in the note. |
+| `serviceType` | Claim with `value`: general-acute, specialty-surgical, specialty-cancer, specialty-other, rural-emergency-hospital, unknown, and optional `effective`: the conversion date (e.g. to a Rural Emergency Hospital). |
 | `population` | Claim with `value`: all-ages, adult, pediatric, unknown. |
-| `cah` | Claim with `state` (Critical Access Hospital designation). |
-| `ed` | Claim with `state` and `scope` (a general emergency department open 24/7). |
+| `cah` | Claim with `state` (Critical Access Hospital designation), and optional `effective`: when the designation ended (a Rural Emergency Hospital conversion), or, on a closed or merged campus, the date the closure or merger took effect (the same date as on `status`, stated in the note). |
+| `ed` | Claim with `state` and `scope` (a general emergency department open 24/7), and optional `effective`: on a closed or merged campus, the date the closure or merger took effect (the same date as on `status`, stated in the note); a closed hospital's emergency department is `negative`, a merged one's `not-applicable`. |
 | `governance` | Claim with `value`: nonprofit, proprietary, government-local, government-state, federal-ihs, tribal, military-dod, veterans-affairs, unknown. |
 | `system` | Claim with `state` (affiliated / independent / unknown) and `value` (system name). Affiliation implies no telestroke, referral or contract relationship. |
 | `national` | Claim with `state`, `body`, `program` (as the body names it), `tier` (CSC/TSC/PSC/ASR), `effective`, `expires`. |
-| `stateDesignation` | Claim with `state`, `authority`, `system` (WA ECS / Idaho TSE), `level` (as issued: I, II, II+, III), `status` (designated, pending…), `effective`, `expires`. |
+| `stateDesignation` | Claim with `state`, `authority`, `system` (WA ECS / Idaho TSE / WY Heart and Stroke Center Designation), `level` (as issued: I, II, II+, III), `status` (designated, pending…), `effective`, `expires`. A Wyoming `no-record-found` may rest on `regulatory-inference` from the designation rule (designation requires national accreditation), citing it as a `regulation` source. |
 | `evt` | Claim with `state`: thrombectomy capability documented for this campus. |
 | `evt247` | Claim with `state` and `basis`: 24/7 thrombectomy documented explicitly or entailed by a named current credential. |
 | `roadNetwork` | `{value, evidence, checked, method, note}` — `contiguous-us`, `ak-railbelt`, `ak-isolated:<community>`, `<place>-ferry`, or `unknown`. Ground transfer is modeled only within one network. |
 | `notes` | Free-text record notes (public reference only). |
-| `openItems` | Optional `[{priority, question, nextCheck}]` for the worklist. |
+| `openItems` | Optional `[{priority, question, nextCheck}]` for the worklist: record-specific checks that no needs-verification code expresses (for example, which of two conflicting operator pages is right). Dataset-level items, including leads that are not records, are in `manifest.json` `openItems` (`{priority, scope, question, nextCheck}`). |
 | `outOfRegion` | `true` for receiving centers outside the five states (destinations only; not counted). |
 | `cms` | Reference row from the CMS snapshot: `{name, asOf, hospitalType, ownership, beds, bedsScope, priorNames}`. `beds` is null on a shared CCN. |
 | `derived` | Computed by the build — see below. |
 
 ### Claims
 
-Every claim object has `evidence: [{src, excerpt?, kind?, supports?}]`, `checked` (date or null), `method` (see `methods`) and `note`. `state` uses the claim states (affirmative, negative, no-record-found, unknown, conflicting, not-applicable); value-type claims use `value`. A claim corrected in this edition carries `changedFrom` with the earlier value, its check date, method and edition. `excerpt.kind` is `quote` only when the text was presented verbatim, otherwise `paraphrase`.
+Every claim object has `evidence: [{src, excerpt?, kind?, supports?}]`, `checked` (date or null), `method` (see `methods`) and `note`. `state` uses the claim states (affirmative, negative, no-record-found, unknown, conflicting, not-applicable; on `national`, `stateDesignation`, `evt` and `evt247`, not-applicable is used only for a closed or merged campus, with the closure date and source in the note); value-type claims use `value`. A claim carried from the previous edition (`method: prior-edition`) has `editionAsOf` (the previous edition's date) and `checked: null` unless that edition re-checked it individually. A claim corrected in this edition carries `changedFrom` with the value before the correction, its check date, method and `edition`: the previous edition's label (`v3 (data 2026.09.13.1)`) when that value was carried from it, which is possible only on a record the previous edition contained (its `id`, or one of its `previousIds`, is in `data/curated/previous-edition-ids.json`), or `this review (earlier step)` when an earlier step of this review had written it, which is always the case on a record added in this review; when the earlier value was carried from the previous edition, `changedFrom` has `editionAsOf` and `checked: null` in the same way. `effective` and `expires` are the dates the source gives (see each claim above). `excerpt.kind` is `quote` only when the text was presented verbatim, otherwise `paraphrase`; Evidence written in this review keeps `excerpt` and `supports` to at most 400 characters (a longer source text is cut at a word boundary and ends with "…"); evidence carried from the previous edition keeps its text as that edition recorded it.
 
 ### derived
 
@@ -73,12 +73,12 @@ Every claim object has `evidence: [{src, excerpt?, kind?, supports?}]`, `checked
 | `tier`, `tierBasis` | Display tier and whether it comes from the `national` certification or the `state-crosswalk`. Null when neither is documented. |
 | `capability` | assessed, partial, unassessed, conflicting (n/a out of region). |
 | `capabilityChecked`, `capabilityAgeDays` | Latest check date among the capability claims, and its age at the review date. |
-| `eligibility` | `{value: eligible/excluded/unknown/not-applicable, code, reason}`. Codes: eligible, unresolved, not-active, no-general-ed, pediatric, out-of-region. |
+| `eligibility` | `{value: eligible/excluded/unknown/not-applicable, code, reason}`. Codes: eligible, unresolved, restricted-access (value unknown: a VA or military hospital with a 24/7 emergency department, documented or inferred from a program requirement, whose civilian and EMS access is not documented; still a possible destination), not-active, no-general-ed, pediatric, out-of-region. |
 | `located` | Whether a location is recorded. |
 | `county`, `countyFips` | From the coordinates (2017 Census boundaries). |
 | `cityDistanceMi` | Miles from the GeoNames point of the town the address names (null for town-centre placements or unknown towns). |
 | `geoFlags` | outside-state-boundary, near-state-boundary, near-county-boundary, far-from-named-city, location-conflict. |
-| `needsVerification` | Worklist codes for this record (see `data/verification-worklist.csv`). Each code's priority is published in `needs_verification_codes`: P1/P2 are open items to resolve; P3 are precision notes (for example coordinates or an address not yet verified to the campus). The app's "Needs verification" filter lists records with a P1/P2 item; any single code can be shown on its own (`ev=nv:<code>` in a link). |
+| `needsVerification` | Worklist codes for this record (see `data/verification-worklist.csv`); for example `federal-ed-access` on a restricted-access federal emergency department, in place of `eligibility-unresolved`; `conflicting-evidence` for a conflicting capability claim (settled by the issuer's registry) and `conflicting-identity` for a conflicting status, emergency-department, Critical Access or address claim (settled by the state licensing roster, current CMS data and the hospital's own pages). Each code's priority is published in `needs_verification_codes`: P1/P2 are open items to resolve; P3 are precision notes (for example coordinates or an address not yet verified to the campus). The app's "Needs verification" filter lists records with a P1/P2 item; any single code can be shown on its own (`ev=nv:<code>` in a link). |
 
 ## Curated inputs (`data/curated/`)
 
@@ -86,10 +86,11 @@ Every claim object has `evidence: [{src, excerpt?, kind?, supports?}]`, `checked
 - `sources.json` — the source registry.
 - `facilities.json` — one curated record per campus (the record shape above without `cms` and `derived`).
 - `neighbors.json` — out-of-region receiving centers (`outOfRegion: true`), destinations only.
+- `previous-edition-ids.json` — the record ids of the previous edition (v3, `git show 33b535b:hospitals.json`), for `scripts/verify-data.py`: claim history labelled with that edition may appear only on a record it contained.
 
 ## Generated outputs
 
 - `hospitals.json` — the dataset above.
-- `data/audit/evidence-audit.csv` — one row per facility × claim: outcome (corrected, confirmed, carried-forward, conflicting, inaccessible, not-assessed), state, value, method, check date, previous value, sources, note.
+- `data/audit/evidence-audit.csv` — one row per facility × claim: outcome (confirmed, corroborated, established, corrected, carried-forward, conflicting, searched-unresolved, inaccessible, not-assessed, missing), state, value, method, check date, previous value (the `changedFrom` object as recorded, with its own `checked` or `editionAsOf`), sources, note.
 - `data/verification-worklist.csv` — ranked open checks with the source that can settle each.
-- Count sentences between `<!-- counts:start -->` and `<!-- counts:end -->` in README.md, METHODOLOGY.md and llms.txt, and the JSON-LD description in index.html.
+- Count sentences between `<!-- counts:start -->` and `<!-- counts:end -->` in README.md, METHODOLOGY.md and llms.txt, and the JSON-LD description in index.html; the sentence on how eligible records' emergency departments are known between `<!-- ed-basis:start -->` and `<!-- ed-basis:end -->` in METHODOLOGY.md; and the claim × outcome table between `<!-- audit-table:start -->` and `<!-- audit-table:end -->` in docs/EVIDENCE-AUDIT-2026-10.md.

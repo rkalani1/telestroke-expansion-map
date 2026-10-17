@@ -18,6 +18,8 @@ Outputs:
   data/audit/evidence-audit.csv   one row per facility x claim: state, method, checked date, sources
   data/verification-worklist.csv  ranked open items, each naming the source that can settle it
   README.md, METHODOLOGY.md, llms.txt, index.html  counts between <!-- counts:... --> markers
+  METHODOLOGY.md                  how eligible records' EDs are known, between <!-- ed-basis:... --> markers
+  docs/EVIDENCE-AUDIT-2026-10.md  claim x audit-outcome table between <!-- audit-table:... --> markers
 
 The build never stamps a verification date, never promotes a claim, and never
 turns "not assessed" into "none": every state and date in the output is the
@@ -124,6 +126,21 @@ def validate_claim(rid, name, c, sources, errors, kind='state'):
     for ev in c.get('evidence') or []:
         if ev.get('src') not in sources:
             errors.append(f'{rid}: {name} cites unknown source {ev.get("src")!r}')
+    # Claim history is published too (and in the audit's "previous" column): its
+    # dates and method follow the same vocabulary as the claim itself.
+    cf = c.get('changedFrom')
+    if cf is not None:
+        if not isinstance(cf, dict):
+            errors.append(f'{rid}: {name}.changedFrom is not an object')
+        else:
+            if cf.get('method') not in METHODS:
+                errors.append(f'{rid}: {name}.changedFrom.method {cf.get("method")!r} invalid')
+            try:
+                for k in ('checked', 'effective', 'expires', 'editionAsOf'):
+                    if k in cf:
+                        iso(cf.get(k))
+            except BuildError as e:
+                errors.append(f'{rid}: {name}.changedFrom {e}')
     # A positive or negative finding needs at least one cited source and a date.
     st = c.get('state') if kind == 'state' else None
     if st in ('affirmative', 'negative', 'conflicting', 'no-record-found') and not c.get('evidence'):
@@ -255,15 +272,18 @@ def derive_capability(r):
 def tier_class(r, tier, cap):
     """One class per record for filters, counts and map colour. 'none' means the
     national certification (and the state designation, where the state has a
-    program) was searched and nothing was found; a record with some of that
-    still unknown is 'partial', never 'none'."""
+    program) was searched and nothing was found, or does not apply (a closed or
+    merged campus); a record with some of that still unknown is 'partial', never
+    'none'."""
     if tier:
         return tier.lower()
     if cap in ('unassessed', 'conflicting'):
         return cap
-    searched = ('no-record-found', 'negative')
-    if st(r.get('national')) in searched and (not state_program_applies(r)
-                                              or st(r.get('stateDesignation')) in searched + ('not-applicable',)):
+    # Searched with nothing found, or not applicable (a closed or merged campus
+    # holds no credential): either way no tier applies.
+    settled = ('no-record-found', 'negative', 'not-applicable')
+    if st(r.get('national')) in settled and (not state_program_applies(r)
+                                             or st(r.get('stateDesignation')) in settled):
         return 'none'
     return 'partial'
 
@@ -273,7 +293,16 @@ def tier_class(r, tier, cap):
 ED_RULE_SOURCES = (
     ('ecfr-42-cfr-485-618', 'Critical Access Hospital conditions of participation (42 CFR 485.618)'),
     ('wa-doh-ecs-stroke-level2-application', 'Washington stroke Level II designation criteria'),
+    ('ecfr-42-cfr-485-528', 'Rural Emergency Hospital conditions of participation (42 CFR 485.528(a))'),
 )
+
+# A VA or military emergency department serves eligible beneficiaries. Whether it
+# takes civilian walk-in and EMS patients is not documented, so such a record is
+# neither eligible nor excluded: it stays searchable and can still be a
+# destination (the destination rule needs only "not excluded").
+FEDERAL_GOVERNANCE = ('veterans-affairs', 'military-dod')
+RESTRICTED_REASON = ('Federal emergency department serving eligible beneficiaries (Veterans / TRICARE); civilian emergency and '
+                     'EMS access not documented')
 
 
 def derive_eligibility(r):
@@ -291,10 +320,14 @@ def derive_eligibility(r):
     if pop == 'pediatric':
         return {'value': 'excluded', 'code': 'pediatric',
                 'reason': "Pediatric hospital — outside the adult emergency-stroke analysis set"}
+    if (r.get('governance') or {}).get('value') in FEDERAL_GOVERNANCE and ed == 'affirmative':
+        also = [m for m, ok in (('active status', status == 'active'), ('population served', pop in ('all-ages', 'adult'))) if not ok]
+        return {'value': 'unknown', 'code': 'restricted-access',
+                'reason': RESTRICTED_REASON + ('; also not yet documented: ' + ', '.join(also) if also else '')}
     if status == 'active' and ed == 'affirmative' and pop in ('all-ages', 'adult'):
         # Say how the emergency department is known: most come from program
-        # requirements (CAH conditions of participation, WA stroke Level II
-        # criteria), not a campus-specific source.
+        # requirements (CAH or REH conditions of participation, WA stroke Level
+        # II criteria), not a campus-specific source.
         edc = r.get('ed') or {}
         srcs = {ev.get('src') for ev in edc.get('evidence') or []}
         rules = [txt for sid, txt in ED_RULE_SOURCES if sid in srcs]
@@ -343,6 +376,11 @@ def oldest_critical(r):
     return (None if undated or not dates else min(dates)), undated
 
 
+# Claims about the campus itself whose conflict is settled by the licensing roster,
+# CMS and the hospital's pages (conflicting-identity), with the address status.
+IDENTITY_CLAIMS = ('status', 'ed', 'cah')
+
+
 def needs_verification(r, derived, review_date):
     codes = []
     cap = derived['capability']
@@ -352,24 +390,28 @@ def needs_verification(r, derived, review_date):
         codes.append('conflicting-evidence')
     if cap == 'partial':
         codes.append('capability-partial')
-    for n in ('national', 'stateDesignation', 'evt', 'evt247', 'status', 'ed'):
+    for n in ('national', 'stateDesignation', 'evt', 'evt247'):
         if st(r.get(n)) == 'conflicting' and 'conflicting-evidence' not in codes:
             codes.append('conflicting-evidence')
+    # A conflict about the campus itself (status, emergency department, Critical Access
+    # designation or address) is settled by the licensing roster, current CMS data and
+    # the hospital's own pages, not by an issuer registry, so it has its own code. A
+    # conflicting address no longer has a separate code: it is one of these.
+    if any(st(r.get(n)) == 'conflicting' for n in IDENTITY_CLAIMS) or (r.get('address') or {}).get('status') == 'conflicting':
+        codes.append('conflicting-identity')
     lc = derived.get('capabilityOldest')
     if cap in ('assessed', 'partial') and lc and days_between(lc, review_date) > STALE_DAYS:
         codes.append('evidence-stale')
     if cap in ('assessed', 'partial', 'conflicting') and derived.get('capabilityUndated'):
         codes.append('evidence-undated')
     if derived['eligibility']['value'] == 'unknown':
-        codes.append('eligibility-unresolved')
+        codes.append('federal-ed-access' if derived['eligibility']['code'] == 'restricted-access' else 'eligibility-unresolved')
     if not derived['located']:
         codes.append('unlocated')
     elif (r.get('location') or {}).get('precision') in ('city', 'unknown') and (r.get('status') or {}).get('value') != 'closed':
         codes.append('location-unverified')
     astat = (r.get('address') or {}).get('status')
-    if astat == 'conflicting':
-        codes.append('address-conflicting')
-    elif astat not in ('corroborated', 'source-reported') and (r.get('status') or {}).get('value') != 'closed':
+    if astat not in ('corroborated', 'source-reported', 'conflicting') and (r.get('status') or {}).get('value') != 'closed':
         codes.append('address-unverified')
     if (r.get('status') or {}).get('value') == 'unknown':
         codes.append('status-unknown')
@@ -537,6 +579,10 @@ def _blank(name, key):
     return False
 
 
+# The edition label on claim history written by an earlier step of this review.
+EARLIER_STEP = 'this review (earlier step)'
+
+
 def audit_outcome(name, c):
     """What this review did with the claim (see docs/EVIDENCE-AUDIT-2026-10.md)."""
     if c is None:
@@ -562,11 +608,22 @@ def audit_outcome(name, c):
     if not m:
         return 'not-assessed'
     prev = c.get('changedFrom')
+    # Searched (a method and usually sources are recorded) but still unknown:
+    # the search shows, without counting it as a confirmed value. That includes a
+    # claim whose earlier documented value (affirmative or any other) this review
+    # could not confirm and left unknown: searched and unresolved, not corrected
+    # (the earlier value stays in changedFrom and is quoted in the note).
+    unresolved = _blank(name, _key(name, c))
     if prev is None:
-        return 'confirmed'
+        return 'searched-unresolved' if unresolved else 'confirmed'
     before, after = _key(name, prev), _key(name, c)
-    if before == after:
-        return 'confirmed'
+    if before == after or unresolved:
+        return 'searched-unresolved' if unresolved else 'confirmed'
+    # Only a value the previous edition stated can be corrected. History written by an
+    # earlier step of this review (always so on a record the previous edition did not
+    # contain) records no previous-edition value, so the documented value is established.
+    if prev.get('edition') == EARLIER_STEP:
+        return 'established'
     if name == 'address' and not before[0] and before[1] == after[1]:
         return 'established'   # a street added to the town already recorded
     if _blank(name, before):
@@ -584,6 +641,8 @@ def write_audit(records, sources):
             continue
         for name in AUDIT_CLAIMS:
             c = r.get(name)
+            # The previous value as recorded, with its own dates: a carried-forward
+            # value keeps editionAsOf (the previous edition's date) and checked null.
             prev = (c or {}).get('changedFrom')
             w.writerow([
                 r['id'], r['name'], r['state'], name, audit_outcome(name, c),
@@ -598,11 +657,15 @@ def write_audit(records, sources):
 
 WORK_TEXT = {
     'conflicting-evidence': ('P1', 'Resolve conflicting evidence', 'Issuer registry for the credential in conflict; hospital page'),
+    'conflicting-identity': ('P1', 'Resolve conflicting status, emergency department, Critical Access or address evidence',
+                             'State licensing roster; current CMS Hospital General Information; hospital emergency services and contact '
+                             'pages'),
     'evidence-undated': ('P2', 'Re-check capability evidence carried from the previous edition without a claim-level check date', 'Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages'),
     'capability-partial': ('P2', 'Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)', 'Hospital stroke and neurointerventional pages; issuer registries'),
     'capability-unassessed': ('P2', 'Assess stroke capability (national, state, EVT)', 'Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page'),
     'evidence-stale': ('P2', 'Re-check capability evidence (older than 12 months)', 'Issuer registries and hospital pages'),
     'eligibility-unresolved': ('P2', 'Confirm active status and general 24/7 emergency department', 'Hospital emergency services page; state licensing roster'),
+    'federal-ed-access': ('P2', 'Confirm civilian emergency and EMS access at this federal emergency department', 'Facility policy pages; regional EMS destination protocols'),
     'unlocated': ('P1', 'Locate campus (no verified coordinates)', 'Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded'),
     'location-unverified': ('P3', 'Verify campus coordinates', 'Geocode the verified street address; record geocoder, query and match type'),
     'address-unverified': ('P3', 'Verify physical campus address', 'NPPES organization record (282N taxonomy) and the hospital website'),
@@ -614,7 +677,6 @@ WORK_TEXT = {
     'town-not-in-gazetteer': ('P3', 'Town not in the gazetteer, so the town check could not run', 'Confirm the town from the verified address'),
     'far-from-named-city': ('P1', 'Coordinates more than 15 mi from the town the address names', 'Verified street address, then a documented geocoder'),
     'location-conflict': ('P2', 'Two coordinate sources disagree by more than 1 mi', 'Geocode the verified street address and keep the matching point'),
-    'address-conflicting': ('P2', 'NPPES and the previous edition give different street addresses', 'Hospital website contact page; state licensing roster'),
 }
 
 
@@ -665,7 +727,41 @@ def compute_counts(records):
     c['tiers'] = OrderedDict((t, sum(1 for r in inreg if r['derived']['tier'] == t)) for t in TIERS)
     c['state_only_tier'] = sum(1 for r in inreg if r['derived']['tierBasis'] == 'state-crosswalk')
     c['national_certified'] = sum(1 for r in inreg if st(r['national']) == 'affirmative')
+    c['eligible_ed_basis'] = eligible_ed_basis(inreg)
     return c
+
+
+def eligible_ed_basis(inreg):
+    """How the emergency department of each eligible record is known: documented for
+    the campus, or inferred from a program requirement (by the first rule source the
+    ED claim cites, in ED_RULE_SOURCES order). Published in counts and in
+    METHODOLOGY section 5, so the prose cannot drift from the data."""
+    by_rule = Counter()
+    documented = 0
+    for r in inreg:
+        if r['derived']['eligibility']['value'] != 'eligible':
+            continue
+        edc = r.get('ed') or {}
+        if edc.get('method') != 'regulatory-inference':
+            documented += 1
+            continue
+        srcs = {ev.get('src') for ev in edc.get('evidence') or []}
+        by_rule[next((sid for sid, _ in ED_RULE_SOURCES if sid in srcs), 'other')] += 1
+    rules = OrderedDict((sid, by_rule[sid]) for sid, _ in ED_RULE_SOURCES)
+    if by_rule['other']:
+        rules['other'] = by_rule['other']
+    return OrderedDict([('documented', documented), ('inferred', sum(by_rule.values())), ('inferred_by_rule', rules)])
+
+
+def ed_basis_sentence(c):
+    b = c['eligible_ed_basis']
+    label = dict(ED_RULE_SOURCES, other='other program requirements')
+    parts = [f'{n} on the {label[sid]}' for sid, n in b['inferred_by_rule'].items() if n]
+    listed = ', '.join(parts[:-1]) + ' and ' + parts[-1] if len(parts) > 1 else ''.join(parts)
+    return (f"Of the {c['eligible']} eligible records in this edition, {b['inferred']} rest on such an inference"
+            + (f" — {listed} —" if parts else '')
+            + f" and {b['documented']} on an emergency department documented for the campus (the hospital's or operator's own "
+              "statement, or local reporting).")
 
 
 def counts_sentence(c, manifest):
@@ -683,7 +779,8 @@ def counts_sentence(c, manifest):
 
 def audit_table(records):
     """Markdown table: claim x audit outcome counts, in-region records only."""
-    outcomes = ('confirmed', 'corroborated', 'established', 'corrected', 'carried-forward', 'conflicting', 'inaccessible', 'not-assessed', 'missing')
+    outcomes = ('confirmed', 'corroborated', 'established', 'corrected', 'carried-forward', 'conflicting', 'searched-unresolved',
+                'inaccessible', 'not-assessed', 'missing')
     rows = []
     totals = Counter()
     for name in AUDIT_CLAIMS:
@@ -697,11 +794,12 @@ def audit_table(records):
 
 DOC_TARGETS = ('README.md', 'METHODOLOGY.md', 'llms.txt', 'index.html', 'docs/EVIDENCE-AUDIT-2026-10.md')
 AUDIT_MARK = re.compile(r'(<!-- audit-table:start -->)(.*?)(<!-- audit-table:end -->)', re.S)
+ED_BASIS_MARK = re.compile(r'(<!-- ed-basis:start -->)(.*?)(<!-- ed-basis:end -->)', re.S)
 MARK = re.compile(r'(<!-- counts:start -->)(.*?)(<!-- counts:end -->)', re.S)
 JSONLD = re.compile(r'("description": ")([^"]*)(")')
 
 
-def render_docs(sentence, table):
+def render_docs(sentence, table, ed_basis):
     out = {}
     for name in DOC_TARGETS:
         p = ROOT / name
@@ -710,6 +808,7 @@ def render_docs(sentence, table):
         text = p.read_text()
         new = MARK.sub(lambda m: m.group(1) + sentence + m.group(3), text)
         new = AUDIT_MARK.sub(lambda m: m.group(1) + '\n' + table + '\n' + m.group(3), new)
+        new = ED_BASIS_MARK.sub(lambda m: m.group(1) + ed_basis + m.group(3), new)
         if name == 'index.html':
             new = re.sub(r'(<script type="application/ld\+json">.*?"description": ")[^"]*(")',
                          lambda m: m.group(1) + 'Public-source reference dataset: ' + sentence.replace('"', "'") + m.group(2),
@@ -777,7 +876,7 @@ def main():
     }
     work_text, work_rows = write_worklist(records, manifest)
     outputs[OUT_WORK] = work_text
-    for name, (old, new) in render_docs(counts_sentence(counts, manifest), audit_table(records)).items():
+    for name, (old, new) in render_docs(counts_sentence(counts, manifest), audit_table(records), ed_basis_sentence(counts)).items():
         outputs[ROOT / name] = new
 
     changed = []
