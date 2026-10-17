@@ -4,6 +4,8 @@ Interactive map of stroke-center certifications and acute-care hospitals across 
 
 **Live site:** https://rkalani1.github.io/telestroke-expansion-map/
 
+<!-- counts:start -->253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 102 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 148 with eligibility unresolved; 0 not yet located. Stroke capability: 130 assessed, 1 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
+
 ![Map screenshot](https://img.shields.io/badge/status-live-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Data](https://img.shields.io/badge/data-verified%20July%202026-informational) ![Records](https://img.shields.io/badge/hospitals-236-blue)
 
 ---
@@ -25,7 +27,7 @@ Census records never assert a tier or an EVT flag, are excluded from every capab
 - **Separates national accreditation from state designation.** 67 of the 136 assessed records display a tier derived from a WA ECS or Idaho TSE state designation alone, with no national accreditation on record. The detail view says so in as many words, and the list row carries a dashed state badge — a WA ECS Level III should never be read as a Joint Commission ASR.
 - **Finds hospitals by what clinicians actually call them.** Search covers spoken shorthand (`HMC`, `Harborview`, `Sacred Heart`, `St V`), county, health system, facility type, and city — not just the official CMS name.
 - Computes, for each hospital, distance and estimated ground/air transport time to the nearest CSC/TSC and nearest EVT center.
-- Identifies **EVT deserts** (hospitals beyond a configurable distance from 24/7 thrombectomy) and **zero-capability** hospitals (no national certification — also available as a "None" filter pill).
+- Identifies hospitals beyond a configurable straight-line distance from documented 24/7 thrombectomy, and separates "no certification found" from "not assessed".
 - **Expansion candidates (press `E`)**: ranks non-EVT, non-CSC/TSC hospitals by a transparent planning heuristic (certification gap, distance to EVT, distance to CSC/TSC), with a per-site "Why?" breakdown showing exactly how each score was computed, nearest-center names, and ground/air estimates.
 - **Scenario mode**: adjust the scoring weights, EVT-desert threshold, and distance cap with sliders and watch the ranking re-order live. Scenario settings are display-layer only — the source dataset is never modified — and are encoded in the URL so a scenario can be shared as a link.
 - **Data quality panel (press `Q`)**: data version, verification date, per-field completeness, integrity checks run live in the browser, model assumptions, and primary-source list.

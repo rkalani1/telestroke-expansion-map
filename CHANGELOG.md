@@ -2,6 +2,11 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [4.0.0] - Unreleased
+
+Schema 4: claim-level evidence, a rebuilt app and a full census reconciliation. In progress on
+`claude/zealous-heisenberg-1lso2a`; the complete entry lands with the release.
+
 ## [3.2.1] - 2026-09-19
 
 Second pass on the same day: independent audits the 3.2.0 pass had not run (axe-core
