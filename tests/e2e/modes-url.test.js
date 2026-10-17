@@ -105,6 +105,9 @@ test('links from earlier versions still work (pill flags, dark=1, scenario keys,
   const ui = await page.evaluate(() => window.__strokeAtlas.ui);
   assert.deepEqual(ui.tiers, ['csc', 'unassessed']);
   assert.equal(ui.review.wGap, 55);
+  assert.equal(ui.review.wEvt, 40, 'omitted weights take the earlier version\'s defaults');
+  assert.equal(ui.review.wAdv, 20);
+  assert.match(await page.textContent('#toasts'), /earlier version/);
   assert.equal(ui.review.desertMi, 120);
   assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark');
   assert.equal(await page.evaluate(() => window.__strokeAtlas.map.getZoom()), 7);

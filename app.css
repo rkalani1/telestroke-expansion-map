@@ -433,6 +433,10 @@ table.data tfoot td { font-weight: 650; border-top: 1px solid var(--border-stron
 .checks li { display: flex; gap: var(--sp-2); }
 .checks .pass { color: var(--ok); font-weight: 700; }
 .checks .fail { color: var(--danger); font-weight: 700; }
+.nv-list li { align-items: baseline; }
+.nv-list li > span:nth-child(2) { flex: 1; min-width: 0; }
+.nv-list .link-btn { min-height: 24px; font-size: var(--fs-xs); }
+.sub-head { font-size: var(--fs-xs); font-weight: 650; color: var(--text-2); margin: var(--sp-2) 0 4px; }
 
 /* ---------- map ---------- */
 .map { position: absolute; inset: 0; background: var(--surface-3); }

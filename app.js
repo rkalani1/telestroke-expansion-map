@@ -63,7 +63,14 @@ const NV_LABELS = {
   'far-from-named-city': 'Coordinates far from the town the address names',
   'location-conflict': 'Two coordinate sources disagree',
   'address-conflicting': 'Address sources disagree',
+  'nearer-to-another-town': 'Coordinates much nearer another town than the one named',
+  'town-not-in-gazetteer': 'Town not in the gazetteer — town check not run',
 };
+// Priority of a needs-verification code (published with the data): P1/P2 are
+// open items to resolve; P3 are precision notes, such as coordinates or an
+// address not yet verified to the campus.
+function nvPriority(code) { const c = S.meta && S.meta.needs_verification_codes && S.meta.needs_verification_codes[code]; return c ? c.priority : 'P3'; }
+function openItems(h) { return ((h.derived && h.derived.needsVerification) || []).filter(c => nvPriority(c) !== 'P3'); }
 const ADDRESS_STATUS = {
   corroborated: 'Two registries agree (previous edition and NPPES)',
   'source-reported': 'From one registry record (NPPES or CMS)',
@@ -421,7 +428,8 @@ function passesOther(h, ui, tokens, exceptTier) {
     const ok = ui.evidence.some(f => (f === 'assessed' && (cap === 'assessed' || cap === 'partial'))
       || (f === 'unassessed' && cap === 'unassessed')
       || (f === 'conflicting' && cap === 'conflicting')
-      || (f === 'needs-verification' && nv.length > 0));
+      || (f === 'needs-verification' && openItems(h).length > 0)
+      || (f.startsWith('nv:') && nv.includes(f.slice(3))));
     if (!ok) return false;
   }
   if (ui.evtMin > 0) {
@@ -508,7 +516,7 @@ function activeFilterParts() {
   if (ui.basis) parts.push(ui.basis === 'national' ? 'national certification' : 'state designation only');
   if (ui.cah) parts.push('CAH: ' + ui.cah);
   if (ui.system) parts.push(ui.system === '__independent' ? 'independent' : ui.system === '__unknown' ? 'system unknown' : ui.system);
-  if (ui.evidence.length) parts.push(ui.evidence.join('/'));
+  if (ui.evidence.length) parts.push(ui.evidence.map(f => f.startsWith('nv:') ? 'needs verification: ' + (NV_LABELS[f.slice(3)] || f.slice(3)).toLowerCase() : f).join('/'));
   if (ui.evtMin) parts.push(`≥${ui.evtMin} mi to 24/7 EVT`);
   return parts;
 }
@@ -1639,7 +1647,7 @@ function renderSourcesSection(h) {
     const s = sourceOf(ev.src) || { title: ev.src };
     const dates = [s.published ? 'published ' + s.published : null, s.effective ? 'effective ' + s.effective : null, s.accessed ? 'accessed ' + s.accessed : null].filter(Boolean).join(' · ');
     list.appendChild(el('div', { class: 'source' }, [
-      el('span', { class: 's-title' }, s.url && s.access !== 'inaccessible' ? el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title || s.url }) : (s.title || ev.src)),
+      el('span', { class: 's-title' }, s.url && /^https?:\/\//i.test(s.url) && s.access !== 'inaccessible' ? el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title || s.url }) : (s.title || ev.src)),
       el('span', { text: [s.publisher, ({ 'issuer-registry': 'issuer registry', 'official-facility': 'hospital/system source', government: 'government', news: 'news', tertiary: 'tertiary', dataset: 'dataset', nppes: 'NPPES', 'prior-edition': 'previous edition', regulation: 'regulation' }[s.type] || s.type)].filter(Boolean).join(' · ') }),
       el('span', { text: 'Supports: ' + labels.join(', ') + (ev.supports ? ' — ' + ev.supports : '') }),
       ev.excerpt ? el('q', { text: ev.excerpt }) : null,
@@ -2064,14 +2072,47 @@ function renderDataPanel() {
   const vb = $('#verify-breakdown');
   clear(vb);
   const inReg = S.all.filter(h => !isOOR(h));
-  const open = inReg.filter(h => (h.derived.needsVerification || []).length).length;
-  vb.appendChild(el('p', { class: 'hint', text: `Whole dataset: ${open} of ${inReg.length} facility records have at least one open item. A record can appear under several reasons.` }));
-  const ul = el('ul', { class: 'checks' });
-  for (const [code, n] of Object.entries(nv).sort((a, b) => b[1] - a[1])) ul.appendChild(el('li', null, [el('span', { class: 'num', text: String(n) }), el('span', { text: NV_LABELS[code] || code })]));
-  vb.appendChild(ul);
+  const open = inReg.filter(h => openItems(h).length).length;
+  const notesOnly = inReg.filter(h => !openItems(h).length && (h.derived.needsVerification || []).length).length;
+  vb.appendChild(el('p', { class: 'hint', text: `Whole dataset: ${open} of ${inReg.length} facility records have an open item to resolve (P1/P2). ` +
+    `${notesOnly} more carry only precision notes (P3), such as coordinates or an address not yet verified to the campus. A record can appear under several reasons.` }));
+  for (const [title, pri] of [['Open items (P1/P2)', p => p !== 'P3'], ['Precision notes (P3)', p => p === 'P3']]) {
+    const rows = Object.entries(nv).filter(([code]) => pri(nvPriority(code))).sort((a, b) => nvPriority(a[0]).localeCompare(nvPriority(b[0])) || b[1] - a[1]);
+    if (!rows.length) continue;
+    vb.appendChild(el('h3', { class: 'sub-head', text: title }));
+    const ul = el('ul', { class: 'checks nv-list' });
+    for (const [code, n] of rows) {
+      ul.appendChild(el('li', null, [el('span', { class: 'num', text: String(n) }), el('span', { text: `${NV_LABELS[code] || code} (${nvPriority(code)})` }),
+        el('button', { type: 'button', class: 'link-btn', text: 'Show', 'aria-label': `Show the ${n} records: ${NV_LABELS[code] || code}`, on: { click: () => showNeedsVerification('nv:' + code) } })]));
+    }
+    vb.appendChild(ul);
+  }
 
   renderCoverage();
   renderChecks();
+}
+// Show the whole worklist (or one reason on it), not a slice of it: clear every other filter.
+function showNeedsVerification(filter) {
+  const d = C.defaultUiState();
+  Object.assign(S.ui, { q: '', state: 'ALL', system: null, basis: null, cah: null, evtMin: 0, include: d.include,
+    evidence: [filter], scope: 'all', preset: null, tiers: [], evt: false });
+  populateEvidenceSelect();
+  syncControls(); update(); switchView('find', { sheet: true });
+  const what = filter === 'needs-verification' ? 'have an open item to resolve' : `need verification: ${(NV_LABELS[filter.slice(3)] || filter).toLowerCase()}`;
+  toast(`${S.results.length} records ${what} (whole dataset; other filters cleared)`);
+}
+// The Evidence filter offers each needs-verification reason present in the data.
+function populateEvidenceSelect() {
+  const sel = $('#f-evidence');
+  if (!sel || !S.all) return;
+  for (const g of $$('optgroup', sel)) g.remove();
+  const nv = {};
+  for (const h of S.all) if (!isOOR(h)) for (const code of h.derived.needsVerification || []) nv[code] = (nv[code] || 0) + 1;
+  const grp = el('optgroup', { label: 'Needs verification — one reason' });
+  for (const [code, n] of Object.entries(nv).sort((a, b) => nvPriority(a[0]).localeCompare(nvPriority(b[0])) || b[1] - a[1])) {
+    grp.appendChild(el('option', { value: 'nv:' + code, text: `${NV_LABELS[code] || code} (${nvPriority(code)}, ${n})` }));
+  }
+  sel.appendChild(grp);
 }
 function renderCoverage() {
   const wrap = $('#coverage');
@@ -2112,7 +2153,9 @@ function renderChecks() {
   const checks = [
     ['Every record id unique', ids.size === recs.length],
     ['Every claim state recognised', recs.every(h => claimNames.every(k => !h[k] || C.CLAIM_STATES.includes(h[k].state)))],
-    ['Every documented claim cites a source and a check date', recs.every(h => claimNames.every(k => !h[k] || !['affirmative', 'negative', 'conflicting', 'no-record-found'].includes(h[k].state) || ((h[k].evidence || []).length && h[k].checked)))],
+    // Carried-forward claims keep their edition's date (editionAsOf) instead
+    // of a claim-level check date; they are counted under Needs verification.
+    ['Every documented claim cites a source and a date (a check date, or the edition date for carried-forward claims)', recs.every(h => claimNames.every(k => !h[k] || !['affirmative', 'negative', 'conflicting', 'no-record-found'].includes(h[k].state) || ((h[k].evidence || []).length && (h[k].checked || (h[k].method === 'prior-edition' && h[k].editionAsOf)))))],
     ['Every cited source exists in the registry', recs.every(h => claimNames.concat(['status', 'address', 'location', 'system']).every(k => !h[k] || (h[k].evidence || []).every(ev => !!sourceOf(ev.src))))],
     ['No unassessed record shows a tier', recs.every(h => capOf(h) !== 'unassessed' || !tierOf(h))],
     ['Every shown tier traces to a national or state claim', recs.every(h => {
@@ -2193,7 +2236,10 @@ function stamp() { return S.meta ? S.meta.data_version : ''; }
 function todayStr() { return new Date().toISOString().slice(0, 10); }
 function download(content, filename, mime) {
   try {
-    const blob = content instanceof Blob ? content : new Blob([content], { type: mime + ';charset=utf-8' });
+    // A byte-order mark tells spreadsheet programs the CSV is UTF-8 (names
+    // such as "Utqiaġvik" and en dashes otherwise open garbled).
+    const body = mime === 'text/csv' && typeof content === 'string' && content.charCodeAt(0) !== 0xFEFF ? '\uFEFF' + content : content;
+    const blob = content instanceof Blob ? content : new Blob([body], { type: mime + ';charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = filename;
@@ -2223,7 +2269,7 @@ const CSV_HEADER = ['record_id', 'name', 'state', 'city', 'county_derived', 'sta
   'ccn', 'ccn_relation', 'health_system', 'governance', 'cah_state', 'ed_24x7_state',
   'national_state', 'national_body', 'national_program', 'national_tier', 'national_effective', 'national_expires', 'national_checked', 'national_method', 'national_sources',
   'state_designation_state', 'state_system', 'state_level', 'state_status', 'state_checked', 'state_method', 'state_sources',
-  'evt_state', 'evt_24x7_state', 'evt_24x7_basis', 'evt_checked', 'evt_sources',
+  'evt_state', 'evt_checked', 'evt_method', 'evt_sources', 'evt_24x7_state', 'evt_24x7_basis', 'evt_24x7_checked', 'evt_24x7_method', 'evt_24x7_sources',
   'tier_shown', 'tier_basis', 'tier_class', 'capability_evidence', 'capability_oldest_critical_checked', 'capability_undated',
   'latitude', 'longitude', 'location_method', 'location_precision', 'road_network',
   'nearest_24x7_evt_center', 'miles_to_nearest_24x7_evt', 'nearest_csc_tsc_level_center', 'miles_to_nearest_csc_tsc_level',
@@ -2240,7 +2286,8 @@ function csvRow(h, scope) {
     (h.ccn && h.ccn.value) || '', (h.ccn && h.ccn.relation) || '', (h.system && h.system.value) || (h.system && h.system.state) || '', (h.governance && h.governance.value) || '', stOf(h.cah), stOf(h.ed),
     stOf(n), n.body || '', n.program || '', n.tier || '', n.effective || '', n.expires || '', n.checked || '', n.method || '', claimSources(n),
     stOf(sd), sd.system || '', sd.level || '', sd.status || '', sd.checked || '', sd.method || '', claimSources(sd),
-    stOf(h.evt), stOf(h.evt247), (h.evt247 && h.evt247.basis) || '', (h.evt247 && h.evt247.checked) || (h.evt && h.evt.checked) || '', claimSources(h.evt247) || claimSources(h.evt),
+    stOf(h.evt), (h.evt && h.evt.checked) || '', (h.evt && h.evt.method) || '', claimSources(h.evt),
+    stOf(h.evt247), (h.evt247 && h.evt247.basis) || '', (h.evt247 && h.evt247.checked) || '', (h.evt247 && h.evt247.method) || '', claimSources(h.evt247),
     tierOf(h) || '', h.derived.tierBasis || '', tierKey(h) || '', capOf(h), lastCheckedOf(h) || '', h.derived.capabilityUndated ? 'yes' : '',
     h.location ? h.location.lat : '', h.location ? h.location.lng : '', h.location ? h.location.method : '', h.location ? h.location.precision : '', (h.roadNetwork && h.roadNetwork.value) || 'unknown',
     a.evt247.dest ? a.evt247.dest.name : '', miles(a.evt247), a.advanced.dest ? a.advanced.dest.name : '', miles(a.advanced),
@@ -2506,7 +2553,8 @@ async function exportPng() {
     // Footer
     ctx.fillStyle = cssVar('--text-2'); ctx.font = '11.5px system-ui, sans-serif';
     ctx.fillText(`Release ${S.meta.release} · data ${S.meta.data_version} · evidence review ${S.meta.evidence_review_date} · exported ${todayStr()} · ${location.origin}${location.pathname}`, 14, headH + size.y + 22);
-    ctx.fillText(`${withTiles && tiles ? 'Basemap © OpenStreetMap contributors. ' : 'Basemap omitted. '}Straight-line distances; lines are not routes or referral relationships. Planning reference — not for clinical decisions.`, 14, headH + size.y + 40);
+    const relief = withTiles && tiles && currentBasemap() === 'terrain' ? 'Relief: USGS The National Map (3DEP). ' : '';
+    ctx.fillText(`${withTiles && tiles ? 'Basemap © OpenStreetMap contributors. ' + relief : 'Basemap omitted. '}Straight-line distances; lines are not routes or referral relationships. Planning reference — not for clinical decisions.`, 14, headH + size.y + 40);
     ctx.restore();
     return tiles;
   };
@@ -2637,6 +2685,7 @@ function readUrl() {
   if (S.prefs.hub && !canHub(S.prefs.hub)) S.prefs.hub = null;
   if (!S.ui.hub && S.prefs.hub) S.ui.hub = S.prefs.hub;
   if (S.ui.mode === 'hub-distance' && !S.ui.hub) { S.ui.mode = 'capability'; parsed.ignored.push('mode'); }
+  if (parsed.legacy && parsed.legacy.includes('weights')) toast('This link is from an earlier version: access-review weights it left out were restored from that version’s defaults (40 to EVT, 20 to CSC/TSC-level).', 'warn', 6000);
   if (parsed.ignored.length) toast(`Some link settings were not recognised and were ignored (${parsed.ignored.slice(0, 4).join(', ')}${parsed.ignored.length > 4 ? '…' : ''})`, 'warn', 5000);
   return parsed;
 }
@@ -2909,14 +2958,7 @@ function bindEvents() {
 
   // Data
   $('#open-methods').addEventListener('click', () => openDialog('dlg-methods'));
-  $('#show-needs-verification').addEventListener('click', () => {
-    // Show the whole worklist, not a slice of it: clear every other filter.
-    const d = C.defaultUiState();
-    Object.assign(S.ui, { q: '', state: 'ALL', system: null, basis: null, cah: null, evtMin: 0, include: d.include,
-      evidence: ['needs-verification'], scope: 'all', preset: null, tiers: [], evt: false });
-    syncControls(); update(); switchView('find', { sheet: true });
-    toast(`${S.results.length} records need verification (whole dataset; other filters cleared)`);
-  });
+  $('#show-needs-verification').addEventListener('click', () => showNeedsVerification('needs-verification'));
   $('#export-csv').addEventListener('click', () => exportCsv($('#export-scope').value));
   $('#export-json').addEventListener('click', () => exportJson($('#export-scope').value));
   $('#export-md').addEventListener('click', () => download(summaryMarkdown(), `stroke-capability-summary_${stamp()}.md`, 'text/markdown'));
@@ -3091,6 +3133,7 @@ async function boot() {
   readUrl();
   const mapOk = initMap();
   populateSystems();
+  populateEvidenceSelect();
   populateHubSelect();
   populateJump();
   buildTransportForm();

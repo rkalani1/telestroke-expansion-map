@@ -16,6 +16,7 @@ import json
 import re
 import sys
 from collections import Counter
+from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -33,6 +34,17 @@ CROSSWALK = {
     'Idaho TSE': {'I': 'CSC', 'II+': 'TSC', 'II': 'PSC', 'III': 'ASR'},
 }
 DATE = re.compile(r'^\d{4}(-\d{2}(-\d{2})?)?$')
+
+
+def real_date(d):
+    """A well-formed date that also exists on the calendar."""
+    if not isinstance(d, str) or not DATE.match(d):
+        return False
+    try:
+        date.fromisoformat({4: d + '-01-01', 7: d + '-01'}.get(len(d), d))
+        return True
+    except ValueError:
+        return False
 # The v3 edition's last data date; a prior-edition claim cannot have been
 # checked after the edition it was carried from.
 PRIOR_EDITION_MAX = '2026-09-19'
@@ -129,10 +141,12 @@ def main():
             for ev in c.get('evidence') or []:
                 if ev.get('src') not in sources:
                     p.append(f'{r["id"]}.{name}: cites {ev.get("src")!r}, not in sources')
-            for k in ('checked', 'effective', 'expires'):
+            for k in ('checked', 'effective', 'expires', 'editionAsOf'):
                 d = c.get(k)
-                if d is not None and not DATE.match(d):
+                if d is not None and not real_date(d):
                     p.append(f'{r["id"]}.{name}.{k}: bad date {d!r}')
+            if real_date(c.get('editionAsOf')) and c['editionAsOf'] > review:
+                p.append(f'{r["id"]}.{name}: editionAsOf {c["editionAsOf"]} after the review date {review}')
             if c.get('checked') and c['checked'] > review:
                 p.append(f'{r["id"]}.{name}: checked {c["checked"]} after the review date {review}')
             if c.get('method') == 'prior-edition' and c.get('checked') == '2026-07-04':
@@ -149,8 +163,10 @@ def main():
     for sid, s in sources.items():
         if not s.get('url') and s.get('type') not in ('prior-edition', 'regulation', 'dataset', 'nppes'):
             p.append(f'source {sid}: no URL')
+        if s.get('url') and not re.match(r'https?://', s['url'], re.I):
+            p.append(f'source {sid}: url {s["url"][:40]!r} is not a web address')
         for k in ('published', 'effective', 'accessed'):
-            if s.get(k) and not DATE.match(s[k]):
+            if s.get(k) and not real_date(s[k]):
                 p.append(f'source {sid}.{k}: bad date {s[k]!r}')
         if s.get('accessed') and s['accessed'] > review:
             p.append(f'source {sid}: accessed {s["accessed"]} after the review date')
@@ -261,7 +277,8 @@ def main():
         lng = sorted(x['location']['lng'] for x in rs)[len(rs) // 2]
         for r in rs:
             d = haversine_mi(lat, lng, r['location']['lat'], r['location']['lng'])
-            if d > 25 and 'location-unverified' not in r['derived']['needsVerification']:
+            # Records the town check already flags are reported there.
+            if d > 25 and not {'far-from-named-city', 'nearer-to-another-town'} & set(r['derived']['needsVerification']):
                 p.append(f'{r["id"]} {r["name"]}: {d:.0f} mi from other {city.title()}, {s} records')
     # The town check must still catch the previous edition's own errors.
     cities = Cities()
@@ -360,6 +377,19 @@ def main():
         p.append(f'CHANGELOG.md has no ## [{rel}] entry')
     if re.search(r'src="https://(unpkg|cdnjs|cdn\.jsdelivr)[^"]*', html):
         p.append('index.html loads a script from a CDN')
+    m = re.search(r'<script type="application/ld\+json">.*?"version": "([^"]*)"', html, re.S)
+    if not m or m.group(1) != rel:
+        p.append(f'index.html JSON-LD version {m.group(1) if m else None!r} != release {rel}')
+    # Every needs-verification code the build emits has a priority and an app label.
+    codes = doc.get('needs_verification_codes') or {}
+    used = {c for r in inreg for c in r['derived']['needsVerification']}
+    for c in sorted(used - set(codes)):
+        p.append(f'needs-verification code {c!r} has no priority in needs_verification_codes')
+    app = (ROOT / 'app.js').read_text()
+    labels = re.search(r'const NV_LABELS = \{(.*?)\n\};', app, re.S)
+    have = set(re.findall(r"'?([a-z0-9-]+)'?:\s*'", labels.group(1))) if labels else set()
+    for c in sorted(set(codes) - have):
+        p.append(f'app.js NV_LABELS has no label for {c!r}')
     report('Wording and versioning: retired phrases gone, cache-busters and changelog match the release', p)
 
     print()

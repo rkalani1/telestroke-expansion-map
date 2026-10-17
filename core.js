@@ -697,7 +697,8 @@
     s.tiers = TIER_FILTERS.filter(t => tiers.has(t));
     if (p.get('evt') === '1') s.evt = true;
 
-    if (p.has('ev')) s.evidence = list(p.get('ev')).filter(x => EVIDENCE_FILTERS.includes(x));
+    // ev also takes one needs-verification reason, as nv:<code>.
+    if (p.has('ev')) s.evidence = list(p.get('ev')).filter(x => EVIDENCE_FILTERS.includes(x) || /^nv:[a-z0-9-]{2,40}$/.test(x));
     if (p.has('basis')) { const v = p.get('basis'); if (v === 'national' || v === 'state') s.basis = v; else ignored.push('basis'); }
     if (p.has('cah')) { const v = p.get('cah'); if (CAH_FILTERS.includes(v)) s.cah = v; else ignored.push('cah'); }
     if (p.has('sys')) { const v = p.get('sys'); if (systems.has(v)) s.system = v; else ignored.push('sys'); }
@@ -723,8 +724,16 @@
     }
     if (p.has('nb')) s.neighbors = p.get('nb') !== '0';
 
-    // Old scenario links used wc for the certification-gap weight.
+    // Old scenario links used wc for the certification-gap weight and left out
+    // weights at their own defaults (40 to EVT, 20 to CSC/TSC-level); fill those
+    // from the old defaults so the link restores the mix it was made with.
     const reviewKeys = REVIEW_KEYS.concat([['wGap', 'wc']]);
+    const legacy = [];
+    if (p.has('wc')) {
+      if (!p.has('we')) s.review.wEvt = 40;
+      if (!p.has('wa')) s.review.wAdv = 20;
+      legacy.push('weights');
+    }
     for (const [k, short] of reviewKeys) {
       if (!p.has(short)) continue;
       const r = REVIEW_RANGES[k];
@@ -751,7 +760,7 @@
     else if (p.get('dark') === '1') { s.theme = 'dark'; explicit.theme = true; }
     if (p.has('cb')) { s.cb = p.get('cb') === '1'; explicit.cb = true; }
     if (p.has('bm')) { const v = p.get('bm'); if (BASEMAPS.includes(v)) { s.basemap = v; explicit.basemap = true; } else ignored.push('bm'); }
-    return { state: s, ignored, explicit };
+    return { state: s, ignored, explicit, legacy };
   }
 
   // Serialise only what differs from defaults, so links stay short and an old

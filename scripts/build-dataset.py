@@ -83,10 +83,15 @@ def load_json(path):
 
 
 def iso(d):
+    """A YYYY, YYYY-MM or YYYY-MM-DD date that exists on the calendar."""
     if d is None:
         return None
-    if not re.fullmatch(r'\d{4}(-\d{2}(-\d{2})?)?', d):
+    if not isinstance(d, str) or not re.fullmatch(r'\d{4}(-\d{2}(-\d{2})?)?', d):
         raise BuildError(f'bad date {d!r}')
+    try:
+        date.fromisoformat({4: d + '-01-01', 7: d + '-01'}.get(len(d), d))
+    except ValueError:
+        raise BuildError(f'impossible date {d!r}') from None
     return d
 
 
@@ -111,7 +116,7 @@ def validate_claim(rid, name, c, sources, errors, kind='state'):
         errors.append(f'{rid}: {name}.method {c.get("method")!r} invalid')
     try:
         iso(c.get('checked'))
-        for k in ('effective', 'expires'):
+        for k in ('effective', 'expires', 'editionAsOf'):
             if k in c:
                 iso(c.get(k))
     except BuildError as e:
@@ -133,6 +138,9 @@ def validate(facilities, neighbors, sources, manifest):
     for sid, s in sources.items():
         if s.get('type') not in SOURCE_TYPES:
             errors.append(f'source {sid}: type {s.get("type")!r} invalid')
+        # Source links become clickable anchors: web addresses only.
+        if s.get('url') and not re.match(r'https?://', s['url'], re.I):
+            errors.append(f'source {sid}: url must start with http:// or https://')
         for k in ('published', 'effective', 'accessed'):
             try:
                 iso(s.get(k))
@@ -260,6 +268,14 @@ def tier_class(r, tier, cap):
     return 'partial'
 
 
+# Program requirements that establish a 24/7 emergency department when the
+# campus holds that status (cited on the ED claim).
+ED_RULE_SOURCES = (
+    ('ecfr-42-cfr-485-618', 'Critical Access Hospital conditions of participation (42 CFR 485.618)'),
+    ('wa-doh-ecs-stroke-level2-application', 'Washington stroke Level II designation criteria'),
+)
+
+
 def derive_eligibility(r):
     """Adult emergency-stroke analysis set. Rule published in hospitals.json."""
     status = (r.get('status') or {}).get('value')
@@ -276,8 +292,16 @@ def derive_eligibility(r):
         return {'value': 'excluded', 'code': 'pediatric',
                 'reason': "Pediatric hospital — outside the adult emergency-stroke analysis set"}
     if status == 'active' and ed == 'affirmative' and pop in ('all-ages', 'adult'):
+        # Say how the emergency department is known: most come from program
+        # requirements (CAH conditions of participation, WA stroke Level II
+        # criteria), not a campus-specific source.
+        edc = r.get('ed') or {}
+        srcs = {ev.get('src') for ev in edc.get('evidence') or []}
+        rules = [txt for sid, txt in ED_RULE_SOURCES if sid in srcs]
+        basis = ('inferred from ' + (' and '.join(rules) or 'program requirements')
+                 if edc.get('method') == 'regulatory-inference' else 'documented for this campus')
         return {'value': 'eligible', 'code': 'eligible',
-                'reason': 'Active campus with a documented general 24/7 emergency department serving adults'}
+                'reason': f'Active campus with a general 24/7 emergency department serving adults ({basis})'}
     missing = []
     if status != 'active':
         missing.append('active status')
@@ -526,8 +550,10 @@ def audit_outcome(name, c):
     if name == 'location':
         if m == 'legacy-geocode' or (m in ('cms-dataset', 'city-centroid') and not c.get('checked')):
             return 'carried-forward'
+        # Two earlier coordinate sources agreeing is corroboration, not a
+        # campus-verified point: neither records its match type.
         if m in ('rule-based',):
-            return 'confirmed'
+            return 'corroborated'
         if m == 'city-centroid':
             return 'established'
         return 'corrected' if c.get('previous') or 'replaced' in (c.get('note') or '') or 'Restored' in (c.get('note') or '') else 'confirmed'
@@ -573,7 +599,7 @@ def write_audit(records, sources):
 WORK_TEXT = {
     'conflicting-evidence': ('P1', 'Resolve conflicting evidence', 'Issuer registry for the credential in conflict; hospital page'),
     'evidence-undated': ('P2', 'Re-check capability evidence carried from the previous edition without a claim-level check date', 'Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages'),
-    'capability-partial': ('P3', 'Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)', 'Hospital stroke and neurointerventional pages; issuer registries'),
+    'capability-partial': ('P2', 'Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)', 'Hospital stroke and neurointerventional pages; issuer registries'),
     'capability-unassessed': ('P2', 'Assess stroke capability (national, state, EVT)', 'Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page'),
     'evidence-stale': ('P2', 'Re-check capability evidence (older than 12 months)', 'Issuer registries and hospital pages'),
     'eligibility-unresolved': ('P2', 'Confirm active status and general 24/7 emergency department', 'Hospital emergency services page; state licensing roster'),
@@ -657,7 +683,7 @@ def counts_sentence(c, manifest):
 
 def audit_table(records):
     """Markdown table: claim x audit outcome counts, in-region records only."""
-    outcomes = ('confirmed', 'established', 'corrected', 'carried-forward', 'conflicting', 'inaccessible', 'not-assessed', 'missing')
+    outcomes = ('confirmed', 'corroborated', 'established', 'corrected', 'carried-forward', 'conflicting', 'inaccessible', 'not-assessed', 'missing')
     rows = []
     totals = Counter()
     for name in AUDIT_CLAIMS:
@@ -736,6 +762,10 @@ def main():
     doc['census_snapshot'] = manifest['census_snapshot']
     doc['geography'] = {'boundaries': Boundaries().source, 'note': manifest['geography_note']}
     doc['road_networks'] = manifest['road_networks']
+    # Priority per needs-verification code: P1/P2 are open items to resolve,
+    # P3 are precision notes (e.g. coordinates not verified to the campus).
+    doc['needs_verification_codes'] = OrderedDict(
+        (k, OrderedDict([('priority', v[0]), ('item', v[1]), ('check', v[2])])) for k, v in WORK_TEXT.items())
     doc['certification_definitions'] = manifest['certification_definitions']
     doc['counts'] = counts
     doc['sources'] = OrderedDict((k, sources[k]) for k in sorted(sources) if k not in unused)

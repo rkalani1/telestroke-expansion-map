@@ -78,7 +78,7 @@ Every claim object has `evidence: [{src, excerpt?, kind?, supports?}]`, `checked
 | `county`, `countyFips` | From the coordinates (2017 Census boundaries). |
 | `cityDistanceMi` | Miles from the GeoNames point of the town the address names (null for town-centre placements or unknown towns). |
 | `geoFlags` | outside-state-boundary, near-state-boundary, near-county-boundary, far-from-named-city, location-conflict. |
-| `needsVerification` | Worklist codes for this record (see `data/verification-worklist.csv`). |
+| `needsVerification` | Worklist codes for this record (see `data/verification-worklist.csv`). Each code's priority is published in `needs_verification_codes`: P1/P2 are open items to resolve; P3 are precision notes (for example coordinates or an address not yet verified to the campus). The app's "Needs verification" filter lists records with a P1/P2 item; any single code can be shown on its own (`ev=nv:<code>` in a link). |
 
 ## Curated inputs (`data/curated/`)
 

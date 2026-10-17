@@ -153,3 +153,54 @@ test('the footer wraps instead of clipping, and the layout sits above it', async
   assert.ok(r.gap <= 1, `app ends at the footer (${r.gap}px)`);
   await context.close();
 });
+
+test('Data view: structural checks pass, needs verification separates open items from precision notes, one reason can be shown', async () => {
+  const { page, context, errors } = await openApp(browser, srv.base, '?view=data');
+  const r = await page.evaluate(() => ({
+    fails: Array.from(document.querySelectorAll('#checks .fail')).map(n => n.parentNode.textContent),
+    hint: document.querySelector('#verify-breakdown .hint').textContent,
+    heads: Array.from(document.querySelectorAll('#verify-breakdown h3')).map(n => n.textContent),
+  }));
+  assert.deepEqual(r.fails, []);
+  assert.match(r.hint, /open item to resolve \(P1\/P2\)/);
+  assert.deepEqual(r.heads, ['Open items (P1/P2)', 'Precision notes (P3)']);
+  await page.click('#show-needs-verification');
+  // Membership follows the published priorities: a record with only P3
+  // precision notes (such as unverified coordinates) is not listed.
+  const open = await page.evaluate(() => {
+    const S = window.__strokeAtlas;
+    const pri = S.meta.needs_verification_codes;
+    const expected = S.all.filter(h => !h.outOfRegion && h.derived.needsVerification.some(c => pri[c].priority !== 'P3')).length;
+    return { shown: S.results.filter(h => !h.outOfRegion).length, expected, p3: Object.values(pri).filter(c => c.priority === 'P3').length };
+  });
+  assert.equal(open.shown, open.expected);
+  assert.ok(open.p3 > 0);
+  await page.click('#tab-data');
+  await page.click('#verify-breakdown li:has-text("Two coordinate sources disagree") button, #verify-breakdown li:has-text("Conflicting evidence") button');
+  const one = await page.evaluate(() => {
+    const S = window.__strokeAtlas;
+    const f = S.ui.evidence[0];
+    return { f, all: S.results.every(h => h.derived.needsVerification.includes(f.slice(3))), n: S.results.length, select: document.querySelector('#f-evidence').value };
+  });
+  assert.match(one.f, /^nv:/);
+  assert.ok(one.n > 0 && one.all);
+  assert.equal(one.select, one.f, 'the Evidence filter shows the chosen reason');
+  // The link is saved shortly after a change.
+  await page.waitForFunction(() => (new URL(location.href).searchParams.get('ev') || '').startsWith('nv:'), null, { timeout: 5000 });
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test('CSV: UTF-8 byte-order mark, separate EVT and 24/7 EVT provenance, eligibility basis stated', async () => {
+  const { page, context } = await openApp(browser, srv.base, '?view=data');
+  const { buffer } = await readDownload(page, () => page.click('#export-csv'));
+  assert.deepEqual([...buffer.subarray(0, 3)], [0xef, 0xbb, 0xbf]);
+  const rows = parseCsv(buffer.toString('utf8'));
+  const h = rows[0];
+  for (const c of ['evt_checked', 'evt_method', 'evt_sources', 'evt_24x7_checked', 'evt_24x7_method', 'evt_24x7_sources']) assert.ok(h.includes(c), c);
+  const reason = h.indexOf('eligibility_reason');
+  const elig = rows.slice(1).filter(r => r[h.indexOf('analysis_eligibility')] === 'eligible');
+  assert.ok(elig.length > 0);
+  assert.ok(elig.every(r => /\((inferred from|documented for this campus)/.test(r[reason])), 'eligibility reason says how the ED is known');
+  await context.close();
+});

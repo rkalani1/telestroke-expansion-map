@@ -74,6 +74,7 @@ async function readDownload(page, trigger) {
 }
 
 function parseCsv(text) {
+  text = text.replace(/^\uFEFF/, ''); // exports start with a UTF-8 byte-order mark
   const rows = [];
   let row = [];
   let cell = '';

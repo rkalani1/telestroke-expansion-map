@@ -14,10 +14,10 @@
   "source_accessed": "On a source: when the evidence was retrieved or observed, and through which access method.",
   "as_of": "On CMS reference data: the CMS snapshot month the row comes from."
  },
- "scope": "Hospital campuses in Washington, Alaska, Idaho, Montana and Wyoming (WWAMI): every Medicare-certified short-term acute-care, critical-access and children's hospital in the CMS Hospital General Information October 2023 snapshot for the five states, plus curated campuses the census cannot supply (military, shared-CCN campuses, facilities identified in the evidence review), and closed or merged campuses kept so old names remain searchable. Receiving centers just outside the five states are included as destinations only. The CMS snapshot is the census denominator; facilities opened after it are present only where the review identified them.",
+ "scope": "Hospital campuses in Washington, Alaska, Idaho, Montana and Wyoming (WWAMI): every Medicare-certified short-term acute-care, critical-access and children's hospital in the CMS Hospital General Information October 2023 snapshot for the five states, plus curated campuses the census cannot supply (military, shared-CCN campuses, facilities identified in the evidence review), and former names of renamed or merged campuses kept as search aliases; a campus is recorded as closed only when a licensing or CMS source confirms it. Receiving centers just outside the five states are included as destinations only. The CMS snapshot is the census denominator; facilities opened after it are present only where the review identified them.",
  "eligibility_rule": {
   "label": "Adult emergency-stroke analysis set",
-  "eligible": "Active campus AND a documented general emergency department open 24/7 AND serving adults (all ages or adult).",
+  "eligible": "Active campus AND a general emergency department open 24/7 AND serving adults (all ages or adult). The emergency department may be documented for the campus or inferred from a program requirement the campus is subject to: Critical Access Hospital conditions of participation (42 CFR 485.618) or Washington stroke Level II designation criteria. Each record's eligibility reason says which.",
   "excluded": "Closed or merged campus; OR documented absence of a general 24/7 emergency department; OR a pediatric-only hospital. Each exclusion carries its reason.",
   "unknown": "Anything else: eligibility is unresolved until the missing evidence is found. Unknown is not excluded and not eligible.",
   "note": "Name alone never excludes a hospital (e.g. 'Clinic' in a name)."
@@ -72,6 +72,98 @@
   "isolated": "ak-isolated:<community> — a community with no road link to any other hospital in the dataset (local roads at most); reached by air, or seasonally by sea or river.",
   "ferry": "<community>-ferry — reached from other hospitals' road networks only by ferry. Ground transfer is not modelled across a ferry; campuses in the same community share its local roads.",
   "unknown": "Not documented; ground transfer is shown as unavailable."
+ },
+ "needs_verification_codes": {
+  "conflicting-evidence": {
+   "priority": "P1",
+   "item": "Resolve conflicting evidence",
+   "check": "Issuer registry for the credential in conflict; hospital page"
+  },
+  "evidence-undated": {
+   "priority": "P2",
+   "item": "Re-check capability evidence carried from the previous edition without a claim-level check date",
+   "check": "Issuer registries (Joint Commission Quality Check, DNV) and hospital stroke pages"
+  },
+  "capability-partial": {
+   "priority": "P2",
+   "item": "Finish the capability assessment (some of national, state, EVT and 24/7 EVT not yet documented)",
+   "check": "Hospital stroke and neurointerventional pages; issuer registries"
+  },
+  "capability-unassessed": {
+   "priority": "P2",
+   "item": "Assess stroke capability (national, state, EVT)",
+   "check": "Joint Commission Quality Check, DNV certificate checker, state registry, hospital stroke page"
+  },
+  "evidence-stale": {
+   "priority": "P2",
+   "item": "Re-check capability evidence (older than 12 months)",
+   "check": "Issuer registries and hospital pages"
+  },
+  "eligibility-unresolved": {
+   "priority": "P2",
+   "item": "Confirm active status and general 24/7 emergency department",
+   "check": "Hospital emergency services page; state licensing roster"
+  },
+  "unlocated": {
+   "priority": "P1",
+   "item": "Locate campus (no verified coordinates)",
+   "check": "Official campus address, then a documented geocoder (US Census geocoder or Nominatim) with match type recorded"
+  },
+  "location-unverified": {
+   "priority": "P3",
+   "item": "Verify campus coordinates",
+   "check": "Geocode the verified street address; record geocoder, query and match type"
+  },
+  "address-unverified": {
+   "priority": "P3",
+   "item": "Verify physical campus address",
+   "check": "NPPES organization record (282N taxonomy) and the hospital website"
+  },
+  "status-unknown": {
+   "priority": "P2",
+   "item": "Confirm active / closed status",
+   "check": "State hospital licensing roster; CMS Hospital General Information (current)"
+  },
+  "outside-state-boundary": {
+   "priority": "P1",
+   "item": "Coordinates fall outside the named state",
+   "check": "Re-geocode from the verified address"
+  },
+  "near-state-boundary": {
+   "priority": "P3",
+   "item": "Coordinates near the state boundary (generalised coastline?)",
+   "check": "Confirm against the verified address"
+  },
+  "near-county-boundary": {
+   "priority": "P3",
+   "item": "Coordinates within 1 mi of a county boundary — county assignment uncertain",
+   "check": "Confirm county from the verified address"
+  },
+  "nearer-to-another-town": {
+   "priority": "P2",
+   "item": "Coordinates sit much nearer another town than the one the address names",
+   "check": "Verified street address and town, then a documented geocoder"
+  },
+  "town-not-in-gazetteer": {
+   "priority": "P3",
+   "item": "Town not in the gazetteer, so the town check could not run",
+   "check": "Confirm the town from the verified address"
+  },
+  "far-from-named-city": {
+   "priority": "P1",
+   "item": "Coordinates more than 15 mi from the town the address names",
+   "check": "Verified street address, then a documented geocoder"
+  },
+  "location-conflict": {
+   "priority": "P2",
+   "item": "Two coordinate sources disagree by more than 1 mi",
+   "check": "Geocode the verified street address and keep the matching point"
+  },
+  "address-conflicting": {
+   "priority": "P2",
+   "item": "NPPES and the previous edition give different street addresses",
+   "check": "Hospital website contact page; state licensing roster"
+  }
  },
  "certification_definitions": {
   "CSC": "Comprehensive Stroke Center (Joint Commission; DNV; ACHC).",
@@ -7254,7 +7346,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Kenai Peninsula",
@@ -7894,7 +7986,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Ketchikan Gateway",
@@ -8233,7 +8325,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Kodiak Island",
@@ -9748,7 +9840,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Kenai Peninsula",
@@ -10105,7 +10197,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Sitka",
@@ -11275,7 +11367,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Valdez-Cordova",
@@ -13944,7 +14036,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Boundary",
@@ -14265,7 +14357,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Cassia",
@@ -14867,7 +14959,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Valley",
@@ -15478,7 +15570,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Idaho",
@@ -15785,7 +15877,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Teton",
@@ -16081,7 +16173,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Gem",
@@ -16668,7 +16760,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Idaho",
@@ -17875,7 +17967,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Jerome",
@@ -18479,7 +18571,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Blaine",
@@ -19378,7 +19470,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Valley",
@@ -20282,7 +20374,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Latah",
@@ -20585,7 +20677,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Elmore",
@@ -21825,7 +21917,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Clearwater",
@@ -22742,7 +22834,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Franklin",
@@ -23339,7 +23431,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Minidoka",
@@ -23940,7 +24032,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Bonner",
@@ -24526,7 +24618,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Benewah",
@@ -25151,7 +25243,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Washington",
@@ -25994,7 +26086,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Chouteau",
@@ -28487,7 +28579,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Liberty",
@@ -28791,7 +28883,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Teton",
@@ -29080,7 +29172,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "McCone",
@@ -29665,7 +29757,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Pondera",
@@ -29954,7 +30046,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Big Horn",
@@ -30533,7 +30625,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Glacier",
@@ -30826,7 +30918,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Powell",
@@ -31399,7 +31491,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Carter",
@@ -31688,7 +31780,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Madison",
@@ -32265,7 +32357,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Chouteau",
@@ -32554,7 +32646,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Valley",
@@ -33719,7 +33811,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Ravalli",
@@ -34290,7 +34382,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Blaine",
@@ -34580,7 +34672,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Wheatland",
@@ -35457,7 +35549,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Garfield",
@@ -36341,7 +36433,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Fergus",
@@ -36630,7 +36722,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lincoln",
@@ -37497,7 +37589,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Custer",
@@ -38970,7 +39062,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Sheridan",
@@ -39271,7 +39363,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lake",
@@ -39558,7 +39650,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Roosevelt",
@@ -40137,7 +40229,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lake",
@@ -40702,7 +40794,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Daniels",
@@ -41000,7 +41092,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Toole",
@@ -41293,7 +41385,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Madison",
@@ -41596,7 +41688,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Richland",
@@ -42167,7 +42259,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Prairie",
@@ -42460,7 +42552,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Broadwater",
@@ -42747,7 +42839,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Meagher",
@@ -43066,7 +43158,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Flathead",
@@ -43354,7 +43446,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Roosevelt",
@@ -43666,7 +43758,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Grays Harbor",
@@ -43974,7 +44066,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Skagit",
@@ -44620,7 +44712,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -44960,7 +45052,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -45294,7 +45386,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Whatcom",
@@ -45935,7 +46027,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -46549,7 +46641,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Chelan",
@@ -46874,7 +46966,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Stevens",
@@ -47182,7 +47274,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Asotin",
@@ -47495,7 +47587,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Whitman",
@@ -47817,7 +47909,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Stevens",
@@ -48136,7 +48228,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Island",
@@ -48763,7 +48855,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lincoln",
@@ -49075,7 +49167,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Columbia",
@@ -49418,7 +49510,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Snohomish",
@@ -49736,7 +49828,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Kittitas",
@@ -50044,7 +50136,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Grays Harbor",
@@ -50367,7 +50459,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "King",
@@ -50677,7 +50769,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Grant",
@@ -51057,7 +51149,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Snohomish",
@@ -51381,7 +51473,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -51687,7 +51779,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Clallam",
@@ -52028,7 +52120,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "San Juan",
@@ -52351,7 +52443,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Pierce",
@@ -52657,7 +52749,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Klickitat",
@@ -52967,7 +53059,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Grant",
@@ -53273,7 +53365,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Pacific",
@@ -53613,7 +53705,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -53932,7 +54024,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Benton",
@@ -54285,7 +54377,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -54902,7 +54994,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Chelan",
@@ -55817,7 +55909,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lewis",
@@ -56151,7 +56243,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Grant",
@@ -56469,7 +56561,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Skagit",
@@ -56779,7 +56871,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Pend Oreille",
@@ -57093,7 +57185,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lincoln",
@@ -57450,7 +57542,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Thurston",
@@ -57795,7 +57887,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Thurston",
@@ -58105,7 +58197,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Okanogan",
@@ -58411,7 +58503,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Adams",
@@ -58722,7 +58814,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Franklin",
@@ -59034,7 +59126,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Garfield",
@@ -59666,7 +59758,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Jefferson",
@@ -59989,7 +60081,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Benton",
@@ -60302,7 +60394,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Whitman",
@@ -60651,7 +60743,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Pierce",
@@ -60959,7 +61051,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Grant",
@@ -61294,7 +61386,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -61599,7 +61691,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Ferry",
@@ -61942,7 +62034,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Benton",
@@ -62278,7 +62370,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Adams",
@@ -64133,7 +64225,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -64823,7 +64915,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "King",
@@ -65497,7 +65589,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Skagit",
@@ -65807,7 +65899,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Mason",
@@ -66137,7 +66229,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Kitsap",
@@ -66445,7 +66537,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "King",
@@ -67101,7 +67193,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Spokane",
@@ -67439,7 +67531,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Spokane",
@@ -68683,7 +68775,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Yakima",
@@ -69011,7 +69103,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Pierce",
@@ -70607,7 +70699,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Okanogan",
@@ -70938,7 +71030,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Yakima",
@@ -71269,7 +71361,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Clark",
@@ -71946,7 +72038,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Walla Walla",
@@ -72543,7 +72635,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Chelan",
@@ -73116,7 +73208,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Klickitat",
@@ -73672,7 +73764,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Washington stroke Level II designation criteria)"
     },
     "located": true,
     "county": "Yakima",
@@ -73959,7 +74051,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lincoln",
@@ -74524,7 +74616,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Johnson",
@@ -75979,7 +76071,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Park",
@@ -77418,7 +77510,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Lincoln",
@@ -78290,7 +78382,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Big Horn",
@@ -78855,7 +78947,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Weston",
@@ -79414,7 +79506,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Carbon",
@@ -81379,7 +81471,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Goshen",
@@ -81938,7 +82030,7 @@
     "eligibility": {
      "value": "eligible",
      "code": "eligible",
-     "reason": "Active campus with a documented general 24/7 emergency department serving adults"
+     "reason": "Active campus with a general 24/7 emergency department serving adults (inferred from Critical Access Hospital conditions of participation (42 CFR 485.618))"
     },
     "located": true,
     "county": "Washakie",

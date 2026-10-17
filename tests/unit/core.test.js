@@ -267,6 +267,8 @@ test('URL state accepts links written by earlier versions', () => {
   assert.equal(old.state.cb, true);
   assert.equal(old.state.review.wGap, 55);
   assert.equal(old.state.review.wEvt, 30);
+  assert.equal(old.state.review.wAdv, 20, 'a weight the old link left out takes the old default');
+  assert.deepEqual(old.legacy, ['weights']);
   assert.equal(old.state.review.desertMi, 120);
   assert.equal(old.state.evtMin, 50, 'snapped to the 25-mi step');
   assert.equal(old.state.view_z, 7);
@@ -420,4 +422,13 @@ test('a shortlist row without any usable component has no score rather than a cr
   const res = C.accessReview([site], access, { wGap: 3, wEvt: 0, wAdv: 0, wHub: 0 }, {});
   assert.equal(res.shortlist.length, 1);
   assert.equal(res.shortlist[0].score, null);
+});
+
+test('one needs-verification reason round-trips in a link; malformed reasons are dropped', () => {
+  const ctx = { ids: new Set(), systems: new Set() };
+  const r = C.parseUrlState('ev=nv:location-conflict', ctx);
+  assert.deepEqual(r.state.evidence, ['nv:location-conflict']);
+  assert.match(C.serializeUrlState(r.state), /ev=nv%3Alocation-conflict|ev=nv:location-conflict/);
+  assert.deepEqual(C.parseUrlState('ev=nv:<b>', ctx).state.evidence, []);
+  assert.deepEqual(C.parseUrlState('wg=60', ctx).legacy, [], 'current links are not treated as legacy');
 });
