@@ -120,12 +120,12 @@
                   <button type="button" class="chip" data-tier="psc" aria-pressed="false"><span class="swatch sw-PSC" aria-hidden="true"></span>PSC <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="asr" aria-pressed="false"><span class="swatch sw-ASR" aria-hidden="true"></span>ASR <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="none" aria-pressed="false"><span class="swatch sw-NONE" aria-hidden="true"></span>None found <span class="count"></span></button>
-                  <button type="button" class="chip" data-tier="partial" aria-pressed="false"><span class="swatch sw-PARTIAL" aria-hidden="true"></span>Partly assessed <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="partial" aria-pressed="false"><span class="swatch sw-PARTIAL" aria-hidden="true"></span>Partly assessed, no tier yet <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="unassessed" aria-pressed="false"><span class="swatch sw-UNASSESSED" aria-hidden="true"></span>Not assessed <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="conflicting" aria-pressed="false"><span class="swatch sw-CONFLICT" aria-hidden="true"></span>Conflicting <span class="count"></span></button>
                 </div>
                 <label class="check"><input type="checkbox" id="f-evt"> Documented 24/7 thrombectomy (EVT) <span class="count" data-count="evt"></span></label>
-                <p class="hint">Counts are within the current scope and other filters. EVT overlaps the tiers: a PSC can document 24/7 EVT.</p>
+                <p class="hint">Counts are five-state records within the current scope and other filters; neighboring-state destinations are counted apart. EVT overlaps the tiers: a PSC can document 24/7 EVT.</p>
               </fieldset>
 
               <div class="field-grid">
@@ -161,12 +161,13 @@
                   <select id="f-evidence">
                     <option value="">Any</option>
                     <option value="assessed">Capability assessed</option>
+                    <option value="partial">Capability partly assessed</option>
                     <option value="unassessed">Not assessed</option>
                     <option value="conflicting">Conflicting evidence</option>
                     <option value="needs-verification">Needs verification</option>
                   </select>
                 </label>
-                <div class="field"><label for="f-evtmin">Min. straight-line miles to 24/7 EVT</label>
+                <div class="field"><label for="f-evtmin">Min. straight-line miles to documented 24/7 EVT</label>
                   <span class="range-row">
                     <input id="f-evtmin" type="range" min="0" max="250" step="25" value="0">
                     <output id="f-evtmin-out" for="f-evtmin">0</output>
@@ -182,7 +183,7 @@
               <option value="relevance">Best match</option>
               <option value="name">Name</option>
               <option value="tier">Capability tier</option>
-              <option value="evt">Miles to 24/7 EVT</option>
+              <option value="evt">Miles to documented 24/7 EVT</option>
               <option value="hub">Miles to my center</option>
               <option value="checked">Evidence date</option>
             </select>
@@ -236,7 +237,7 @@
             <h2 id="overlay-heading">Map layers</h2>
             <label class="check"><input type="checkbox" id="ov-lines" checked> Connections for the selected hospital</label>
             <label class="check"><input type="checkbox" id="ov-nearest"> Modeled nearest-center lines for listed hospitals <span class="hint-inline">(geometry only — not referral relationships)</span></label>
-            <label class="check"><input type="checkbox" id="ov-rings"> 50 / 100 mi straight-line rings around 24/7 EVT centers <span class="hint-inline">(not travel time)</span></label>
+            <label class="check"><input type="checkbox" id="ov-rings"> 50 / 100 mi straight-line rings around documented 24/7 EVT centers <span class="hint-inline">(not travel time)</span></label>
             <label class="check"><input type="checkbox" id="nb-toggle" checked> Include receiving centers in neighboring states <span class="count" id="nb-count"></span></label>
           </section>
 
@@ -244,6 +245,12 @@
             <h2 id="review-heading">Access review</h2>
             <p class="hint">A transparent public-data scenario: ranks eligible campuses by straight-line distance and documented capability, with unassessed campuses listed separately for verification.</p>
             <button type="button" class="btn btn-primary" id="open-review">Open access review</button>
+          </section>
+
+          <section class="card" aria-labelledby="matrix-heading">
+            <h2 id="matrix-heading">Distance table</h2>
+            <p class="hint">Each hospital in the current results with its nearest documented 24/7 EVT center and nearest CSC/TSC-level center (and my center, once chosen), in straight-line miles. Sortable by any column; exports to CSV.</p>
+            <button type="button" class="btn" id="open-matrix">Open distance table</button>
           </section>
 
           <details class="card details-card" id="transport-card">
@@ -432,6 +439,24 @@
     </div>
   </dialog>
 
+  <dialog class="dlg dlg-wide" id="dlg-matrix" aria-labelledby="matrix-title">
+    <div class="dlg-head">
+      <h2 id="matrix-title">Distance table — current results</h2>
+      <!-- The export sits in the header, so a short phone screen keeps its height for rows. -->
+      <div class="dlg-head-actions">
+        <button type="button" class="btn" id="matrix-export">Export CSV</button>
+        <button type="button" class="icon-btn" data-close aria-label="Close distance table">
+          <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="dlg-body">
+      <p class="note">Straight-line (great-circle) miles between recorded coordinates — not road distance, travel time, transfer pathways or referral relationships. “On site (0 mi)” means the campus is itself in that set; “—” means unknown, with the reason given; “≈” marks a distance where one end is placed at a town centre. Select a column heading to sort; unknown distances always sort last.</p>
+      <p id="matrix-status" class="visually-hidden" role="status"></p>
+      <section id="matrix-table" class="table-wrap matrix-wrap" tabindex="0" aria-label="Distances by hospital (scrollable)"></section>
+    </div>
+  </dialog>
+
   <dialog class="dlg dlg-wide" id="dlg-compare" aria-labelledby="cmp-title">
     <div class="dlg-head">
       <h2 id="cmp-title">Comparison</h2>
@@ -482,7 +507,7 @@
         <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </div>
-    <div class="dlg-body" id="shortcuts-body"></div>
+    <div class="dlg-body" id="shortcuts-body" tabindex="0" aria-label="Keyboard shortcuts"></div>
   </dialog>
 
   <div class="print-root" id="print-root" aria-hidden="true"></div>

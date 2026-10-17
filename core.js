@@ -552,7 +552,9 @@
   }
 
   function buildSearchFields(h) {
-    const names = [h.name, h.officialName, h.cmsName].concat(h.formerNames || []).concat(h.aliases || []);
+    // The CMS registry name often differs from the common name ("… Hospital
+    // Association", an old owner's name), and people search by what they see.
+    const names = [h.name, h.officialName, h.cms && h.cms.name].concat(h.formerNames || []).concat(h.aliases || []);
     const addr = h.address || {};
     // County comes from the curated address when present, else from the
     // coordinates against Census boundaries (derived by the build).
@@ -570,21 +572,45 @@
     };
   }
 
-  // "Lewis County" / "Kenai Peninsula Borough": the words before "county" (or
-  // "borough") must be this record's county, as a phrase. Without this the
-  // word "county" would match everything and "lewis" would match any street,
-  // name or town beginning "Lewis". Returns the remaining tokens, or null when
-  // the record is in a different county; undefined when no county phrase.
-  const COUNTY_WORDS = ['county', 'borough'];
+  // "Lewis County" / "Kenai Peninsula Borough" / "Bethel Census Area": the
+  // words before the county word must be this record's county, as a phrase.
+  // Without this the word "county" would match everything and "lewis" would
+  // match any street, name or town beginning "Lewis". Alaska's county
+  // equivalents carry their Census suffix (borough, census area, municipality,
+  // city and borough), which the stored county name leaves out, and their
+  // official names put some of them first ("Municipality of Anchorage", "City
+  // and Borough of Juneau"); there the words after "of" must be the county,
+  // the last one possibly still being typed. Returns the remaining tokens, or
+  // null when the record is in a different county; undefined when no county
+  // phrase.
+  const COUNTY_WORDS = [['city', 'and', 'borough'], ['census', 'area'], ['county'], ['borough'], ['municipality']];
+  const PREFIX_COUNTY_WORDS = ['city and borough', 'borough', 'municipality'];
+  function countyWordAt(tokens, i) {
+    const w = COUNTY_WORDS.find(cw => cw.every((t, k) => tokens[i + k] === t));
+    return w ? w.length : 0;
+  }
   function countyPhrase(fields, tokens) {
-    const ci = tokens.findIndex(t => COUNTY_WORDS.includes(t));
-    if (ci < 1) return undefined;
-    for (let j = Math.min(3, ci); j >= 1; j--) {
-      if (fields.county && fields.county === tokens.slice(ci - j, ci).join(' ')) {
-        return tokens.slice(0, ci - j).concat(tokens.slice(ci + 1));
+    let ci = -1;
+    let len = 0;
+    for (let i = 0; i < tokens.length && ci < 0; i++) { len = countyWordAt(tokens, i); if (len) ci = i; }
+    if (ci < 0) return undefined;
+    const county = fields.county || '';
+    for (let j = Math.min(4, ci); j >= 1; j--) {
+      if (county && county === tokens.slice(ci - j, ci).join(' ')) {
+        return tokens.slice(0, ci - j).concat(tokens.slice(ci + len));
       }
     }
-    return null;
+    const at = ci + len + 1;
+    const prefix = PREFIX_COUNTY_WORDS.includes(tokens.slice(ci, ci + len).join(' ')) && tokens[ci + len] === 'of' && at < tokens.length;
+    if (prefix) {
+      for (let j = Math.min(4, tokens.length - at); j >= 1; j--) {
+        const phrase = tokens.slice(at, at + j).join(' ');
+        if (county && (county === phrase || (at + j === tokens.length && county.startsWith(phrase)))) {
+          return tokens.slice(0, ci).concat(tokens.slice(at + j));
+        }
+      }
+    }
+    return ci < 1 && !prefix ? undefined : null;
   }
 
   function matchesQuery(fields, tokens) {
@@ -632,7 +658,8 @@
   const MODES = ['capability', 'evt-distance', 'adv-distance', 'hub-distance', 'evidence', 'eligibility'];
   const VIEWS = ['find', 'explore', 'compare', 'data'];
   const TIER_FILTERS = ['csc', 'tsc', 'psc', 'asr', 'none', 'partial', 'unassessed', 'conflicting'];
-  const EVIDENCE_FILTERS = ['assessed', 'unassessed', 'conflicting', 'needs-verification'];
+  // 'assessed' is strict (every critical claim assessed); 'partial' is its own option.
+  const EVIDENCE_FILTERS = ['assessed', 'partial', 'unassessed', 'conflicting', 'needs-verification'];
   const SCOPES = ['eligible', 'all'];
   const INCLUDES = ['excluded', 'unknown'];
   const STATES = ['WA', 'AK', 'ID', 'MT', 'WY'];
@@ -642,6 +669,8 @@
   const OVERLAYS = ['lines', 'nearest', 'rings'];
   const SORTS = ['relevance', 'name', 'tier', 'evt', 'hub', 'checked'];
   const PRESETS = ['telestroke', 'evt', 'state'];
+  // Explore summary table and access-review candidates: current results or everything.
+  const TABLE_SCOPES = ['results', 'all'];
   const MAX_COMPARE = 4;
 
   const REVIEW_KEYS = [['wGap', 'wg'], ['wEvt', 'we'], ['wAdv', 'wa'], ['wHub', 'wh'], ['capMi', 'cap'], ['desertMi', 'dm']];
@@ -654,6 +683,7 @@
       basis: null, cah: null, system: null, scope: 'eligible', include: ['unknown'], evtMin: 0,
       selected: null, hub: null, compare: [], overlays: ['lines'], neighbors: true, sort: 'relevance', preset: null,
       review: Object.assign({}, REVIEW_DEFAULTS), transport: Object.assign({}, TRANSPORT_DEFAULTS),
+      summaryScope: 'results', reviewScope: 'results', advLine: false,
       view_lat: null, view_lng: null, view_z: null, theme: null, cb: null, basemap: null,
     };
   }
@@ -697,8 +727,15 @@
     s.tiers = TIER_FILTERS.filter(t => tiers.has(t));
     if (p.get('evt') === '1') s.evt = true;
 
-    // ev also takes one needs-verification reason, as nv:<code>.
-    if (p.has('ev')) s.evidence = list(p.get('ev')).filter(x => EVIDENCE_FILTERS.includes(x) || /^nv:[a-z0-9-]{2,40}$/.test(x));
+    // ev also takes one needs-verification reason, as nv:<code>. The Evidence
+    // filter is a single choice: the first valid value is kept, the rest reported.
+    if (p.has('ev')) {
+      for (const x of list(p.get('ev'))) {
+        const ok = EVIDENCE_FILTERS.includes(x) || /^nv:[a-z0-9-]{2,40}$/.test(x);
+        if (ok && !s.evidence.length) s.evidence = [x];
+        else ignored.push('ev:' + x.slice(0, 40));
+      }
+    }
     if (p.has('basis')) { const v = p.get('basis'); if (v === 'national' || v === 'state') s.basis = v; else ignored.push('basis'); }
     if (p.has('cah')) { const v = p.get('cah'); if (CAH_FILTERS.includes(v)) s.cah = v; else ignored.push('cah'); }
     if (p.has('sys')) { const v = p.get('sys'); if (systems.has(v)) s.system = v; else ignored.push('sys'); }
@@ -707,6 +744,8 @@
     if (p.has('evtdist')) { const v = snap(parseInt(p.get('evtdist'), 10), 0, 250, 25); if (v != null) s.evtMin = v; else ignored.push('evtdist'); }
     if (p.has('sort')) { const v = p.get('sort'); if (SORTS.includes(v)) s.sort = v; else ignored.push('sort'); }
     if (p.has('preset')) { const v = p.get('preset'); if (PRESETS.includes(v)) s.preset = v; else ignored.push('preset'); }
+    if (p.has('ss')) { const v = p.get('ss'); if (TABLE_SCOPES.includes(v)) s.summaryScope = v; else ignored.push('ss'); }
+    if (p.has('rc')) { const v = p.get('rc'); if (TABLE_SCOPES.includes(v)) s.reviewScope = v; else ignored.push('rc'); }
 
     if (p.has('h')) { const v = id(p.get('h')); if (v) s.selected = v; else ignored.push('h'); }
     if (p.has('hub')) { const v = id(p.get('hub')); if (v) { s.hub = v; explicit.hub = true; } else ignored.push('hub'); }
@@ -723,6 +762,12 @@
       for (const x of raw) if (!OVERLAYS.includes(x)) ignored.push('ov:' + x);
     }
     if (p.has('nb')) s.neighbors = p.get('nb') !== '0';
+    // The CSC/TSC-level line belongs to a selection; without one it has nothing to draw.
+    if (p.has('adv')) {
+      const v = p.get('adv');
+      if ((v === '1' || v === '0') && s.selected) s.advLine = v === '1';
+      else ignored.push('adv');
+    }
 
     // Old scenario links used wc for the certification-gap weight and left out
     // weights at their own defaults (40 to EVT, 20 to CSC/TSC-level); fill those
@@ -784,7 +829,10 @@
     if (s.evtMin) p.set('evtdist', String(s.evtMin));
     if (s.sort && s.sort !== d.sort) p.set('sort', s.sort);
     if (s.preset) p.set('preset', s.preset);
+    if (s.summaryScope && s.summaryScope !== d.summaryScope) p.set('ss', s.summaryScope);
+    if (s.reviewScope && s.reviewScope !== d.reviewScope) p.set('rc', s.reviewScope);
     if (s.selected) p.set('h', s.selected);
+    if (s.selected && s.advLine) p.set('adv', '1');
     if (s.hub) p.set('hub', s.hub);
     if (s.compare && s.compare.length) p.set('cmp', s.compare.slice(0, MAX_COMPARE).join(','));
     const ov = (s.overlays || []).slice().sort().join(',');

@@ -4,7 +4,7 @@
 // an ineligible receiving center, filter counts, and the uncertainty channel.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { startServer, launch, openApp, search, pick } = require('./helpers');
+const { startServer, launch, openApp, search, pick, frames, endpointsClear } = require('./helpers');
 
 let srv; let browser;
 test.before(async () => { srv = await startServer(); browser = await launch(); });
@@ -20,28 +20,6 @@ async function spokeFor(page) {
   });
 }
 
-// Both ends of every selection line must sit inside the map and outside every
-// panel floating over it.
-async function endpointsClear(page) {
-  return page.evaluate(() => {
-    const S = window.__strokeAtlas;
-    const m = S.map.getContainer().getBoundingClientRect();
-    const sel = S.byId.get(S.ui.selected);
-    const a = S.access[sel.id];
-    const pts = [sel, a.evt247.dest, S.byId.get(S.ui.hub)].filter(Boolean);
-    const overlays = ['#detail', '#legend', '#map-status', '.map-jump']
-      .map(q => document.querySelector(q)).filter(n => n && !n.hidden && n.getBoundingClientRect().width)
-      .map(n => n.getBoundingClientRect());
-    return pts.map(h => {
-      const p = S.map.latLngToContainerPoint([h.location.lat, h.location.lng]);
-      const x = m.left + p.x; const y = m.top + p.y;
-      const inMap = x >= m.left && x <= m.right && y >= m.top && y <= m.bottom;
-      const covered = overlays.some(r => x >= r.left && x <= r.right && y >= r.top && y <= r.bottom);
-      return { name: h.name, inMap, covered };
-    });
-  });
-}
-
 for (const [w, h] of [[1024, 768], [820, 1180], [1440, 900]]) {
   test(`fit connections keeps sender, nearest EVT and my center clear of panels at ${w}×${h}`, async () => {
     const { page, context, errors } = await openApp(browser, srv.base, '?hub=500064', { viewport: { width: w, height: h }, reducedMotion: 'reduce' });
@@ -51,11 +29,12 @@ for (const [w, h] of [[1024, 768], [820, 1180], [1440, 900]]) {
     await page.click(`#results .result[data-id="${spoke.id}"]`);
     await page.waitForSelector('#detail:not([hidden])');
     await page.click('#detail-actions button:has-text("Fit connections")');
-    await page.waitForTimeout(300);
+    await frames(page);
     const pts = await endpointsClear(page);
+    assert.deepEqual(pts.map(p => p.what), ['sender', 'nearest EVT', 'my center']);
     for (const p of pts) {
-      assert.ok(p.inMap, `${p.name} inside the map at ${w}×${h}`);
-      assert.ok(!p.covered, `${p.name} not under a panel at ${w}×${h}`);
+      assert.ok(p.inMap, `${p.what} inside the map at ${w}×${h}`);
+      assert.deepEqual(p.under, [], `${p.what} not under a panel at ${w}×${h}`);
     }
     assert.deepEqual(errors, []);
     await context.close();
@@ -71,7 +50,7 @@ test('phone: "Show on map" puts the list and details away and offers a way back'
   if (!(await page.isVisible('#detail'))) await page.click(`#results .result[data-id="${spoke.id}"]`);
   await page.waitForSelector('#detail:not([hidden])');
   await page.click('#detail-actions button:has-text("Show on map")');
-  await page.waitForTimeout(300);
+  await page.waitForFunction(() => document.querySelector('#detail').hidden && !document.body.classList.contains('sheet-open'));
   const st = await page.evaluate(() => ({
     sheet: document.body.classList.contains('sheet-open'),
     inert: document.querySelector('#main').hasAttribute('inert'),
@@ -113,18 +92,46 @@ test('a link naming an ineligible receiving center is set aside and reported', a
   await context.close();
 });
 
-test('tier chip counts apply the 24/7 EVT filter, so they add up to the list', async () => {
-  const { page, context } = await openApp(browser, srv.base, '?scope=all');
+// Read from the rendered chips and rows, not from internal counters, so a tier
+// class missing from either side (as "partial" once was) shows up.
+test('every tier chip count is what pressing that chip lists; with the 24/7 EVT filter they still add up to the list', async () => {
+  const { page, context, errors } = await openApp(browser, srv.base, '?scope=all');
   if (!(await page.$eval('#filters', d => d.open))) await page.click('#filters > summary');
-  await page.check('#f-evt');
-  await page.waitForFunction(() => window.__strokeAtlas.ui.evt === true);
-  await page.waitForTimeout(100);
-  const r = await page.evaluate(() => {
-    const S = window.__strokeAtlas;
-    const sum = ['csc', 'tsc', 'psc', 'asr', 'none', 'unassessed', 'conflicting'].reduce((a, k) => a + (S.counts[k] || 0), 0);
-    return { sum, shown: S.results.filter(h => !h.outOfRegion).length };
-  });
-  assert.equal(r.sum, r.shown);
+  const chips = () => page.$$eval('#tier-chips .chip', cs => cs.map(c => ({ tier: c.dataset.tier, text: c.querySelector('.count').textContent })));
+  // Neighboring-state destinations are listed with "all records" but have no tier class.
+  const listed = () => page.$$eval('#results .result', rs => rs.filter(r => !r.querySelector('.b-OOR')).length);
+  const summaryN = async () => Number((await page.textContent('#result-summary strong')));
+  const all = await page.evaluate(() => window.StrokeCore.TIER_FILTERS);
+  assert.deepEqual((await chips()).map(c => c.tier), all, 'one chip per tier class, "partial" included');
+  for (const evt of [false, true]) {
+    if (evt) {
+      await page.check('#f-evt');
+      await page.waitForFunction(() => window.__strokeAtlas.ui.evt === true);
+      await frames(page);
+    }
+    const cs = await chips();
+    assert.ok(cs.every(c => /^\d+$/.test(c.text)), JSON.stringify(cs));
+    const sum = cs.reduce((a, c) => a + Number(c.text), 0);
+    const n = await listed();
+    assert.equal(sum, n, `chips add up to the listed records (EVT filter ${evt ? 'on' : 'off'})`);
+    assert.equal(await summaryN(), n, 'the summary counts the same records');
+    // The checkbox counts the five-state records it lists, as the chips and the
+    // summary do; neighboring-state 24/7 EVT destinations listed beside them are not counted.
+    if (evt) {
+      assert.equal(await page.textContent('[data-count="evt"]'), `(${n})`);
+      assert.ok(await page.$$eval('#results .result', rs => rs.length) > n, 'neighboring-state destinations are listed too');
+    }
+    for (const c of cs) {
+      await page.click(`#tier-chips .chip[data-tier="${c.tier}"]`);
+      await frames(page);
+      assert.equal(await page.getAttribute(`#tier-chips .chip[data-tier="${c.tier}"]`, 'aria-pressed'), 'true');
+      assert.equal(await listed(), Number(c.text), `${c.tier}: pressing the chip lists its count`);
+      assert.equal(await page.textContent(`#tier-chips .chip[data-tier="${c.tier}"] .count`), c.text, `${c.tier}: a chip's own count ignores its own filter`);
+      await page.click(`#tier-chips .chip[data-tier="${c.tier}"]`);
+      await frames(page);
+    }
+  }
+  assert.deepEqual(errors, []);
   await context.close();
 });
 

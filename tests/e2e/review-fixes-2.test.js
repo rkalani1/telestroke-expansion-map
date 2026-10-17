@@ -5,7 +5,7 @@
 // footer and the disclaimer on phones.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { startServer, launch, openApp, readDownload, parseCsv } = require('./helpers');
+const { startServer, launch, openApp, readDownload, parseCsv, frames } = require('./helpers');
 
 let srv; let browser;
 test.before(async () => { srv = await startServer(); browser = await launch(); });
@@ -79,12 +79,12 @@ test('access review: transfer column is shown, exported and unscored; all-zero w
   await page.click('#open-review');
   await page.waitForSelector('#dlg-review[open]');
   const head = await page.$$eval('#rp-ranked thead th', ns => ns.map(n => n.textContent));
-  assert.ok(head.includes('Transfer scenario to nearest 24/7 EVT (not scored)'));
+  assert.ok(head.includes('Transfer scenario to nearest documented 24/7 EVT (not scored)'));
   const cell = await page.$eval('#rp-ranked tbody tr:not([hidden])', tr => tr.textContent);
   assert.match(cell, /airport access not assessed/);
   let { buffer } = await readDownload(page, () => page.click('#review-export'));
   let rows = parseCsv(buffer.toString('utf8'));
-  const col = rows[0].indexOf('transfer_scenario_to_nearest_24x7_evt_not_scored');
+  const col = rows[0].indexOf('transfer_scenario_to_nearest_documented_24x7_evt_not_scored');
   assert.ok(col > 0);
   assert.ok(rows.slice(1).every(r => r[col]), 'every row has a transfer description');
   await page.keyboard.press('Escape');
@@ -143,7 +143,7 @@ test('marker outlines keep 3:1 against the basemap background in both themes', a
 
 test('the footer wraps instead of clipping, and the layout sits above it', async () => {
   const { page, context } = await openApp(browser, srv.base, '', { viewport: { width: 768, height: 1024 } });
-  await page.waitForTimeout(100);
+  await frames(page);
   const r = await page.evaluate(() => {
     const f = document.querySelector('#provenance');
     const app = document.querySelector('#app').getBoundingClientRect();

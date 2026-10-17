@@ -432,3 +432,128 @@ test('one needs-verification reason round-trips in a link; malformed reasons are
   assert.deepEqual(C.parseUrlState('ev=nv:<b>', ctx).state.evidence, []);
   assert.deepEqual(C.parseUrlState('wg=60', ctx).legacy, [], 'current links are not treated as legacy');
 });
+
+test('search finds the CMS registry name, which often differs from the common name', () => {
+  const h = { name: 'Arbor Health Morton Hospital', cms: { name: 'Lewis County Public Hospital District No 1' }, address: { city: 'Morton' }, state: 'WA', derived: { county: 'Lewis' } };
+  const f = C.buildSearchFields(h);
+  assert.ok(C.matchesQuery(f, C.tokenize('public hospital district')));
+  assert.ok(f.variants.includes(C.normalizeSearch(h.cms.name)), 'the CMS name is a name variant, so it ranks as a name');
+  assert.equal(C.searchRank(f, 'Lewis County Public Hospital District No 1', C.tokenize('Lewis County Public Hospital District No 1')), 0);
+  assert.doesNotThrow(() => C.buildSearchFields({ name: 'No CMS record' }));
+});
+
+test('Alaska county equivalents: census area, borough, municipality, city and borough', () => {
+  const ak = (county) => C.buildSearchFields({ name: 'Some Hospital', address: { city: 'X' }, state: 'AK', derived: { county } });
+  const bethel = ak('Bethel');
+  const juneau = ak('Juneau');
+  const anchorage = ak('Anchorage');
+  const kenai = ak('Kenai Peninsula');
+  assert.ok(C.matchesQuery(bethel, C.tokenize('Bethel Census Area')));
+  assert.ok(!C.matchesQuery(juneau, C.tokenize('Bethel Census Area')), 'another census area does not match');
+  assert.ok(C.matchesQuery(juneau, C.tokenize('Juneau City and Borough')));
+  assert.ok(C.matchesQuery(juneau, C.tokenize('Juneau City & Borough')), '"&" reads as "and"');
+  assert.ok(C.matchesQuery(anchorage, C.tokenize('Anchorage Municipality')));
+  assert.ok(!C.matchesQuery(kenai, C.tokenize('Anchorage Municipality')));
+  assert.ok(C.matchesQuery(kenai, C.tokenize('kenai peninsula borough')));
+  assert.equal(C.searchRank(bethel, 'Bethel Census Area', C.tokenize('Bethel Census Area')), 3, 'a county asked for by name outranks an incidental word match');
+  // Remaining words still have to match.
+  assert.ok(!C.matchesQuery(bethel, C.tokenize('Bethel Census Area clinic')));
+  assert.ok(C.matchesQuery(bethel, C.tokenize('Bethel Census Area hospital')));
+});
+
+test('Alaska prefix forms: "Municipality of Anchorage", "City and Borough of Juneau", "Borough of …"', () => {
+  const ak = (county, where) => C.buildSearchFields({ name: 'Some Hospital', address: Object.assign({ city: 'X' }, where === 'address' ? { county } : {}), state: 'AK',
+    derived: { county: where === 'address' ? null : county } });
+  const anchorage = ak('Anchorage');
+  const juneau = ak('Juneau');
+  const matsu = ak('Matanuska-Susitna');
+  const sitka = ak('Sitka', 'address');
+  const q = (f, s) => C.matchesQuery(f, C.tokenize(s));
+  // Each prefix form matches its own county exactly as the suffix form does …
+  for (const [f, prefix, suffix] of [[anchorage, 'Municipality of Anchorage', 'Anchorage Municipality'], [juneau, 'City and Borough of Juneau', 'Juneau City and Borough'],
+    [matsu, 'Borough of Matanuska-Susitna', 'Matanuska-Susitna Borough'], [sitka, 'City & Borough of Sitka', 'Sitka City and Borough']]) {
+    assert.equal(q(f, prefix), true, prefix);
+    assert.equal(q(f, prefix), q(f, suffix), `${prefix} matches like ${suffix}`);
+    assert.equal(C.searchRank(f, prefix, C.tokenize(prefix)), C.searchRank(f, suffix, C.tokenize(suffix)), `${prefix} ranks like ${suffix}`);
+  }
+  // … and no other county, so the county word and "of" never match everything.
+  assert.equal(q(juneau, 'Municipality of Anchorage'), false);
+  assert.equal(q(anchorage, 'City and Borough of Juneau'), false);
+  assert.equal(q(sitka, 'Borough of Juneau'), false);
+  // The county named in the address is used before the derived one.
+  assert.equal(q(sitka, 'City and Borough of Sitka'), true);
+  // Other words still have to match; the last word of the county may still be typed.
+  assert.equal(q(anchorage, 'Some Municipality of Anchorage'), true);
+  assert.equal(q(anchorage, 'Municipality of Anchorage clinic'), false);
+  assert.equal(q(anchorage, 'Municipality of Anch'), true, 'a county name still being typed');
+  assert.equal(q(juneau, 'Municipality of Anch'), false);
+  // "of" with nothing after it is not a county phrase yet.
+  assert.equal(q(anchorage, 'Municipality of'), false);
+  assert.equal(q(C.buildSearchFields({ name: 'Borough of Somewhere Hospital', address: { city: 'X' }, derived: { county: 'Juneau' } }), 'borough of'), true);
+});
+
+test('the Evidence filter is one choice: "assessed" and "partial" are separate, extra values are reported', () => {
+  const ctx = { ids: new Set(), systems: new Set() };
+  assert.ok(C.EVIDENCE_FILTERS.includes('partial'));
+  assert.deepEqual(C.parseUrlState('ev=partial', ctx).state.evidence, ['partial']);
+  const two = C.parseUrlState('ev=assessed,partial', ctx);
+  assert.deepEqual(two.state.evidence, ['assessed'], 'the first valid value is kept');
+  assert.ok(two.ignored.includes('ev:partial'), 'the rest is reported');
+  const junk = C.parseUrlState('ev=bogus,unassessed', ctx);
+  assert.deepEqual(junk.state.evidence, ['unassessed']);
+  assert.ok(junk.ignored.includes('ev:bogus'));
+  assert.deepEqual(C.parseUrlState('ev=nv:<b>', ctx).ignored, ['ev:nv:<b>']);
+});
+
+test('summary scope, review candidates scope and the CSC/TSC line round-trip and are validated', () => {
+  const ctx = { ids: new Set(['500064']), systems: new Set() };
+  const s = C.defaultUiState();
+  assert.equal(C.serializeUrlState(s), '', 'defaults stay out of links');
+  Object.assign(s, { summaryScope: 'all', reviewScope: 'all', selected: '500064', advLine: true });
+  const q = C.serializeUrlState(s);
+  assert.match(q, /ss=all/);
+  assert.match(q, /rc=all/);
+  assert.match(q, /adv=1/);
+  const back = C.parseUrlState(q, ctx);
+  assert.deepEqual(back.ignored, []);
+  assert.equal(back.state.summaryScope, 'all');
+  assert.equal(back.state.reviewScope, 'all');
+  assert.equal(back.state.advLine, true);
+  // The line belongs to a selection: without one it is not written, and a link carrying it alone is reported.
+  assert.doesNotMatch(C.serializeUrlState(Object.assign(C.defaultUiState(), { advLine: true })), /adv=/);
+  const bad = C.parseUrlState('ss=everything&rc=nope&adv=1', ctx);
+  assert.equal(bad.state.summaryScope, 'results');
+  assert.equal(bad.state.reviewScope, 'results');
+  assert.equal(bad.state.advLine, false);
+  assert.ok(['ss', 'rc', 'adv'].every(k => bad.ignored.includes(k)), bad.ignored.join(','));
+  assert.ok(C.parseUrlState('h=500064&adv=yes', ctx).ignored.includes('adv'));
+});
+
+test('access: a closed center is passed over for the next nearest; an unlocated campus or center gives no distance, never 0', () => {
+  const evt = { evt247: { state: 'affirmative' }, derived: { tier: 'CSC', capability: 'assessed', eligibility: { value: 'eligible' } } };
+  const near = rec('near', Object.assign(at(46.0, -120.0), evt));
+  const far = rec('far', Object.assign(at(47.6, -122.3), evt));
+  const spoke = rec('spoke', at(46.1, -120.1));
+  const open = C.destinationSet([near, far, spoke], 'evt247');
+  assert.equal(C.computeAccess(spoke, { evt247: open, advanced: [] }, null).evt247.dest.id, 'near');
+  // The same campus, closed (the build marks it excluded): the next center is named instead.
+  const shut = Object.assign({}, near, { status: { value: 'closed' }, derived: Object.assign({}, near.derived, { eligibility: { value: 'excluded', code: 'not-active' } }) });
+  assert.equal(C.canBeDestination(shut), false);
+  const sets = { evt247: C.destinationSet([shut, far, spoke], 'evt247'), advanced: C.destinationSet([shut, far, spoke], 'advanced') };
+  const a = C.computeAccess(spoke, sets, far);
+  assert.equal(a.evt247.dest.id, 'far');
+  assert.equal(a.advanced.dest.id, 'far');
+  assert.equal(C.computeAccess(shut, sets, null).evt247.status, 'ok', 'a closed center is not "on site" for itself');
+  // Unlocated: every distance is unknown (null), with a status that says why.
+  const lost = rec('lost', { location: null });
+  const b = C.computeAccess(lost, sets, far);
+  for (const k of ['evt247', 'advanced', 'hub']) {
+    assert.equal(b[k].status, 'no-location', k);
+    assert.equal(b[k].miles, null, k);
+    assert.equal(C.distanceBin(b[k]), 'unknown', k);
+  }
+  const toLostHub = C.computeAccess(spoke, sets, rec('nowhere', { location: null }));
+  assert.equal(toLostHub.hub.status, 'no-location');
+  assert.equal(toLostHub.hub.miles, null);
+  assert.equal(C.legScenario('ground', lost, far, b.evt247.miles).minutes, null);
+});

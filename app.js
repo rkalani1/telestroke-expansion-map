@@ -116,10 +116,9 @@ const S = {
   ringLayer: null,
   offsets: new Map(),
   detailOpener: null,
-  showAdvLine: false,
   tileStats: { ok: 0, err: 0, warned: false },
   reviewTab: 'ranked',
-  reviewScope: 'results',
+  matrixSort: { key: 'name', dir: 1 },
   storageOk: true,
   booted: false,
 };
@@ -155,6 +154,20 @@ function appendAll(node, children) {
   return node;
 }
 function clear(node) { while (node && node.firstChild) node.removeChild(node.firstChild); }
+// Focus the first of these that can take it: present, rendered, enabled and
+// not under an inert panel. Used where the control that had focus goes away
+// with a re-render, so focus never drops to <body>.
+function focusFirst(...targets) {
+  for (const t of targets) {
+    const n = typeof t === 'string' ? $(t) : t;
+    if (n && n.isConnected && !n.disabled && n.getClientRects().length && !n.closest('[inert]')) { n.focus(); return n; }
+  }
+  return null;
+}
+function focusLost() {
+  const a = document.activeElement;
+  return !a || a === document.body || !a.isConnected || !a.getClientRects().length || !!a.closest('[inert]');
+}
 function svgEl(markup) {
   const t = document.createElement('template');
   t.innerHTML = markup; // internal constant markup only (see glyphSvg)
@@ -166,7 +179,21 @@ function toast(message, kind, ms) {
   if (!box) return;
   const n = el('div', { class: 'toast' + (kind ? ' ' + kind : ''), role: kind === 'error' ? 'alert' : 'status', text: message });
   box.appendChild(n);
-  setTimeout(() => n.remove(), ms || 3200);
+  placeToasts();
+  setTimeout(() => { n.remove(); placeToasts(); }, ms || 3200);
+}
+// A toast never sits over the control that has focus (on a phone the bottom
+// stack would cover the status bar's links): while it would, the stack moves
+// to the top of the screen. Checked again whenever focus moves.
+function placeToasts() {
+  const box = $('#toasts');
+  if (!box) return;
+  box.classList.remove('toasts-top');
+  const a = document.activeElement;
+  if (!box.childElementCount || !a || a === document.body) return;
+  const r = a.getBoundingClientRect();
+  const over = (t) => { const b = t.getBoundingClientRect(); return b.left < r.right && r.left < b.right && b.top < r.bottom && r.top < b.bottom; };
+  if (Array.from(box.children).some(over)) box.classList.add('toasts-top');
 }
 
 // ------------------------------------------------------------------
@@ -246,6 +273,11 @@ const cityOf = h => (h && h.address && h.address.city) || null;
 function placeLine(h) {
   return [cityOf(h), h.state].filter(Boolean).join(', ');
 }
+// The reason a capability claim does not apply, from the record's own status.
+function closedNote(h) {
+  const v = h.status && h.status.value;
+  return v === 'closed' ? ' (closed campus)' : v === 'merged' ? ' (merged campus)' : '';
+}
 function nationalLabel(h) {
   const n = h.national || {};
   switch (stOf(n)) {
@@ -253,7 +285,7 @@ function nationalLabel(h) {
     case 'negative': return 'Verified: no national stroke certification' + (n.note ? ` (${n.note})` : '');
     case 'no-record-found': return 'No national stroke certification found in reviewed sources';
     case 'conflicting': return 'Conflicting evidence';
-    case 'not-applicable': return 'Not applicable';
+    case 'not-applicable': return 'Not applicable' + closedNote(h);
     default: return 'Not assessed';
   }
 }
@@ -265,6 +297,9 @@ function stateLabel(h) {
     return s.status && s.status !== 'designated' ? `${lvl} (${s.status})` : lvl;
   }
   if (st === 'not-applicable') return s.note || 'No state stroke-designation program identified for this state';
+  // Wyoming designation requires national accreditation and has no public
+  // roster: its no-record-found is inferred from the national claim, not read off a roster.
+  if (st === 'no-record-found' && s.method === 'regulatory-inference') return `None found (inferred from the ${s.system || 'state'} rule; see the note — no roster was available)`;
   if (st === 'no-record-found') return s.system ? `Not found on the ${s.system} roster as reviewed` : `No state stroke-designation program found${s.authority ? ' (' + s.authority + ')' : ''}`;
   if (st === 'negative') return `Not designated (${s.system || 'state'} roster, as reviewed)`;
   if (st === 'conflicting') return 'Conflicting evidence';
@@ -279,6 +314,7 @@ function evtLabel(h) {
   if (e === 'conflicting' || e24 === 'conflicting') return 'Conflicting evidence';
   if (e === 'no-record-found' || e24 === 'no-record-found') return 'No thrombectomy program found in reviewed sources';
   if (e === 'negative') return 'Verified: no thrombectomy program';
+  if (e === 'not-applicable' || e24 === 'not-applicable') return 'Not applicable' + closedNote(h);
   return 'Not assessed';
 }
 // Evidence age is the OLDEST critical claim's check date (national
@@ -399,46 +435,62 @@ function tierKey(h) {
   if (isOOR(h)) return null;
   return (h.derived && h.derived.tierClass) || (tierOf(h) ? tierOf(h).toLowerCase() : 'unassessed');
 }
-const TIER_CLASS_TEXT = { none: 'None found in reviewed sources', partial: 'Partly assessed — no tier found so far', unassessed: 'Not assessed', conflicting: 'Conflicting evidence' };
+const TIER_CLASS_TEXT = { none: 'None found in reviewed sources', partial: 'Partly assessed, no tier yet', unassessed: 'Not assessed', conflicting: 'Conflicting evidence' };
 function tierText(h, short) {
   const t = tierOf(h);
   if (t) return `${t} (${h.derived.tierBasis === 'national' ? 'national' : short ? 'state' : 'state crosswalk'})`;
   return TIER_CLASS_TEXT[tierKey(h)] || 'Not assessed';
 }
 
-function passesOther(h, ui, tokens, exceptTier) {
+// One test per select filter, shared by the filter itself and by the counts
+// shown on its options.
+function matchState(h, v) { return v === 'ALL' || (h.state === v && !isOOR(h)); }
+function matchSystem(h, v) {
+  if (!v) return true;
+  if (v === '__independent') return !!(h.system && h.system.state === 'independent');
+  if (v === '__unknown') return !!(h.system && h.system.state === 'unknown');
+  return !!(h.system && h.system.value === v);
+}
+function matchBasis(h, v) {
+  if (v === 'national') return stOf(h.national) === 'affirmative';
+  if (v === 'state') return !!(h.derived && h.derived.tierBasis === 'state-crosswalk');
+  return true;
+}
+function matchCah(h, v) {
+  const s = stOf(h.cah);
+  if (v === 'yes') return s === 'affirmative';
+  if (v === 'no') return s === 'negative';
+  if (v === 'unknown') return s !== 'affirmative' && s !== 'negative';
+  return true;
+}
+// "assessed" is strict: every critical capability claim assessed. Partly
+// assessed records have their own option.
+function matchEvidence(h, f) {
+  if (!f) return true;
+  const cap = capOf(h);
+  if (f === 'assessed' || f === 'partial' || f === 'unassessed' || f === 'conflicting') return cap === f;
+  if (f === 'needs-verification') return openItems(h).length > 0;
+  if (f.startsWith('nv:')) return ((h.derived && h.derived.needsVerification) || []).includes(f.slice(3));
+  return false;
+}
+const EVIDENCE_LABELS = { assessed: 'capability assessed', partial: 'capability partly assessed', unassessed: 'capability not assessed', conflicting: 'conflicting evidence', 'needs-verification': 'open items to verify' };
+
+// `except` leaves one control's own filter out, so the counts on that control
+// show what each of its choices would give with every other filter applied:
+// 'tier' (the chips and the EVT checkbox), 'state', 'system', 'basis', 'cah', 'evidence'.
+function passesOther(h, ui, tokens, except) {
   if (tokens.length && !C.matchesQuery(h.fields, tokens)) return false;
-  if (ui.state !== 'ALL' && h.state !== ui.state && !isOOR(h)) return false;
-  if (ui.state !== 'ALL' && isOOR(h)) return false;
-  if (ui.system) {
-    if (ui.system === '__independent') { if (!(h.system && h.system.state === 'independent')) return false; }
-    else if (ui.system === '__unknown') { if (!(h.system && h.system.state === 'unknown')) return false; }
-    else if (!(h.system && h.system.value === ui.system)) return false;
-  }
-  if (ui.basis === 'national' && !(stOf(h.national) === 'affirmative')) return false;
-  if (ui.basis === 'state' && !(h.derived && h.derived.tierBasis === 'state-crosswalk')) return false;
-  if (ui.cah) {
-    const s = stOf(h.cah);
-    if (ui.cah === 'yes' && s !== 'affirmative') return false;
-    if (ui.cah === 'no' && s !== 'negative') return false;
-    if (ui.cah === 'unknown' && (s === 'affirmative' || s === 'negative')) return false;
-  }
-  if (ui.evidence.length) {
-    const cap = capOf(h);
-    const nv = (h.derived && h.derived.needsVerification) || [];
-    const ok = ui.evidence.some(f => (f === 'assessed' && (cap === 'assessed' || cap === 'partial'))
-      || (f === 'unassessed' && cap === 'unassessed')
-      || (f === 'conflicting' && cap === 'conflicting')
-      || (f === 'needs-verification' && openItems(h).length > 0)
-      || (f.startsWith('nv:') && nv.includes(f.slice(3))));
-    if (!ok) return false;
-  }
+  if (except !== 'state' && !matchState(h, ui.state)) return false;
+  if (except !== 'system' && !matchSystem(h, ui.system)) return false;
+  if (except !== 'basis' && !matchBasis(h, ui.basis)) return false;
+  if (except !== 'cah' && !matchCah(h, ui.cah)) return false;
+  if (except !== 'evidence' && ui.evidence.length && !ui.evidence.some(f => matchEvidence(h, f))) return false;
   if (ui.evtMin > 0) {
     const a = S.access[h.id];
     const mi = a && a.evt247.miles;
     if (!C.isNum(mi) || mi < ui.evtMin) return false;
   }
-  if (!exceptTier) {
+  if (except !== 'tier') {
     if (ui.tiers.length && !ui.tiers.includes(tierKey(h))) return false;
     if (ui.evt && !C.hasDocumented247Evt(h)) return false;
   }
@@ -449,34 +501,48 @@ function passesOther(h, ui, tokens, exceptTier) {
   return true;
 }
 
+// The select filters whose options carry counts: key in passesOther, element,
+// and the test an option value applies.
+const SELECT_FILTERS = [['state', '#f-state', matchState], ['system', '#f-system', matchSystem], ['basis', '#f-basis', matchBasis],
+  ['cah', '#f-cah', matchCah], ['evidence', '#f-evidence', matchEvidence]];
+
 function computeResults() {
   const ui = S.ui;
   const tokens = C.tokenize(ui.q);
   const hasQuery = tokens.length > 0;
   const results = [];
   const counts = { csc: 0, tsc: 0, psc: 0, asr: 0, none: 0, partial: 0, unassessed: 0, conflicting: 0, evt: 0, 'inc-unknown': 0, 'inc-excluded': 0 };
+  // Per select: the records passing every filter but that select's own; the
+  // option counts are taken from these in renderCounts.
+  const selectPools = Object.fromEntries(SELECT_FILTERS.map(([key]) => [key, []]));
   for (const h of S.all) {
     const scoped = inScope(h, ui, hasQuery);
     if (!isOOR(h) && !hasQuery && ui.scope === 'eligible') {
       // Counts for the include toggles: what each would add.
-      if (passesOther(h, ui, tokens, false)) {
+      if (passesOther(h, ui, tokens)) {
         if (eligOf(h) === 'unknown') counts['inc-unknown']++;
         if (eligOf(h) === 'excluded') counts['inc-excluded']++;
       }
     }
     if (!scoped) continue;
-    if (passesOther(h, ui, tokens, true)) {
+    if (passesOther(h, ui, tokens)) results.push(h);
+    // Every count is of five-state records, as the summary line is:
+    // neighboring-state destinations listed with a search or "all records"
+    // are counted apart there, never in a chip, checkbox or option.
+    if (isOOR(h)) continue;
+    if (passesOther(h, ui, tokens, 'tier')) {
       // Each control's count applies every other filter but its own: tier
       // chips respect the EVT checkbox; the EVT count respects the chips.
       const k = tierKey(h);
       if (k && counts[k] != null && (!ui.evt || C.hasDocumented247Evt(h))) counts[k]++;
       if (C.hasDocumented247Evt(h) && (!ui.tiers.length || ui.tiers.includes(k))) counts.evt++;
     }
-    if (passesOther(h, ui, tokens, false)) results.push(h);
+    for (const [key] of SELECT_FILTERS) if (passesOther(h, ui, tokens, key)) selectPools[key].push(h);
   }
   sortResults(results, tokens);
   S.results = results;
   S.counts = counts;
+  S.selectPools = selectPools;
 }
 
 function sortResults(rows, tokens) {
@@ -512,13 +578,13 @@ function activeFilterParts() {
   const parts = [];
   if (ui.preset) parts.push('preset: ' + presetTitle(ui.preset));
   if (ui.state !== 'ALL') parts.push(STATE_NAMES[ui.state]);
-  if (ui.tiers.length) parts.push(ui.tiers.map(t => ({ none: 'none found', partial: 'partly assessed', unassessed: 'not assessed', conflicting: 'conflicting (no tier)' }[t] || t.toUpperCase())).join('/'));
-  if (ui.evt) parts.push('24/7 EVT');
+  if (ui.tiers.length) parts.push(ui.tiers.map(t => ({ none: 'none found', partial: 'partly assessed, no tier yet', unassessed: 'not assessed', conflicting: 'conflicting (no tier)' }[t] || t.toUpperCase())).join('/'));
+  if (ui.evt) parts.push('documented 24/7 EVT');
   if (ui.basis) parts.push(ui.basis === 'national' ? 'national certification' : 'state designation only');
   if (ui.cah) parts.push('CAH: ' + ui.cah);
   if (ui.system) parts.push(ui.system === '__independent' ? 'independent' : ui.system === '__unknown' ? 'system unknown' : ui.system);
-  if (ui.evidence.length) parts.push(ui.evidence.map(f => f.startsWith('nv:') ? 'needs verification: ' + (NV_LABELS[f.slice(3)] || f.slice(3)).toLowerCase() : f).join('/'));
-  if (ui.evtMin) parts.push(`≥${ui.evtMin} mi to 24/7 EVT`);
+  if (ui.evidence.length) parts.push(ui.evidence.map(f => f.startsWith('nv:') ? 'needs verification: ' + (NV_LABELS[f.slice(3)] || f.slice(3)).toLowerCase() : EVIDENCE_LABELS[f] || f).join('/'));
+  if (ui.evtMin) parts.push(`≥${ui.evtMin} mi to documented 24/7 EVT`);
   return parts;
 }
 function scopeLabel() {
@@ -543,6 +609,9 @@ function filtersActive() {
 let renderQueued = false;
 function update(opts) {
   if (opts && opts.access) recomputeAccess();
+  // A change of the destination sets (neighboring-state centers on or off) can
+  // leave the selection without a separate CSC/TSC-level line; the setting goes with it.
+  if (S.ui.advLine && !hasAdvLine(S.byId.get(S.ui.selected))) S.ui.advLine = false;
   computeResults();
   if (renderQueued) return;
   renderQueued = true;
@@ -577,13 +646,18 @@ function rowBadges(h) {
     const lvl = `${STATE_SYS_ABBR[sd.system] || sd.system} L${sd.level}` + (sd.status && sd.status !== 'designated' ? ` (${sd.status})` : '');
     out.push(badge(stOf(n) === 'affirmative' ? 'b-STATE' : 'b-' + (tierOf(h) || 'STATE') + ' b-STATE', lvl, stateLabel(h) + ' — state designation, not national accreditation'));
   }
-  if (C.hasDocumented247Evt(h)) out.push(badge('b-EVT', '24/7 EVT'));
+  if (C.hasDocumented247Evt(h)) out.push(badge('b-EVT', 'Documented 24/7 EVT'));
   const cap = capOf(h);
   if (!isOOR(h)) {
     if (cap === 'unassessed') out.push(badge('b-UNASSESSED', 'Capability not assessed'));
     else if (cap === 'conflicting') out.push(badge('b-CONFLICT', 'Conflicting evidence'));
-    else if (!tierOf(h) && tierKey(h) === 'none') out.push(badge('b-MUTED', 'No certification found'));
-    else if (cap === 'partial') out.push(badge('b-UNASSESSED', 'Partly assessed'));
+    else {
+      if (!tierOf(h) && tierKey(h) === 'none') out.push(badge('b-MUTED', 'No certification found'));
+      // Also beside a tier or "none found": some capability claims are still
+      // unknown. Named as the Evidence filter names this (wider) set; the tier
+      // chip "Partly assessed, no tier yet" is the part of it without a tier.
+      if (cap === 'partial') out.push(badge('b-PARTIAL', 'Capability partly assessed'));
+    }
   }
   const e = h.derived && h.derived.eligibility;
   const status = h.status && h.status.value;
@@ -600,21 +674,22 @@ function rowDistance(h) {
   if (S.ui.hub && a.hub && S.ui.sort === 'hub') {
     return a.hub.status === 'on-site' ? 'my center' : C.isNum(a.hub.miles) ? C.formatMiles(a.hub.miles) + ' mi to my center' : '';
   }
-  if (a.evt247.status === 'on-site') return '24/7 EVT on site';
-  if (C.isNum(a.evt247.miles)) return C.formatMiles(a.evt247.miles) + ' mi to 24/7 EVT';
+  if (a.evt247.status === 'on-site') return 'documented 24/7 EVT on site';
+  if (C.isNum(a.evt247.miles)) return C.formatMiles(a.evt247.miles) + ' mi to documented 24/7 EVT';
   return '';
 }
 
 function renderResults() {
   const list = $('#results');
   if (!list) return;
-  const focusedId = document.activeElement && document.activeElement.closest && document.activeElement.closest('#results')
-    ? document.activeElement.dataset.id : null;
+  const inList = !!(document.activeElement && document.activeElement.closest && document.activeElement.closest('#results'));
+  const focusedId = inList ? document.activeElement.dataset.id : null;
   clear(list);
   if (!S.results.length) {
+    if (inList) requestAnimationFrame(() => { if (document.activeElement === document.body) $('#search').focus({ preventScroll: true }); });
     const li = el('li', { class: 'empty' }, [
       el('p', { text: S.ui.q ? `No hospitals match “${S.ui.q}”${filtersActive() ? ' with the current filters' : ''}.` : 'No hospitals match the current filters.' }),
-      filtersActive() ? el('button', { type: 'button', class: 'btn', text: 'Reset filters', on: { click: resetFilters } }) : null,
+      filtersActive() ? el('button', { type: 'button', class: 'btn', text: 'Reset filters', on: { click: () => resetFilters(['#search']) } }) : null,
       S.ui.q ? el('p', { class: 'hint', text: 'Search matches whole-word beginnings across names, former names, nicknames, city, county, system and CMS number.' }) : null,
     ]);
     list.appendChild(li);
@@ -639,8 +714,10 @@ function renderResults() {
     frag.appendChild(el('li', null, btn));
   });
   list.appendChild(frag);
-  if (focusedId) {
-    const again = list.querySelector(`.result[data-id="${CSS.escape(focusedId)}"]`);
+  if (inList) {
+    // A focused row that is no longer listed hands focus to the row now
+    // tabbable, never to <body>.
+    const again = (focusedId && list.querySelector(`.result[data-id="${CSS.escape(focusedId)}"]`)) || list.querySelector('.result[tabindex="0"]');
     if (again) again.focus({ preventScroll: true });
   }
 }
@@ -683,6 +760,16 @@ function renderCounts() {
   $('#reset-filters').hidden = !filtersActive();
   const nb = $('#nb-count');
   if (nb) nb.textContent = `(${S.all.filter(isOOR).length})`;
+  // Select options show "(n)": the five-state results each choice would give
+  // with every other filter applied (the same rule as the chips). Values
+  // never change.
+  for (const [key, sel, match] of SELECT_FILTERS) {
+    const pool = (S.selectPools && S.selectPools[key]) || [];
+    for (const o of $$('option', $(sel))) {
+      if (o.dataset.label == null) o.dataset.label = o.textContent;
+      o.textContent = `${o.dataset.label} (${pool.filter(h => match(h, o.value)).length})`;
+    }
+  }
 }
 
 function renderStatus() {
@@ -690,15 +777,22 @@ function renderStatus() {
   const shown = S.results.length;
   const onMap = S.results.filter(isLocated).length;
   const unloc = shown - onMap;
+  // Neighboring-state destinations are listed with a search or "all records"
+  // but are not records of the five states: counted apart, never in "n of total".
+  const nb = S.results.filter(isOOR).length;
   const summary = $('#result-summary');
   clear(summary);
   const fparts = activeFilterParts();
-  appendAll(summary, [el('strong', { text: String(shown) }), ` of ${total} records · ${scopeLabel()}`,
+  appendAll(summary, [el('strong', { text: String(shown - nb) }), ` of ${total} records${nb ? ` + ${nb} neighboring-state destination${nb === 1 ? '' : 's'}` : ''} · ${scopeLabel()}`,
     C.tokenize(S.ui.q).length && fparts.length ? ` (${fparts.join(', ')})` : '',
     unloc ? ` · ${unloc} without a map location` : '']);
   const toggle = $('#sheet-toggle');
   if (toggle) toggle.textContent = document.body.classList.contains('sheet-open') ? 'Show map' : `Show list (${shown})`;
   const ms = $('#map-status');
+  // The bar is rebuilt on every render: a focused link keeps focus on its
+  // rebuilt twin; one that is gone ("Reset filters" once nothing is filtered)
+  // hands focus to the way back to the details, or to the search.
+  const focused = ms.contains(document.activeElement) ? document.activeElement.dataset.act : null;
   clear(ms);
   const parts = activeFilterParts();
   const sep = () => el('span', { class: 'sep', text: ' · ', 'aria-hidden': 'true' });
@@ -708,18 +802,38 @@ function renderStatus() {
     el('span', { text: `${onMap} on map` + (unloc ? `, ${unloc} not located` : '') + '; ' }),
     el('span', { text: scopeLabel() + (parts.length ? '; ' : '') }),
     parts.length ? el('span', { text: 'filters: ' + parts.join(', ') }) : null,
-    filtersActive() ? el('button', { type: 'button', class: 'link-btn', text: 'Reset filters', on: { click: resetFilters } }) : null,
+    filtersActive() ? el('button', { type: 'button', class: 'link-btn', dataset: { act: 'reset' }, text: 'Reset filters', on: { click: () => resetFilters() } }) : null,
     sel && $('#detail').hidden ? sep() : null,
-    sel && $('#detail').hidden ? el('button', { type: 'button', class: 'link-btn', text: 'Details: ' + sel.name, on: { click: () => { document.body.classList.remove('detail-minimized'); openDetail(); renderDetail(); $('#detail-title').focus(); } } }) : null,
+    sel && $('#detail').hidden ? el('button', { type: 'button', class: 'link-btn', dataset: { act: 'details' }, text: 'Details: ' + sel.name, on: { click: () => { document.body.classList.remove('detail-minimized'); openDetail(); renderDetail(); $('#detail-title').focus(); } } }) : null,
+    // Said, not hidden: a fit that could not keep every connection clear of the panels.
+    sel && S.fitShort ? sep() : null,
+    sel && S.fitShort ? el('span', { class: 'fit-note', text: 'Not every connection end fits clear of the map panels at this size: some may be under a panel.' }) : null,
   ]);
+  if (focused) focusFirst(`#map-status [data-act="${focused}"]`, '#map-status [data-act="details"]', '#search', '#map');
+  syncStatusHeight();
+}
+// The legend never rises over the status bar (on phones it sits just above
+// it), and the bar wraps to more lines on narrow screens: its real height
+// places the legend (app.css --status-h).
+function syncStatusHeight() {
+  const ms = $('#map-status');
+  const h = ms && ms.offsetParent ? Math.ceil(ms.getBoundingClientRect().height) + 'px' : '';
+  const main = $('#main');
+  if (main && main.style.getPropertyValue('--status-h') !== h) main.style.setProperty('--status-h', h);
 }
 
-function resetFilters() {
+// `fallback`: where focus goes if the control used goes with the filters
+// (the sidebar "Reset filters" hides once nothing is filtered).
+function resetFilters(fallback) {
   const d = C.defaultUiState();
   Object.assign(S.ui, { state: 'ALL', tiers: [], evt: false, evidence: [], basis: null, cah: null, system: null, scope: 'eligible', include: d.include.slice(), evtMin: 0, preset: null, sort: d.sort });
+  S.presetUndo = null;
   syncControls();
   update();
   toast('Filters reset');
+  // Queued after the render that update() queued, so it sees the result.
+  // Only a list of selectors moves focus (an event passed by a click handler does not).
+  if (Array.isArray(fallback)) requestAnimationFrame(() => { if (focusLost()) focusFirst(...fallback); });
 }
 
 // ------------------------------------------------------------------
@@ -735,23 +849,24 @@ function glyphModel(h, opts) {
     size: 14, fill: '--c-none', stroke: '--marker-stroke', dashed: false, hollow: false,
     evtRing: C.hasDocumented247Evt(h), hub: S.ui.hub === h.id, selected: S.ui.selected === h.id,
     dim: false, dashOverlay: false,
+    // Partly assessed (some capability claims still unknown) keeps a dotted
+    // ring in every mode: a second channel besides colour, and distinct from
+    // the dashed "not assessed" ring.
+    partialRing: !isOOR(h) && cap === 'partial',
   };
   if (mode === 'capability') {
     m.size = tier ? { CSC: 20, TSC: 19, PSC: 17, ASR: 15 }[tier] : 13;
     if (isOOR(h)) { m.fill = tier ? TIER_VAR[tier] : '--c-neighbor'; m.size = 14; }
-    else if (cap === 'unassessed') { m.hollow = true; m.dashed = true; m.stroke = '--c-unassessed'; }
+    else if (cap === 'unassessed') { m.hollow = true; m.dashed = true; m.stroke = '--c-unassessed-stroke'; }
     else if (cap === 'conflicting') {
       // Shape carries the conflict; fill still shows the tier when one is documented (e.g. a state level).
       m.size = tier ? Math.max(15, m.size - 2) : 15;
       if (tier) m.fill = TIER_VAR[tier];
       else { m.hollow = true; m.stroke = '--c-conflict'; }
     } else if (tier) m.fill = TIER_VAR[tier];
-    else {
-      m.fill = '--c-none';
-      // Partly assessed with no tier yet: grey like "none found", plus the
-      // dashed ring that marks missing evidence.
-      if (tierKey(h) === 'partial') m.dashOverlay = true;
-    }
+    // Partly assessed with no tier yet: grey like "none found"; the dotted
+    // ring tells them apart.
+    else m.fill = '--c-none';
   } else if (mode === 'evt-distance' || mode === 'adv-distance' || mode === 'hub-distance') {
     const r = !a ? null : mode === 'evt-distance' ? a.evt247 : mode === 'adv-distance' ? a.advanced : a.hub;
     const bin = r ? C.distanceBin(r) : 'unknown';
@@ -763,7 +878,7 @@ function glyphModel(h, opts) {
   } else if (mode === 'evidence') {
     m.size = 14;
     if (isOOR(h)) m.fill = '--c-neighbor';
-    else if (cap === 'unassessed') { m.hollow = true; m.dashed = true; m.stroke = '--c-unassessed'; }
+    else if (cap === 'unassessed') { m.hollow = true; m.dashed = true; m.stroke = '--c-unassessed-stroke'; }
     else if (cap === 'conflicting') { m.hollow = true; m.stroke = '--c-conflict'; m.size = 16; }
     else if (cap === 'partial') m.fill = '--e-partial';
     else {
@@ -805,13 +920,17 @@ function glyphSvg(m) {
   const dash = m.dashed ? 'stroke-dasharray:2.6 2;' : '';
   const sw = m.hollow ? 2 : 1.6;
   parts.push(`<path d="${shapePath(m.shape, c, c, r)}" style="fill:${fill};stroke:var(${m.stroke});stroke-width:${sw};${dash}"/>`);
-  if (m.dashOverlay) parts.push(`<path data-ring="unassessed" d="${shapePath('circle', c, c, r + 2.4)}" style="fill:none;stroke:var(--c-unassessed);stroke-width:1.8;stroke-dasharray:2.6 2"/>`);
+  if (m.dashOverlay) parts.push(`<path data-ring="unassessed" d="${shapePath('circle', c, c, r + 2.4)}" style="fill:none;stroke:var(--c-unassessed-stroke);stroke-width:1.8;stroke-dasharray:2.6 2"/>`);
+  if (m.partialRing) parts.push(`<path data-ring="partial" d="${shapePath('circle', c, c, partialRingRadius(m))}" style="fill:none;stroke:var(--c-partial);stroke-width:${PARTIAL_DOT.width};stroke-linecap:round;stroke-dasharray:${PARTIAL_DOT.dash.join(' ')}"/>`);
   return `<svg class="mk" width="${box}" height="${box}" viewBox="0 0 ${box} ${box}" aria-hidden="true" focusable="false">${parts.join('')}</svg>`;
 }
 
 function glyphSignature(m) {
-  return [m.shape, m.size, m.fill, m.stroke, m.dashed, m.hollow, m.evtRing, m.hub, m.selected, m.dim, m.dashOverlay].join('|');
+  return [m.shape, m.size, m.fill, m.stroke, m.dashed, m.hollow, m.evtRing, m.hub, m.selected, m.dim, m.dashOverlay, m.partialRing].join('|');
 }
+// The dotted ring sits outside the EVT and my-center rings when those are drawn.
+const PARTIAL_DOT = { width: 2, dash: [0.1, 3.4] };
+function partialRingRadius(m) { return m.size / 2 + (m.hub ? 8.4 : m.evtRing ? 5.6 : 2.8); }
 
 // ------------------------------------------------------------------
 // Map
@@ -894,8 +1013,9 @@ function dataBounds(records) {
 // (status bar, legend, jump menu, the detail panel where it overlays the map,
 // the phone search bar). Each overlay pads the map edge that costs the smallest
 // share of that dimension (a small corner pill pads the long edge, not the
-// short one), and padding never takes more than 60% of either dimension, so a
-// fit still has room at tablet and laptop widths.
+// short one). The padding is never scaled down to make room: a fit zooms out
+// to the clear rectangle it leaves instead (fitPoints). `cramped` marks a
+// rectangle under 40% of either dimension, where a fit folds the legend.
 const MAP_OVERLAYS = ['#map-status', '#legend', '.map-jump', '#detail', '.search-block'];
 function mapPadding() {
   const base = 20;
@@ -911,6 +1031,9 @@ function mapPadding() {
     const r = node.getBoundingClientRect();
     if (!r.width || !r.height) continue;
     if (r.right <= m.left || r.left >= m.right || r.bottom <= m.top || r.top >= m.bottom) continue;
+    // A sheet covering the whole map (the phone detail) is put away before the
+    // map is used, so a fit made while it is open aims at the map under it.
+    if (r.left <= m.left + 1 && r.right >= m.right - 1 && r.top <= m.top + 1 && r.bottom >= m.bottom - 1) continue;
     const cand = [['left', r.right - m.left, m.width], ['right', m.right - r.left, m.width],
       ['top', r.bottom - m.top, m.height], ['bottom', m.bottom - r.top, m.height]];
     cand.sort((a, b) => a[1] / a[2] - b[1] / b[2]);
@@ -918,22 +1041,47 @@ function mapPadding() {
     pad[edge] = Math.max(pad[edge], depth + 12);
   }
   const cramped = pad.left + pad.right > m.width * 0.6 || pad.top + pad.bottom > m.height * 0.6;
-  const cap = (a, b, size) => {
-    const max = size * 0.6;
-    if (pad[a] + pad[b] <= max) return;
-    const f = max / (pad[a] + pad[b]);
-    pad[a] = Math.max(base, pad[a] * f);
-    pad[b] = Math.max(base, pad[b] * f);
-  };
-  cap('left', 'right', m.width);
-  cap('top', 'bottom', m.height);
   return { tl: [Math.round(pad.left), Math.round(pad.top)], br: [Math.round(pad.right), Math.round(pad.bottom)], cramped };
 }
 
 function fitTo(bounds, maxZoom) {
   if (!S.map || !bounds) return;
+  fitPoints([bounds.getSouthWest(), bounds.getNorthEast()], maxZoom);
+}
+
+// Fit points into the clear rectangle the full padding leaves: the zoom
+// Leaflet gives for that rectangle, centred in it as fitBounds would, then
+// stepped down until every point lies inside it, never below the map's
+// minimum zoom. When the rectangle cannot hold them, the points are fitted to
+// the whole map instead and `done(false)` says so, for the status bar.
+function fitPoints(latlngs, maxZoom, done) {
+  const report = done || (() => {});
+  if (!S.map || !latlngs.length) { report(true); return; }
+  // A zoom animation in progress ignores a new view: fit once it has ended.
+  if (S.map._animatingZoom) { S.map.once('zoomend', () => fitPoints(latlngs, maxZoom, done)); return; }
   const p = mapPadding();
-  S.map.fitBounds(bounds, { paddingTopLeft: p.tl, paddingBottomRight: p.br, maxZoom: maxZoom || 11, animate: !REDUCED_MOTION });
+  const size = S.map.getSize();
+  const box = { l: p.tl[0], t: p.tl[1], r: size.x - p.br[0], b: size.y - p.br[1] };
+  const bounds = L.latLngBounds(latlngs);
+  const animate = !REDUCED_MOTION;
+  const minZ = S.map.getMinZoom();
+  const step = S.map.options.zoomSnap || 0.5;
+  // Pixel centre that puts the bounds' centre in the middle of the clear rectangle.
+  const centreAt = (z) => S.map.project(bounds.getSouthWest(), z).add(S.map.project(bounds.getNorthEast(), z)).divideBy(2)
+    .add(L.point((p.br[0] - p.tl[0]) / 2, (p.br[1] - p.tl[1]) / 2));
+  const inside = (z, c) => latlngs.every(ll => {
+    const q = S.map.project(ll, z).subtract(c).add(size.divideBy(2));
+    return q.x >= box.l && q.x <= box.r && q.y >= box.t && q.y <= box.b;
+  });
+  if (box.r - box.l >= 1 && box.b - box.t >= 1) {
+    let z = Math.min(maxZoom || 11, S.map.getBoundsZoom(bounds, false, L.point(p.tl[0] + p.br[0], p.tl[1] + p.br[1])));
+    for (; z >= minZ; z -= step) {
+      const c = centreAt(z);
+      if (inside(z, c)) { S.map.setView(S.map.unproject(c, z), z, { animate }); report(true); return; }
+    }
+  }
+  S.map.fitBounds(bounds, { padding: [20, 20], maxZoom: maxZoom || 11, animate });
+  report(false);
 }
 
 // Same-coordinate campuses get small, fixed screen-space offsets so each stays
@@ -1068,7 +1216,7 @@ function markerTooltip(h) {
   else {
     lines.push(el('br'), tierOf(h) ? `${tierOf(h)} (${h.derived.tierBasis === 'national' ? 'national' : 'state level'})` : CAP_LABELS[capOf(h)] || '');
   }
-  if (C.hasDocumented247Evt(h)) lines.push(' · 24/7 EVT');
+  if (C.hasDocumented247Evt(h)) lines.push(' · documented 24/7 EVT');
   if (a && a.evt247.status === 'ok') lines.push(el('br'), `${milesText(a.evt247.miles, h, a.evt247.dest)} mi straight-line to nearest documented 24/7 EVT center`);
   const stacked = S.stacks && S.stacks.get(h.id);
   if (stacked > 1) lines.push(el('br'), el('em', { text: `${stacked} hospitals overlap here at this zoom — click to choose, or zoom in` }));
@@ -1077,14 +1225,19 @@ function markerTooltip(h) {
 
 function onMarkerClick(h, e) {
   // Overlapping markers: offer a chooser instead of silently picking the top one.
-  if (S.map && e && e.containerPoint) {
+  // Measured between drawn positions (coordinates plus any same-point offset):
+  // Leaflet reports a marker click at its coordinates, not where its offset
+  // icon is drawn, which would put two offset campuses always "on" each other.
+  if (S.map && e && isLocated(h)) {
     const near = [];
+    const own = S.offsets.get(h.id) || [0, 0];
+    const at = S.map.latLngToContainerPoint([h.location.lat, h.location.lng]);
     for (const [id, mk] of S.markers) {
       if (!S.markerLayer.hasLayer(mk)) continue;
       const p = S.map.latLngToContainerPoint(mk.getLatLng());
       const off = S.offsets.get(id) || [0, 0];
-      const dx = p.x + off[0] - e.containerPoint.x;
-      const dy = p.y + off[1] - e.containerPoint.y;
+      const dx = p.x + off[0] - (at.x + own[0]);
+      const dy = p.y + off[1] - (at.y + own[1]);
       if (dx * dx + dy * dy <= 13 * 13) near.push(S.byId.get(id));
     }
     if (near.length > 1) { openChooser(near, mk => mk, e.latlng); return; }
@@ -1125,7 +1278,7 @@ function selectionLines() {
   // carries both meanings and says so.
   if (a.evt247.status === 'ok') out.push({ kind: 'evt', to: a.evt247.dest, miles: a.evt247.miles, alsoHub: !!(hub && hub.id === a.evt247.dest.id) });
   if (hub && a.hub && a.hub.status === 'ok' && (!a.evt247.dest || hub.id !== a.evt247.dest.id)) out.push({ kind: 'hub', to: hub, miles: a.hub.miles });
-  if (S.showAdvLine && a.advanced.status === 'ok' && !out.some(x => x.to.id === a.advanced.dest.id)) out.push({ kind: 'adv', to: a.advanced.dest, miles: a.advanced.miles });
+  if (S.ui.advLine && a.advanced.status === 'ok' && !out.some(x => x.to.id === a.advanced.dest.id)) out.push({ kind: 'adv', to: a.advanced.dest, miles: a.advanced.miles });
   return out;
 }
 
@@ -1136,7 +1289,7 @@ function lineStyle(kind) {
 }
 
 function lineLabel(l) {
-  return `${milesText(l.miles, S.byId.get(S.ui.selected), l.to)} mi straight-line` + (l.kind === 'hub' ? ' · my center' : l.kind === 'adv' ? ' · CSC/TSC-level' : l.alsoHub ? ' · 24/7 EVT · my center' : ' · 24/7 EVT');
+  return `${milesText(l.miles, S.byId.get(S.ui.selected), l.to)} mi straight-line` + (l.kind === 'hub' ? ' · my center' : l.kind === 'adv' ? ' · CSC/TSC-level' : l.alsoHub ? ' · documented 24/7 EVT · my center' : ' · documented 24/7 EVT');
 }
 
 function renderLines() {
@@ -1183,8 +1336,9 @@ function renderOverlays() {
 // ------------------------------------------------------------------
 // Legend (always matches the active mode)
 // ------------------------------------------------------------------
+const LEGEND_GLYPH = { shape: 'circle', size: 12, fill: '--c-none', stroke: '--marker-stroke', dashed: false, hollow: false, evtRing: false, hub: false, selected: false, dim: false, dashOverlay: false, partialRing: false };
 function legendRow(model, text) {
-  return el('div', { class: 'legend-row' }, [svgEl(glyphSvg(Object.assign({ shape: 'circle', size: 12, fill: '--c-none', stroke: '--marker-stroke', dashed: false, hollow: false, evtRing: false, hub: false, selected: false, dim: false, dashOverlay: false }, model))), el('span', { text })]);
+  return el('div', { class: 'legend-row' }, [svgEl(glyphSvg(Object.assign({}, LEGEND_GLYPH, model))), el('span', { text })]);
 }
 function legendLine(cls, text) {
   return el('div', { class: 'legend-row' }, [el('span', { class: 'line-key ' + cls, 'aria-hidden': 'true' }), el('span', { text })]);
@@ -1199,16 +1353,16 @@ function legendModel() {
       [{ fill: '--c-psc', size: 14 }, 'PSC — Primary'],
       [{ fill: '--c-asr', size: 13 }, 'ASR — Acute Stroke Ready'],
       [{ fill: '--c-none' }, 'No certification or designation found in reviewed sources'],
-      [{ fill: '--c-none', dashOverlay: true }, 'Partly assessed — no tier found so far'],
-      [{ hollow: true, dashed: true, stroke: '--c-unassessed' }, 'Capability not assessed'],
+      [{ fill: '--c-none', partialRing: true }, 'Partly assessed, no tier yet (dotted ring)'],
+      [{ hollow: true, dashed: true, stroke: '--c-unassessed-stroke' }, 'Capability not assessed'],
       [{ shape: 'diamond', hollow: true, stroke: '--c-conflict' }, 'Diamond: conflicting evidence (filled when a tier is still documented)'],
     ], note: 'A state level is shown on the tier it maps to (display crosswalk) — not national accreditation. The list and details name the basis.' });
   } else if (mode === 'evidence') {
     groups.push({ title: 'Fill: evidence status', rows: [
       [{ fill: '--e-assessed' }, `Assessed, oldest critical evidence checked within ${STALE_DAYS} days of the review`],
       [{ fill: '--e-old' }, 'Assessed, older or undated evidence'],
-      [{ fill: '--e-partial' }, 'Partly assessed'],
-      [{ hollow: true, dashed: true, stroke: '--c-unassessed' }, 'Not assessed'],
+      [{ fill: '--e-partial', partialRing: true }, 'Capability partly assessed (dotted ring)'],
+      [{ hollow: true, dashed: true, stroke: '--c-unassessed-stroke' }, 'Not assessed'],
       [{ shape: 'diamond', hollow: true, stroke: '--c-conflict' }, 'Conflicting evidence'],
     ] });
   } else if (mode === 'eligibility') {
@@ -1231,6 +1385,8 @@ function legendModel() {
   const shape = [
     [{ fill: '--c-psc', evtRing: true }, 'Teal ring: documented 24/7 EVT'],
   ];
+  const sample = mode === 'capability' ? '--c-psc' : mode === 'evidence' ? '--e-partial' : mode === 'eligibility' ? '--c-hub' : '--d-2';
+  shape.push([{ fill: sample, partialRing: true }, 'Dotted ring: capability partly assessed (some claims still unknown)']);
   if (mode !== 'capability' && mode !== 'evidence') {
     shape.push([{ fill: '--d-2', dashOverlay: true }, 'Dashed ring: capability not assessed']);
     shape.push([{ fill: '--d-2', shape: 'diamond' }, 'Diamond: conflicting capability evidence']);
@@ -1247,8 +1403,8 @@ function legendModel() {
     if (lines.some(l => l.kind === 'hub')) rows.push(['hub', 'Selected → my receiving center']);
     if (lines.some(l => l.kind === 'adv')) rows.push(['adv', 'Selected → nearest CSC/TSC-level center']);
     groups.push({ title: 'Lines', lines: rows, note: 'Straight-line geometry. Not road routes, transfer pathways or referral relationships.'
-      + (S.ui.overlays.includes('nearest') ? ' Thin grey lines: modeled nearest 24/7 EVT center for each listed hospital.' : '')
-      + (S.ui.overlays.includes('rings') ? ' Teal circles: 50 / 100 mi straight-line radius, not travel time.' : '') });
+      + (S.ui.overlays.includes('nearest') ? ' Thin grey lines: modeled nearest documented 24/7 EVT center for each listed hospital.' : '')
+      + (S.ui.overlays.includes('rings') ? ' Teal circles: 50 / 100 mi straight-line radius around each documented 24/7 EVT center, not travel time.' : '') });
   }
   return groups;
 }
@@ -1297,8 +1453,11 @@ function selectHospital(id, opts) {
   if (!h) return;
   const o = opts || {};
   if (o.source !== 'url') S.detailOpener = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
+  // A new selection starts without the CSC/TSC-level line; a link may carry it.
+  if (o.source !== 'url' && o.source !== 'url-keep-view') S.ui.advLine = false;
   S.ui.selected = id;
-  S.showAdvLine = false;
+  S.fitShort = false;
+  S.refitOnReveal = false;
   // Fill the panel before revealing it, so it never shows a placeholder title
   // or an empty body for a frame (the scheduled render repeats this harmlessly).
   renderDetail();
@@ -1321,8 +1480,14 @@ function openDetail() {
   d.hidden = false;
   document.body.classList.add('detail-open');
   syncInert();
-  if (S.map) setTimeout(() => S.map.invalidateSize(), 0);
+  syncMapSize();
 }
+
+// On desktop the detail is a grid column, so opening or closing it resizes the
+// map. Leaflet must learn the new size before any fit, or fitBounds works from
+// the old width; done at once (not deferred) so a fit queued after it is right.
+// pan:false keeps what is on screen where it is.
+function syncMapSize() { if (S.map) S.map.invalidateSize({ pan: false }); }
 
 // Is the detail panel covering the tool column (tablet) or the screen (phone)?
 function detailCoversTools() { return !$('#detail').hidden && NARROW_Q.matches; }
@@ -1346,15 +1511,22 @@ function closeDetail(restore) {
   syncInert();
   const prevId = S.ui.selected;
   S.ui.selected = null;
+  S.ui.advLine = false;
+  S.fitShort = false;
+  S.refitOnReveal = false;
+  // A legend collapsed to make room for this selection's fit comes back.
+  if (S.legendAuto === false) S.legendAuto = null;
   update();
-  if (S.map) setTimeout(() => S.map.invalidateSize(), 0);
+  syncMapSize();
   if (restore !== false) {
     const opener = S.detailOpener;
     S.detailOpener = null;
     const openerId = opener && opener.dataset ? opener.dataset.id : null;
     // Resolve the target after the re-render: list rows are rebuilt, so the
     // element that opened the panel may have been replaced by an equivalent one.
+    // Focus already placed somewhere else in the meantime stays where it is.
     requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!focusLost() && !$('#detail').contains(document.activeElement)) return;
       let target = opener && document.contains(opener) && opener.offsetParent ? opener : null;
       const rowId = openerId || prevId;
       if (!target && rowId) target = $(`.result[data-id="${CSS.escape(rowId)}"]`);
@@ -1373,7 +1545,9 @@ function minimizeDetail(focusBack) {
   document.body.classList.remove('detail-open');
   document.body.classList.add('detail-minimized');
   if (MOBILE_Q.matches) setSheet(false); else syncInert();
+  syncMapSize();
   renderStatus();
+  if (S.refitOnReveal) fitConnections(false);
   if (focusBack === false) return;
   const back = $$('#map-status .link-btn').find(b => b.textContent.startsWith('Details: '));
   if (back) back.focus();
@@ -1382,20 +1556,29 @@ function minimizeDetail(focusBack) {
 function fitConnections(closeOnMobile) {
   const h = S.byId.get(S.ui.selected);
   if (!h || !S.map || !isLocated(h)) return;
+  S.refitOnReveal = false;
   if (closeOnMobile && MOBILE_Q.matches) minimizeDetailOnPhone();
-  else if (closeOnMobile && mapPadding().cramped) {
-    // Not enough clear map beside the panels (laptop/tablet widths): put the
-    // details away (selection kept, "Details:" link to return), then, if still
-    // cramped, collapse the legend for this view without changing the saved choice.
-    const d = $('#detail').getBoundingClientRect();
-    const m = S.map.getContainer().getBoundingClientRect();
-    if (!$('#detail').hidden && d.left < m.right && d.right > m.left) minimizeDetail(true);
+  else if (mapPadding().cramped) {
+    // Not enough clear map beside the panels (laptop/tablet widths). The
+    // button puts the details away (selection kept, "Details:" link to
+    // return); the automatic fit on selection keeps the details just opened.
+    // Then, if still cramped, collapse the legend for this view without
+    // changing the saved choice, so the endpoints are not fitted under it.
+    if (closeOnMobile) {
+      const d = $('#detail').getBoundingClientRect();
+      const m = S.map.getContainer().getBoundingClientRect();
+      if (!$('#detail').hidden && d.left < m.right && d.right > m.left) minimizeDetail(true);
+    }
     if (mapPadding().cramped && legendExpanded()) { S.legendAuto = false; renderLegend(); }
   }
-  const pts = [[h.location.lat, h.location.lng]];
-  for (const l of selectionLines()) pts.push([l.to.location.lat, l.to.location.lng]);
-  if (pts.length === 1) { S.map.setView(pts[0], Math.max(S.map.getZoom(), 10), { animate: !REDUCED_MOTION }); return; }
-  fitTo(L.latLngBounds(pts), 11);
+  const pts = [L.latLng(h.location.lat, h.location.lng)];
+  for (const l of selectionLines()) pts.push(L.latLng(l.to.location.lat, l.to.location.lng));
+  // On a phone the details cover the map while this fit is made: once they
+  // are put away (and the status bar has its "Details:" link), fit again.
+  S.refitOnReveal = MOBILE_Q.matches && !$('#detail').hidden;
+  const setShort = (ok) => { if (S.fitShort !== !ok) { S.fitShort = !ok; renderStatus(); } };
+  if (pts.length === 1) { setShort(true); S.map.setView(pts[0], Math.max(S.map.getZoom(), 10), { animate: !REDUCED_MOTION }); return; }
+  fitPoints(pts, 11, setShort);
 }
 
 function claimRow(label, valueNodes, claim, extra) {
@@ -1464,7 +1647,8 @@ function renderDetail() {
   dl.appendChild(claimRow('Thrombectomy (EVT)', evtLabel(h), h.evt247 && stOf(h.evt247) !== 'unknown' ? h.evt247 : h.evt,
     h.evt247 && h.evt247.basis ? 'Basis for 24/7: ' + h.evt247.basis : null));
   const tier = tierOf(h);
-  dl.appendChild(claimRow('Tier shown on map', tier ? `${tier} — ${C.TIER_NAMES[tier]}` : (cap === 'unassessed' ? 'None (not assessed)' : 'None'), null,
+  // Without a tier, the same words as the list badge and the comparison (tierText).
+  dl.appendChild(claimRow('Tier shown on map', tier ? `${tier} — ${C.TIER_NAMES[tier]}` : isOOR(h) ? 'None shown (destination only)' : tierText(h), null,
     tier ? (h.derived.tierBasis === 'national' ? 'From the national certification.' : 'From the state designation via the display crosswalk — not a national certification.') : null));
   capSec.appendChild(dl);
   body.appendChild(capSec);
@@ -1519,27 +1703,41 @@ function locMethod(m) {
 
 function renderDetailActions(h) {
   const bar = $('#detail-actions');
+  // The bar is rebuilt on every render: a focused action keeps focus on its
+  // rebuilt twin instead of dropping to <body>.
+  const focused = bar.contains(document.activeElement) ? document.activeElement.dataset.act : null;
   clear(bar);
   const inCmp = S.ui.compare.includes(h.id);
   if (isLocated(h) && S.map) {
-    bar.appendChild(el('button', { type: 'button', class: 'btn', text: MOBILE_Q.matches ? 'Show on map' : 'Fit connections', on: { click: () => fitConnections(true) } }));
+    bar.appendChild(el('button', { type: 'button', class: 'btn', dataset: { act: 'fit' }, text: MOBILE_Q.matches ? 'Show on map' : 'Fit connections', on: { click: () => fitConnections(true) } }));
   }
   if (!isOOR(h) && C.canBeDestination(h)) {
     const isHub = S.ui.hub === h.id;
-    bar.appendChild(el('button', { type: 'button', class: 'btn', 'aria-pressed': String(isHub), text: isHub ? 'My receiving center ✓' : 'Set as my receiving center', on: { click: () => setHub(isHub ? null : h.id, true) } }));
+    bar.appendChild(el('button', { type: 'button', class: 'btn', dataset: { act: 'hub' }, 'aria-pressed': String(isHub), text: isHub ? 'My receiving center ✓' : 'Set as my receiving center', on: { click: () => setHub(isHub ? null : h.id, true) } }));
   }
   if (!isOOR(h)) {
-    bar.appendChild(el('button', { type: 'button', class: 'btn', 'aria-pressed': String(inCmp), text: inCmp ? 'In comparison ✓' : 'Add to comparison', disabled: !inCmp && S.ui.compare.length >= C.MAX_COMPARE, on: { click: () => toggleCompare(h.id) } }));
+    bar.appendChild(el('button', { type: 'button', class: 'btn', dataset: { act: 'compare' }, 'aria-pressed': String(inCmp), text: inCmp ? 'In comparison ✓' : 'Add to comparison', disabled: !inCmp && S.ui.compare.length >= C.MAX_COMPARE, on: { click: () => toggleCompare(h.id) } }));
   }
-  const a = S.access[h.id];
-  if (isLocated(h) && a && a.advanced.status === 'ok' && (!a.evt247.dest || a.advanced.dest.id !== a.evt247.dest.id)) {
-    bar.appendChild(el('button', { type: 'button', class: 'btn', 'aria-pressed': String(S.showAdvLine), text: S.showAdvLine ? 'Hide CSC/TSC-level line' : 'Show CSC/TSC-level line', on: { click: () => { S.showAdvLine = !S.showAdvLine; renderLines(); renderLegend(); renderDetailActions(h); } } }));
+  if (hasAdvLine(h)) {
+    bar.appendChild(el('button', { type: 'button', class: 'btn', dataset: { act: 'adv-line' }, 'aria-pressed': String(S.ui.advLine), text: S.ui.advLine ? 'Hide CSC/TSC-level line' : 'Show CSC/TSC-level line',
+      on: { click: () => { S.ui.advLine = !S.ui.advLine; renderLines(); renderLegend(); renderDetailActions(h); scheduleUrlSave(); } } }));
   }
-  bar.appendChild(el('button', { type: 'button', class: 'btn', text: 'Copy link', on: { click: () => copyLink() } }));
+  bar.appendChild(el('button', { type: 'button', class: 'btn', dataset: { act: 'link' }, text: 'Copy link', on: { click: () => copyLink() } }));
+  const again = focused && bar.querySelector(`[data-act="${focused}"]`);
+  if (again && !again.disabled) again.focus({ preventScroll: true });
+  else if (focused) $('#detail-title').focus({ preventScroll: true });
+}
+
+// A separate CSC/TSC-level line exists only when the nearest CSC/TSC-level
+// center is another campus than the nearest documented 24/7 EVT center.
+function hasAdvLine(h) {
+  const a = h && isLocated(h) && S.access[h.id];
+  return !!(a && a.advanced.status === 'ok' && (!a.evt247.dest || a.advanced.dest.id !== a.evt247.dest.id));
 }
 
 // Distances from or to a campus placed at a town centre are approximate: show
-// them as "≈" whole miles and say why.
+// them as "≈" whole miles and say why (the distance table keeps its own
+// precision, see tableMiles).
 function isApprox(...hs) { return hs.some(x => x && x.location && x.location.precision === 'city'); }
 function milesText(miles, ...hs) { return isApprox(...hs) ? `≈${Math.round(miles)}` : C.formatMiles(miles); }
 const APPROX_NOTE = 'Approximate: one end is placed at a town centre (no cited campus coordinates).';
@@ -1598,9 +1796,9 @@ function renderAccessSection(h) {
     box.appendChild(el('p', { class: 'hint' }, ['Choose ', el('button', { type: 'button', class: 'link-btn', text: 'my receiving center', on: { click: () => switchView('explore', { focus: '#hub-select' }) } }), ' to compare distances.']));
   }
   sec.appendChild(box);
-  // Transport scenario table for the nearest 24/7 EVT destination and my center.
+  // Transport scenario table for the nearest documented 24/7 EVT destination and my center.
   const dests = [];
-  if (a.evt247.status === 'ok') dests.push(['Nearest 24/7 EVT', a.evt247.dest, a.evt247.miles]);
+  if (a.evt247.status === 'ok') dests.push(['Nearest documented 24/7 EVT', a.evt247.dest, a.evt247.miles]);
   if (hub && a.hub && a.hub.status === 'ok' && (!a.evt247.dest || a.evt247.dest.id !== hub.id)) dests.push(['My center', hub, a.hub.miles]);
   if (dests.length) {
     const p = C.transportParams(S.ui.transport);
@@ -1734,16 +1932,40 @@ const PRESET_NOTES = {
   evt: 'Asks: where is thrombectomy evidence missing, conflicting, or not documented as 24/7 — including CSC/TSC/PSC-tier sites and large unassessed hospitals? A list of things to verify, not a judgement of any program.',
   state: 'Asks: which Washington, Idaho and Wyoming campuses (the states with a hospital stroke designation program) have an unresolved or pending state level, or a state level that does not match their national tier? State levels and national certifications are different systems.',
 };
+// The map mode, scope and sort a preset sets, compared as text.
+function presetView(ui) { return { mode: ui.mode, scope: ui.scope, include: ui.include.slice().sort().join(','), sort: ui.sort }; }
 function applyPreset(key) {
-  if (S.ui.preset === key) { S.ui.preset = null; syncControls(); update(); return; }
+  if (S.ui.preset === key) { clearPreset(); return; }
+  // Remember the mode, scope and sort in effect before the first preset, and
+  // what this one set, so clearing it can put them back (see clearPreset).
+  const before = S.ui.preset && S.presetUndo ? S.presetUndo.before : presetView(S.ui);
   S.ui.preset = key;
   Object.assign(S.ui, { tiers: [], evt: false, evidence: [], basis: null, cah: null, system: null, evtMin: 0 });
   if (key === 'telestroke') { S.ui.scope = 'eligible'; S.ui.include = ['unknown']; S.ui.mode = 'evt-distance'; S.ui.sort = 'evt'; Object.assign(S.ui.review, { wGap: 30, wEvt: 50, wAdv: 20 }); }
   if (key === 'evt') { S.ui.scope = 'all'; S.ui.mode = 'capability'; S.ui.sort = 'tier'; }
   if (key === 'state') { S.ui.scope = 'all'; S.ui.mode = 'capability'; S.ui.sort = 'name'; }
+  S.presetUndo = { before, set: presetView(S.ui) };
   syncControls();
   update();
   toast(`Preset: ${presetTitle(key)} — ${S.results.length} records`);
+}
+// Clearing a preset lifts its filter and puts back each of the mode, scope
+// and sort it set to what it was before, unless that one was changed since.
+// A preset that came with a link has nothing to put back.
+function clearPreset() {
+  const u = S.presetUndo;
+  S.ui.preset = null;
+  S.presetUndo = null;
+  if (u) {
+    const now = presetView(S.ui);
+    const want = u.before;
+    if (now.mode === u.set.mode && (want.mode !== 'hub-distance' || S.ui.hub)) S.ui.mode = want.mode;
+    if (now.scope === u.set.scope) S.ui.scope = want.scope;
+    if (now.include === u.set.include) S.ui.include = want.include ? want.include.split(',') : [];
+    if (now.sort === u.set.sort && (want.sort !== 'hub' || S.ui.hub)) S.ui.sort = want.sort;
+  }
+  syncControls();
+  update();
 }
 
 const TRANSPORT_FIELDS = [
@@ -1790,7 +2012,9 @@ function stateStats(hs) {
     excluded: c(h => eligOf(h) === 'excluded'),
     unresolved: c(h => eligOf(h) === 'unknown'),
     unlocated: c(h => !isLocated(h)),
-    assessed: c(h => capOf(h) === 'assessed' || capOf(h) === 'partial'),
+    // Capability evidence, strict: these four add up to the records.
+    assessed: c(h => capOf(h) === 'assessed'),
+    partlyAssessed: c(h => capOf(h) === 'partial'),
     unassessed: c(h => capOf(h) === 'unassessed'),
     conflicting: c(h => capOf(h) === 'conflicting'),
     advanced: c(h => C.isAdvancedCenter(h)),
@@ -1802,7 +2026,9 @@ function stateStats(hs) {
   };
 }
 const STAT_COLS = [['records', 'Records'], ['eligible', 'Analysis set'], ['excluded', 'Excluded'], ['unresolved', 'Unresolved'], ['unlocated', 'Not located'],
-  ['assessed', 'Capability assessed'], ['unassessed', 'Not assessed'], ['conflicting', 'Conflicting'], ['advanced', 'CSC/TSC-level'], ['psc', 'PSC'], ['asr', 'ASR'], ['none', 'None found'], ['partial', 'Partly assessed, no tier yet'], ['evt', '24/7 EVT documented']];
+  ['assessed', 'Capability assessed'], ['partlyAssessed', 'Capability partly assessed'], ['unassessed', 'Capability not assessed'], ['conflicting', 'Capability evidence conflicting'], ['advanced', 'CSC/TSC-level'], ['psc', 'PSC'], ['asr', 'ASR'], ['none', 'None found'], ['partial', 'Partly assessed, no tier yet'], ['evt', '24/7 EVT documented']];
+
+const STATE_TABLE_NOTE = '“Capability assessed” = every critical capability claim assessed; “partly assessed” = some still unknown. The four capability rows add up to Records. “None found” = national certification and state designation checked; none found in reviewed sources (other capability claims may still be unknown). “Partly assessed, no tier yet” = no tier shown while the national certification or state designation is still unknown. EVT overlaps the tiers.';
 
 function summaryRecords(scope) {
   return scope === 'all' ? S.all.filter(h => !isOOR(h)) : S.results.filter(h => !isOOR(h));
@@ -1810,7 +2036,7 @@ function summaryRecords(scope) {
 function renderSummaryTables() {
   const wrap = $('#state-table');
   if (!wrap) return;
-  const scope = $('#summary-scope').value;
+  const scope = S.ui.summaryScope;
   const recs = summaryRecords(scope);
   clear(wrap);
   const tbl = el('table', { class: 'data' });
@@ -1824,7 +2050,7 @@ function renderSummaryTables() {
   }
   tbl.appendChild(tb);
   wrap.appendChild(tbl);
-  wrap.appendChild(el('p', { class: 'hint', text: '“None found” = assessed with no certification or designation found in reviewed sources. EVT overlaps the tiers. CSC/TSC-level includes state levels shown on that tier.' }));
+  wrap.appendChild(el('p', { class: 'hint', text: STATE_TABLE_NOTE + ' CSC/TSC-level includes state levels shown on that tier.' }));
 
   const dwrap = $('#distance-table');
   clear(dwrap);
@@ -1847,14 +2073,14 @@ function renderSummaryTables() {
 // ------------------------------------------------------------------
 // Access review dialog
 // ------------------------------------------------------------------
-const REVIEW_FIELDS = [['wGap', 'Weight: documented capability-tier gap'], ['wEvt', 'Weight: miles to nearest documented 24/7 EVT'], ['wAdv', 'Weight: miles to nearest CSC/TSC-level'], ['wHub', 'Weight: miles to my center'], ['capMi', 'Distance cap (mi)'], ['desertMi', 'Flag beyond (mi) to 24/7 EVT']];
+const REVIEW_FIELDS = [['wGap', 'Weight: documented capability-tier gap'], ['wEvt', 'Weight: miles to nearest documented 24/7 EVT'], ['wAdv', 'Weight: miles to nearest CSC/TSC-level'], ['wHub', 'Weight: miles to my center'], ['capMi', 'Distance cap (mi)'], ['desertMi', 'Flag beyond (mi) to documented 24/7 EVT']];
 function buildReviewForm() {
   const f = $('#review-form');
   clear(f);
   f.appendChild(el('label', { class: 'field' }, [el('span', { text: 'Candidates from' }), (() => {
     const s = el('select', { id: 'review-scope' }, [el('option', { value: 'results', text: 'Current results' }), el('option', { value: 'all', text: 'Whole analysis set' })]);
-    s.value = S.reviewScope;
-    s.addEventListener('change', () => { S.reviewScope = s.value; renderReview(); });
+    s.value = S.ui.reviewScope;
+    s.addEventListener('change', () => { S.ui.reviewScope = s.value; renderReview(); scheduleUrlSave(); });
     return s;
   })()]));
   for (const [key, label] of REVIEW_FIELDS) {
@@ -1866,7 +2092,7 @@ function buildReviewForm() {
   }
 }
 function reviewInput() {
-  const pool = S.reviewScope === 'all' ? S.all : S.results;
+  const pool = S.ui.reviewScope === 'all' ? S.all : S.results;
   return pool.filter(h => !isOOR(h));
 }
 function renderReview() {
@@ -1880,8 +2106,9 @@ function renderReview() {
     const beyond = res.ranked.concat(res.shortlist).filter(r => C.isNum(r.evtMi) && r.evtMi > res.params.desertMi).length;
     const pool = reviewInput();
     const unresolved = pool.filter(h => eligOf(h) === 'unknown').length;
-    sum.textContent = `Candidates from ${S.reviewScope === 'all' ? 'the whole dataset' : 'current results'}: campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier. ` +
-      `${res.ranked.length} ranked (capability assessed) · ${res.shortlist.length} on the verification shortlist (capability not assessed, partly assessed or conflicting) · ${beyond} beyond ${res.params.desertMi} mi straight-line of a documented 24/7 EVT center.` +
+    const cands = pool.filter(h => C.isReviewCandidate(h) && S.access[h.id]).length;
+    sum.textContent = `Candidates from ${S.ui.reviewScope === 'all' ? 'the whole dataset' : 'current results'}: ${cands} campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier. ` +
+      `Of these, ${res.ranked.length} ranked (capability assessed) · ${res.shortlist.length} on the verification shortlist (capability not assessed, partly assessed or conflicting) · ${beyond} beyond ${res.params.desertMi} mi straight-line of a documented 24/7 EVT center.` +
       (unresolved ? ` ${unresolved} records in this scope have unresolved eligibility and are not ranked — see Needs verification.` : '');
   }
   renderReviewTable($('#rp-ranked'), res.ranked, sens, true);
@@ -1904,14 +2131,14 @@ function renderReviewTable(container, rows, sens, ranked) {
   if (!rows.length) { container.appendChild(el('p', { class: 'hint', text: ranked ? 'No ranked candidates in this scope.' : 'No candidates whose capability is not assessed, partly assessed or conflicting in this scope.' })); return; }
   const tbl = el('table', { class: 'data' });
   const head = ['#', 'Hospital', 'State', ranked ? 'Tier (basis)' : 'Capability', 'Mi to documented 24/7 EVT', 'Mi to CSC/TSC', S.ui.hub ? 'Mi to my center' : null, 'Score', ranked ? 'Rank range' : null,
-    'Transfer scenario to nearest 24/7 EVT (not scored)', 'Evidence checked', 'Details'].filter(Boolean);
+    'Transfer scenario to nearest documented 24/7 EVT (not scored)', 'Evidence checked', 'Details'].filter(Boolean);
   tbl.appendChild(el('thead', null, el('tr', null, head.map(t => el('th', { scope: 'col', class: /Mi|Score|#|range/.test(t) ? 'num' : null, text: t })))));
   const tb = el('tbody');
   for (const r of rows) {
     const h = r.h;
     const why = el('tr', { hidden: true }, el('td', { colspan: String(head.length) }, el('ul', { class: 'why' }, r.comps.map(c =>
       el('li', { text: c.value == null ? `${compLabel(c)}: not available (${c.detail || 'unknown'}) — weight not used` : `${compLabel(c)}: component ${c.value.toFixed(2)} × weight ${c.weight} → ${c.points.toFixed(1)} points` })).concat([
-      el('li', { text: `Nearest 24/7 EVT: ${r.access.evt247.dest ? r.access.evt247.dest.name : '—'}; nearest CSC/TSC-level: ${r.access.advanced.dest ? r.access.advanced.dest.name : '—'}.` }),
+      el('li', { text: `Nearest documented 24/7 EVT center: ${r.access.evt247.dest ? r.access.evt247.dest.name : '—'}; nearest CSC/TSC-level center: ${r.access.advanced.dest ? r.access.advanced.dest.name : '—'}.` }),
       el('li', { text: r.score == null ? 'No score: no weighted component has a value for this campus.' : 'Score = weighted mean of the components shown (0–100). Not an assessment of need, operations or feasibility.' }),
     ]))));
     const scoreTxt = r.score == null ? '—' : r.score.toFixed(0);
@@ -1944,6 +2171,185 @@ function openReview() {
   buildReviewForm();
   renderReview();
   openDialog('dlg-review');
+}
+
+// ------------------------------------------------------------------
+// Distance table (current results)
+// ------------------------------------------------------------------
+// One row per hospital in the current results: nearest documented 24/7 EVT
+// center, nearest CSC/TSC-level center and, once one is chosen, my center.
+// 0 mi is a real value (on site). An unknown distance shows "—" with its
+// reason and sorts last in either direction; it is never treated as 0.
+function accessReason(r) {
+  if (r && r.status === 'no-location') return 'Unknown: no verified map location';
+  if (r && r.status === 'no-destination') return 'Unknown: no destination in this set';
+  return 'Unknown';
+}
+// Every distance in the table keeps one decimal under 10 mi, approximate or
+// not, so a sorted column reads in order and only on site shows a bare 0.
+function tableMiles(mi, approx) { return (approx ? '≈' : '') + (mi < 10 ? mi.toFixed(1) : String(Math.round(mi))); }
+function matrixMiles(r, h) {
+  if (r && r.status === 'on-site') return { text: '0', value: 0 };
+  if (r && r.status === 'ok' && C.isNum(r.miles)) { const approx = isApprox(h, r.dest); return { text: tableMiles(r.miles, approx), value: r.miles, approx }; }
+  return { value: null, reason: accessReason(r) };
+}
+function matrixCenter(r) {
+  // On site sorts before any center name.
+  if (r && r.status === 'on-site') return { text: 'On site (0 mi)', value: '' };
+  if (r && r.status === 'ok') return { text: r.dest.name + (isOOR(r.dest) ? ' (neighboring state)' : ''), value: r.dest.name };
+  return { value: null, reason: accessReason(r) };
+}
+const TIER_CLASS_ORDER = { none: 4, partial: 5, conflicting: 6, unassessed: 7 };
+// Headings show a short form (`short`, named in the caption beside them) on
+// one line, so the sticky header row stays shallow on a phone; the spoken
+// name continues it with the full wording (`more`). `label` is the name used
+// in the sort announcement.
+function matrixColumns(hub) {
+  const acc = h => S.access[h.id];
+  const cols = [
+    { key: 'name', label: 'Hospital', get: h => ({ text: h.name, value: h.name }) },
+    { key: 'state', label: 'State', get: h => ({ text: h.state, value: h.state }) },
+    { key: 'tier', label: 'Tier shown (basis)', short: 'Tier', more: ' shown (basis)', wrap: true, get: h => ({ text: tierText(h), value: tierOf(h) ? TIER_ORDER[tierOf(h)] : TIER_CLASS_ORDER[tierKey(h)] ?? 8 }) },
+    { key: 'evtCenter', label: 'Nearest documented 24/7 EVT center', short: 'EVT center', more: ': nearest documented 24/7 EVT center', wrap: true, get: h => matrixCenter(acc(h).evt247) },
+    { key: 'evtMi', label: 'Mi to documented 24/7 EVT', short: 'EVT mi', more: ': straight-line miles to the nearest documented 24/7 EVT center', num: true, get: h => matrixMiles(acc(h).evt247, h) },
+    { key: 'advCenter', label: 'Nearest CSC/TSC-level center', short: 'CSC/TSC center', more: ': nearest CSC/TSC-level center', wrap: true, get: h => matrixCenter(acc(h).advanced) },
+    { key: 'advMi', label: 'Mi to CSC/TSC-level', short: 'CSC/TSC mi', more: ': straight-line miles to the nearest CSC/TSC-level center', num: true, get: h => matrixMiles(acc(h).advanced, h) },
+  ];
+  if (hub) {
+    cols.push({ key: 'hubMi', label: 'Mi to my center', short: 'My center mi', more: ': straight-line miles to my center', num: true, get: h => matrixMiles(acc(h).hub, h) });
+    cols.push({ key: 'diff', label: 'My center minus nearest documented 24/7 EVT (mi)', short: 'My center − EVT mi', more: ': my center minus the nearest documented 24/7 EVT center, in straight-line miles', num: true, get: h => {
+      const d = C.hubDifferential(h, acc(h), S.ui.transport);
+      if (d.status !== 'ok' || !C.isNum(d.miles)) return { value: null, reason: 'Unavailable: ' + (d.reason || 'distance unknown').replace(/^./, x => x.toLowerCase()) };
+      const approx = isApprox(h, acc(h).evt247.dest, hub);
+      return { text: (approx ? '≈' : '') + C.formatSignedMiles(d.miles) + (d.sameCenter ? ' (same center)' : ''), value: d.miles, approx };
+    } });
+  }
+  return cols;
+}
+function matrixSorted(cols) {
+  const col = cols.find(c => c.key === S.matrixSort.key) || cols[0];
+  const dir = S.matrixSort.dir;
+  const rows = S.results.filter(h => !isOOR(h)).map(h => ({ h, v: col.get(h).value }));
+  const byName = (x, y) => x.h.name.localeCompare(y.h.name) || x.h.id.localeCompare(y.h.id);
+  rows.sort((x, y) => {
+    if (x.v == null || y.v == null) return x.v == null && y.v == null ? byName(x, y) : x.v == null ? 1 : -1;
+    const c = typeof x.v === 'number' ? x.v - y.v : String(x.v).localeCompare(String(y.v));
+    return c * dir || byName(x, y);
+  });
+  return rows.map(r => r.h);
+}
+function renderMatrix(focusKey) {
+  const wrap = $('#matrix-table');
+  clear(wrap);
+  const hub = S.ui.hub && S.byId.get(S.ui.hub);
+  const cols = matrixColumns(hub);
+  if (!cols.some(c => c.key === S.matrixSort.key)) S.matrixSort = { key: 'name', dir: 1 };
+  const recs = matrixSorted(cols);
+  // An empty table has nothing to export; a disabled button says so where a toast behind the modal could not.
+  $('#matrix-export').disabled = !recs.length;
+  const tbl = el('table', { class: 'data matrix' });
+  tbl.appendChild(el('caption', { text: `Current results: ${recs.length} hospitals (${resultsScopeText()}). “EVT” = nearest documented 24/7 EVT center; “CSC/TSC” = nearest CSC/TSC-level center; mi = straight-line miles${hub ? '; my center: ' + hub.name : ''}.` }));
+  const hr = el('tr');
+  for (const c of cols) {
+    const active = S.matrixSort.key === c.key;
+    const btn = el('button', { type: 'button', class: 'th-sort', dataset: { sort: c.key } }, [el('span', { text: c.short || c.label }),
+      c.more ? el('span', { class: 'visually-hidden', text: c.more }) : null,
+      el('span', { class: 'sort-ind', 'aria-hidden': 'true', text: active ? (S.matrixSort.dir > 0 ? '▲' : '▼') : '' })]);
+    btn.addEventListener('click', () => {
+      S.matrixSort = { key: c.key, dir: active ? -S.matrixSort.dir : 1 };
+      renderMatrix(c.key);
+      $('#matrix-status').textContent = `Sorted by ${c.label}, ${S.matrixSort.dir > 0 ? 'ascending' : 'descending'}; unknown distances last.`;
+    });
+    hr.appendChild(el('th', { scope: 'col', class: c.num ? 'num' : null, 'aria-sort': active ? (S.matrixSort.dir > 0 ? 'ascending' : 'descending') : null }, btn));
+  }
+  tbl.appendChild(el('thead', null, hr));
+  const tb = el('tbody');
+  for (const h of recs) {
+    const tr = el('tr');
+    for (const c of cols) {
+      if (c.key === 'name') {
+        tr.appendChild(el('th', { scope: 'row' }, el('button', { type: 'button', class: 'link-btn', text: h.name,
+          on: { click: () => { $('#dlg-matrix').close(); selectHospital(h.id, { source: 'matrix' }); } } })));
+        continue;
+      }
+      const v = c.get(h);
+      const cls = [c.num ? 'num' : null, c.wrap ? 'wrap' : null].filter(Boolean).join(' ') || null;
+      if (v.text == null) { tr.appendChild(el('td', { class: cls, title: v.reason }, [el('span', { 'aria-hidden': 'true', text: '—' }), el('span', { class: 'visually-hidden', text: v.reason })])); continue; }
+      tr.appendChild(el('td', { class: cls, title: v.approx ? APPROX_NOTE : null }, [v.text, v.approx ? el('span', { class: 'visually-hidden', text: ' (approximate: town-centre location)' }) : null]));
+    }
+    tb.appendChild(tr);
+  }
+  if (!recs.length) tb.appendChild(el('tr', null, el('td', { colspan: String(cols.length), text: 'No hospitals in the current results. Change the search or filters in Find.' })));
+  tbl.appendChild(tb);
+  wrap.appendChild(tbl);
+  syncMatrixScrollPadding();
+  if (focusKey) { const b = wrap.querySelector(`.th-sort[data-sort="${focusKey}"]`); if (b) b.focus(); }
+}
+// A row or heading scrolled to on focus stops below the sticky header row and
+// beside the sticky hospital column, never under them (app.css scroll-padding).
+function syncMatrixScrollPadding() {
+  const wrap = $('#matrix-table');
+  const head = $('thead', wrap);
+  const first = $('thead th', wrap);
+  if (!head || !head.offsetParent) return;
+  wrap.style.setProperty('--matrix-head', Math.ceil(head.getBoundingClientRect().height) + 'px');
+  wrap.style.setProperty('--matrix-col', Math.ceil(first.getBoundingClientRect().width) + 'px');
+}
+// Chromium's focus scrolling leaves a control that is already partly in view
+// where it is (horizontally, when 32 px or more show), so a heading half under
+// the sticky hospital column, or cut off at the right edge, would stay so:
+// bring the focused control fully into the area the sticky parts leave clear.
+function revealInMatrix(e) {
+  const wrap = $('#matrix-table');
+  const t = e.target;
+  const first = $('thead th', wrap);
+  const head = $('thead', wrap);
+  if (t === wrap || !first || !t.getBoundingClientRect) return;
+  const w = wrap.getBoundingClientRect();
+  const r = t.getBoundingClientRect();
+  const inColumn = !!t.closest('th[scope="row"]') || first.contains(t);
+  const stickyHead = getComputedStyle(head.querySelector('th:last-child')).position === 'sticky';
+  const left = inColumn ? w.left + wrap.clientLeft : first.getBoundingClientRect().right;
+  const right = w.left + wrap.clientLeft + wrap.clientWidth;
+  const top = stickyHead && !head.contains(t) ? head.getBoundingClientRect().bottom : w.top + wrap.clientTop;
+  const bottom = w.top + wrap.clientTop + wrap.clientHeight;
+  if (r.left < left) wrap.scrollLeft -= left - r.left;
+  else if (r.right > right) wrap.scrollLeft += Math.min(r.right - right, r.left - left);
+  if (r.top < top) wrap.scrollTop -= top - r.top;
+  else if (r.bottom > bottom) wrap.scrollTop += Math.min(r.bottom - bottom, r.top - top);
+}
+function openMatrix() {
+  $('#matrix-status').textContent = '';
+  renderMatrix();
+  openDialog('dlg-matrix');
+  syncMatrixScrollPadding();
+}
+function exportMatrixCsv() {
+  const hub = S.ui.hub && S.byId.get(S.ui.hub);
+  const recs = matrixSorted(matrixColumns(hub));
+  if (!recs.length) { toast('Nothing to export in this scope', 'warn'); return; }
+  // Unknown is blank, on site is 0; the status columns say which. The same
+  // columns whether or not my center is chosen; provenance in trailing
+  // columns on every row, as in the main CSV, so the file stays one table.
+  const mi = r => (r && C.isNum(r.miles) ? Number(r.miles.toFixed(1)) : '');
+  const center = r => (r && r.status === 'on-site' ? 'on site' : r && r.status === 'ok' ? r.dest.name : '');
+  const head = ['record_id', 'name', 'state', 'tier_shown', 'tier_basis', 'tier_class',
+    'nearest_documented_24x7_evt_center', 'nearest_documented_24x7_evt_status', 'miles_to_nearest_documented_24x7_evt',
+    'nearest_csc_tsc_level_center', 'nearest_csc_tsc_level_status', 'miles_to_nearest_csc_tsc_level',
+    'my_center', 'my_center_record_id', 'my_center_status', 'miles_to_my_center', 'my_center_minus_nearest_documented_24x7_evt_miles',
+    'distances_approximate', 'distance_metric', 'export_scope', 'data_version', 'evidence_review_date', 'exported_on', 'release'];
+  const prov = ['straight-line (great-circle) miles', scopeDescription('results'), S.meta.data_version, S.meta.evidence_review_date, todayStr(), S.meta.release];
+  const rows = [head];
+  for (const h of recs) {
+    const a = S.access[h.id];
+    const d = hub ? C.hubDifferential(h, a, S.ui.transport) : null;
+    rows.push([h.id, h.name, h.state, tierOf(h) || '', h.derived.tierBasis || '', tierKey(h) || '',
+      center(a.evt247), a.evt247.status, mi(a.evt247), center(a.advanced), a.advanced.status, mi(a.advanced),
+      hub ? hub.name : '', hub ? hub.id : '', hub && a.hub ? a.hub.status : 'none-chosen', hub ? mi(a.hub) : '',
+      d && d.status === 'ok' && C.isNum(d.miles) ? Number(d.miles.toFixed(1)) : '',
+      isApprox(h, a.evt247.dest, a.advanced.dest, hub) ? 'yes (a town-centre location is involved)' : ''].concat(prov));
+  }
+  download(C.toCsv(rows), `stroke-distance-table_${stamp()}.csv`, 'text/csv');
 }
 
 // ------------------------------------------------------------------
@@ -1995,7 +2401,7 @@ function compareFields() {
   ];
   if (hub) {
     f.push([`My center: ${hub.name}`, h => accessText(S.access[h.id].hub, h)]);
-    f.push(['My center minus nearest 24/7 EVT', h => { const d = C.hubDifferential(h, S.access[h.id], S.ui.transport); return d.status === 'ok' ? `${C.formatSignedMiles(d.miles)} mi` + (d.sameCenter ? ' (same center)' : '') : 'Unavailable' + (d.reason ? ': ' + d.reason : ''); }]);
+    f.push(['My center minus nearest documented 24/7 EVT', h => { const d = C.hubDifferential(h, S.access[h.id], S.ui.transport); return d.status === 'ok' ? `${C.formatSignedMiles(d.miles)} mi` + (d.sameCenter ? ' (same center)' : '') : 'Unavailable' + (d.reason ? ': ' + d.reason : ''); }]);
   }
   f.push(['Road network (ground model)', h => (h.roadNetwork && h.roadNetwork.value) || 'unknown']);
   f.push(['Location precision', h => h.location ? `${h.location.precision} (${h.location.method})` : 'Not located']);
@@ -2057,12 +2463,12 @@ function renderDataPanel() {
   const kv = (k, v) => { dl.appendChild(el('dt', { text: k })); dl.appendChild(el('dd', { text: v })); };
   kv('Release', m.release);
   kv('Data version', m.data_version);
-  kv('Evidence review', m.evidence_review_date + ' (each claim has its own checked date)');
+  kv('Evidence review', m.evidence_review_date + ' (claims checked in this review carry their own check date; carried-forward claims carry the previous edition’s date)');
   kv('CMS census reference', `${m.census_snapshot.as_of} snapshot`);
   kv('Facility records', `${c.records} (${Object.entries(c.by_state).map(([s, n]) => s + ' ' + n).join(', ')})`);
   kv('Analysis set', `${c.eligible} eligible · ${c.excluded} excluded · ${c.eligibility_unknown} unresolved`);
   kv('Not located', String(c.unlocated));
-  kv('Capability evidence', `${c.capability.assessed} assessed · ${c.capability.partial} partial · ${c.capability.unassessed} not assessed · ${c.capability.conflicting} conflicting`);
+  kv('Capability evidence', `${c.capability.assessed} assessed · ${c.capability.partial} partly assessed · ${c.capability.unassessed} not assessed · ${c.capability.conflicting} conflicting (of ${c.records} records)`);
   kv('24/7 EVT documented', String(c.evt247_documented));
   kv('Neighboring-state destinations', String(c.neighbors));
   kv('Sources cited', String(Object.keys(m.sources).length));
@@ -2097,6 +2503,7 @@ function showNeedsVerification(filter) {
   const d = C.defaultUiState();
   Object.assign(S.ui, { q: '', state: 'ALL', system: null, basis: null, cah: null, evtMin: 0, include: d.include,
     evidence: [filter], scope: 'all', preset: null, tiers: [], evt: false });
+  S.presetUndo = null;
   populateEvidenceSelect();
   syncControls(); update(); switchView('find', { sheet: true });
   const what = filter === 'needs-verification' ? 'have an open item to resolve' : `need verification: ${(NV_LABELS[filter.slice(3)] || filter).toLowerCase()}`;
@@ -2110,8 +2517,9 @@ function populateEvidenceSelect() {
   const nv = {};
   for (const h of S.all) if (!isOOR(h)) for (const code of h.derived.needsVerification || []) nv[code] = (nv[code] || 0) + 1;
   const grp = el('optgroup', { label: 'Needs verification — one reason' });
-  for (const [code, n] of Object.entries(nv).sort((a, b) => nvPriority(a[0]).localeCompare(nvPriority(b[0])) || b[1] - a[1])) {
-    grp.appendChild(el('option', { value: 'nv:' + code, text: `${NV_LABELS[code] || code} (${nvPriority(code)}, ${n})` }));
+  for (const [code] of Object.entries(nv).sort((a, b) => nvPriority(a[0]).localeCompare(nvPriority(b[0])) || b[1] - a[1])) {
+    // The live count is appended by renderCounts; the priority stays in the label.
+    grp.appendChild(el('option', { value: 'nv:' + code, text: `${NV_LABELS[code] || code} · ${nvPriority(code)}` }));
   }
   sel.appendChild(grp);
 }
@@ -2203,7 +2611,7 @@ function buildMethods() {
     ]),
     h2('Access review scoring'),
     ul([
-      'Score = weighted mean (0–100) of normalised components: documented capability-tier gap — national certification or state level, whichever sets the display tier (none found 1.0 · ASR 0.65 · PSC 0.35), straight-line miles to the nearest 24/7 EVT center, to the nearest CSC/TSC-level center, and optionally to my center, each capped and divided by the cap.',
+      'Score = weighted mean (0–100) of normalised components: documented capability-tier gap — national certification or state level, whichever sets the display tier (none found 1.0 · ASR 0.65 · PSC 0.35), straight-line miles to the nearest documented 24/7 EVT center, to the nearest CSC/TSC-level center, and optionally to my center, each capped and divided by the cap.',
       'Only campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier are candidates. Campuses whose capability is not assessed, partly assessed or conflicting are never given a gap value; they appear on a separate verification shortlist, ordered by geography alone, whose membership does not depend on the weights.',
       'Ties (same score to 0.1) share a rank and are ordered by distance to EVT, then name. All-zero weights produce no ranking. Rank range shows sensitivity to each weight. Nothing about volumes, population, staffing, existing coverage or business opportunity is modelled.',
     ]),
@@ -2212,7 +2620,7 @@ function buildMethods() {
     h2('Limits'),
     ul([
       'Primary registries (Joint Commission Quality Check, DNV certificate checker, WA DOH, Idaho TSE, data.cms.gov) could not be opened directly from the authoring environment in the October 2026 pass. Claims checked then were observed through web-search extracts of the cited pages or the NPPES API, and say so.',
-      'Many values carried forward from the previous edition keep that edition’s check date; they are not re-verified by being carried forward.',
+      'Values carried forward from the previous edition keep that edition’s date (editionAsOf), not a claim-level check date; they are not re-verified by being carried forward.',
       'Unknown is a valid answer and is shown as unknown. Structural checks passing does not certify factual accuracy.',
     ]),
     h2('Sources'), el('p', null, [el('a', { href: 'https://github.com/rkalani1/telestroke-expansion-map/blob/main/METHODOLOGY.md', target: '_blank', rel: 'noopener noreferrer', text: 'Full methodology' }), ' · ',
@@ -2262,8 +2670,14 @@ function exportRecords(scope) {
   if (scope === 'all') return S.all.filter(h => !isOOR(h));
   return S.results.filter(h => !isOOR(h));
 }
+// The current results in words: their scope, the search text and the filters.
+function resultsScopeText() {
+  const parts = activeFilterParts();
+  const q = C.tokenize(S.ui.q).length ? S.ui.q.replace(/\s+/g, ' ').trim() : '';
+  return scopeLabel() + (q ? `; search: "${q}"` : '') + (parts.length ? '; filters: ' + parts.join(', ') : '');
+}
 function scopeDescription(scope) {
-  return { compare: 'comparison set', selected: 'selected hospital', all: 'all facility records', results: 'current results (' + scopeLabel() + (activeFilterParts().length ? '; filters: ' + activeFilterParts().join(', ') : '') + ')' }[scope];
+  return { compare: 'comparison set', selected: 'selected hospital', all: 'all facility records', results: 'current results (' + resultsScopeText() + ')' }[scope];
 }
 function claimSources(c) { return ((c && c.evidence) || []).map(e => { const s = sourceOf(e.src); return s && s.url ? s.url : e.src; }).filter((v, i, a) => a.indexOf(v) === i).join(' | '); }
 const CSV_HEADER = ['record_id', 'name', 'state', 'city', 'county_derived', 'status', 'analysis_eligibility', 'eligibility_reason',
@@ -2273,8 +2687,8 @@ const CSV_HEADER = ['record_id', 'name', 'state', 'city', 'county_derived', 'sta
   'evt_state', 'evt_checked', 'evt_method', 'evt_sources', 'evt_24x7_state', 'evt_24x7_basis', 'evt_24x7_checked', 'evt_24x7_method', 'evt_24x7_sources',
   'tier_shown', 'tier_basis', 'tier_class', 'capability_evidence', 'capability_oldest_critical_checked', 'capability_undated',
   'latitude', 'longitude', 'location_method', 'location_precision', 'road_network',
-  'nearest_24x7_evt_center', 'miles_to_nearest_24x7_evt', 'nearest_csc_tsc_level_center', 'miles_to_nearest_csc_tsc_level',
-  'my_center', 'miles_to_my_center', 'my_center_minus_nearest_evt_miles', 'distances_approximate',
+  'nearest_documented_24x7_evt_center', 'miles_to_nearest_documented_24x7_evt', 'nearest_csc_tsc_level_center', 'miles_to_nearest_csc_tsc_level',
+  'my_center', 'miles_to_my_center', 'my_center_minus_nearest_documented_24x7_evt_miles', 'distances_approximate',
   'needs_verification', 'distance_metric', 'export_scope', 'data_version', 'evidence_review_date', 'exported_on'];
 function csvRow(h, scope) {
   const a = S.access[h.id];
@@ -2317,7 +2731,7 @@ function exportJson(scope) {
       const r = Object.assign({}, h);
       delete r.fields;
       const a = S.access[h.id];
-      r.access = { nearest_24x7_evt: a.evt247.dest ? { id: a.evt247.dest.id, name: a.evt247.dest.name, miles: a.evt247.miles, status: a.evt247.status } : { status: a.evt247.status },
+      r.access = { nearest_documented_24x7_evt: a.evt247.dest ? { id: a.evt247.dest.id, name: a.evt247.dest.name, miles: a.evt247.miles, status: a.evt247.status } : { status: a.evt247.status },
         nearest_csc_tsc_level: a.advanced.dest ? { id: a.advanced.dest.id, name: a.advanced.dest.name, miles: a.advanced.miles, status: a.advanced.status } : { status: a.advanced.status },
         my_center: a.hub ? { id: a.hub.dest && a.hub.dest.id, miles: a.hub.miles, status: a.hub.status } : null };
       return r;
@@ -2335,10 +2749,10 @@ function summaryMarkdown() {
   const lines = [];
   const esc = t => String(t == null ? '' : t).replace(/\|/g, '\\|').replace(/\n/g, ' ');
   lines.push('# Regional Hospital Stroke Capabilities — summary', '');
-  lines.push(`Generated ${todayStr()} · release ${m.release} · data ${m.data_version} · evidence review ${m.evidence_review_date} (each claim carries its own check date).`, '');
+  lines.push(`Generated ${todayStr()} · release ${m.release} · data ${m.data_version} · evidence review ${m.evidence_review_date} (claims checked in this review carry their own check date; carried-forward claims carry the previous edition’s date).`, '');
   lines.push('Public-source planning reference. Not for clinical decisions, dispatch or patient routing; not an official product of any health department or accreditor.', '');
   lines.push('## Scope', '');
-  lines.push(`- Records in scope: **${recs.length}** — ${scopeLabel()}${activeFilterParts().length ? '; filters: ' + activeFilterParts().join(', ') : ''}.`);
+  lines.push(`- Records in scope: **${recs.length}** — ${resultsScopeText()}.`);
   lines.push(`- My receiving center: ${hub ? hub.name + ' (' + placeLine(hub) + ')' : 'none chosen'}.`);
   const nbIn = S.ui.neighbors ? S.sets.evt247.filter(isOOR).length + '/' + S.sets.advanced.filter(isOOR).length : null;
   const nbText = !S.all.some(isOOR) ? ' (no out-of-region centers in the data)' : S.ui.neighbors ? ` (incl. ${nbIn.split('/')[0]} and ${nbIn.split('/')[1]} in neighboring states)` : ' (neighboring-state centers excluded)';
@@ -2348,7 +2762,7 @@ function summaryMarkdown() {
   const per = stateTableRows(recs).map(([, hs]) => stateStats(hs));
   const tot = stateStats(recs);
   for (const [k, label] of STAT_COLS) lines.push(`| ${label} | ${per.map(p => p[k]).join(' | ')} | ${tot[k]} |`);
-  lines.push('', '“None found” = assessed, no certification or designation found in reviewed sources. EVT overlaps the tiers.', '');
+  lines.push('', STATE_TABLE_NOTE, '');
   const res = C.accessReview(recs, S.access, S.ui.review, { hasHub: !!hub });
   lines.push('## Access review — public-data shortlist', '');
   if (res.error) {
@@ -2360,8 +2774,8 @@ function summaryMarkdown() {
     const unresolved = recs.filter(h => eligOf(h) === 'unknown').length;
     lines.push(`Candidates: ${cands} campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier → ${res.ranked.length} ranked, ${res.shortlist.length} on the verification shortlist.` +
       (unresolved ? ` ${unresolved} records in scope have unresolved eligibility and are not ranked (see "Unknowns" below).` : ''), '');
-    lines.push(`Weights: capability-tier gap ${w.wGap} (national certification or state level), miles to 24/7 EVT ${w.wEvt}, miles to CSC/TSC-level ${w.wAdv}${hub ? ', miles to my center ' + w.wHub : ''}; cap ${w.capMi} mi. Questions to investigate — not onboarding eligibility, feasibility or an outreach list.`, '');
-    lines.push('| Rank | Hospital | State | Tier (basis) | Mi to documented 24/7 EVT | Score | Transfer scenario to nearest 24/7 EVT (not scored) | Evidence checked |', '|---:|---|---|---|---:|---:|---|---|');
+    lines.push(`Weights: capability-tier gap ${w.wGap} (national certification or state level), miles to documented 24/7 EVT ${w.wEvt}, miles to CSC/TSC-level ${w.wAdv}${hub ? ', miles to my center ' + w.wHub : ''}; cap ${w.capMi} mi. Questions to investigate — not onboarding eligibility, feasibility or an outreach list.`, '');
+    lines.push('| Rank | Hospital | State | Tier (basis) | Mi to documented 24/7 EVT | Score | Transfer scenario to nearest documented 24/7 EVT (not scored) | Evidence checked |', '|---:|---|---|---|---:|---:|---|---|');
     for (const r of res.ranked.slice(0, 10)) lines.push(`| ${r.rank}${r.tied ? '=' : ''} | ${esc(r.h.name)} | ${r.h.state} | ${tierText(r.h, true)} | ${C.formatMiles(r.evtMi)} | ${r.score.toFixed(0)} | ${feasibilityText(r)} | ${evidenceDateText(r.h)} |`);
     lines.push('', `Verification shortlist (capability not assessed, partly assessed or conflicting; ranked by geography only): ${res.shortlist.slice(0, 8).map(r => esc(r.h.name) + ' (' + r.h.state + ', ' + C.formatMiles(r.evtMi) + ' mi)').join('; ') || 'none'}.`, '');
   }
@@ -2450,7 +2864,7 @@ function exportCompareCsv() {
   const hub = S.ui.hub && S.byId.get(S.ui.hub);
   const p = C.transportParams(S.ui.transport);
   const rows = [['field'].concat(hs.map(h => h.name))].concat(fields.map(([label, fn]) => [label].concat(hs.map(fn))));
-  if (hub) rows.push(['my_center_minus_nearest_24_7_evt_mi'].concat(hs.map(h => { const d = C.hubDifferential(h, S.access[h.id], S.ui.transport); return d.status === 'ok' && C.isNum(d.miles) ? Math.round(d.miles * 10) / 10 : ''; })));
+  if (hub) rows.push(['my_center_minus_nearest_documented_24x7_evt_mi'].concat(hs.map(h => { const d = C.hubDifferential(h, S.access[h.id], S.ui.transport); return d.status === 'ok' && C.isNum(d.miles) ? Math.round(d.miles * 10) / 10 : ''; })));
   rows.push(['capability_sources'].concat(hs.map(claimSourceUrls)));
   const meta = (k, v) => rows.push([k].concat(hs.map(() => v)));
   meta('my_center', hub ? `${hub.name} (${hub.id})` : 'none chosen');
@@ -2592,11 +3006,15 @@ function drawGlyph(ctx, m, x, y) {
   ctx.setLineDash(m.dashed ? [2.6, 2] : []);
   ctx.strokeStyle = cssVar(m.stroke); ctx.lineWidth = m.hollow ? 2 : 1.6; ctx.stroke();
   ctx.setLineDash([]);
-  if (m.dashOverlay) { drawShape(ctx, 'circle', x, y, r + 2.4); ctx.setLineDash([2.6, 2]); ctx.strokeStyle = cssVar('--c-unassessed'); ctx.lineWidth = 1.8; ctx.stroke(); ctx.setLineDash([]); }
+  if (m.dashOverlay) { drawShape(ctx, 'circle', x, y, r + 2.4); ctx.setLineDash([2.6, 2]); ctx.strokeStyle = cssVar('--c-unassessed-stroke'); ctx.lineWidth = 1.8; ctx.stroke(); ctx.setLineDash([]); }
+  if (m.partialRing) {
+    drawShape(ctx, 'circle', x, y, partialRingRadius(m)); ctx.setLineDash(PARTIAL_DOT.dash); ctx.lineCap = 'round';
+    ctx.strokeStyle = cssVar('--c-partial'); ctx.lineWidth = PARTIAL_DOT.width; ctx.stroke(); ctx.setLineDash([]); ctx.lineCap = 'butt';
+  }
   ctx.restore();
 }
 function drawLegendPanel(ctx, x, y, w) {
-  const base = { shape: 'circle', size: 12, fill: '--c-none', stroke: '--marker-stroke', dashed: false, hollow: false, evtRing: false, hub: false, selected: false, dim: false, dashOverlay: false };
+  const base = LEGEND_GLYPH;
   ctx.fillStyle = cssVar('--text'); ctx.font = '650 12px system-ui, sans-serif'; ctx.textAlign = 'left';
   ctx.fillText('Legend', x, y + 12);
   let cy = y + 30;
@@ -2638,15 +3056,20 @@ async function copyText(text) {
   try {
     if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
   } catch { /* fall through */ }
+  // Selecting the text moves focus into the temporary textarea; give it back
+  // afterwards, or focus drops to <body> when the textarea goes.
+  const back = document.activeElement;
+  let ta = null;
   try {
-    const ta = el('textarea', { value: text, readOnly: true });
+    ta = el('textarea', { value: text, readOnly: true });
     ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta);
     ta.select();
-    const ok = document.execCommand && document.execCommand('copy');
-    ta.remove();
-    return !!ok;
-  } catch { return false; }
+    return !!(document.execCommand && document.execCommand('copy'));
+  } catch { return false; } finally {
+    if (ta) ta.remove();
+    if (back && back !== document.body && document.contains(back)) back.focus({ preventScroll: true });
+  }
 }
 async function copyLink() {
   saveUrlNow();
@@ -2686,9 +3109,17 @@ function readUrl() {
   if (S.prefs.hub && !canHub(S.prefs.hub)) S.prefs.hub = null;
   if (!S.ui.hub && S.prefs.hub) S.ui.hub = S.prefs.hub;
   if (S.ui.mode === 'hub-distance' && !S.ui.hub) { S.ui.mode = 'capability'; parsed.ignored.push('mode'); }
+  // Sorting by miles to my center needs a center (the sort option is disabled without one).
+  if (S.ui.sort === 'hub' && !S.ui.hub) { S.ui.sort = 'relevance'; parsed.ignored.push('sort'); }
   if (parsed.legacy && parsed.legacy.includes('weights')) toast('This link is from an earlier version: access-review weights it left out were restored from that version’s defaults (40 to EVT, 20 to CSC/TSC-level).', 'warn', 6000);
-  if (parsed.ignored.length) toast(`Some link settings were not recognised and were ignored (${parsed.ignored.slice(0, 4).join(', ')}${parsed.ignored.length > 4 ? '…' : ''})`, 'warn', 5000);
   return parsed;
+}
+// Run once distances are known: adv=1 asks for the CSC/TSC-level line, and a
+// selection without a separate CSC/TSC-level destination has none to draw, so
+// the setting is dropped (and leaves the saved link) and reported.
+function settleUrl(parsed) {
+  if (S.ui.advLine && !hasAdvLine(S.byId.get(S.ui.selected))) { S.ui.advLine = false; parsed.ignored.push('adv'); }
+  if (parsed.ignored.length) toast(`Some link settings were not recognised and were ignored (${parsed.ignored.slice(0, 4).join(', ')}${parsed.ignored.length > 4 ? '…' : ''})`, 'warn', 5000);
 }
 
 // ------------------------------------------------------------------
@@ -2723,9 +3154,11 @@ function syncControls() {
   if (ui.preset) {
     clear(pa);
     appendAll(pa, [el('strong', { text: presetTitle(ui.preset) + '. ' }), PRESET_NOTES[ui.preset] + ' ',
-      el('button', { type: 'button', class: 'link-btn', text: 'Clear preset', on: { click: () => applyPreset(ui.preset) } }),
+      // The link goes with the preset: focus moves to the preset's own button.
+      el('button', { type: 'button', class: 'link-btn', text: 'Clear preset', on: { click: () => { const k = S.ui.preset; clearPreset(); focusFirst(`.preset[data-preset="${k}"]`); } } }),
       ui.preset === 'telestroke' ? el('button', { type: 'button', class: 'link-btn', text: 'Open access review', on: { click: openReview } }) : null]);
   }
+  $('#summary-scope').value = ui.summaryScope;
   $('#theme-select').value = S.ui.theme || S.prefs.theme;
   $('#basemap-select').value = currentBasemap();
   $('#cb-toggle').checked = S.ui.cb != null ? S.ui.cb : S.prefs.cb;
@@ -2795,6 +3228,10 @@ function switchView(view, opts) {
   if (detailCoversTools()) minimizeDetail(false);
   if (view === 'data') renderDataPanel();
   if (MOBILE_Q.matches && (!opts || opts.sheet !== false)) setSheet(view !== 'find' || (opts && opts.sheet === true));
+  // A switch can hide or make inert what had focus (the phone detail sheet put
+  // away by a shortcut, the map under a sheet): focus the active tab instead.
+  const ae = document.activeElement;
+  if (S.booted && (!ae || ae === document.body || !ae.getClientRects().length || ae.closest('[inert]'))) $('#tab-' + view).focus({ preventScroll: true });
   scheduleUrlSave();
   if (opts && opts.focus) requestAnimationFrame(() => { const n = $(opts.focus); if (n) n.focus(); });
 }
@@ -2803,9 +3240,9 @@ function setSheet(open) {
   const t = $('#sheet-toggle');
   t.setAttribute('aria-expanded', String(!!open));
   renderStatus();
-  if (S.map) setTimeout(() => S.map.invalidateSize(), 50);
   syncInert();
   measureSheetTop();
+  syncMapSize();
 }
 function measureSheetTop() {
   const sb = $('.search-block');
@@ -2863,15 +3300,17 @@ function bindEvents() {
   // Search
   const search = $('#search');
   let timer = null;
+  const applyQuery = () => { clearTimeout(timer); timer = null; S.ui.q = search.value.slice(0, 120); if (S.ui.sort !== 'relevance' && S.ui.q) S.ui.sort = 'relevance'; $('#sort').value = S.ui.sort; update(); };
   search.addEventListener('input', () => {
     $('#search-clear').hidden = !search.value;
     clearTimeout(timer);
-    timer = setTimeout(() => { S.ui.q = search.value.slice(0, 120); if (S.ui.sort !== 'relevance' && S.ui.q) S.ui.sort = 'relevance'; $('#sort').value = S.ui.sort; update(); }, 120);
+    timer = setTimeout(applyQuery, 120);
   });
   search.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       clearTimeout(timer);
+      timer = null;
       S.ui.q = search.value.slice(0, 120);
       computeResults();
       update();
@@ -2883,11 +3322,14 @@ function bindEvents() {
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (MOBILE_Q.matches) setSheet(true);
-      // The list already reflects the query (typing re-renders it), so focus
-      // now: a deferred focus would drop a quick second ArrowDown.
+      // Typing inside the debounce window leaves the list showing the previous
+      // query, and the pending render would then remove the row given focus.
+      // Apply the query and render the list now, then focus at once: a
+      // deferred focus would drop a quick second ArrowDown.
+      if (timer || search.value.slice(0, 120) !== S.ui.q) applyQuery();
+      if (renderQueued) renderResults();
       const f = $('#results .result[tabindex="0"]') || $('#results .result');
       if (f) f.focus();
-      else requestAnimationFrame(() => { const g = $('#results .result'); if (g) g.focus(); });
     } else if (e.key === 'Escape' && search.value) {
       e.preventDefault(); e.stopPropagation();
       search.value = ''; S.ui.q = ''; $('#search-clear').hidden = true; update();
@@ -2923,7 +3365,7 @@ function bindEvents() {
   $('#inc-unknown').addEventListener('change', e => { toggleInclude('unknown', e.target.checked); });
   $('#inc-excluded').addEventListener('change', e => { toggleInclude('excluded', e.target.checked); });
   $('#sort').addEventListener('change', e => { S.ui.sort = e.target.value; update(); });
-  $('#reset-filters').addEventListener('click', resetFilters);
+  $('#reset-filters').addEventListener('click', () => resetFilters(['#filters > summary', '#search']));
 
   // Explore
   $('#hub-select').addEventListener('change', e => setHub(e.target.value || null, true));
@@ -2940,8 +3382,11 @@ function bindEvents() {
   ov('#ov-lines', 'lines'); ov('#ov-nearest', 'nearest'); ov('#ov-rings', 'rings');
   $('#nb-toggle').addEventListener('change', e => { S.ui.neighbors = e.target.checked; update({ access: true }); });
   $('#open-review').addEventListener('click', openReview);
+  $('#open-matrix').addEventListener('click', openMatrix);
+  $('#matrix-table').addEventListener('focusin', revealInMatrix);
+  $('#matrix-export').addEventListener('click', exportMatrixCsv);
   $('#transport-reset').addEventListener('click', () => { S.ui.transport = Object.assign({}, C.TRANSPORT_DEFAULTS); syncControls(); update(); toast('Transport assumptions reset'); });
-  $('#summary-scope').addEventListener('change', renderSummaryTables);
+  $('#summary-scope').addEventListener('change', e => { S.ui.summaryScope = e.target.value; renderSummaryTables(); scheduleUrlSave(); });
 
   // Review dialog
   $('#review-reset').addEventListener('click', () => { S.ui.review = Object.assign({}, C.REVIEW_DEFAULTS); buildReviewForm(); renderReview(); scheduleUrlSave(); });
@@ -2997,6 +3442,7 @@ function bindEvents() {
 
   bindDialogs();
   document.addEventListener('keydown', onGlobalKey);
+  document.addEventListener('focusin', () => { if ($('#toasts').childElementCount) placeToasts(); });
   if (MOBILE_Q.addEventListener) MOBILE_Q.addEventListener('change', onLayoutChange);
   if (NARROW_Q.addEventListener) NARROW_Q.addEventListener('change', onLayoutChange);
   window.addEventListener('resize', () => { measureSheetTop(); });
@@ -3032,8 +3478,8 @@ function exportReviewCsv() {
   // With every weight at zero nothing is ranked, but the shortlist still exports.
   const w = res.params;
   const head = ['list', 'rank', 'tied', 'record_id', 'name', 'state', 'tier_shown', 'tier_basis', 'capability_evidence', 'capability_oldest_critical_checked',
-    'miles_to_nearest_24x7_evt', 'nearest_24x7_evt_center', 'miles_to_nearest_csc_tsc_level', 'miles_to_my_center',
-    'points_gap', 'points_evt', 'points_adv', 'points_hub', 'score', 'transfer_scenario_to_nearest_24x7_evt_not_scored', 'transport_assumptions',
+    'miles_to_nearest_documented_24x7_evt', 'nearest_documented_24x7_evt_center', 'miles_to_nearest_csc_tsc_level', 'miles_to_my_center',
+    'points_gap', 'points_evt', 'points_adv', 'points_hub', 'score', 'transfer_scenario_to_nearest_documented_24x7_evt_not_scored', 'transport_assumptions',
     'w_gap', 'w_evt', 'w_adv', 'w_hub', 'cap_mi', 'candidate_scope', 'data_version'];
   const assumptions = assumptionsText(C.transportParams(S.ui.transport));
   const pts = (r, k) => { const c = r.comps.find(x => x.key === k); return c && c.points != null ? Number(c.points.toFixed(2)) : ''; };
@@ -3044,7 +3490,7 @@ function exportReviewCsv() {
       r.access.hub && C.isNum(r.access.hub.miles) ? Number(r.access.hub.miles.toFixed(1)) : '',
       pts(r, 'gap'), pts(r, 'evt'), pts(r, 'adv'), pts(r, 'hub'), r.score == null ? '' : Number(r.score.toFixed(2)), feasibilityText(r), assumptions,
       w.wGap, w.wEvt, w.wAdv, S.ui.hub ? w.wHub : '', w.capMi,
-      S.reviewScope === 'all' ? 'whole analysis set' : 'current results', stamp()]);
+      S.ui.reviewScope === 'all' ? 'whole analysis set' : 'current results', stamp()]);
   }
   download(C.toCsv(rows), `stroke-access-review_w${w.wGap}-${w.wEvt}-${w.wAdv}-${w.wHub}_cap${w.capMi}_${stamp()}.csv`, 'text/csv');
 }
@@ -3070,12 +3516,16 @@ function onGlobalKey(e) {
   const run = (fn) => {
     e.preventDefault();
     const lk = k.toLowerCase();
-    if (detailCoversTools() && k !== '?' && lk !== 'd' && !(lk === 'm' && !MOBILE_Q.matches)) minimizeDetail(false);
+    const putAway = detailCoversTools() && k !== '?' && lk !== 'd' && !(lk === 'm' && !MOBILE_Q.matches);
+    if (putAway) minimizeDetail(false);
     fn();
+    // Putting the details away hid what had focus; a shortcut that moves no
+    // focus itself (Shift+R) leaves it on the way back to them.
+    if (putAway && focusLost()) focusFirst('#map-status [data-act="details"]', '#search', '#map');
   };
   if (k === '/') return run(() => { switchView('find'); $('#search').focus(); });
   if (k === '?') return run(() => openDialog('dlg-shortcuts'));
-  if (k === 'R' && e.shiftKey) return run(resetFilters);
+  if (k === 'R' && e.shiftKey) return run(() => resetFilters(['#map-status [data-act="details"]', '#search', '#map']));
   if (e.shiftKey) return;
   switch (k.toLowerCase()) {
     case 'l': return run(() => { switchView('find', { sheet: true }); const b = $('.result[tabindex="0"]') || $('.result'); if (b) b.focus(); });
@@ -3095,7 +3545,7 @@ function onGlobalKey(e) {
 // ------------------------------------------------------------------
 function renderProvenance() {
   const m = S.meta;
-  $('#provenance-text').textContent = `Release ${m.release} · data ${m.data_version} · evidence review ${m.evidence_review_date} (claims carry their own check dates) · CMS reference ${m.census_snapshot.as_of} · straight-line distances.`;
+  $('#provenance-text').textContent = `Release ${m.release} · data ${m.data_version} · evidence review ${m.evidence_review_date} (carried-forward claims keep the previous edition’s date) · CMS reference ${m.census_snapshot.as_of} · straight-line distances.`;
 }
 
 function showBootError(err) {
@@ -3131,7 +3581,18 @@ async function boot() {
     return;
   }
   ingest(json);
-  readUrl();
+  const parsed = readUrl();
+  // The footer's real height sets the map's bottom edge: measure it before the
+  // map exists, so the first fits use the final map size.
+  renderProvenance();
+  const foot = $('#provenance');
+  const setFooter = () => {
+    const v = foot.offsetHeight + 'px';
+    if (document.documentElement.style.getPropertyValue('--footer-real') === v) return false;
+    document.documentElement.style.setProperty('--footer-real', v);
+    return true;
+  };
+  if (foot) setFooter();
   const mapOk = initMap();
   populateSystems();
   populateEvidenceSelect();
@@ -3140,20 +3601,19 @@ async function boot() {
   buildTransportForm();
   buildMethods();
   buildShortcuts();
-  renderProvenance();
   placeViewTabs();
   // The footer wraps at narrow widths and larger text; the layout above it
   // follows its real height.
-  const foot = $('#provenance');
   if (foot && typeof ResizeObserver === 'function') {
-    new ResizeObserver(() => {
-      document.documentElement.style.setProperty('--footer-real', foot.offsetHeight + 'px');
-      if (S.map) S.map.invalidateSize();
-    }).observe(foot);
+    new ResizeObserver(() => { if (setFooter() && S.map) S.map.invalidateSize(); }).observe(foot);
   }
+  // The status bar rewraps on a resize or rotation; the phone legend follows it.
+  if (typeof ResizeObserver === 'function') new ResizeObserver(syncStatusHeight).observe($('#map-status'));
   recomputeAccess();
+  settleUrl(parsed);
   syncControls();
-  switchView(S.ui.view, { sheet: false });
+  // On phones a restored non-Find view is shown as the open sheet, so what it covers is inert.
+  switchView(S.ui.view, { sheet: MOBILE_Q.matches && S.ui.view !== 'find' ? true : false });
   if (mapOk) {
     if (S.explicit.viewport) S.map.setView([S.ui.view_lat, S.ui.view_lng], S.ui.view_z);
     // No explicit view: show what the link filters to (a one-state filter fits
@@ -3165,6 +3625,8 @@ async function boot() {
   if (S.ui.selected) {
     const keepView = !!S.explicit.viewport;
     selectHospital(S.ui.selected, { source: keepView ? 'url-keep-view' : 'url', focusDetail: false });
+    // Opening the detail column narrowed the map; apply the link's view to the final size.
+    if (keepView && mapOk) S.map.setView([S.ui.view_lat, S.ui.view_lng], S.ui.view_z, { animate: false });
   }
   measureSheetTop();
   // Read-only handle for automated tests and console inspection; also a

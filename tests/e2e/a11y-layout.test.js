@@ -160,6 +160,7 @@ for (const vp of VIEWPORTS) {
     const overlap = (a, b) => a && b && a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
     assert.ok(!overlap(g.status, g.jump), 'map status and jump control do not overlap');
     assert.ok(!overlap(g.legend, g.jump), 'legend and jump control do not overlap');
+    assert.ok(!overlap(g.legend, g.status), 'legend and map status bar do not overlap');
     // The list is reachable at every size.
     if (await page.isVisible('#sheet-toggle')) await page.click('#sheet-toggle');
     await page.waitForSelector('#results .result', { state: 'visible' });

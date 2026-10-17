@@ -3,7 +3,7 @@
 // share links restore state in a fresh browser; malformed and old links are safe.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { startServer, launch, openApp, search } = require('./helpers');
+const { startServer, launch, openApp, search, frames } = require('./helpers');
 
 let srv; let browser;
 test.before(async () => { srv = await startServer(); browser = await launch(); });
@@ -48,7 +48,8 @@ test('capability legend distinguishes not assessed, none found and conflicting',
 });
 
 test('share link round-trips selection, center, mode, filters, scenario and viewport in a fresh context', async () => {
-  const a = await openApp(browser, srv.base, '?hub=500064');
+  // Reduced motion: the fit on selection is then immediate, so the view set below is not overtaken by it.
+  const a = await openApp(browser, srv.base, '?hub=500064', { reducedMotion: 'reduce' });
   const page = a.page;
   await page.click('#tab-explore');
   await page.check('input[name="mode"][value="adv-distance"]');
@@ -61,9 +62,10 @@ test('share link round-trips selection, center, mode, filters, scenario and view
   await page.waitForSelector('#detail:not([hidden])');
   await page.click('#detail-actions button:has-text("Add to comparison")');
   await page.evaluate(() => { const S = window.__strokeAtlas; S.ui.transport.didoMin = 45; S.ui.review.wEvt = 70; });
-  await page.waitForTimeout(700);
+  await frames(page);
   await page.evaluate(() => window.__strokeAtlas.map.setView([46.2, -119.2], 9, { animate: false }));
-  await page.waitForTimeout(500);
+  // The link is saved shortly after the move; wait for it to carry everything.
+  await page.waitForFunction(() => { const q = new URL(location.href).searchParams; return q.get('dido') === '45' && q.get('we') === '70' && q.get('lat') === '46.2000' && q.get('z') === '9'; }, null, { timeout: 5000 });
   const url = await page.evaluate(() => location.href);
   const sel = await page.evaluate(() => window.__strokeAtlas.ui.selected);
   await a.context.close();

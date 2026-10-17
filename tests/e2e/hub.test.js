@@ -2,7 +2,7 @@
 // My receiving center, connection lines, Fit connections and differentials.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { startServer, launch, openApp, search, pick } = require('./helpers');
+const { startServer, launch, openApp, search, pick, frames } = require('./helpers');
 
 let srv; let browser;
 test.before(async () => { srv = await startServer(); browser = await launch(); });
@@ -13,7 +13,7 @@ async function lineCount(page) {
 }
 
 test('Harborview preset sets my center; detail shows distances and a same-metric comparison', async () => {
-  const { page, context, errors } = await openApp(browser, srv.base);
+  const { page, context, errors } = await openApp(browser, srv.base, '', { reducedMotion: 'reduce' });
   await page.click('#tab-explore');
   assert.ok(await page.isVisible('#hub-preset'), 'Harborview preset offered');
   await page.click('#hub-preset');
@@ -35,7 +35,7 @@ test('Harborview preset sets my center; detail shows distances and a same-metric
   assert.equal(await lineCount(page), 2, 'line to nearest EVT and line to my center');
   // Fit connections: both endpoints visible and not hidden under the detail panel.
   await page.click('#detail-actions button:has-text("Fit connections")');
-  await page.waitForTimeout(400);
+  await frames(page);
   const geo = await page.evaluate((id) => {
     const S = window.__strokeAtlas;
     const h = S.byId.get(id);
@@ -110,4 +110,55 @@ test('no ground-transfer time across road networks; a shared local network keeps
   });
   if (local) assert.ok(local.minutes > 0 && local.status === 'scenario', JSON.stringify(local));
   await context.close();
+});
+
+// The scenario table in the details, as shown, for a sender whose nearest
+// documented 24/7 EVT center and my center lie on other road networks.
+test('detail scenario table: no ground time across road networks, with the reason; air legs still shown; a shared network keeps ground', async () => {
+  const probe = await openApp(browser, srv.base, '?hub=500064');
+  const cut = await pick(probe.page, (S, C) => {
+    const rotorMax = C.TRANSPORT_DEFAULTS.rotorMaxMi;
+    const h = S.all.find(x => x.location && !x.outOfRegion && x.roadNetwork && S.access[x.id].evt247.status === 'ok'
+      && S.access[x.id].evt247.dest.id !== '500064' && S.access[x.id].evt247.miles <= rotorMax
+      && C.groundFeasibility(x, S.access[x.id].evt247.dest).status === 'not-connected' && C.groundFeasibility(x, S.byId.get('500064')).status === 'not-connected');
+    return h && { id: h.id, from: h.roadNetwork.value, to: S.access[h.id].evt247.dest.roadNetwork.value, hub: S.byId.get('500064').roadNetwork.value };
+  });
+  const joined = await pick(probe.page, (S, C) => {
+    const h = S.all.find(x => x.location && !x.outOfRegion && S.access[x.id].evt247.status === 'ok' && S.access[x.id].evt247.dest.id !== '500064'
+      && C.groundFeasibility(x, S.access[x.id].evt247.dest).status === 'feasible');
+    return h && h.id;
+  });
+  await probe.context.close();
+  assert.ok(cut, 'a sender off the road network of its nearest EVT center (within rotor-wing range) and of Harborview');
+  assert.ok(joined);
+  const { page, context, errors } = await openApp(browser, srv.base, `?hub=500064&h=${cut.id}`);
+  await page.waitForSelector('#detail:not([hidden])');
+  const t = await page.evaluate(() => {
+    const tbl = document.querySelector('#detail-body table.scenario');
+    return { head: Array.from(tbl.querySelectorAll('thead th')).map(th => th.textContent),
+      rows: Array.from(tbl.querySelectorAll('tbody tr')).map(r => ({ leg: r.querySelector('th').textContent, cells: Array.from(r.querySelectorAll('td')).map(td => ({ text: td.textContent, title: td.getAttribute('title') })) })),
+      hint: tbl.closest('.table-wrap').nextElementSibling.textContent, body: document.querySelector('#detail-body').textContent };
+  });
+  assert.deepEqual(t.head, ['Leg', 'Nearest documented 24/7 EVT', 'My center']);
+  const row = (re) => t.rows.find(r => re.test(r.leg));
+  const ground = row(/^Ground ambulance/);
+  const why = `No road connection between these sites in the network model (${cut.from} vs ${cut.to})`;
+  assert.deepEqual(ground.cells[0], { text: '—', title: why }, 'no ground time to the nearest EVT center, and why');
+  assert.equal(ground.cells[1].text, '—');
+  assert.equal(ground.cells[1].title, `No road connection between these sites in the network model (${cut.from} vs ${cut.hub})`);
+  assert.match(t.hint, new RegExp(`Nearest documented 24/7 EVT, ground: ${why.replace(/[()]/g, '\\$&')}\\.`), 'the reason is also in the text under the table');
+  const rotor = row(/^Rotor-wing/);
+  assert.match(rotor.cells[0].text, /^\d/, 'rotor-wing scenario within range: a time');
+  assert.match(rotor.cells[0].title, /Assumes an aircraft and flyable weather/);
+  const fixed = row(/^Fixed-wing/);
+  assert.ok(fixed.cells.every(c => /^\d/.test(c.text)), 'fixed-wing scenarios do not depend on roads');
+  assert.match(t.body, /Ground: comparison unavailable — /, 'the minute comparison with my center says ground is unavailable');
+  assert.deepEqual(errors, []);
+  await context.close();
+
+  const shared = await openApp(browser, srv.base, `?h=${joined}`);
+  await shared.page.waitForSelector('#detail:not([hidden])');
+  const g = await shared.page.evaluate(() => Array.from(document.querySelectorAll('#detail-body table.scenario tbody tr')).find(r => /^Ground ambulance/.test(r.querySelector('th').textContent)).querySelector('td').textContent);
+  assert.match(g, /^\d/, 'a shared road network gives a ground time');
+  await shared.context.close();
 });
