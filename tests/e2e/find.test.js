@@ -86,6 +86,9 @@ test('Enter on a single match opens it; the selected row is marked', async () =>
   await page.keyboard.press('Enter');
   await page.waitForSelector('#detail:not([hidden])');
   assert.match(await page.textContent('#detail-title'), /Harborview/);
+  // The detail opens at once; the list is re-rendered with the selected row
+  // marked on the next animation frame, which a slow runner can reach later.
+  await page.waitForSelector('#results .result[aria-current="true"]', { timeout: 5000 });
   assert.equal(await page.getAttribute('#results .result', 'aria-current'), 'true');
   await page.click('#detail-close');
 });
