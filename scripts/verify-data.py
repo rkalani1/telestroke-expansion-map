@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""Lightweight integrity checks for hospitals.json (no dependencies).
-
-Mirrors the checks documented in METHODOLOGY.md §7 and the in-app
-Data Quality panel. Run before any deploy:
+"""
+Structural, provenance, geography and regression checks on the built dataset.
 
     python3 scripts/verify-data.py
 
-Exit code 0 = all checks pass; 1 = at least one failure.
+Reads hospitals.json (what the app loads) and checks it independently of the
+build: it recomputes what it can rather than trusting the build's own derived
+fields, so a defect in build-dataset.py surfaces here instead of being copied
+into both. No network, no clock, no third-party packages. Exit 1 on any failure.
+
+The checks are grouped; each prints one PASS/FAIL line with up to a few
+examples. METHODOLOGY.md §8 describes them.
 """
 import json
 import re
@@ -14,170 +18,343 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parent.parent / "hospitals.json"
-VALID_STATES = {"WA", "AK", "ID", "MT", "WY"}
-VALID_TIERS = {"CSC", "TSC", "PSC", "ASR", None}
-VALID_CLASSES = {"stroke-capability", "acute-care-census"}
-VALID_BASES = {"national", "state", "both", "none", "not-assessed"}
-VALID_ID_TYPES = {"ccn", "shared-ccn", "military"}
-# CMS Certification Number state prefixes for the five states in scope.
-CCN_PREFIX = {"AK": "02", "ID": "13", "MT": "27", "WA": "50", "WY": "53"}
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from geo import Boundaries, haversine_mi  # noqa: E402
+
+ROOT = Path(__file__).resolve().parent.parent
+STATES = ('WA', 'AK', 'ID', 'MT', 'WY')
+TIERS = ('CSC', 'TSC', 'PSC', 'ASR')
+CLAIM_STATES = {'affirmative', 'negative', 'no-record-found', 'unknown', 'conflicting', 'not-applicable'}
+DOCUMENTED = {'affirmative', 'negative', 'no-record-found', 'conflicting'}
+PRECISIONS = {'campus', 'street', 'city', 'unknown'}
+ELIG_CODES = {'eligible', 'unresolved', 'not-active', 'no-general-ed', 'pediatric', 'out-of-region'}
+CROSSWALK = {
+    'WA ECS': {'I': 'CSC', 'II': 'PSC', 'III': 'ASR'},
+    'Idaho TSE': {'I': 'CSC', 'II+': 'TSC', 'II': 'PSC', 'III': 'ASR'},
+}
+DATE = re.compile(r'^\d{4}(-\d{2}(-\d{2})?)?$')
+# The v3 edition's last data date; a prior-edition claim cannot have been
+# checked after the edition it was carried from.
+PRIOR_EDITION_MAX = '2026-09-19'
+
+failures = 0
 
 
-def main() -> int:
-    payload = json.loads(DATA.read_text())
-    hospitals = payload["hospitals"]
-    failures = []
-
-    def check(name, ok, detail=""):
-        status = "PASS" if ok else "FAIL"
-        print(f"  [{status}] {name}" + (f" — {detail}" if detail else ""))
-        if not ok:
-            failures.append(name)
-
-    assessed = [h for h in hospitals if h.get("recordClass") != "acute-care-census"]
-    census = [h for h in hospitals if h.get("recordClass") == "acute-care-census"]
-
-    print(f"hospitals.json — {len(hospitals)} records "
-          f"({len(assessed)} assessed, {len(census)} census), "
-          f"schema {payload.get('schema_version')}, "
-          f"version {payload.get('data_version')}, verified {payload.get('last_verified')}\n")
-
-    # ---- identity -------------------------------------------------------
-    ids = [h.get("id") for h in hospitals]
-    check("Every record id present and unique",
-          all(ids) and len(set(ids)) == len(ids), f"{len(set(ids))}/{len(ids)} unique")
-
-    own_ccns = [h["cmsId"] for h in hospitals
-                if h.get("facilityIdType") == "ccn" and h.get("cmsId")]
-    dupes = [c for c, n in Counter(own_ccns).items() if n > 1]
-    check("Every self-owned CMS CCN unique", not dupes, f"duplicates: {dupes}" if dupes else
-          f"{len(own_ccns)} CCNs")
-
-    check("Every facilityIdType recognised",
-          all(h.get("facilityIdType") in VALID_ID_TYPES for h in hospitals))
-
-    bad_prefix = [f"{h['id']}({h['state']})" for h in hospitals
-                  if h.get("cmsId") and re.fullmatch(r"\d{6}", h["cmsId"])
-                  and not h["cmsId"].startswith(CCN_PREFIX[h["state"]])]
-    check("Every CCN's state prefix matches its state",
-          not bad_prefix, f"mismatched: {bad_prefix}" if bad_prefix else "")
-
-    bad_format = [h["id"] for h in hospitals
-                  if h.get("cmsId") and not re.fullmatch(r"\d{6}", h["cmsId"])]
-    check("Every CMS CCN is six digits (synthetic ids are cmsId=null)",
-          not bad_format, f"malformed: {bad_format}" if bad_format else "")
-
-    # ---- geometry -------------------------------------------------------
-    check("Every record geocoded (plausible lat/lon)",
-          all(isinstance(h.get("latitude"), (int, float))
-              and isinstance(h.get("longitude"), (int, float))
-              and 24 <= h["latitude"] <= 72 and -180 <= h["longitude"] <= -100
-              for h in hospitals))
-
-    check("Every state in WA/AK/ID/MT/WY",
-          all(h.get("state") in VALID_STATES for h in hospitals))
-
-    # ---- record classes -------------------------------------------------
-    check("Every recordClass recognised",
-          all(h.get("recordClass") in VALID_CLASSES for h in hospitals))
-
-    check("Every certificationBasis recognised",
-          all(h.get("certificationBasis") in VALID_BASES for h in hospitals))
-
-    # A census record asserting a certification would be a fabricated claim.
-    check("No census record asserts stroke capability",
-          all(h.get("strokeCertificationType") is None and h.get("hasELVO") is False
-              and h.get("certificationBasis") == "not-assessed" for h in census),
-          f"{len(census)} census records")
-
-    check("Every assessed record has a definite EVT flag",
-          all(isinstance(h.get("hasELVO"), bool) for h in assessed))
-
-    # ---- certification --------------------------------------------------
-    check("Every certification tier valid (CSC/TSC/PSC/ASR/null)",
-          all(h.get("strokeCertificationType") in VALID_TIERS for h in hospitals))
-
-    adv = [h for h in assessed if h.get("strokeCertificationType") in ("CSC", "TSC")]
-    check("Every CSC/TSC has hasELVO = true",
-          all(h.get("hasELVO") is True for h in adv), f"{len(adv)} CSC/TSC records")
-
-    certified = [h for h in assessed if h.get("strokeCertificationType")]
-    check("Every certified hospital has a certifying body",
-          all(h.get("certifyingBody") for h in certified), f"{len(certified)} certified")
-
-    # certificationBasis must agree with the structured certification fields.
-    inconsistent = []
-    for h in assessed:
-        nat = bool(h.get("nationalCertification"))
-        st = bool(h.get("stateDesignation"))
-        expected = ("both" if nat and st else "national" if nat
-                    else "state" if st else "none")
-        if h.get("certificationBasis") != expected:
-            inconsistent.append(h["id"])
-    check("certificationBasis agrees with national/state fields",
-          not inconsistent, f"inconsistent: {inconsistent[:6]}" if inconsistent else "")
-
-    check("Every assessed hospital has a populated city",
-          all(h.get("city") for h in assessed))
-
-    # ---- geometry vs. stated locality ----------------------------------
-    # A hospital plotted in the wrong town silently corrupts every transport
-    # estimate derived from it. Needs the optional `zipcodes` package.
-    try:
-        import zipcodes  # noqa: F401
-    except ImportError:
-        print("  [SKIP] Coordinates agree with stated city — "
-              "install `zipcodes` to enable this check")
+def report(name, problems, limit=6):
+    global failures
+    if problems:
+        failures += 1
+        print(f'FAIL  {name} ({len(problems)})')
+        for p in problems[:limit]:
+            print(f'        {p}')
+        if len(problems) > limit:
+            print(f'        … {len(problems) - limit} more')
     else:
-        from math import radians, sin, cos, asin, sqrt
+        print(f'PASS  {name}')
 
-        def hav(a, b, c, d):
-            a, b, c, d = map(radians, (a, b, c, d))
-            return 3959 * 2 * asin(sqrt(sin((c - a) / 2) ** 2
-                                        + cos(a) * cos(c) * sin((d - b) / 2) ** 2))
 
-        def key(s):
-            return re.sub(r"[^a-z]", "", (s or "").lower())
+def st(c):
+    return (c or {}).get('state') or 'unknown'
 
-        centroids = {}
-        for z in zipcodes.list_all():
-            if z["state"] not in VALID_STATES or not (z["lat"] and z["long"] and z["active"]):
-                continue
-            for nm in [z["city"]] + list(z.get("acceptable_cities") or []):
-                centroids.setdefault((z["state"], key(nm)), []).append(
-                    (float(z["lat"]), float(z["long"])))
 
-        strays = []
-        for h in hospitals:
-            pts = centroids.get((h["state"], key(h.get("city"))))
-            if not pts:
-                continue
-            off = min(hav(h["latitude"], h["longitude"], la, lo) for la, lo in pts)
-            if off > 18:
-                strays.append(f'{h["id"]} {h.get("city")},{h["state"]} {off:.0f}mi')
-        check("Coordinates agree with stated city (within 18 mi)",
-              not strays, f"stray: {strays}" if strays else f"{len(hospitals)} records")
+def claims_of(r):
+    for k, v in r.items():
+        if isinstance(v, dict) and k not in ('derived', 'cms', 'ccn'):
+            yield k, v
 
-    # ---- informational --------------------------------------------------
-    no_cert = sum(1 for h in assessed if not h.get("strokeCertificationType"))
-    evt = sum(1 for h in hospitals if h.get("hasELVO"))
-    air_only = sum(1 for h in hospitals if h.get("airOnly"))
-    state_only = sum(1 for h in assessed if h.get("certificationBasis") == "state")
-    derived_city = sum(1 for h in hospitals if h.get("cityConfidence") == "coordinate-derived")
-    by_state = Counter(h["state"] for h in hospitals)
-    print(f"\n  Info: {no_cert} assessed hospitals with no certification on record, "
-          f"{evt} EVT-capable, {air_only} flagged air-only")
-    print(f"  Info: {state_only} records whose displayed tier rests on a STATE designation only")
-    print(f"  Info: {derived_city} census records with a coordinate-derived city")
-    print(f"  Info: by state — {dict(sorted(by_state.items()))}")
 
+def main():
+    doc = json.loads((ROOT / 'hospitals.json').read_text())
+    manifest = json.loads((ROOT / 'data' / 'curated' / 'manifest.json').read_text())
+    H = doc['hospitals']
+    inreg = [r for r in H if not r.get('outOfRegion')]
+    review = doc['evidence_review_date']
+    sources = doc['sources']
+
+    # -- envelope -------------------------------------------------------------
+    p = []
+    if not str(doc.get('schema_version', '')).startswith('4.'):
+        p.append(f'schema_version {doc.get("schema_version")!r} is not 4.x')
+    for k in ('release', 'data_version', 'generated', 'evidence_review_date', 'eligibility_rule',
+              'tier_crosswalk', 'claim_states', 'methods', 'date_semantics'):
+        if not doc.get(k):
+            p.append(f'missing top-level {k}')
+    if doc.get('tier_crosswalk', {}).get('mapping') != CROSSWALK:
+        p.append('tier_crosswalk.mapping differs from the documented crosswalk')
+    for k in ('release', 'data_version', 'evidence_review_date', 'generated'):
+        if doc.get(k) != manifest.get(k):
+            p.append(f'{k} differs from data/curated/manifest.json')
+    report('Envelope: schema 4, manifest fields, published crosswalk', p)
+
+    # -- identity -------------------------------------------------------------
+    p = []
+    ids = Counter(r['id'] for r in H)
+    p += [f'duplicate id {i}' for i, n in ids.items() if n > 1]
+    prev = Counter(x for r in H for x in r.get('previousIds') or [])
+    p += [f'previousId {i} reused' for i, n in prev.items() if n > 1]
+    p += [f'previousId {i} is also a live id' for i in prev if i in ids]
+    own = Counter((r.get('ccn') or {}).get('value') for r in inreg
+                  if (r.get('ccn') or {}).get('relation') == 'own')
+    p += [f'CCN {c} marked "own" on {n} records' for c, n in own.items() if c and n > 1]
+    for r in inreg:
+        c = r.get('ccn') or {}
+        if c.get('value') and not re.fullmatch(r'\d{6}', c['value']):
+            p.append(f'{r["id"]}: CCN {c["value"]!r} not six digits')
+        if c.get('relation') == 'shared' and not c.get('note') and not c.get('parentId'):
+            p.append(f'{r["id"]}: shared CCN without a parent or note')
+        if r['state'] not in STATES:
+            p.append(f'{r["id"]}: state {r["state"]!r} outside the five states')
+        if not r.get('name') or r['name'] != r['name'].strip():
+            p.append(f'{r["id"]}: blank or untrimmed name')
+        if re.search(r'Hosptial|Hosiptal|Hopsital', r['name']):
+            p.append(f'{r["id"]}: misspelt name {r["name"]!r}')
+    report('Identity: unique stable ids, CCN ownership, names', p)
+
+    # -- claims and provenance ------------------------------------------------
+    p = []
+    for r in H:
+        for name, c in claims_of(r):
+            s = c.get('state')
+            if name == 'system':
+                if s not in ('affiliated', 'independent', 'unknown'):
+                    p.append(f'{r["id"]}.system: state {s!r}')
+                s = 'affirmative' if s in ('affiliated', 'independent') else None
+            elif s is not None and s not in CLAIM_STATES:
+                p.append(f'{r["id"]}.{name}: state {s!r}')
+            if s in DOCUMENTED:
+                if not c.get('evidence'):
+                    p.append(f'{r["id"]}.{name}: {s} with no evidence')
+                if not c.get('checked'):
+                    p.append(f'{r["id"]}.{name}: {s} with no checked date')
+            for ev in c.get('evidence') or []:
+                if ev.get('src') not in sources:
+                    p.append(f'{r["id"]}.{name}: cites {ev.get("src")!r}, not in sources')
+            for k in ('checked', 'effective', 'expires'):
+                d = c.get(k)
+                if d is not None and not DATE.match(d):
+                    p.append(f'{r["id"]}.{name}.{k}: bad date {d!r}')
+            if c.get('checked') and c['checked'] > review:
+                p.append(f'{r["id"]}.{name}: checked {c["checked"]} after the review date {review}')
+            if c.get('method') == 'prior-edition' and c.get('checked') and c['checked'] > PRIOR_EDITION_MAX:
+                # Carried-forward evidence keeps the date it was last checked;
+                # the build must never re-stamp it.
+                p.append(f'{r["id"]}.{name}: prior-edition claim stamped {c["checked"]}')
+            if c.get('checked') and not c.get('method'):
+                p.append(f'{r["id"]}.{name}: checked date without a method')
+    for sid, s in sources.items():
+        if not s.get('url') and s.get('type') not in ('prior-edition', 'regulation', 'dataset', 'nppes'):
+            p.append(f'source {sid}: no URL')
+        for k in ('published', 'effective', 'accessed'):
+            if s.get(k) and not DATE.match(s[k]):
+                p.append(f'source {sid}.{k}: bad date {s[k]!r}')
+        if s.get('accessed') and s['accessed'] > review:
+            p.append(f'source {sid}: accessed {s["accessed"]} after the review date')
+    report('Provenance: vocabularies, cited sources exist, dated evidence, no re-stamped dates', p)
+
+    # -- capability -------------------------------------------------------------
+    p = []
+    for r in H:
+        d = r['derived']
+        nat, sd = r.get('national') or {}, r.get('stateDesignation') or {}
+        want = None, None
+        if st(nat) == 'affirmative' and nat.get('tier') in TIERS:
+            want = nat['tier'], 'national'
+        elif st(sd) == 'affirmative' and CROSSWALK.get(sd.get('system'), {}).get(sd.get('level')):
+            want = CROSSWALK[sd['system']][sd['level']], 'state-crosswalk'
+        if (d['tier'], d['tierBasis']) != want:
+            p.append(f'{r["id"]}: tier {d["tier"]}/{d["tierBasis"]}, expected {want[0]}/{want[1]}')
+        if st(nat) == 'affirmative' and not (nat.get('body') and nat.get('tier')):
+            p.append(f'{r["id"]}: national certification without issuer and tier')
+        if st(r.get('evt247')) == 'affirmative' and st(r.get('evt')) not in ('affirmative', 'conflicting'):
+            p.append(f'{r["id"]}: 24/7 thrombectomy documented but thrombectomy itself is {st(r.get("evt"))}')
+        if d['capability'] == 'unassessed' and d['tier']:
+            p.append(f'{r["id"]}: unassessed record carries tier {d["tier"]}')
+        if r.get('outOfRegion'):
+            continue
+        if d['capability'] not in ('assessed', 'partial', 'unassessed', 'conflicting'):
+            p.append(f'{r["id"]}: capability {d["capability"]!r}')
+        if d['capability'] == 'assessed' and any(st(r.get(k)) == 'unknown' for k in ('national', 'evt247')):
+            p.append(f'{r["id"]}: "assessed" with an unknown capability claim')
+    report('Capability: tier traceable to an issuer, EVT consistency, unassessed carries no tier', p)
+
+    # -- eligibility ------------------------------------------------------------
+    p = []
+    for r in inreg:
+        e = r['derived']['eligibility']
+        if e.get('code') not in ELIG_CODES:
+            p.append(f'{r["id"]}: eligibility code {e.get("code")!r}')
+        if e['value'] in ('excluded', 'unknown') and not e.get('reason'):
+            p.append(f'{r["id"]}: {e["value"]} without a reason')
+        status = (r.get('status') or {}).get('value')
+        if e['value'] == 'eligible' and not (status == 'active' and st(r.get('ed')) == 'affirmative'
+                                             and (r.get('population') or {}).get('value') in ('all-ages', 'adult')):
+            p.append(f'{r["id"]}: eligible without active status, documented ED and adult population')
+        if e['value'] == 'excluded':
+            ok = {'not-active': status in ('closed', 'merged'),
+                  'no-general-ed': st(r.get('ed')) == 'negative',
+                  'pediatric': (r.get('population') or {}).get('value') == 'pediatric'}.get(e['code'])
+            if not ok:
+                p.append(f'{r["id"]}: excluded as {e["code"]} but the record does not say so')
+    # A hospital is never excluded because of a word in its name.
+    gf = [r for r in inreg if 'Great Falls Clinic' in r['name']]
+    if not gf:
+        p.append('Great Falls Clinic Hospital missing')
+    for r in gf:
+        if r['derived']['eligibility']['value'] == 'excluded':
+            p.append(f'{r["id"]}: Great Falls Clinic Hospital excluded ({r["derived"]["eligibility"]["code"]})')
+    report('Eligibility: rule-consistent, every exclusion documented, no name-based exclusion', p)
+
+    # -- geography ----------------------------------------------------------------
+    p = []
+    bounds = Boundaries()
+    for r in H:
+        loc = r.get('location')
+        if loc is None:
+            if r['derived']['located']:
+                p.append(f'{r["id"]}: located=true with no location')
+            continue
+        if loc.get('precision') not in PRECISIONS:
+            p.append(f'{r["id"]}: precision {loc.get("precision")!r}')
+        if loc.get('precision') in ('campus', 'street') and loc.get('method') == 'legacy-geocode':
+            p.append(f'{r["id"]}: {loc["precision"]} precision claimed for an undocumented legacy geocode')
+        if r.get('outOfRegion'):
+            continue
+        where, mi = bounds.check_state(loc['lat'], loc['lng'], r['state'])
+        flagged = 'outside-state-boundary' in r['derived']['geoFlags']
+        if where == 'outside' and not flagged:
+            p.append(f'{r["id"]}: {mi:.1f} mi outside {r["state"]} and not flagged')
+    report('Geography: coordinates in the named state or flagged, no unsupported precision', p)
+
+    # -- regressions: specific errors fixed in 4.0 ---------------------------------
+    p = []
+    by_name = {}
+    for r in inreg:
+        by_name.setdefault(r['name'], []).append(r)
+    expected_city = {
+        'South Peninsula Hospital': 'Homer',
+        'Central Peninsula Hospital': 'Soldotna',
+    }
+    for name, city in expected_city.items():
+        rs = by_name.get(name) or []
+        if not rs:
+            p.append(f'{name} missing')
+        for r in rs:
+            got = (r.get('address') or {}).get('city')
+            if got != city:
+                p.append(f'{r["id"]} {name}: city {got!r}, expected {city}')
+    # A city named on the record should be near its coordinates; a 25-mile
+    # gap between two records of the same city usually means one is misplaced.
+    by_city = {}
+    for r in inreg:
+        a, loc = r.get('address') or {}, r.get('location')
+        if a.get('city') and loc:
+            by_city.setdefault((r['state'], a['city'].lower()), []).append(r)
+    for (s, city), rs in by_city.items():
+        if len(rs) < 2:
+            continue
+        lat = sorted(x['location']['lat'] for x in rs)[len(rs) // 2]
+        lng = sorted(x['location']['lng'] for x in rs)[len(rs) // 2]
+        for r in rs:
+            d = haversine_mi(lat, lng, r['location']['lat'], r['location']['lng'])
+            if d > 25 and 'location-unverified' not in r['derived']['needsVerification']:
+                p.append(f'{r["id"]} {r["name"]}: {d:.0f} mi from other {city.title()}, {s} records')
+    report('Regressions: known city/coordinate errors stay fixed', p)
+
+    # -- counts ---------------------------------------------------------------------
+    p = []
+    c = doc['counts']
+    el = Counter(r['derived']['eligibility']['value'] for r in inreg)
+    cap = Counter(r['derived']['capability'] for r in inreg)
+    want = {
+        'records': len(inreg), 'neighbors': len(H) - len(inreg),
+        'eligible': el['eligible'], 'excluded': el['excluded'], 'eligibility_unknown': el['unknown'],
+        'unlocated': sum(1 for r in inreg if r.get('location') is None),
+        'evt247_documented': sum(1 for r in inreg if st(r.get('evt247')) == 'affirmative'),
+    }
+    for k, v in want.items():
+        if c.get(k) != v:
+            p.append(f'counts.{k} = {c.get(k)}, recomputed {v}')
+    for k in ('assessed', 'partial', 'unassessed', 'conflicting'):
+        if c['capability'].get(k) != cap[k]:
+            p.append(f'counts.capability.{k} = {c["capability"].get(k)}, recomputed {cap[k]}')
+    for s in STATES:
+        n = sum(1 for r in inreg if r['state'] == s)
+        if c['by_state'].get(s) != n:
+            p.append(f'counts.by_state.{s} = {c["by_state"].get(s)}, recomputed {n}')
+    if sum(c['by_state'].values()) != c['records']:
+        p.append('by_state does not sum to records')
+    if c['eligible'] + c['excluded'] + c['eligibility_unknown'] != c['records']:
+        p.append('eligible + excluded + unresolved does not equal records')
+    sentence = re.compile(r'<!-- counts:start -->(.*?)<!-- counts:end -->', re.S)
+    texts = {}
+    jsonld = re.compile(r'<script type="application/ld\+json">.*?"description": "Public-source reference dataset: ([^"]*)"', re.S)
+    for name in ('README.md', 'METHODOLOGY.md', 'llms.txt', 'index.html'):
+        path = ROOT / name
+        if path.exists():
+            m = (jsonld if name == 'index.html' else sentence).search(path.read_text())
+            if m:
+                texts[name] = m.group(1).strip()
+            else:
+                p.append(f'{name}: no counts marker')
+    if len({t.replace("'", '"') for t in texts.values()}) > 1:
+        p.append('count sentences differ between ' + ', '.join(texts))
+    for name, t in texts.items():
+        if f'{c["records"]} facility records' not in t:
+            p.append(f'{name}: count sentence does not match counts.records')
+    report('Counts: published counts recompute, doc sentences agree', p)
+
+    # -- public-data boundary ----------------------------------------------------------
+    p = []
+    email = re.compile(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
+    phone = re.compile(r'\(?\b\d{3}\)?[-. ]\d{3}[-. ]\d{4}\b')
+    private = re.compile(r'\b(confidential|internal only|do not share|patient name|MRN|contract (?:value|terms)|'
+                         r'staffing (?:plan|level)s?|on-call schedule)\b', re.I)
+    blob = json.dumps(H, ensure_ascii=False)
+    for rx, label in ((email, 'email address'), (phone, 'phone number'), (private, 'private-operations wording')):
+        for m in sorted(set(rx.findall(blob)))[:5]:
+            p.append(f'{label} in hospitals.json: {m!r}')
+    for name in ('app.js', 'core.js', 'index.html'):
+        t = (ROOT / name).read_text()
+        for host in re.findall(r'https?://([a-z0-9.-]+)', t):
+            if any(x in host for x in ('google-analytics', 'googletagmanager', 'doubleclick', 'segment.',
+                                       'hotjar', 'plausible', 'mixpanel', 'clarity.ms', 'facebook')):
+                p.append(f'{name}: tracker host {host}')
+    report('Public-data boundary: no contacts, private-operations wording or trackers', p)
+
+    # -- wording and versioning ------------------------------------------------------------
+    p = []
+    banned = {
+        'zero-capability': re.compile(r'zero[- ]capability', re.I),
+        '"on target" door-to-puncture verdict': re.compile(r'\bon[- ]target\b', re.I),
+        'rooftop precision': re.compile(r'rooftop', re.I),
+        '"Referral pathways"': re.compile(r'Referral pathways?', re.I),
+    }
+    for name in ('app.js', 'core.js', 'index.html', 'hospitals.json', 'README.md', 'llms.txt'):
+        t = (ROOT / name).read_text()
+        for label, rx in banned.items():
+            if rx.search(t):
+                p.append(f'{name}: contains {label}')
+    html = (ROOT / 'index.html').read_text()
+    rel = doc['release']
+    for asset in re.findall(r'(?:href|src)="((?:app|core)\.(?:js|css)[^"]*)"', html):
+        if f'?v={rel}' not in asset:
+            p.append(f'index.html: {asset} cache-buster is not ?v={rel}')
+    pkg = json.loads((ROOT / 'package.json').read_text())
+    if pkg.get('version') != rel:
+        p.append(f'package.json version {pkg.get("version")} != release {rel}')
+    if f'## [{rel}]' not in (ROOT / 'CHANGELOG.md').read_text():
+        p.append(f'CHANGELOG.md has no ## [{rel}] entry')
+    if re.search(r'src="https://(unpkg|cdnjs|cdn\.jsdelivr)[^"]*', html):
+        p.append('index.html loads a script from a CDN')
+    report('Wording and versioning: retired phrases gone, cache-busters and changelog match the release', p)
+
+    print()
     if failures:
-        print(f"\n{len(failures)} check(s) FAILED")
+        print(f'{failures} check group(s) failed')
         return 1
-    print("\nAll checks passed")
+    print(f'all checks passed · {len(inreg)} records · data {doc["data_version"]}')
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

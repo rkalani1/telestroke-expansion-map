@@ -1,0 +1,88 @@
+'use strict';
+// My receiving center, connection lines, Fit connections and differentials.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { startServer, launch, openApp, search, pick } = require('./helpers');
+
+let srv; let browser;
+test.before(async () => { srv = await startServer(); browser = await launch(); });
+test.after(async () => { await browser.close(); srv.server.close(); });
+
+async function lineCount(page) {
+  return page.evaluate(() => { let n = 0; window.__strokeAtlas.lineLayer.eachLayer(l => { if (l.getLatLngs) n++; }); return n; });
+}
+
+test('Harborview preset sets my center; detail shows distances and a same-metric comparison', async () => {
+  const { page, context, errors } = await openApp(browser, srv.base);
+  await page.click('#tab-explore');
+  assert.ok(await page.isVisible('#hub-preset'), 'Harborview preset offered');
+  await page.click('#hub-preset');
+  assert.match(await page.textContent('#hub-current'), /Harborview/);
+  // A hospital whose nearest documented 24/7 EVT center is not Harborview.
+  const spoke = await pick(page, (S) => {
+    const h = S.all.find(x => !x.outOfRegion && x.location && x.state === 'WA' && S.access[x.id].evt247.status === 'ok'
+      && S.access[x.id].evt247.dest.id !== '500064' && S.access[x.id].hub.miles > S.access[x.id].evt247.miles + 30);
+    return h && { id: h.id, name: h.name };
+  });
+  assert.ok(spoke, 'found a spoke with a nearer EVT center than Harborview');
+  await page.click('#tab-find');
+  await search(page, spoke.name);
+  await page.click(`#results .result[data-id="${spoke.id}"]`);
+  await page.waitForSelector('#detail:not([hidden])');
+  const text = await page.textContent('#detail-body');
+  assert.match(text, /My receiving center/);
+  assert.match(text, /mi straight-line compared with the nearest documented 24\/7 EVT center/);
+  assert.equal(await lineCount(page), 2, 'line to nearest EVT and line to my center');
+  // Fit connections: both endpoints visible and not hidden under the detail panel.
+  await page.click('#detail-actions button:has-text("Fit connections")');
+  await page.waitForTimeout(400);
+  const geo = await page.evaluate((id) => {
+    const S = window.__strokeAtlas;
+    const h = S.byId.get(id);
+    const pts = [h, S.access[id].evt247.dest, S.byId.get(S.ui.hub)].map(x => S.map.latLngToContainerPoint([x.location.lat, x.location.lng]));
+    const map = S.map.getContainer().getBoundingClientRect();
+    const det = document.querySelector('#detail').getBoundingClientRect();
+    return { pts: pts.map(p => ({ x: p.x + map.left, y: p.y + map.top })), map: { l: map.left, r: map.right, t: map.top, b: map.bottom }, det: { l: det.left } };
+  }, spoke.id);
+  for (const p of geo.pts) {
+    assert.ok(p.x >= geo.map.l && p.x <= geo.map.r && p.y >= geo.map.t && p.y <= geo.map.b, 'endpoint inside the map');
+    assert.ok(p.x < geo.det.l, 'endpoint not under the detail panel');
+  }
+  assert.ok(!(await page.isHidden('#detail')), 'detail stays open on desktop');
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test('when my center is the nearest 24/7 EVT center, the difference is zero and one line is drawn', async () => {
+  const { page, context } = await openApp(browser, srv.base, '?hub=500064');
+  const near = await pick(page, (S) => {
+    const h = S.all.find(x => !x.outOfRegion && x.location && S.access[x.id].evt247.status === 'ok' && S.access[x.id].evt247.dest.id === '500064');
+    return h && { id: h.id, name: h.name };
+  });
+  await search(page, near.name);
+  await page.click(`#results .result[data-id="${near.id}"]`);
+  await page.waitForSelector('#detail:not([hidden])');
+  assert.match(await page.textContent('#detail-body'), /also the nearest documented 24\/7 EVT center \(difference 0 mi\)/);
+  assert.equal(await lineCount(page), 1);
+  await context.close();
+});
+
+test('a hospital that is itself a 24/7 EVT center shows on-site 0 mi, not unknown', async () => {
+  const { page, context } = await openApp(browser, srv.base, '?h=500064');
+  await page.waitForSelector('#detail:not([hidden])');
+  const rows = await page.$$eval('.access-row', rs => rs.map(r => r.textContent));
+  assert.ok(rows.some(r => /0 mi/.test(r) && /On site/.test(r)), rows.join(' | '));
+  await context.close();
+});
+
+test('ferry or isolated road networks never get a ground-transfer time', async () => {
+  const { page, context } = await openApp(browser, srv.base);
+  const island = await pick(page, (S) => {
+    const h = S.all.find(x => x.location && x.roadNetwork && /ferry|isolated|ak-/.test(x.roadNetwork.value || '') && S.access[x.id].evt247.status === 'ok');
+    return h && h.id;
+  });
+  if (!island) return;
+  const leg = await pick(page, `(S, C) => C.legScenario('ground', S.byId.get('${island}'), S.access['${island}'].evt247.dest, S.access['${island}'].evt247.miles)`);
+  assert.equal(leg.minutes, null);
+  await context.close();
+});

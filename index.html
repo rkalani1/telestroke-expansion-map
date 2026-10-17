@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Look up any hospital in Washington, Alaska, Idaho, Montana or Wyoming: stroke-center certification, 24/7 thrombectomy capability, nearest EVT centre, and transport estimates. 236 hospitals.">
-  <meta name="theme-color" content="#4f46e5">
-  <meta property="og:title" content="Regional Hospital Stroke Capabilities">
-  <meta property="og:description" content="Stroke certification, thrombectomy capability and transfer times for 236 hospitals across the WWAMI region.">
+  <meta name="description" content="Public-source reference for hospitals in Washington, Alaska, Idaho, Montana and Wyoming: national stroke certification, state stroke designation, documented thrombectomy capability, evidence and check dates, and straight-line access to receiving centers.">
+  <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111418" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:title" content="Regional Hospital Stroke Capabilities — WWAMI">
+  <meta property="og:description" content="Find a hospital, see its documented stroke capability with sources and check dates, and compare straight-line access to receiving centers across WA, AK, ID, MT and WY.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rkalani1.github.io/telestroke-expansion-map/">
   <link rel="canonical" href="https://rkalani1.github.io/telestroke-expansion-map/">
@@ -17,12 +19,13 @@
     "@context": "https://schema.org",
     "@type": "Dataset",
     "name": "Regional Hospital Stroke Capabilities (WWAMI)",
-    "description": "Public-source reference dataset of 236 hospitals in Washington, Alaska, Idaho, Montana and Wyoming: stroke-center certifications (CSC/TSC/PSC/ASR), state stroke designations, 24/7 endovascular thrombectomy capability, and transparent distance-based transport estimates. 136 records have verified stroke capability; 100 are acute-care census records whose capability has not been assessed. Planning reference only — not for clinical routing or live patient care.",
+    "description": "Public-source reference dataset: 253 facility records (WA 95, AK 22, ID 45, MT 62, WY 29): 96 in the adult emergency-stroke analysis set, 3 excluded with a documented reason, 154 with eligibility unresolved; 7 not yet located. Stroke capability: 130 assessed, 1 partly assessed, 117 not assessed, 5 with conflicting evidence; 21 with documented 24/7 thrombectomy. 0 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.",
     "url": "https://rkalani1.github.io/telestroke-expansion-map/",
     "sameAs": "https://github.com/rkalani1/telestroke-expansion-map",
     "license": "https://opensource.org/licenses/MIT",
     "isAccessibleForFree": true,
-    "dateModified": "2026-09-13",
+    "version": "4.0.0",
+    "dateModified": "2026-10-17",
     "spatialCoverage": "Washington, Alaska, Idaho, Montana, Wyoming (United States)",
     "distribution": [{
       "@type": "DataDownload",
@@ -32,302 +35,446 @@
   }
   </script>
 
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%234f46e5'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='system-ui' font-size='28' font-weight='700' fill='white'%3E%E2%9A%95%3C/text%3E%3C/svg%3E">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Leaflet is vendored rather than loaded from a CDN: hospital networks
-       commonly block third-party CDNs, and a blocked leaflet.js left the map
-       permanently blank. See vendor/leaflet/README.md. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23255fb8'/%3E%3Ccircle cx='32' cy='32' r='15' fill='none' stroke='white' stroke-width='6'/%3E%3Ccircle cx='32' cy='32' r='5' fill='white'/%3E%3C/svg%3E">
+  <!-- Leaflet is vendored: hospital networks commonly block third-party CDNs,
+       and a blocked leaflet.js would leave the map blank. No web fonts and no
+       other third-party scripts are loaded. See vendor/leaflet/README.md. -->
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="app.css?v=3.2.1">
+  <link rel="stylesheet" href="app.css?v=4.0.0">
   <script defer src="vendor/leaflet/leaflet.js"></script>
-  <script defer src="app.js?v=3.2.1"></script>
+  <script defer src="core.js?v=4.0.0"></script>
+  <script defer src="app.js?v=4.0.0"></script>
 </head>
 <body>
-  <a class="sr-skip" href="#map">Skip to map</a>
-  <div class="print-only">
-    <h1>Regional Hospital Stroke Capabilities</h1>
-    <p>Washington · Alaska · Idaho · Montana · Wyoming</p>
-  </div>
+  <a class="skip-link" href="#search">Skip to hospital search</a>
 
-  <!-- Map -->
-  <main id="map" tabindex="0" aria-label="Regional hospital stroke capabilities map" aria-describedby="map-mode-hint"></main>
-  <p id="map-mode-hint" class="map-mode-hint">Press Enter for map mode · Escape exits</p>
+  <div class="app" id="app">
+    <!-- Left: tools. On phones this becomes a sheet over the map. -->
+    <div class="sidebar" id="sidebar">
+      <header class="brand">
+        <h1>Regional Hospital Stroke Capabilities</h1>
+        <p class="brand-sub">Washington · Alaska · Idaho · Montana · Wyoming — public-source reference</p>
+      </header>
 
-  <!-- Toasts -->
-  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
-
-  <!-- Mobile top bar -->
-  <header class="mobile-bar" aria-label="Mobile controls">
-    <div class="mobile-identity-row">
-      <button id="mobile-sidebar-btn" class="icon-btn" type="button" aria-label="Open filters sidebar" aria-expanded="false" aria-controls="sidebar" title="Filters">☰</button>
-      <div class="mobile-identity">
-        <h1>Stroke Capability Map</h1>
-        <span>WA · AK · ID · MT · WY</span>
-      </div>
-      <button id="mobile-dash-btn" class="icon-btn" type="button" aria-label="Open dashboard" aria-expanded="false" aria-controls="dashboard" title="Dashboard">📊</button>
-    </div>
-    <div class="mobile-search-row">
-      <input id="mobile-search-input" type="search" placeholder="Name, nickname, city, county…" aria-label="Search hospitals">
-      <button id="mobile-clear-search" class="mobile-clear-search hidden" type="button">Clear</button>
-    </div>
-    <button id="mobile-search-status" class="mobile-search-status" type="button" aria-live="polite" aria-controls="sidebar">Loading hospitals…</button>
-  </header>
-
-  <!-- Sidebar -->
-  <div id="sidebar" class="sidebar" role="complementary" aria-label="Hospital filters and list">
-    <button id="sidebar-close-mobile" class="mobile-close" type="button" aria-label="Close sidebar">✕ Close</button>
-    <div class="sidebar-header">
-      <h1>Regional Hospital Stroke Capabilities</h1>
-      <p>Washington · Alaska · Idaho · Montana · Wyoming</p>
-      <nav class="workspace-shortcuts" aria-label="Workspace shortcuts">
-        <button id="shortcut-map" type="button">Map</button>
-        <button id="shortcut-list" type="button">Hospital list</button>
-        <button id="shortcut-dashboard" type="button" aria-controls="dashboard" aria-expanded="false">Dashboard</button>
-        <button id="shortcut-tools" type="button" aria-controls="tools-menu" aria-expanded="false">Tools</button>
+      <nav class="view-tabs" aria-label="Views">
+        <div role="tablist" id="view-tabs" aria-label="Tool views">
+          <button role="tab" type="button" id="tab-find" aria-controls="panel-find" aria-selected="true" data-view="find">
+            <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+            <span>Find</span>
+          </button>
+          <button role="tab" type="button" id="tab-explore" aria-controls="panel-explore" aria-selected="false" tabindex="-1" data-view="explore">
+            <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>
+            <span>Explore</span>
+          </button>
+          <button role="tab" type="button" id="tab-compare" aria-controls="panel-compare" aria-selected="false" tabindex="-1" data-view="compare">
+            <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/></svg>
+            <span>Compare <span class="tab-count" id="compare-count" hidden></span></span>
+          </button>
+          <button role="tab" type="button" id="tab-data" aria-controls="panel-data" aria-selected="false" tabindex="-1" data-view="data">
+            <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3"/></svg>
+            <span>Data &amp; methods</span>
+          </button>
+        </div>
       </nav>
-    </div>
 
-    <section class="sidebar-search">
-      <label for="search-input" class="visually-hidden">Search hospitals</label>
-      <div class="search-wrapper">
-        <input id="search-input" type="search" placeholder="Name, nickname (HMC), city, county, system…">
-        <span class="search-kbd-badge" aria-hidden="true">/</span>
-      </div>
-      <div class="sidebar-status">
-        <span id="status-bar" role="status">Loading…</span>
-        <button id="clear-btn" type="button" class="clear-btn hidden">Clear all</button>
-      </div>
-    </section>
-
-    <section class="filter-row" aria-label="Certification filters">
-      <div class="pill-row" role="group" aria-label="Certification type filters">
-        <button class="pill" type="button" data-filter="CSC" aria-pressed="false">
-          <span class="pill-dot"></span>CSC
-        </button>
-        <button class="pill" type="button" data-filter="TSC" aria-pressed="false">
-          <span class="pill-dot"></span>TSC
-        </button>
-        <button class="pill" type="button" data-filter="PSC" aria-pressed="false">
-          <span class="pill-dot"></span>PSC
-        </button>
-        <button class="pill" type="button" data-filter="ASR" aria-pressed="false">
-          <span class="pill-dot"></span>ASR
-        </button>
-        <button class="pill" type="button" data-filter="EVT" aria-pressed="false">
-          <span class="pill-dot"></span>EVT
-        </button>
-        <button class="pill" type="button" data-filter="NONE" aria-pressed="false" title="Checked — no stroke certification on record">
-          <span class="pill-dot"></span>None
-        </button>
-        <button class="pill" type="button" data-filter="CENSUS" aria-pressed="false" title="Acute-care census records — stroke capability not assessed">
-          <span class="pill-dot"></span>Not assessed
-        </button>
-      </div>
-      <div class="secondary-filters">
-        <label class="visually-hidden" for="filter-state">Filter by state</label>
-        <select id="filter-state" aria-label="State filter">
-          <option value="ALL">All states</option>
-          <option value="WA">Washington</option>
-          <option value="AK">Alaska</option>
-          <option value="ID">Idaho</option>
-          <option value="MT">Montana</option>
-          <option value="WY">Wyoming</option>
-        </select>
-        <div class="range-group">
-          <label for="filter-evt-distance" title="Minimum distance to nearest EVT center">EVT ≥</label>
-          <input id="filter-evt-distance" type="range" min="0" max="200" step="25" value="0" aria-label="Minimum miles to nearest EVT center">
-          <span id="evt-dist-label" aria-hidden="true">0</span><span aria-hidden="true">mi</span>
+      <!-- FIND ---------------------------------------------------------->
+      <section class="panel" role="tabpanel" id="panel-find" aria-labelledby="tab-find">
+        <div class="search-block">
+          <label class="field-label" for="search">Find a hospital</label>
+          <div class="search-field">
+            <svg class="ico search-ico" aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+            <input id="search" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search"
+                   placeholder="Name, nickname, city, county, system…" aria-describedby="search-help result-summary">
+            <button type="button" class="icon-btn search-clear" id="search-clear" aria-label="Clear search" hidden>
+              <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+          <p class="hint" id="search-help">Current and former names, nicknames (HMC, St&nbsp;V), city, county, health system or CMS number.</p>
+          <div class="result-bar">
+            <p id="result-summary" class="result-summary" role="status" aria-live="polite">Loading hospitals…</p>
+            <button type="button" class="link-btn" id="reset-filters" hidden>Reset filters</button>
+          </div>
+          <button type="button" class="sheet-toggle" id="sheet-toggle" aria-expanded="false" aria-controls="find-body">Show list</button>
         </div>
-      </div>
-    </section>
 
-    <div class="list-header">
-      <span>Hospitals</span>
-      <span id="list-count">0</span>
-    </div>
-    <ul id="hospital-list" class="hospital-list" role="list" aria-label="Hospital list. Use Arrow keys, Home, and End to move through hospitals."></ul>
-  </div>
+        <div class="panel-body" id="find-body">
+          <details class="filters" id="filters">
+            <summary><span>Filters &amp; scope</span> <span class="filter-count" id="filter-count"></span></summary>
+            <div class="filters-body">
+              <fieldset class="field-group">
+                <legend>Analysis scope</legend>
+                <div class="radio-row">
+                  <label><input type="radio" name="scope" value="eligible" checked> Adult emergency analysis set</label>
+                  <label><input type="radio" name="scope" value="all"> All facility records</label>
+                </div>
+                <label class="check"><input type="checkbox" id="inc-unknown" checked> Include eligibility unresolved <span class="count" data-count="inc-unknown"></span></label>
+                <label class="check"><input type="checkbox" id="inc-excluded"> Include excluded (pediatric, closed, no general ED) <span class="count" data-count="inc-excluded"></span></label>
+                <p class="hint" id="scope-help">The analysis set is active campuses with a documented 24/7 general emergency department serving adults. Search always looks across every record.</p>
+              </fieldset>
 
-  <!-- Dashboard -->
-  <div id="dashboard" class="dashboard collapsed" role="complementary" aria-label="Statistics dashboard" aria-hidden="true" inert>
-    <button id="dashboard-close-mobile" class="mobile-close" type="button" aria-label="Close dashboard">✕ Close</button>
-    <div class="dash-header">
-      <h2>Dashboard</h2>
-      <button id="dash-close" class="icon-btn" type="button" aria-label="Collapse dashboard" title="Collapse">×</button>
-    </div>
-    <div class="dash-section" role="group" aria-label="Certification donut">
-      <canvas id="donut-chart" class="chart" width="180" height="180" aria-label="Certification distribution donut chart" role="img"></canvas>
-      <p class="dash-scope dash-scope-block">Certification split · all records, not the current filter</p>
-    </div>
-    <div class="dash-section" role="group" aria-label="State bars">
-      <h3>By state <span class="dash-scope">· all records</span></h3>
-      <div id="state-bars"></div>
-    </div>
-    <div class="dash-section" role="group" aria-label="Coverage gaps">
-      <h3>Coverage gaps · current view</h3>
-      <div id="gap-metrics"></div>
-    </div>
-    <div class="dash-section" role="group" aria-label="Distance histogram">
-      <h3>Distance to nearest EVT <span class="dash-scope">· all records</span></h3>
-      <canvas id="histogram-chart" class="chart" width="248" height="110" aria-label="Histogram of distances to nearest EVT center" role="img"></canvas>
-    </div>
-  </div>
+              <fieldset class="field-group">
+                <legend>Capability shown on map</legend>
+                <div class="chip-row" id="tier-chips">
+                  <button type="button" class="chip" data-tier="csc" aria-pressed="false"><span class="swatch sw-CSC" aria-hidden="true"></span>CSC <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="tsc" aria-pressed="false"><span class="swatch sw-TSC" aria-hidden="true"></span>TSC <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="psc" aria-pressed="false"><span class="swatch sw-PSC" aria-hidden="true"></span>PSC <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="asr" aria-pressed="false"><span class="swatch sw-ASR" aria-hidden="true"></span>ASR <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="none" aria-pressed="false"><span class="swatch sw-NONE" aria-hidden="true"></span>None found <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="unassessed" aria-pressed="false"><span class="swatch sw-UNASSESSED" aria-hidden="true"></span>Not assessed <span class="count"></span></button>
+                </div>
+                <label class="check"><input type="checkbox" id="f-evt"> Documented 24/7 thrombectomy (EVT) <span class="count" data-count="evt"></span></label>
+                <p class="hint">Counts are within the current scope and other filters. EVT overlaps the tiers: a PSC can document 24/7 EVT.</p>
+              </fieldset>
 
-  <!-- Tools FAB + menu -->
-  <button id="tools-fab" class="tools-fab" type="button" aria-expanded="false" aria-controls="tools-menu" aria-label="Open tools menu" title="Tools &amp; analysis">⚙</button>
-  <nav id="tools-menu" class="tools-menu" hidden aria-label="Analysis tools">
-    <h4>Analysis</h4>
-    <button id="tool-candidates" class="tool-item" type="button"><strong>Expansion candidates (E)</strong></button>
-    <button id="tool-referral" class="tool-item" type="button">Referral pathways</button>
-    <button id="tool-distance-map" class="tool-item" type="button">CSC/TSC distance map</button>
-    <button id="tool-evt-deserts" class="tool-item" type="button">EVT deserts (&gt;100 mi)</button>
-    <button id="tool-zero-cap" class="tool-item" type="button">Zero-capability hospitals</button>
-    <button id="tool-coverage" class="tool-item" type="button">Coverage overlay</button>
-    <button id="tool-query-location" class="tool-item" type="button">Query custom location</button>
-    <hr>
-    <h4>Reports &amp; exports</h4>
-    <button id="tool-matrix" class="tool-item" type="button">Distance matrix</button>
-    <button id="tool-exec-summary" class="tool-item" type="button">Executive summary</button>
-    <button id="tool-data-qa" class="tool-item" type="button">Data quality &amp; sources (Q)</button>
-    <button id="tool-export-csv" class="tool-item" type="button">Export filtered CSV</button>
-    <button id="tool-export-png" class="tool-item" type="button">Export map as PNG</button>
-    <button id="tool-share" class="tool-item" type="button">Share current view</button>
-    <hr>
-    <h4>Display</h4>
-    <button id="tool-dark-ui" class="tool-item" type="button">Toggle dark mode (D)</button>
-    <button id="tool-dark-map" class="tool-item" type="button">Toggle dark map tiles</button>
-    <button id="tool-palette" class="tool-item" type="button">Toggle colour-blind palette</button>
-    <button id="tool-cert-info" class="tool-item" type="button">Certification info (?)</button>
-    <button id="tool-reset" class="tool-item" type="button">Reset everything (Shift+R)</button>
-  </nav>
+              <div class="field-grid">
+                <label class="field"><span>State</span>
+                  <select id="f-state">
+                    <option value="ALL">All five states</option>
+                    <option value="WA">Washington</option>
+                    <option value="AK">Alaska</option>
+                    <option value="ID">Idaho</option>
+                    <option value="MT">Montana</option>
+                    <option value="WY">Wyoming</option>
+                  </select>
+                </label>
+                <label class="field"><span>Health system</span>
+                  <select id="f-system"><option value="">Any system</option></select>
+                </label>
+                <label class="field"><span>Certification basis</span>
+                  <select id="f-basis">
+                    <option value="">Any</option>
+                    <option value="national">National certification</option>
+                    <option value="state">State designation only</option>
+                  </select>
+                </label>
+                <label class="field"><span>Critical Access Hospital</span>
+                  <select id="f-cah">
+                    <option value="">Any</option>
+                    <option value="yes">CAH documented</option>
+                    <option value="no">Not a CAH</option>
+                    <option value="unknown">CAH status unknown</option>
+                  </select>
+                </label>
+                <label class="field"><span>Evidence</span>
+                  <select id="f-evidence">
+                    <option value="">Any</option>
+                    <option value="assessed">Capability assessed</option>
+                    <option value="unassessed">Not assessed</option>
+                    <option value="conflicting">Conflicting evidence</option>
+                    <option value="needs-verification">Needs verification</option>
+                  </select>
+                </label>
+                <div class="field"><label for="f-evtmin">Min. straight-line miles to 24/7 EVT</label>
+                  <span class="range-row">
+                    <input id="f-evtmin" type="range" min="0" max="250" step="25" value="0">
+                    <output id="f-evtmin-out" for="f-evtmin">0</output>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </details>
 
-  <!-- Provenance bar -->
-  <section id="provenance-bar" class="provenance-bar" aria-label="Data provenance"></section>
-
-  <!-- Modal: Certification info -->
-  <div id="cert-info-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cert-info-title" aria-hidden="true" inert>
-    <div class="modal">
-      <div class="modal-header">
-        <h2 id="cert-info-title">Methods &amp; Certification Reference</h2>
-        <button class="icon-btn" type="button" data-close-modal="cert-info-modal" aria-label="Close">×</button>
-      </div>
-      <div id="cert-info-body"></div>
-    </div>
-  </div>
-
-  <!-- Modal: Distance matrix -->
-  <div id="distance-matrix-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="matrix-title" aria-hidden="true" inert>
-    <div class="modal wide">
-      <div class="modal-header">
-        <h2 id="matrix-title">Distance Matrix</h2>
-        <button class="icon-btn" type="button" data-close-modal="distance-matrix-modal" aria-label="Close">×</button>
-      </div>
-      <div class="modal-toolbar">
-        <button id="matrix-export-csv" class="btn btn-primary" type="button">Export CSV</button>
-      </div>
-      <div id="distance-matrix-content"></div>
-    </div>
-  </div>
-
-
-  <!-- Modal: Expansion candidates + scenario mode -->
-  <div id="candidates-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="candidates-title" aria-hidden="true" inert>
-    <div class="modal wide">
-      <div class="modal-header">
-        <h2 id="candidates-title">Expansion Candidates</h2>
-        <button class="icon-btn" type="button" data-close-modal="candidates-modal" aria-label="Close">×</button>
-      </div>
-      <p class="candidates-note">
-        Ranks non-EVT, non-CSC/TSC hospitals by a transparent planning heuristic computed in your browser
-        from the public dataset: certification tier on record, distance to 24/7 EVT, and distance to CSC/TSC.
-        Scores do not assess clinical operations, staffing, case volume, or telestroke contract status — and
-        adjusting the scenario never changes the source data.
-      </p>
-      <fieldset class="scenario-controls" aria-label="Scenario weights and thresholds">
-        <legend>Scenario mode</legend>
-        <div class="scenario-grid">
-          <div class="scenario-row">
-            <label for="w-cert">Certification-gap weight</label>
-            <input id="w-cert" type="range" min="0" max="100" step="5" value="40">
-            <span class="scenario-val" id="w-cert-val" aria-hidden="true">40</span>
+          <div class="list-tools">
+            <label class="inline-field" for="sort">Sort</label>
+            <select id="sort">
+              <option value="relevance">Best match</option>
+              <option value="name">Name</option>
+              <option value="tier">Capability tier</option>
+              <option value="evt">Miles to 24/7 EVT</option>
+              <option value="hub">Miles to my center</option>
+              <option value="checked">Evidence date</option>
+            </select>
           </div>
-          <div class="scenario-row">
-            <label for="w-evt">EVT-distance weight</label>
-            <input id="w-evt" type="range" min="0" max="100" step="5" value="40">
-            <span class="scenario-val" id="w-evt-val" aria-hidden="true">40</span>
-          </div>
-          <div class="scenario-row">
-            <label for="w-adv">CSC/TSC-distance weight</label>
-            <input id="w-adv" type="range" min="0" max="100" step="5" value="20">
-            <span class="scenario-val" id="w-adv-val" aria-hidden="true">20</span>
-          </div>
-          <div class="scenario-row">
-            <label for="desert-mi">EVT-desert threshold (mi)</label>
-            <input id="desert-mi" type="range" min="50" max="200" step="10" value="100">
-            <span class="scenario-val" id="desert-mi-val" aria-hidden="true">100</span>
-          </div>
-          <div class="scenario-row">
-            <label for="cap-mi">Distance cap (mi)</label>
-            <input id="cap-mi" type="range" min="100" max="300" step="25" value="200">
-            <span class="scenario-val" id="cap-mi-val" aria-hidden="true">200</span>
-          </div>
+          <p class="visually-hidden" id="results-label">Hospitals. Use the Up and Down arrow keys to move between hospitals and Enter to open one.</p>
+          <ul class="results" id="results" aria-labelledby="results-label"></ul>
         </div>
-        <div class="scenario-actions">
-          <button id="scenario-reset" class="btn btn-secondary" type="button">Reset scenario</button>
-          <button id="candidates-export-csv" class="btn btn-primary" type="button">Export candidates CSV</button>
+      </section>
+
+      <!-- EXPLORE ------------------------------------------------------->
+      <section class="panel" role="tabpanel" id="panel-explore" aria-labelledby="tab-explore" hidden>
+        <div class="panel-body">
+          <section class="card" aria-labelledby="hub-heading">
+            <h2 id="hub-heading">My receiving center</h2>
+            <p class="hint">Used for distance comparisons only. Kept in this browser and in shared links you choose to send. It does not imply any referral relationship.</p>
+            <p class="hub-current" id="hub-current">No center chosen.</p>
+            <label class="field"><span>Choose a hospital</span>
+              <select id="hub-select"><option value="">— Choose —</option></select>
+            </label>
+            <div class="btn-row">
+              <button type="button" class="btn" id="hub-preset">Use Harborview Medical Center</button>
+              <button type="button" class="btn btn-quiet" id="hub-clear" hidden>Clear</button>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="mode-heading">
+            <h2 id="mode-heading">Map shows</h2>
+            <fieldset class="mode-list" id="mode-list">
+              <legend class="visually-hidden">Analysis mode</legend>
+              <label><input type="radio" name="mode" value="capability" checked> Capability (certification and designation)</label>
+              <label><input type="radio" name="mode" value="evt-distance"> Straight-line miles to nearest documented 24/7 EVT center</label>
+              <label><input type="radio" name="mode" value="adv-distance"> Straight-line miles to nearest CSC/TSC-level center</label>
+              <label><input type="radio" name="mode" value="hub-distance" disabled> Straight-line miles to my receiving center</label>
+              <label><input type="radio" name="mode" value="evidence"> Evidence status</label>
+              <label><input type="radio" name="mode" value="eligibility"> Analysis eligibility</label>
+            </fieldset>
+          </section>
+
+          <section class="card" aria-labelledby="preset-heading">
+            <h2 id="preset-heading">Question presets</h2>
+            <p class="hint">Each preset sets filters, map mode and weights to frame a question. None establishes eligibility, feasibility or an outreach list.</p>
+            <div class="preset-list">
+              <button type="button" class="preset" data-preset="telestroke"><strong>Telestroke access review</strong><span>Eligible campuses without on-site 24/7 EVT, ranked by straight-line distance and documented capability.</span></button>
+              <button type="button" class="preset" data-preset="evt"><strong>EVT capability assessment</strong><span>Where thrombectomy evidence is unknown, conflicting or not 24/7 — what to verify first.</span></button>
+              <button type="button" class="preset" data-preset="state"><strong>State designation review</strong><span>Washington and Idaho campuses whose state level is unresolved or differs from national status.</span></button>
+            </div>
+            <p class="preset-active" id="preset-active" hidden></p>
+          </section>
+
+          <section class="card" aria-labelledby="overlay-heading">
+            <h2 id="overlay-heading">Map layers</h2>
+            <label class="check"><input type="checkbox" id="ov-lines" checked> Connections for the selected hospital</label>
+            <label class="check"><input type="checkbox" id="ov-nearest"> Modeled nearest-center lines for listed hospitals <span class="hint-inline">(geometry only — not referral relationships)</span></label>
+            <label class="check"><input type="checkbox" id="ov-rings"> 50 / 100 mi straight-line rings around 24/7 EVT centers <span class="hint-inline">(not travel time)</span></label>
+            <label class="check"><input type="checkbox" id="nb-toggle" checked> Include receiving centers in neighboring states <span class="count" id="nb-count"></span></label>
+          </section>
+
+          <section class="card" aria-labelledby="review-heading">
+            <h2 id="review-heading">Access review</h2>
+            <p class="hint">A transparent public-data scenario: ranks eligible campuses by straight-line distance and documented capability, with unassessed campuses listed separately for verification.</p>
+            <button type="button" class="btn btn-primary" id="open-review">Open access review</button>
+          </section>
+
+          <details class="card details-card" id="transport-card">
+            <summary><h2>Transport scenario assumptions</h2></summary>
+            <p class="hint">Illustrative planning values, not measured performance, dispatch times or aircraft availability. Each interval is kept separate; the endpoint is arrival at the receiving hospital.</p>
+            <div id="transport-form" class="transport-form" role="group" aria-label="Transport assumptions"></div>
+            <button type="button" class="btn btn-quiet" id="transport-reset">Reset assumptions</button>
+          </details>
+
+          <section class="card" aria-labelledby="summary-heading">
+            <h2 id="summary-heading">Summary by state</h2>
+            <label class="field inline"><span>Scope</span>
+              <select id="summary-scope">
+                <option value="results">Current results</option>
+                <option value="all">All facility records</option>
+              </select>
+            </label>
+            <section id="state-table" class="table-wrap" tabindex="0" aria-label="State summary table"></section>
+            <section id="distance-table" class="table-wrap" tabindex="0" aria-label="Distance distribution table"></section>
+          </section>
         </div>
-      </fieldset>
-      <div id="candidates-summary" class="candidates-summary"></div>
-      <div id="candidates-live" class="visually-hidden" aria-live="polite"></div>
-      <div id="candidates-content"></div>
-    </div>
-  </div>
+      </section>
 
-  <!-- Modal: Data quality & sources -->
-  <div id="data-qa-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="data-qa-title" aria-hidden="true" inert>
-    <div class="modal">
-      <div class="modal-header">
-        <h2 id="data-qa-title">Data Quality &amp; Sources</h2>
-        <button class="icon-btn" type="button" data-close-modal="data-qa-modal" aria-label="Close">×</button>
-      </div>
-      <div id="data-qa-body"></div>
-    </div>
-  </div>
+      <!-- COMPARE ------------------------------------------------------->
+      <section class="panel" role="tabpanel" id="panel-compare" aria-labelledby="tab-compare" hidden>
+        <div class="panel-body">
+          <section class="card" aria-labelledby="compare-heading">
+            <h2 id="compare-heading">Compare hospitals</h2>
+            <p class="hint">Add up to four hospitals from their detail panel, then compare documented capability, evidence age and straight-line access side by side.</p>
+            <ol class="compare-list" id="compare-list"></ol>
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" id="compare-open" disabled>Open comparison</button>
+              <button type="button" class="btn" id="compare-export" disabled>Export CSV</button>
+              <button type="button" class="btn btn-quiet" id="compare-clear" disabled>Clear</button>
+            </div>
+          </section>
+        </div>
+      </section>
 
-  <!-- Modal: Hospital detail -->
-  <div id="hospital-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="detail-title" aria-hidden="true" inert>
-    <div class="modal">
-      <div class="modal-header">
-        <h2 id="detail-title">Hospital details</h2>
-        <button class="icon-btn" type="button" data-close-modal="hospital-detail-modal" aria-label="Close">×</button>
-      </div>
-      <div id="hospital-detail-content"></div>
-    </div>
-  </div>
+      <!-- DATA ---------------------------------------------------------->
+      <section class="panel" role="tabpanel" id="panel-data" aria-labelledby="tab-data" hidden>
+        <div class="panel-body">
+          <section class="card" aria-labelledby="dataset-heading">
+            <h2 id="dataset-heading">Dataset</h2>
+            <dl class="kv-list" id="data-overview"></dl>
+            <button type="button" class="btn" id="open-methods">Methods, definitions and limits</button>
+          </section>
 
-  <!-- Modal: Executive summary -->
-  <div id="executive-summary-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="exec-title" aria-hidden="true" inert>
-    <div class="modal">
-      <div class="modal-header">
-        <h2 id="exec-title">Executive Summary</h2>
-        <button class="icon-btn" type="button" data-close-modal="executive-summary-modal" aria-label="Close">×</button>
-      </div>
-      <div class="modal-toolbar">
-        <button id="exec-copy" class="btn btn-primary" type="button">Copy to clipboard</button>
-        <button id="exec-download" class="btn btn-secondary" type="button">Download .txt</button>
-        <button id="exec-print" class="btn btn-secondary" type="button">Print one-pager</button>
-      </div>
-      <section class="exec-summary" tabindex="0" aria-label="Executive summary text">
-        <pre id="executive-summary-content"></pre>
+          <section class="card" aria-labelledby="verify-heading">
+            <h2 id="verify-heading">Needs verification</h2>
+            <p class="hint">Records with unassessed or conflicting evidence, unresolved eligibility, unverified locations, or evidence older than 12 months.</p>
+            <div id="verify-breakdown"></div>
+            <button type="button" class="btn" id="show-needs-verification">Show these records in Find</button>
+          </section>
+
+          <section class="card" aria-labelledby="coverage-heading">
+            <h2 id="coverage-heading">Evidence coverage</h2>
+            <p class="hint">How each claim was last established. Structural checks (below) test the file's internal consistency; they do not verify facts.</p>
+            <section id="coverage" class="table-wrap" tabindex="0" aria-label="Evidence coverage table"></section>
+            <h3 class="subhead">Structural checks (run in your browser)</h3>
+            <ul class="checks" id="checks"></ul>
+          </section>
+
+          <section class="card" aria-labelledby="export-heading">
+            <h2 id="export-heading">Export &amp; share</h2>
+            <label class="field"><span>Records to export</span>
+              <select id="export-scope">
+                <option value="results">Current results</option>
+                <option value="compare">Comparison set</option>
+                <option value="selected">Selected hospital</option>
+                <option value="all">All facility records</option>
+              </select>
+            </label>
+            <div class="btn-grid">
+              <button type="button" class="btn" id="export-csv">CSV</button>
+              <button type="button" class="btn" id="export-json">JSON</button>
+              <button type="button" class="btn" id="export-md">Summary (Markdown)</button>
+              <button type="button" class="btn" id="export-png">Map image (PNG)</button>
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn" id="open-summary">One-page summary…</button>
+              <button type="button" class="btn" id="share-link">Copy link to this view</button>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="display-heading">
+            <h2 id="display-heading">Display</h2>
+            <div class="field-grid">
+              <label class="field"><span>Theme</span>
+                <select id="theme-select">
+                  <option value="auto">Match system</option>
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </label>
+              <label class="field"><span>Basemap</span>
+                <select id="basemap-select">
+                  <option value="muted">Muted (OpenStreetMap)</option>
+                  <option value="standard">Standard (OpenStreetMap)</option>
+                  <option value="none">No basemap</option>
+                </select>
+              </label>
+            </div>
+            <label class="check"><input type="checkbox" id="cb-toggle"> Colour-vision-friendly palette</label>
+            <label class="check"><input type="checkbox" id="shortcuts-toggle" checked> Single-key keyboard shortcuts</label>
+            <button type="button" class="link-btn" id="open-shortcuts">Keyboard shortcuts</button>
+          </section>
+        </div>
       </section>
     </div>
+
+    <!-- Map -------------------------------------------------------------->
+    <main class="map-area" id="main" aria-label="Map">
+      <section id="map" class="map" tabindex="0" aria-roledescription="map" aria-label="Map of hospitals. The hospital list in Find gives the same information." aria-describedby="map-keys"></section>
+      <p id="map-keys" class="visually-hidden">Arrow keys pan the map and plus and minus zoom when the map has focus.</p>
+      <div class="map-status" id="map-status" aria-live="polite"></div>
+      <div class="map-jump">
+        <label class="visually-hidden" for="jump">Jump to region</label>
+        <select id="jump" class="jump-select"><option value="">Jump to…</option></select>
+      </div>
+      <section class="legend" id="legend" aria-label="Map legend">
+        <div class="legend-head">
+          <h2 id="legend-title">Legend</h2>
+          <button type="button" class="icon-btn" id="legend-toggle" aria-expanded="true" aria-controls="legend-body" aria-label="Collapse legend">
+            <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>
+          </button>
+        </div>
+        <div id="legend-body" class="legend-body"></div>
+      </section>
+      <p class="map-banner" id="map-banner" hidden></p>
+    </main>
+
+    <!-- Detail ------------------------------------------------------------>
+    <aside class="detail" id="detail" aria-labelledby="detail-title" hidden>
+      <div class="detail-head">
+        <div class="detail-titles">
+          <h2 id="detail-title" tabindex="-1">Hospital</h2>
+          <p class="detail-sub" id="detail-sub"></p>
+        </div>
+        <button type="button" class="icon-btn" id="detail-close" aria-label="Close hospital details">
+          <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="detail-actions" id="detail-actions"></div>
+      <div class="detail-body" id="detail-body"></div>
+    </aside>
   </div>
 
-  <footer class="site-footer">
-    <p>Public-reference planning tool built from public data sources (CMS, Joint Commission, DNV, state registries). Not for clinical decision-making or real patient care.</p>
+  <footer class="provenance" id="provenance">
+    <strong>Planning reference — not for clinical decisions, dispatch or patient routing.</strong>
+    <span id="provenance-text">Loading data…</span>
   </footer>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Dialogs ------------------------------------------------------------->
+  <dialog class="dlg dlg-wide" id="dlg-review" aria-labelledby="review-title">
+    <div class="dlg-head">
+      <h2 id="review-title">Access review — public-data scenario</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close access review">
+        <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="dlg-body">
+      <p class="note">Computed in your browser from the public dataset. It ranks <em>questions to investigate</em>, not hospitals to approach: it does not assess operations, staffing, volumes, contracts, existing telestroke coverage or feasibility, and it never changes the data.</p>
+      <div class="weights" id="review-form" role="group" aria-label="Scenario weights"></div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-quiet" id="review-reset">Reset weights</button>
+        <button type="button" class="btn" id="review-export">Export CSV</button>
+      </div>
+      <p id="review-summary" class="review-summary" role="status"></p>
+      <div role="tablist" class="sub-tabs" id="review-tabs" aria-label="Access review lists">
+        <button role="tab" type="button" id="rt-ranked" aria-controls="rp-ranked" aria-selected="true">Ranked (capability assessed)</button>
+        <button role="tab" type="button" id="rt-short" aria-controls="rp-short" aria-selected="false" tabindex="-1">Verification shortlist</button>
+      </div>
+      <div role="tabpanel" id="rp-ranked" aria-labelledby="rt-ranked" class="table-wrap" tabindex="0"></div>
+      <div role="tabpanel" id="rp-short" aria-labelledby="rt-short" class="table-wrap" tabindex="0" hidden></div>
+    </div>
+  </dialog>
+
+  <dialog class="dlg dlg-wide" id="dlg-compare" aria-labelledby="cmp-title">
+    <div class="dlg-head">
+      <h2 id="cmp-title">Comparison</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close comparison">
+        <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="dlg-body">
+      <div class="btn-row">
+        <button type="button" class="btn" id="cmp-export">Export CSV</button>
+        <button type="button" class="btn" id="cmp-print">Print</button>
+      </div>
+      <section id="cmp-table" class="table-wrap" tabindex="0" aria-label="Comparison table"></section>
+    </div>
+  </dialog>
+
+  <dialog class="dlg" id="dlg-methods" aria-labelledby="methods-title">
+    <div class="dlg-head">
+      <h2 id="methods-title">Methods, definitions and limits</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close methods">
+        <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="dlg-body prose" id="methods-body"></div>
+  </dialog>
+
+  <dialog class="dlg dlg-wide" id="dlg-summary" aria-labelledby="summary-title">
+    <div class="dlg-head">
+      <h2 id="summary-title">One-page summary</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close summary">
+        <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="dlg-body">
+      <div class="btn-row">
+        <button type="button" class="btn" id="summary-copy">Copy Markdown</button>
+        <button type="button" class="btn" id="summary-download">Download .md</button>
+        <button type="button" class="btn" id="summary-print">Print</button>
+      </div>
+      <article class="prose summary-preview" id="summary-preview" tabindex="0" aria-label="Summary preview"></article>
+    </div>
+  </dialog>
+
+  <dialog class="dlg" id="dlg-shortcuts" aria-labelledby="keys-title">
+    <div class="dlg-head">
+      <h2 id="keys-title">Keyboard shortcuts</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close keyboard shortcuts">
+        <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="dlg-body" id="shortcuts-body"></div>
+  </dialog>
+
+  <div class="print-root" id="print-root" aria-hidden="true"></div>
 </body>
 </html>
