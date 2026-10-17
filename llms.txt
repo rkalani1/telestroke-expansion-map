@@ -1,68 +1,75 @@
 # Regional Hospital Stroke Capabilities (WWAMI)
 
-Static, public-source reference map of hospital stroke-center certifications
-(CSC / TSC / PSC / ASR), state stroke designations, and 24/7 endovascular
-thrombectomy (EVT) capability across Washington, Alaska, Idaho, Montana, and
-Wyoming, with transparent distance/transport planning estimates and a
-user-adjustable expansion-planning heuristic. 236 hospitals.
+Static, public-source reference atlas of hospital stroke capability in
+Washington, Alaska, Idaho, Montana and Wyoming: national stroke certification,
+state stroke designation, documented thrombectomy (EVT) and 24/7 EVT, kept as
+separate claims with sources and check dates, plus straight-line access to
+receiving centers and transparent, adjustable planning scenarios.
+
+<!-- counts:start -->262 facility records (WA 97, AK 24, ID 47, MT 63, WY 31): 142 in the adult emergency-stroke analysis set, 9 excluded with a documented reason, 111 with eligibility unresolved; 1 not yet located. Stroke capability: 235 assessed, 10 partly assessed, 7 not assessed, 10 with conflicting evidence; 19 with documented 24/7 thrombectomy. 8 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17.<!-- counts:end -->
 
 - Site: https://rkalani1.github.io/telestroke-expansion-map/
 - Source: https://github.com/rkalani1/telestroke-expansion-map
 
 ## Data
 
-- /hospitals.json — the only dataset the app loads (schema 3.0.0). Top-level
-  metadata: schema_version, data_version, last_verified, generated_at,
-  primary_sources, coverage_note, census_snapshot, record_classes,
-  certification_definitions, certifying_bodies.
-- IMPORTANT — there are TWO record classes, and conflating them misreports the
-  data. Each record carries recordClass and strokeDataStatus:
-    * recordClass "stroke-capability" (136 records, strokeDataStatus
-      "verified") — capability checked against primary sources. A null
-      strokeCertificationType means CHECKED AND NONE FOUND.
-    * recordClass "acute-care-census" (100 records, strokeDataStatus
-      "not-assessed") — facility identity from the CMS acute-care census.
-      strokeCertificationType is null and hasELVO is false because the site
-      was NEVER ASSESSED. This is NOT evidence of absent capability. Do not
-      count these as uncertified, and do not include them in certification
-      rates or coverage-gap statistics.
-- Per-record fields: id (primary key), cmsId (CMS CCN; may be null or shared),
-  facilityIdType (ccn | shared-ccn | military), name, aliases, address, city,
-  cityConfidence, county, state, zip, latitude, longitude, geocodePrecision,
-  strokeCertificationType (CSC/TSC/PSC/ASR/null), certificationBasis
-  (national | state | both | none | not-assessed), nationalCertification,
-  stateDesignation, certifyingBody, certificationDetails, hasELVO,
-  hospitalType, ownership, beds, healthSystem, dataSources, lastVerified.
-- certificationBasis matters: 67 of the 136 assessed records display a tier
-  derived from a WA ECS or Idaho TSE state designation alone, with no national
-  accreditation. strokeCertificationType is this project's mapping onto the
-  national ladder, not an accreditor's finding.
-- Authoritative dates live inside hospitals.json. As of this file's last
-  update: data_version 2026.09.13.1; stroke capability verified 2026-07-04
-  (open items re-checked 2026-07-18, 2026-08-15, 2026-09-12 and 2026-09-13;
-  press sweep 2026-09-19, no changes); acute-care census snapshot Oct 2023.
-  Certification and EVT changes require two independent public sources.
-- /data/verification-worklist.csv — 59 ranked items that still need a
-  primary-source check, with the source to check for each.
-- /data/cms-census-wwami-2023-10.csv — the vendored CMS census subset.
+- /hospitals.json — the dataset the app loads (schema 4.0.0). Read its
+  top-level definitions before interpreting records: date_semantics,
+  claim_states, methods, eligibility_rule, tier_crosswalk, road_networks,
+  census_snapshot, scope, counts, sources.
+- One record per hospital CAMPUS (stable `id`; `previousIds` lists retired
+  ids). CCN, NPI, address and coordinates are separate fields; `ccn.relation`
+  says whether the campus bills under its own or a parent's CCN.
+- Every material fact is a CLAIM with a state — affirmative, negative (verified
+  absent within a stated scope), no-record-found (searched, nothing found; NOT
+  proof of absence), unknown (not assessed, or searched and still unresolved;
+  NEVER read as "no"), conflicting, not-applicable — plus evidence (source
+  ids into `sources`, excerpts), a `checked` date and a `method`. Claims:
+  status, address, location, serviceType, population, cah, ed, governance,
+  system, national, stateDesignation, evt, evt247, roadNetwork.
+- National certification and state designation are different things. The
+  display tier (`derived.tier`) comes from the national certification when
+  documented, otherwise from a WA ECS or Idaho TSE level through a published
+  DISPLAY crosswalk (`derived.tierBasis = state-crosswalk`), which does not
+  mean the hospital holds that national certification.
+- `derived.eligibility` defines the adult emergency-stroke analysis set:
+  eligible (active + a 24/7 general ED + serving adults; the ED is documented
+  for the campus or inferred from a program requirement: the Critical Access
+  Hospital or Rural Emergency Hospital conditions of participation, or the
+  Washington stroke Level II criteria), excluded (with a reason), or
+  unresolved. A VA or military hospital with such an ED is unresolved with
+  code `restricted-access` (civilian and EMS access not documented) and can
+  still be a receiving destination. Count unresolved records as unresolved,
+  not as eligible or excluded.
+- Dates: `checked` is when a claim was compared with its evidence (null =
+  never, or not recorded); `evidence_review_date` is the latest review pass,
+  not a date every record was verified; `generated` is when curated inputs
+  last changed. Many claims are carried forward from the previous edition
+  (`method: prior-edition`): they keep that edition's date as `editionAsOf`
+  and have `checked` null, an edition date, not a claim-level check date.
+- /data/audit/evidence-audit.csv — one row per facility x claim with the
+  outcome of the October 2026 review: confirmed, corroborated, established,
+  corrected, carried-forward, conflicting, searched-unresolved (searched in
+  this review and still unknown, including an earlier value that could not be
+  confirmed), inaccessible, not-assessed or missing.
+- /data/verification-worklist.csv — ranked open checks, each naming the
+  source that can settle it.
 
 ## Methods
 
-- /METHODOLOGY.md — scope and record classes (§1), certification nomenclature
-  and the national-vs-state distinction (§3), transport-time model
-  (haversine × 1.25 road factor; 55 mph ground + 8 min overhead; 150 mph air
-  + 25 min overhead), expansion-scoring heuristic, integrity checks, limits.
-- /CHANGELOG.md — release and data history.
-- /COMPLIANCE.md — public-data boundary for this repository.
+- /METHODOLOGY.md — records and the census denominator, separate dimensions,
+  evidence and dates, the analysis set, geography, straight-line distances and
+  destination sets, illustrative transport scenarios, the access review,
+  checks and limits.
+- /docs/SCHEMA.md — every field. /docs/SOURCE-MAINTENANCE.md — how claims are
+  re-checked. /CHANGELOG.md — releases. /COMPLIANCE.md — public-data boundary.
 
 ## Scope
 
-Planning reference built from public sources (CMS, Joint Commission, DNV,
-state registries). Not for clinical decision-making, live transfer routing,
-or dispatch, and not an official state Department of Health product.
-Absence of a certification on an acute-care-census record means the site was
-not assessed, not that it lacks capability.
-Transport times are order-of-magnitude planning estimates, not operational
-dispatch times. Expansion scores are transparent heuristics computed in the
-browser; they make no claims about clinical operations, staffing, volume, or
-telestroke contract status.
+Public-source planning reference. Not for clinical decision-making, patient
+routing or dispatch, and not an official health-department or accreditor
+product. It records no institutional approval, affiliation, referral
+agreement, contract or real-time availability. Distances are straight-line;
+lines are geometry, not routes or referral relationships; transport times are
+illustrative scenarios, never compared with treatment-time targets. The
+access review ranks questions to investigate, not hospitals to approach.

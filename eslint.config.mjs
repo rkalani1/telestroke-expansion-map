@@ -1,8 +1,24 @@
-export default [{
-  files: ["**/*.js"],
-  languageOptions: {
-    ecmaVersion: 2022, sourceType: "script",
-    globals: { window:"readonly", document:"readonly", navigator:"readonly", location:"readonly", history:"readonly", localStorage:"readonly", sessionStorage:"readonly", fetch:"readonly", console:"readonly", setTimeout:"readonly", clearTimeout:"readonly", setInterval:"readonly", clearInterval:"readonly", requestAnimationFrame:"readonly", cancelAnimationFrame:"readonly", performance:"readonly", URL:"readonly", URLSearchParams:"readonly", Blob:"readonly", FileReader:"readonly", Intl:"readonly", getComputedStyle:"readonly", matchMedia:"readonly", CustomEvent:"readonly", Event:"readonly", KeyboardEvent:"readonly", Node:"readonly", Element:"readonly", HTMLElement:"readonly", ResizeObserver:"readonly", IntersectionObserver:"readonly", MutationObserver:"readonly", AbortController:"readonly", Image:"readonly", devicePixelRatio:"readonly", innerWidth:"readonly", innerHeight:"readonly", alert:"readonly", confirm:"readonly", prompt:"readonly", structuredClone:"readonly", queueMicrotask:"readonly", crypto:"readonly", TextEncoder:"readonly", TextDecoder:"readonly", DOMParser:"readonly", XMLSerializer:"readonly", screen:"readonly", scrollTo:"readonly", open:"readonly", print:"readonly", L:"readonly" }
-  },
-  rules: { "no-undef":"error", "no-unused-vars":["warn",{args:"none"}], "no-redeclare":"error", "no-dupe-keys":"error", "no-duplicate-case":"error", "no-unreachable":"error", "no-constant-condition":"warn", "eqeqeq":["warn","smart"], "no-var":"warn", "prefer-const":"warn", "no-empty":"warn", "no-fallthrough":"error", "no-self-assign":"error", "no-shadow-restricted-names":"error", "no-undef-init":"warn", "use-isnan":"error", "valid-typeof":"error", "no-cond-assign":"error", "no-func-assign":"error", "no-inner-declarations":"warn", "no-prototype-builtins":"warn" }
-}];
+// Correctness rules only (no style rules). app.js and core.js are classic
+// browser scripts; core.js is also loaded by the Node unit tests via CommonJS.
+const browser = {
+  window: 'readonly', document: 'readonly', navigator: 'readonly', location: 'readonly', history: 'readonly',
+  fetch: 'readonly', console: 'readonly', setTimeout: 'readonly', clearTimeout: 'readonly',
+  requestAnimationFrame: 'readonly', URL: 'readonly', URLSearchParams: 'readonly', Blob: 'readonly',
+  getComputedStyle: 'readonly', matchMedia: 'readonly', AbortController: 'readonly', CSS: 'readonly',
+  self: 'readonly', L: 'readonly', ResizeObserver: 'readonly',
+};
+const rules = {
+  'no-undef': 'error', 'no-unused-vars': ['warn', { args: 'none' }], 'no-redeclare': 'error', 'no-dupe-keys': 'error',
+  'no-duplicate-case': 'error', 'no-unreachable': 'error', 'no-constant-condition': 'warn', eqeqeq: ['warn', 'smart'],
+  'no-var': 'warn', 'prefer-const': 'warn', 'no-empty': ['warn', { allowEmptyCatch: false }], 'no-fallthrough': 'error',
+  'no-self-assign': 'error', 'no-shadow-restricted-names': 'error', 'no-undef-init': 'warn', 'use-isnan': 'error',
+  'valid-typeof': 'error', 'no-cond-assign': 'error', 'no-func-assign': 'error', 'no-inner-declarations': 'warn',
+  'no-prototype-builtins': 'warn',
+};
+export default [
+  { files: ['app.js'], languageOptions: { ecmaVersion: 2022, sourceType: 'script', globals: browser }, rules },
+  { files: ['core.js'], languageOptions: { ecmaVersion: 2022, sourceType: 'script', globals: { self: 'readonly', module: 'writable', URLSearchParams: 'readonly' } }, rules },
+  // Test files run in Node, but the callbacks they pass to page.evaluate() run
+  // in the browser, so both sets of globals apply.
+  { files: ['tests/**/*.js'], languageOptions: { ecmaVersion: 2022, sourceType: 'commonjs', globals: Object.assign({}, browser, { require: 'readonly', module: 'writable', __dirname: 'readonly', process: 'readonly', Buffer: 'readonly', localStorage: 'readonly', sessionStorage: 'readonly', getSelection: 'readonly', KeyboardEvent: 'readonly', DOMException: 'readonly', innerWidth: 'readonly', innerHeight: 'readonly', Element: 'readonly', HTMLElement: 'readonly', MutationObserver: 'readonly' }) }, rules },
+];

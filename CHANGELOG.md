@@ -2,6 +2,97 @@
 
 All notable changes to the Regional Hospital Stroke Capabilities reference.
 
+## [4.0.0] - 2026-10-17
+
+Schema 4: claim-level evidence, a rebuilt app and a full census reconciliation. Every material
+claim now carries its own state, sources, method and check date; nothing is stamped or promoted
+by the build. At release: 262 facility records (WA 97, AK 24, ID 47, MT 63, WY 31): 142 in the adult emergency-stroke analysis set, 9 excluded with a documented reason, 111 with eligibility unresolved; 1 not yet located. Stroke capability: 235 assessed, 10 partly assessed, 7 not assessed, 10 with conflicting evidence; 19 with documented 24/7 thrombectomy. 8 receiving centers outside the five states are included as destinations only. Data 2026.10.17.1, evidence review 2026-10-17. Previous edition: 236 records.
+
+### Data
+- **Claim-level evidence (schema 4.0.0).** Status, address, coordinates, service type, population,
+  Critical Access designation, emergency department, governance, health system, national
+  certification, state designation, thrombectomy and 24/7 thrombectomy are separate claims, each
+  with a state (documented, verified absent within a scope, no record found, not assessed,
+  conflicting, not applicable), sources, method, check date and, when changed, the previous value.
+  Claims carried from the previous edition keep that edition's date (`editionAsOf`) instead of a
+  claim-level check date; the previous build's dataset-wide date is no longer presented as a check.
+- **Census reconciliation** against the CMS Hospital General Information snapshot and NPPES:
+  campus identities, shared CCNs, corrected and retired ids (old links still open the right
+  record), restored addresses and town names (South Peninsula → Homer, Central Peninsula →
+  Soldotna, and every analogous case found by the new town check), the Cascade centroid error,
+  closures and mergers with dates and sources, Rural Emergency Hospital conversions (Cascade,
+  East Adams, Garfield County), new records for VA and military hospitals with a documented
+  24/7 emergency department, Sublette County Hospital, Post Falls ER & Hospital and Swedish
+  Ballard. Facilities considered and not added are listed in the evidence audit.
+- **Capability evidence pass** for every partly assessed or unassessed record (statewide sweeps
+  plus campus checks): absence is recorded as *no record found* with its scope, never as a
+  negative; negatives need a current statement for that campus or an issuer roster omission;
+  disagreements are *conflicting* with both sources cited. Issuer directories (Joint Commission
+  Quality Check, DNV) could not be reached from the authoring environment; the worklist names
+  each next check.
+- **Analysis set** (adult emergency-stroke campuses) states how each emergency department is
+  known: documented for the campus, or inferred from Critical Access Hospital or Rural Emergency
+  Hospital conditions of participation or Washington stroke Level II criteria. Federal (VA,
+  military) emergency departments are kept out of the set as *restricted access* until civilian
+  access is documented; they remain searchable and can be destinations.
+- **Neighboring receiving centers** (Oregon, Utah, Colorado, North Dakota) as destinations only.
+- **Geography:** no precision is inferred from decimal places; coordinates say how they were
+  obtained; a GeoNames town check flags points far from or nearer another town; town-centre
+  placements are marked approximate (≈).
+- Generated evidence audit (`docs/EVIDENCE-AUDIT-2026-10.md`, `data/audit/evidence-audit.csv`) and
+  a prioritised worklist (`data/verification-worklist.csv`): P1/P2 open items and P3 precision notes.
+
+### App
+- Rebuilt around Find, hospital detail, Explore, Compare and Data & methods; every view states its
+  scope and computes its counts from the data shown.
+- National certification and state designation shown separately; state levels appear on the tier
+  ladder only through the stated crosswalk. *Partly assessed, no tier yet* and *not assessed* are
+  never shown as *none found*; uncertainty keeps a second visual channel in every map mode.
+- Nearest destinations always name their set (*documented 24/7 EVT*, *CSC/TSC-level*); on-site
+  (0 mi) is distinct from unknown. Lines are labelled as geometry, not referral relationships.
+- Transport scenarios keep DIDO and each leg separate, state every assumption (including each
+  mode's handover time) and are never compared with treatment-time targets; ground time is modelled
+  only on a shared documented road network; airports and landing zones are not assessed.
+- Access review: transparent weights, rank ranges under weight changes, a verification shortlist
+  that does not depend on the weights, an unscored transfer-scenario column, explicit all-zero
+  handling. Presets frame questions to investigate, not outreach lists.
+- **Distance table** (Explore): a sortable, scoped table of nearest documented 24/7 EVT,
+  CSC/TSC-level and my-center distances, with its own CSV — the v3 distance matrix, restored
+  without its zero-as-missing bug.
+- Fit view keeps the selected hospital and its destinations clear of the panels, on selection and
+  on demand, at phone, tablet and desktop sizes; where a very small screen leaves no clear area the
+  status bar says so. On tablets the detail covers the tool column instead of the map.
+- Overlapping markers carry a count badge; marker outlines and rings meet 3:1 contrast in light,
+  dark and colour-vision palettes; optional USGS terrain shading.
+- Share links restore selection, my center, comparison, mode, overlays, filters (including one
+  needs-verification reason, `ev=nv:<code>`), summary and review scopes (`ss`, `rc`), the
+  CSC/TSC line (`adv`), scenario and viewport; links from earlier versions keep working and
+  unrecognised settings are reported.
+- WCAG 2.2 AA work throughout: accessible names, landmarks, focus order and focus handoff after
+  re-renders, reflow at 320 px, inert content under sheets, 24 px targets; checked with axe-core
+  and keyboard-path tests.
+- PNG export drawn without any library, with legend, provenance and attribution; print one-pagers.
+
+### Exports (changed columns)
+- Main CSV: `nearest_documented_24x7_evt_center`, `miles_to_nearest_documented_24x7_evt` and the
+  my-center difference column replace the unqualified names; separate `evt_*` and `evt_24x7_*`
+  provenance columns; `tier_class`, `capability_oldest_critical_checked`, `capability_undated`,
+  `distances_approximate`; a UTF-8 byte-order mark.
+- JSON export: `access.nearest_documented_24x7_evt`.
+- Access-review CSV: the unscored transfer-scenario and transport-assumption columns.
+- New distance-table CSV and comparison CSV provenance rows.
+- The Evidence filter's *Capability assessed* is now strict; *Capability partly assessed* is its
+  own option (`ev=partial`).
+
+### Engineering
+- Deterministic build (`scripts/build-dataset.py --check`) and an independent verifier
+  (`scripts/verify-data.py`) with structural, provenance, capability, eligibility, geography,
+  regression, count, public-data and wording checks; dates are checked against the calendar and
+  source links must be web addresses.
+- Pure logic in `core.js` with unit tests; headless Playwright end-to-end tests (DOM, accessibility
+  tree, geometry, console and downloaded files; no screenshots) and axe-core; CI on Node 22.
+- Vendored Leaflet 1.9.4; no CDN, no trackers, no webfonts.
+
 ## [3.2.1] - 2026-09-19
 
 Second pass on the same day: independent audits the 3.2.0 pass had not run (axe-core

@@ -1,0 +1,127 @@
+{
+ "schema_version": "4.0.0",
+ "release": "4.0.0",
+ "data_version": "2026.10.17.1",
+ "generated": "2026-10-17",
+ "evidence_review_date": "2026-10-17",
+ "date_semantics": {
+  "release": "Application and dataset release version (semantic versioning). Changes with code or data.",
+  "data_version": "Version of the dataset content, YYYY.MM.DD.n by the date the curated inputs were last changed.",
+  "generated": "Date the curated inputs that produced this file were last changed. Not a verification date.",
+  "evidence_review_date": "Date of the most recent evidence-review pass. It does NOT mean every record was verified on that date: a claim checked in a pass carries its own checked date, and a claim carried forward from the previous edition keeps that edition's date as editionAsOf, with checked null.",
+  "checked": "On a claim: the date someone last compared that claim against the cited evidence. null = never checked, or not recorded (a carried-forward claim then has editionAsOf, the previous edition's date).",
+  "source_published / source_effective": "On a source: the document's own publication or effective date, when the document states one. Never a search date or a website footer year.",
+  "source_accessed": "On a source: when the evidence was retrieved or observed, and through which access method.",
+  "as_of": "On CMS reference data: the CMS snapshot month the row comes from."
+ },
+ "scope": "Hospital campuses in Washington, Alaska, Idaho, Montana and Wyoming (WWAMI): every Medicare-certified short-term acute-care, critical-access and children's hospital in the CMS Hospital General Information October 2023 snapshot for the five states, plus curated campuses the census cannot supply (military, shared-CCN campuses, facilities identified in the evidence review), and former names of renamed or merged campuses kept as search aliases; a closure or merger is recorded when a state licensing roster, CMS, the operator or reputable news reporting documents it, with the date and source cited. Receiving centers just outside the five states are included as destinations only. The CMS snapshot is the census denominator; facilities opened after it are present only where the review identified them.",
+ "eligibility_rule": {
+  "label": "Adult emergency-stroke analysis set",
+  "eligible": "Active campus AND a general emergency department open 24/7 AND serving adults (all ages or adult). The emergency department may be documented for the campus or inferred from a program requirement the campus is subject to: Critical Access Hospital conditions of participation (42 CFR 485.618), Rural Emergency Hospital conditions of participation (42 CFR 485.528(a)) or Washington stroke Level II designation criteria. Each record's eligibility reason says which.",
+  "excluded": "Closed or merged campus; OR documented absence of a general 24/7 emergency department; OR a pediatric-only hospital. Each exclusion carries its reason.",
+  "unknown": "Anything else: eligibility is unresolved until the missing evidence is found. Unknown is not excluded and not eligible. This includes VA and military hospitals with a 24/7 emergency department, documented or inferred from a program requirement (code restricted-access): it serves eligible beneficiaries (Veterans, TRICARE), and civilian emergency and EMS access is not documented. Such records stay searchable and can still be destinations.",
+  "note": "Name alone never excludes a hospital (e.g. 'Clinic' in a name)."
+ },
+ "crosswalk_note": "Display crosswalk only. A state stroke level is drawn on the national tier ladder so it can be coloured and filtered alongside national certifications. It does not mean the hospital holds, or meets the standards of, the national certification of that tier. National certification takes precedence for display when both exist.",
+ "claim_states": {
+  "affirmative": "Positive evidence for the claim (see sources and checked date).",
+  "negative": "Verified absent within a stated scope and date (e.g. not on a named registry revision).",
+  "no-record-found": "Searched the stated sources and found no record. Not proof of absence.",
+  "unknown": "Not assessed, or searched and still unresolved (what was found does not settle it; the search is recorded on the claim). Never read as no.",
+  "conflicting": "Credible sources disagree; both sides are cited.",
+  "not-applicable": "The claim does not apply (e.g. the capability claims of a closed or merged campus, with the closure date and source in the note; its status, emergency-department and Critical Access claims carry the date the closure or merger took effect)."
+ },
+ "methods": {
+  "prior-edition": "Carried forward from the previous edition (v3, data 2026.09.13.1) with that edition's source text. It keeps the edition's date as editionAsOf and has no claim-level check date (checked is null), because the previous edition's build stamped one dataset-wide date on every record; a claim that edition re-checked individually keeps that record-specific date. Not re-observed in the current pass unless a later claim says so.",
+  "search-extract": "Observed through a web search tool's extraction of the cited page. Direct page fetching was blocked in the authoring environment, so the page itself was not opened; treat as weaker than a direct reading.",
+  "nppes-api": "Retrieved from the CMS NPPES NPI Registry API (organization record).",
+  "cms-dataset": "Read from the vendored CMS Hospital General Information snapshot (October 2023; earlier snapshots for CCNs no longer listed).",
+  "regulatory-inference": "Follows from a cited regulation given another documented fact (e.g. CAH conditions of participation require 24-hour emergency services). Also used for a Wyoming state designation: designation requires national accreditation (EMS Rules ch. 13), so a hospital with no national stroke accreditation found is recorded as no record found for state designation, citing the rule.",
+  "manual-review": "Reconciled by the maintainer from the cited sources.",
+  "derived": "Computed by the build from other claims.",
+  "rule-based": "Assigned by a documented rule applied to the cited sources; the rule is written in the claim note (for example: active status from a current registry record plus a CMS listing, or coordinates where two independent sources agree)."
+ },
+ "census_snapshot": {
+  "source": "CMS Hospital General Information, October 2023 snapshot (archived copy via klocey/hospitals-data-archive)",
+  "as_of": "2023-10",
+  "file": "data/cms-census-wwami-2023-10.csv",
+  "note": "Reference for CCN, CMS name, hospital type, ownership and bed count. Some rows last appear in older snapshots (their as_of month says so). The current CMS dataset (data.cms.gov xubh-q36u) could not be retrieved in the October 2026 pass; refreshing it is an open item."
+ },
+ "geography_note": "County/borough is derived from the coordinates against generalised 2017 Census boundaries. Coordinates are checked against the named state's polygon with a 3-mile tolerance for generalised coastlines. A point inside the right county is not proof that it sits on the right campus.",
+ "road_networks": {
+  "contiguous-us": "Road network of the contiguous United States (includes Whidbey and Camano Islands by bridge).",
+  "ak-railbelt": "Alaska road system connecting Anchorage, Mat-Su, the Kenai Peninsula, Fairbanks and Valdez. Treated as separate from contiguous-us: the cross-border road route is not modelled as an acute transfer.",
+  "isolated": "ak-isolated:<community> — a community with no road link to any other hospital in the dataset (local roads at most); reached by air, or seasonally by sea or river.",
+  "ferry": "<community>-ferry — reached from other hospitals' road networks only by ferry. Ground transfer is not modelled across a ferry; campuses in the same community share its local roads.",
+  "unknown": "Not documented; ground transfer is shown as unavailable."
+ },
+ "certification_definitions": {
+  "CSC": "Comprehensive Stroke Center (Joint Commission; DNV; ACHC).",
+  "TSC": "Thrombectomy-Capable Stroke Center (Joint Commission; ACHC). DNV's Primary Stroke Center Plus (PSC+) is shown on this tier and named as such.",
+  "PSC": "Primary Stroke Center, including Joint Commission Advanced Primary Stroke Center (Joint Commission; DNV; ACHC; CIHQ).",
+  "ASR": "Acute Stroke Ready Hospital (Joint Commission 'Acute Stroke Ready Hospital'; DNV, ACHC, CIHQ equivalents).",
+  "EVT": "Endovascular thrombectomy. Recorded as its own documented capability, separately from any certification tier. '24/7' only when explicitly documented or entailed by a current credential, which is named."
+ },
+ "openItems": [
+  {
+   "priority": "P1",
+   "scope": "ALL",
+   "question": "Refresh the CMS Hospital General Information census to the current release",
+   "nextCheck": "data.cms.gov dataset xubh-q36u (blocked from the October 2026 authoring environment)"
+  },
+  {
+   "priority": "P2",
+   "scope": "ID — candidate facility, not a record",
+   "question": "Saint Alphonsus Neighborhood Hospital, Eagle (323 E Riverside Dr): is it a licensed hospital with a 24/7 emergency department? Not researched; its NPPES record (EMP Idaho Nampa, LLC, NPI 1164952206) was last updated 2022-07-21.",
+   "nextCheck": "Idaho DHW Bureau of Facility Standards hospital licensing list for the address; then Saint Alphonsus's location page for Eagle; NPPES NPI 1164952206"
+  },
+  {
+   "priority": "P2",
+   "scope": "ID — candidate facility, not a record",
+   "question": "Saint Alphonsus Neighborhood Hospital, Boise Downtown (350 E Myrtle St): is it a licensed hospital with a 24/7 emergency department? Not researched; its NPPES record (EMP Idaho Nampa, LLC, NPI 1508386707) was last updated 2018-07-16.",
+   "nextCheck": "Idaho DHW Bureau of Facility Standards hospital licensing list for the address; then Saint Alphonsus's location page for downtown Boise; NPPES NPI 1508386707"
+  },
+  {
+   "priority": "P2",
+   "scope": "WY — candidate facility, not a record",
+   "question": "North Platte Valley Medical Center, Saratoga (1300 W Bridge Ave; Platte Valley Healthcare Project): is it a licensed hospital (NPPES lists a Critical Access taxonomy, enumerated 2022-11-25) with a 24/7 emergency department? Not researched.",
+   "nextCheck": "Wyoming Department of Health, Healthcare Licensing and Surveys hospital list; current CMS Hospital General Information for Saratoga, WY; the operator's site; NPPES NPI 1730899204"
+  },
+  {
+   "priority": "P2",
+   "scope": "AK — state stroke designation",
+   "question": "Alaska HB 27 (stroke and heart-attack system bill) passed the Legislature in May 2026: was it signed into law, and does it create a hospital stroke designation program? Until one operates, every Alaska record's state designation stays \"no state program found\".",
+   "nextCheck": "Bill status of HB 27 (34th Legislature) on akleg.gov; then the Alaska Department of Health's emergency-programs pages for stroke-center designation rules or a roster"
+  },
+  {
+   "priority": "P2",
+   "scope": "WY — state stroke designation",
+   "question": "Which hospitals has the WDH Office of EMS designated as heart attack or stroke centers, at what level and since when? No public roster was found, so Wyoming state designations rest on national accreditation (EMS Rules ch. 13): no record found where no national stroke certification was found; not assessed for Banner Wyoming Medical Center and Cheyenne Regional Medical Center.",
+   "nextCheck": "WDH Office of EMS Heart and Stroke Center Designation pages (health.wyo.gov/publichealth/ems/special-projects/686-2/) from an unrestricted network; failing that, the Office of EMS's current letters of recognition with dates; the current chapter 13 text on rules.wyo.gov for the designation term"
+  },
+  {
+   "priority": "P2",
+   "scope": "ID, MT, WY, AK, WA — national certification",
+   "question": "The October 2026 no-record-found national certification claims rest on web-search extracts; the issuer directories could not be reached, so a small Acute Stroke Ready or Primary Stroke Center certification may be missed.",
+   "nextCheck": "Joint Commission Quality Check filtered by state and stroke certification; the DNV certified-organization directory; the ACHC and CIHQ directories"
+  },
+  {
+   "priority": "P2",
+   "scope": "MT — national certification and thrombectomy sources",
+   "question": "Montana's no-record-found thrombectomy claims rest on old or undated statewide sources (the undated Montana Stroke Initiative resource table, with pre-2022 hospital names; the CDC drive-time map, 2016–2018 data), and the Montana national no-record-found claims rest on a statewide sweep known to be incomplete: it did not surface Community Medical Center (Missoula), a Joint Commission Primary Stroke Center. Is there a current statewide list, and do the issuer directories list any of the other Montana campuses?",
+   "nextCheck": "Joint Commission Quality Check, the DNV certified-organization directory and the ACHC and CIHQ directories, filtered to Montana for every stroke tier (Acute Stroke Ready to Comprehensive and Thrombectomy-Capable), compared with each Montana no-record-found claim; then the DPHHS Cardiovascular Health Program and the Montana Stroke Initiative for a current, dated hospital capability list, and AHA Montana Mission: Lifeline Stroke"
+  },
+  {
+   "priority": "P2",
+   "scope": "WA — candidate facility, not a record",
+   "question": "Mann-Grandstaff VA Medical Center (Spokane): does it have a 24/7 emergency department? It was considered and not added because VA pages describe urgent care 07:00–19:00 daily, but a directory \"Emergency Department\" entry gives no hours and a 2026 temporary-closure release was unclear (low confidence).",
+   "nextCheck": "The VA facility page for Mann-Grandstaff VA Medical Center (emergency and urgent care hours); the regional EMS destination list for Spokane County (whether ambulances transport there)"
+  },
+  {
+   "priority": "P2",
+   "scope": "AK, ID, MT, WY — national certification (statewide sweeps only)",
+   "question": "51 national no-record-found claims rest only on statewide sweeps, with no campus-specific search. Alaska (9): Cordova Community Medical Center (021307), Kanakanak Hospital (021309), Providence Kodiak Island Medical Center (021306), Providence Seward Medical Center (021302), Providence Valdez Medical Center (021301), SEARHC Mt. Edgecumbe Medical Center (021314), Samuel Simmonds Memorial Hospital (021312), South Peninsula Hospital (021313), Yukon-Kuskokwim Delta Regional Hospital (020018); Idaho (2): Bingham Memorial Hospital (131325), Gritman Medical Center (131327); Montana (33): Benefis Teton Medical Center (271307), Big Sandy Medical Center (271311), Bitterroot Health – Daly Hospital (271340), Clark Fork Valley Hospital (271323), Dahl Memorial Healthcare Association (271302), Daniels Memorial Hospital (271342), Deer Lodge Medical Center (271314), Fallon Medical Complex Hospital (271301), Garfield County Health Center (271310), Granite County Medical Center (271303), Holy Rosary Healthcare (271347), Liberty Medical Center (271334), Logan Health – Whitefish (271336), Madison Valley Medical Center (271329), Marias Medical Center (271328), McCone County Health Center (271305), Mineral Community Hospital (271331), Missouri River Medical Center (271304), Mountainview Medical Center (271306), Northern Montana Hospital (270032), Northern Rockies Medical Center (271337), Phillips County Hospital (271312), Pioneer Medical Center (271313), Pondera Medical Center (271324), Poplar Community Hospital (271300), Prairie Community Hospital (271309), Roosevelt Medical Center (271308), Rosebud Health Care Center (271327), Roundup Memorial Healthcare (271346), Ruby Valley Medical Center (271319), Sheridan Memorial Hospital (271322), Trinity Hospital (271341), Wheatland Memorial Hospital (271321); Wyoming (7): Cheyenne VA Medical Center (WY-CHEYENNE-VAMC), Cody Regional Health (531312), Evanston Regional Hospital (530032), Memorial Hospital of Converse County (531302), Memorial Hospital of Sweetwater County (530011), SageWest Health Care – Riverton (530008), Sublette County Hospital (WY-SUBLETTE-COUNTY-HOSPITAL). The Montana sweep is known to be incomplete (it did not surface Community Medical Center's June 2026 Joint Commission certification), and the AHA count behind the Wyoming claims may not include VA facilities.",
+   "nextCheck": "Joint Commission Quality Check, the DNV directory and the ACHC and CIHQ directories, searched by each hospital's name; for the Cheyenne VA, also the VA facility pages"
+  }
+ ]
+}
