@@ -359,3 +359,65 @@ test('a hospital that is itself a 24/7 EVT center gets no minute comparison with
   assert.equal(d.miles, 1432);
   assert.ok(d.minutes.every(m => m.diff === null && /no transfer/.test(m.reason)));
 });
+
+test('the verification shortlist does not depend on the weights', () => {
+  const evt = rec('evt', Object.assign(at(47.6, -122.3), { evt247: { state: 'affirmative' }, derived: { tier: 'CSC', capability: 'assessed', eligibility: { value: 'eligible' } } }));
+  const un = rec('un', Object.assign(at(46.0, -118.0), { derived: { tier: null, capability: 'unassessed', eligibility: { value: 'eligible' } } }));
+  const part = rec('part', Object.assign(at(45.0, -117.0), { derived: { tier: null, capability: 'partial', eligibility: { value: 'eligible' } } }));
+  const hs = [evt, un, part];
+  const sets = { evt247: C.destinationSet(hs, 'evt247'), advanced: C.destinationSet(hs, 'advanced') };
+  const acc = Object.fromEntries(hs.map(h => [h.id, C.computeAccess(h, sets, null)]));
+  const ids = r => r.shortlist.map(x => x.h.id).sort();
+  const geo = C.accessReview(hs, acc, { wGap: 30, wEvt: 50, wAdv: 20 });
+  const gapOnly = C.accessReview(hs, acc, { wGap: 30, wEvt: 0, wAdv: 0 });
+  const none = C.accessReview(hs, acc, { wGap: 0, wEvt: 0, wAdv: 0 });
+  assert.deepEqual(ids(geo), ['part', 'un']);
+  assert.deepEqual(ids(gapOnly), ['part', 'un'], 'geographic weights at zero keep the shortlist');
+  assert.deepEqual(ids(none), ['part', 'un'], 'all weights at zero still list what needs verification');
+  assert.equal(none.error, 'all-weights-zero');
+  assert.equal(none.ranked.length, 0);
+  // Without a score the shortlist is ordered by miles to the nearest 24/7 EVT center, farthest first.
+  assert.deepEqual(gapOnly.shortlist.map(x => x.h.id), ['part', 'un']);
+});
+
+test('rank sensitivity still perturbs a weight that sits at the slider maximum', () => {
+  const evt = rec('evt', Object.assign(at(47.6, -122.3), { evt247: { state: 'affirmative' }, derived: { tier: 'CSC', capability: 'assessed', eligibility: { value: 'eligible' } } }));
+  // a: close to EVT but no certification; b: far from EVT but a PSC.
+  const a = rec('a', Object.assign(at(47.0, -122.0), { national: { state: 'no-record-found' }, derived: { tier: null, capability: 'assessed', eligibility: { value: 'eligible' } } }));
+  const b = rec('b', Object.assign(at(45.0, -114.0), { derived: { tier: 'PSC', capability: 'assessed', eligibility: { value: 'eligible' } } }));
+  const hs = [evt, a, b];
+  const sets = { evt247: C.destinationSet(hs, 'evt247'), advanced: C.destinationSet(hs, 'advanced') };
+  const acc = Object.fromEntries(hs.map(h => [h.id, C.computeAccess(h, sets, null)]));
+  const w = { wGap: 100, wEvt: 60, wAdv: 0, capMi: 400 };
+  const sens = C.rankSensitivity(hs, acc, w);
+  // Raising the (maxed) gap weight is now a real perturbation: a's rank can only improve with it.
+  const base = C.accessReview(hs, acc, w).ranked;
+  assert.equal(base.length, 2);
+  assert.ok(Object.values(sens).every(([lo, hi]) => lo >= 1 && hi <= 2));
+});
+
+test('transfer feasibility names each mode in words and is not part of the score', () => {
+  const a = rec('a');
+  const b = rec('b', at(47.0, -120.0));
+  const island = rec('island', { roadNetwork: { value: 'wa-san-juan-ferry' } });
+  const unknown = rec('unk', { roadNetwork: { value: 'unknown' } });
+  const near = C.transferFeasibility(a, b, 120, { rotorMaxMi: 150 });
+  assert.equal(near.ground, 'road');
+  assert.equal(near.rotor, 'within-range');
+  assert.equal(near.fixed, 'not-assessed');
+  assert.match(near.text, /documented road network.*within the 150-mi.*airport access not assessed/);
+  assert.equal(C.transferFeasibility(a, b, 200, { rotorMaxMi: 150 }).rotor, 'beyond-range');
+  assert.equal(C.transferFeasibility(island, b, 80).ground, 'not-connected');
+  assert.equal(C.transferFeasibility(unknown, b, 80).ground, 'unknown');
+  assert.equal(C.transferFeasibility(a, a, 0).text, 'On site');
+  assert.equal(C.transferFeasibility(a, null, null).ground, 'none');
+  assert.equal(C.transferFeasibility(a, b, null).text, 'Distance unknown');
+});
+
+test('a shortlist row without any usable component has no score rather than a crash', () => {
+  const site = rec('s', { derived: { tier: null, capability: 'unassessed', eligibility: { value: 'eligible' } } });
+  const access = { s: { evt247: { status: 'none', dest: null, miles: null }, advanced: { status: 'none', dest: null, miles: null }, hub: null } };
+  const res = C.accessReview([site], access, { wGap: 3, wEvt: 0, wAdv: 0, wHub: 0 }, {});
+  assert.equal(res.shortlist.length, 1);
+  assert.equal(res.shortlist[0].score, null);
+});

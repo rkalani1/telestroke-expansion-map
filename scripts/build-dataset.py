@@ -244,6 +244,22 @@ def derive_capability(r):
     return 'assessed'
 
 
+def tier_class(r, tier, cap):
+    """One class per record for filters, counts and map colour. 'none' means the
+    national certification (and the state designation, where the state has a
+    program) was searched and nothing was found; a record with some of that
+    still unknown is 'partial', never 'none'."""
+    if tier:
+        return tier.lower()
+    if cap in ('unassessed', 'conflicting'):
+        return cap
+    searched = ('no-record-found', 'negative')
+    if st(r.get('national')) in searched and (not state_program_applies(r)
+                                              or st(r.get('stateDesignation')) in searched + ('not-applicable',)):
+        return 'none'
+    return 'partial'
+
+
 def derive_eligibility(r):
     """Adult emergency-stroke analysis set. Rule published in hospitals.json."""
     status = (r.get('status') or {}).get('value')
@@ -424,6 +440,7 @@ def build_record(r, census, bounds, cities, review_date):
         ('tier', tier),
         ('tierBasis', basis),
         ('capability', 'n/a' if r.get('outOfRegion') else derive_capability(r)),
+        ('tierClass', None if r.get('outOfRegion') else tier_class(r, tier, derive_capability(r))),
         ('capabilityChecked', last_checked(r, ('national', 'stateDesignation', 'evt', 'evt247'))),
         ('capabilityOldest', None if r.get('outOfRegion') else oldest_critical(r)[0]),
         ('capabilityUndated', False if r.get('outOfRegion') else oldest_critical(r)[1]),

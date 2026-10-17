@@ -5,7 +5,7 @@ const browser = {
   fetch: 'readonly', console: 'readonly', setTimeout: 'readonly', clearTimeout: 'readonly',
   requestAnimationFrame: 'readonly', URL: 'readonly', URLSearchParams: 'readonly', Blob: 'readonly',
   getComputedStyle: 'readonly', matchMedia: 'readonly', AbortController: 'readonly', CSS: 'readonly',
-  self: 'readonly', L: 'readonly',
+  self: 'readonly', L: 'readonly', ResizeObserver: 'readonly',
 };
 const rules = {
   'no-undef': 'error', 'no-unused-vars': ['warn', { args: 'none' }], 'no-redeclare': 'error', 'no-dupe-keys': 'error',

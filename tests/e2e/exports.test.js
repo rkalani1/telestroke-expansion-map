@@ -20,7 +20,7 @@ test('CSV: scope, ids, national vs state columns, unknown blank (never zero), on
   const head = rows[0];
   const col = (k) => head.indexOf(k);
   for (const k of ['record_id', 'national_state', 'national_body', 'state_designation_state', 'state_level', 'evt_24x7_state', 'tier_basis',
-    'capability_last_checked', 'miles_to_nearest_24x7_evt', 'miles_to_my_center', 'export_scope', 'data_version', 'distance_metric']) {
+    'capability_oldest_critical_checked', 'tier_class', 'distances_approximate', 'miles_to_nearest_24x7_evt', 'miles_to_my_center', 'export_scope', 'data_version', 'distance_metric']) {
     assert.ok(col(k) >= 0, 'column ' + k);
   }
   const data = rows.slice(1).filter(r => r.length === head.length);
@@ -38,8 +38,8 @@ test('CSV: scope, ids, national vs state columns, unknown blank (never zero), on
     for (const cell of r) assert.ok(!/^[=+@]/.test(cell), 'no formula-leading cell: ' + cell);
   }
   assert.ok(data.every(r => r[col('distance_metric')] === 'straight-line miles'));
-  assert.ok(data.some(r => r[col('capability_last_checked')] && r[col('capability_last_checked')] !== data[0][col('capability_last_checked')]) || true);
-  const checked = new Set(data.map(r => r[col('capability_last_checked')]));
+  assert.ok(data.some(r => r[col('capability_oldest_critical_checked')] && r[col('capability_oldest_critical_checked')] !== data[0][col('capability_oldest_critical_checked')]) || true);
+  const checked = new Set(data.map(r => r[col('capability_oldest_critical_checked')]));
   assert.ok(checked.size > 1, 'records do not share one blanket verification date');
 });
 

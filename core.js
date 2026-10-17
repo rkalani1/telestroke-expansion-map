@@ -277,6 +277,24 @@
     return { mode, minutes: null, status: 'unavailable', reason: 'Unknown mode' };
   }
 
+  // Which transfer modes the scenario model can describe for one pair, in
+  // words. Shown beside the access review and kept out of its score: it is a
+  // property of the network model and the scenario range, not of need.
+  function transferFeasibility(origin, dest, miles, params) {
+    const p = transportParams(params);
+    if (!dest) return { ground: 'none', rotor: 'none', fixed: 'none', text: 'No destination in this set' };
+    if (origin && origin.id === dest.id) return { ground: 'on-site', rotor: 'on-site', fixed: 'on-site', text: 'On site' };
+    if (!isNum(miles)) return { ground: 'unknown', rotor: 'unknown', fixed: 'unknown', text: 'Distance unknown' };
+    const g = groundFeasibility(origin, dest).status;
+    const ground = g === 'feasible' ? 'road' : g;
+    const rotor = miles > p.rotorMaxMi ? 'beyond-range' : 'within-range';
+    const words = {
+      road: 'ground on a documented road network', 'not-connected': 'no road connection in the network model', unknown: 'road connection unknown',
+    };
+    const text = `${words[ground] || ground}; rotor-wing ${rotor === 'within-range' ? 'within' : 'beyond'} the ${p.rotorMaxMi}-mi scenario range; fixed-wing airport access not assessed`;
+    return { ground, rotor, fixed: 'not-assessed', text: text.charAt(0).toUpperCase() + text.slice(1) };
+  }
+
   function transferScenario(origin, dest, miles, params) {
     const p = transportParams(params);
     return {
@@ -414,9 +432,12 @@
   // Competition ranking ("1, 2, 2, 4") on scores rounded to 0.1, with a fully
   // deterministic order for display: score, then distance to EVT, then name, then id.
   function rankRows(rows) {
+    // A row without a score (no usable weighted component) sorts after every
+    // scored row, by miles to EVT.
+    const key = r => (r.score == null ? -1 : Math.round(r.score * 10));
     rows.sort((a, b) => {
-      const sa = Math.round(a.score * 10);
-      const sb = Math.round(b.score * 10);
+      const sa = key(a);
+      const sb = key(b);
       if (sb !== sa) return sb - sa;
       const ea = isNum(a.evtMi) ? a.evtMi : -1;
       const eb = isNum(b.evtMi) ? b.evtMi : -1;
@@ -425,7 +446,7 @@
     });
     let prev = null;
     rows.forEach((r, i) => {
-      const s = Math.round(r.score * 10);
+      const s = r.score == null ? 'none:' + (isNum(r.evtMi) ? r.evtMi : 'x') + ':' + r.h.id : Math.round(r.score * 10);
       r.rank = (prev && prev.s === s) ? prev.rank : i + 1;
       r.tied = !!(prev && prev.s === s);
       if (r.tied) prev.row.tied = true;
@@ -444,10 +465,13 @@
   // capability evidence was assessed; `shortlist` holds eligible candidates
   // whose capability is unknown or conflicting, ordered by geography alone so
   // missing evidence never turns into a high-priority gap.
+  // Membership of both lists is fixed by the evidence, never by the weights:
+  // every candidate whose capability is not fully assessed is on the
+  // verification shortlist, ordered by its geographic score when one can be
+  // computed and otherwise by miles to the nearest documented 24/7 EVT center.
   function accessReview(hospitals, accessById, params, opts) {
     const w = reviewParams(params);
     const anyWeight = w.wGap + w.wEvt + w.wAdv + (opts && opts.hasHub ? w.wHub : 0) > 0;
-    if (!anyWeight) return { ranked: [], shortlist: [], error: 'all-weights-zero', params: w };
     const ranked = [];
     const shortlist = [];
     for (const h of hospitals) {
@@ -457,13 +481,13 @@
       const assessed = capabilityAssessed(h);
       const wUse = assessed ? w : Object.assign({}, w, { wGap: 0 });
       const s = scoreOne(h, access, wUse);
-      if (s.score == null) continue;
       const row = { h, access, score: s.score, comps: s.comps, missing: s.missing || [], evtMi: access.evt247.miles, advMi: access.advanced.miles };
-      (assessed ? ranked : shortlist).push(row);
+      if (!assessed) shortlist.push(row);
+      else if (anyWeight && s.score != null) ranked.push(row);
     }
     rankRows(ranked);
     rankRows(shortlist);
-    return { ranked, shortlist, error: null, params: w };
+    return { ranked, shortlist, error: anyWeight ? null : 'all-weights-zero', params: w };
   }
 
   // Rank range across weight perturbations (each non-zero weight ×0.5 and
@@ -477,7 +501,12 @@
     for (const r of base.ranked) ranges[r.h.id] = [r.rank, r.rank];
     for (const k of keys) {
       for (const f of [0.5, 1.5]) {
-        const alt = Object.assign({}, w, { [k]: w[k] * f });
+        // Raising one weight by half is the same, for a weighted mean, as
+        // lowering every other weight to 2/3: this stays inside the slider range
+        // where a direct ×1.5 at the maximum would be clamped away.
+        const alt = Object.assign({}, w);
+        if (f < 1) alt[k] = w[k] * f;
+        else for (const j of keys.concat(['wGap', 'wEvt', 'wAdv', 'wHub'])) if (j !== k) alt[j] = w[j] / f;
         const res = accessReview(hospitals, accessById, alt, opts);
         for (const r of res.ranked) {
           const cur = ranges[r.h.id];
@@ -602,7 +631,7 @@
   // ------------------------------------------------------------------
   const MODES = ['capability', 'evt-distance', 'adv-distance', 'hub-distance', 'evidence', 'eligibility'];
   const VIEWS = ['find', 'explore', 'compare', 'data'];
-  const TIER_FILTERS = ['csc', 'tsc', 'psc', 'asr', 'none', 'unassessed', 'conflicting'];
+  const TIER_FILTERS = ['csc', 'tsc', 'psc', 'asr', 'none', 'partial', 'unassessed', 'conflicting'];
   const EVIDENCE_FILTERS = ['assessed', 'unassessed', 'conflicting', 'needs-verification'];
   const SCOPES = ['eligible', 'all'];
   const INCLUDES = ['excluded', 'unknown'];
@@ -616,7 +645,8 @@
   const MAX_COMPARE = 4;
 
   const REVIEW_KEYS = [['wGap', 'wg'], ['wEvt', 'we'], ['wAdv', 'wa'], ['wHub', 'wh'], ['capMi', 'cap'], ['desertMi', 'dm']];
-  const TRANSPORT_KEYS = [['didoMin', 'dido'], ['roadFactor', 'rf'], ['groundMph', 'gs'], ['rotorMph', 'rs'], ['rotorMaxMi', 'rr'], ['fixedMph', 'fs'], ['fixedGroundLegsMin', 'fg']];
+  const TRANSPORT_KEYS = [['didoMin', 'dido'], ['roadFactor', 'rf'], ['groundMph', 'gs'], ['groundHandoffMin', 'gh'], ['rotorMph', 'rs'],
+    ['rotorHandoffMin', 'rh'], ['rotorMaxMi', 'rr'], ['fixedMph', 'fs'], ['fixedGroundLegsMin', 'fg'], ['fixedHandoffMin', 'fh']];
 
   function defaultUiState() {
     return {
@@ -772,7 +802,7 @@
     haversineMi, locationOf, distanceBetween,
     claimState, displayTier, isEligible, isExcluded, isActive, canBeDestination, hasDocumented247Evt, isAdvancedCenter,
     destinationSet, nearestInSet, computeAccess, hubDifferential,
-    groundFeasibility, transportParams, legScenario, transferScenario,
+    groundFeasibility, transportParams, legScenario, transferScenario, transferFeasibility,
     distanceBin, reviewParams, gapComponent, capabilityAssessed, isReviewCandidate, accessReview, rankSensitivity, rankRows,
     normalizeSearch, tokenize, matchesToken, buildSearchFields, matchesQuery, searchRank,
     csvCell, toCsv,

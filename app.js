@@ -24,7 +24,11 @@ const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyrigh
 const RELIEF_URL = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSShadedReliefOnly/MapServer/tile/{z}/{y}/{x}';
 const RELIEF_ATTRIBUTION = 'Relief: <a href="https://www.usgs.gov/programs/national-geospatial-program/national-map">USGS The National Map</a> (3DEP)';
 const REDUCED_MOTION = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOBILE_Q = typeof matchMedia === 'function' ? matchMedia('(max-width: 767px)') : { matches: false, addEventListener() {} };
+// Phone layout: narrow screens, and short landscape screens (the same query as app.css).
+const MOBILE_Q = typeof matchMedia === 'function' ? matchMedia('(max-width: 767px), (max-height: 480px) and (max-width: 1000px)') : { matches: false, addEventListener() {} };
+// Up to tablet widths the hospital details cover the tool column (on phones,
+// the whole screen above the tab bar) instead of the map.
+const NARROW_Q = typeof matchMedia === 'function' ? matchMedia('(max-width: 1180px)') : { matches: false, addEventListener() {} };
 const STALE_DAYS = 365;
 
 const BODY_ABBR = { 'Joint Commission': 'JC', DNV: 'DNV', ACHC: 'ACHC', CIHQ: 'CIHQ' };
@@ -179,7 +183,7 @@ function loadPrefs() {
       if (p && typeof p === 'object') {
         if (['auto', 'light', 'dark'].includes(p.theme)) S.prefs.theme = p.theme;
         if (typeof p.cb === 'boolean') S.prefs.cb = p.cb;
-        if (['muted', 'standard', 'none'].includes(p.basemap)) S.prefs.basemap = p.basemap;
+        if (['muted', 'terrain', 'standard', 'none'].includes(p.basemap)) S.prefs.basemap = p.basemap;
         if (typeof p.hub === 'string') S.prefs.hub = p.hub;
         if (typeof p.shortcuts === 'boolean') S.prefs.shortcuts = p.shortcuts;
         if (typeof p.legend === 'boolean') S.prefs.legend = p.legend;
@@ -355,7 +359,7 @@ function presetPredicate(key) {
   }
   if (key === 'state') {
     return h => {
-      if (isOOR(h) || !['WA', 'ID'].includes(h.state) || (h.status && h.status.value) !== 'active') return false;
+      if (isOOR(h) || !STATE_PROGRAM_STATES.includes(h.state) || (h.status && h.status.value) !== 'active') return false;
       const sd = h.stateDesignation || {};
       const s = stOf(sd);
       if (s === 'unknown' || s === 'conflicting') return true;
@@ -381,14 +385,17 @@ function inScope(h, ui, hasQuery) {
   return false;
 }
 
+// Published by the build: a tier, 'none' (searched, nothing found), 'partial'
+// (some capability claims still unknown), 'unassessed' or 'conflicting'.
 function tierKey(h) {
   if (isOOR(h)) return null;
+  return (h.derived && h.derived.tierClass) || (tierOf(h) ? tierOf(h).toLowerCase() : 'unassessed');
+}
+const TIER_CLASS_TEXT = { none: 'None found in reviewed sources', partial: 'Partly assessed — no tier found so far', unassessed: 'Not assessed', conflicting: 'Conflicting evidence' };
+function tierText(h, short) {
   const t = tierOf(h);
-  if (t) return t.toLowerCase();
-  const cap = capOf(h);
-  if (cap === 'unassessed') return 'unassessed';
-  if (cap === 'conflicting') return 'conflicting';
-  return 'none';
+  if (t) return `${t} (${h.derived.tierBasis === 'national' ? 'national' : short ? 'state' : 'state crosswalk'})`;
+  return TIER_CLASS_TEXT[tierKey(h)] || 'Not assessed';
 }
 
 function passesOther(h, ui, tokens, exceptTier) {
@@ -438,7 +445,7 @@ function computeResults() {
   const tokens = C.tokenize(ui.q);
   const hasQuery = tokens.length > 0;
   const results = [];
-  const counts = { csc: 0, tsc: 0, psc: 0, asr: 0, none: 0, unassessed: 0, conflicting: 0, evt: 0, 'inc-unknown': 0, 'inc-excluded': 0 };
+  const counts = { csc: 0, tsc: 0, psc: 0, asr: 0, none: 0, partial: 0, unassessed: 0, conflicting: 0, evt: 0, 'inc-unknown': 0, 'inc-excluded': 0 };
   for (const h of S.all) {
     const scoped = inScope(h, ui, hasQuery);
     if (!isOOR(h) && !hasQuery && ui.scope === 'eligible') {
@@ -496,7 +503,7 @@ function activeFilterParts() {
   const parts = [];
   if (ui.preset) parts.push('preset: ' + presetTitle(ui.preset));
   if (ui.state !== 'ALL') parts.push(STATE_NAMES[ui.state]);
-  if (ui.tiers.length) parts.push(ui.tiers.map(t => ({ none: 'none found', unassessed: 'not assessed', conflicting: 'conflicting (no tier)' }[t] || t.toUpperCase())).join('/'));
+  if (ui.tiers.length) parts.push(ui.tiers.map(t => ({ none: 'none found', partial: 'partly assessed', unassessed: 'not assessed', conflicting: 'conflicting (no tier)' }[t] || t.toUpperCase())).join('/'));
   if (ui.evt) parts.push('24/7 EVT');
   if (ui.basis) parts.push(ui.basis === 'national' ? 'national certification' : 'state designation only');
   if (ui.cah) parts.push('CAH: ' + ui.cah);
@@ -566,7 +573,8 @@ function rowBadges(h) {
   if (!isOOR(h)) {
     if (cap === 'unassessed') out.push(badge('b-UNASSESSED', 'Capability not assessed'));
     else if (cap === 'conflicting') out.push(badge('b-CONFLICT', 'Conflicting evidence'));
-    else if (!tierOf(h)) out.push(badge('b-MUTED', 'No certification found'));
+    else if (!tierOf(h) && tierKey(h) === 'none') out.push(badge('b-MUTED', 'No certification found'));
+    else if (cap === 'partial') out.push(badge('b-UNASSESSED', 'Partly assessed'));
   }
   const e = h.derived && h.derived.eligibility;
   const status = h.status && h.status.value;
@@ -728,7 +736,13 @@ function glyphModel(h, opts) {
       m.size = tier ? Math.max(15, m.size - 2) : 15;
       if (tier) m.fill = TIER_VAR[tier];
       else { m.hollow = true; m.stroke = '--c-conflict'; }
-    } else m.fill = tier ? TIER_VAR[tier] : '--c-none';
+    } else if (tier) m.fill = TIER_VAR[tier];
+    else {
+      m.fill = '--c-none';
+      // Partly assessed with no tier yet: grey like "none found", plus the
+      // dashed ring that marks missing evidence.
+      if (tierKey(h) === 'partial') m.dashOverlay = true;
+    }
   } else if (mode === 'evt-distance' || mode === 'adv-distance' || mode === 'hub-distance') {
     const r = !a ? null : mode === 'evt-distance' ? a.evt247 : mode === 'adv-distance' ? a.advanced : a.hub;
     const bin = r ? C.distanceBin(r) : 'unknown';
@@ -800,6 +814,8 @@ function initMap() {
       el('h2', { text: 'The map library did not load' }),
       el('p', { text: 'Some networks block parts of the page. The hospital list, details, sources and exports still work from the Find view.' }),
     ]));
+    // Nothing is drawn, so the jump menu and the marker legend have nothing to act on or explain.
+    for (const q of ['.map-jump', '#legend']) $(q).hidden = true;
     return false;
   }
   S.map = L.map('map', {
@@ -847,28 +863,30 @@ function setBasemap() {
     // OSMF tile usage policy.
     S.tiles = L.tileLayer(TILE_URL, { maxZoom: 19, crossOrigin: 'anonymous', attribution: TILE_ATTRIBUTION }).addTo(S.map);
     S.tiles.on('tileload', () => { S.tileStats.ok++; if (S.tileStats.warned) { $('#map-banner').hidden = true; S.tileStats.warned = false; } });
+    $('#map-banner-close').addEventListener('click', () => { $('#map-banner').hidden = true; $('#map').focus(); });
     S.tiles.on('tileerror', () => {
       S.tileStats.err++;
       if (S.tileStats.err >= 6 && S.tileStats.ok === 0 && !S.tileStats.warned) {
         S.tileStats.warned = true;
-        const b = $('#map-banner');
-        b.textContent = 'Basemap tiles could not be loaded (offline or blocked). Hospital markers, the list, details and exports still work.';
-        b.hidden = false;
+        $('#map-banner-text').textContent = 'Basemap tiles could not be loaded (offline or blocked). Hospital markers, the list, details and exports still work.';
+        $('#map-banner').hidden = false;
       }
     });
   }
 }
 
 function dataBounds(records) {
+  if (typeof L === 'undefined') return null;
   const pts = records.filter(isLocated).map(h => [h.location.lat, h.location.lng]);
   return pts.length ? L.latLngBounds(pts) : null;
 }
 
 // Padding that keeps fitted points clear of everything floating over the map
 // (status bar, legend, jump menu, the detail panel where it overlays the map,
-// the phone search bar). Each overlay pads the map edge it intrudes from least,
-// and padding never takes more than 60% of either dimension, so a fit still has
-// room at tablet and laptop widths.
+// the phone search bar). Each overlay pads the map edge that costs the smallest
+// share of that dimension (a small corner pill pads the long edge, not the
+// short one), and padding never takes more than 60% of either dimension, so a
+// fit still has room at tablet and laptop widths.
 const MAP_OVERLAYS = ['#map-status', '#legend', '.map-jump', '#detail', '.search-block'];
 function mapPadding() {
   const base = 20;
@@ -876,7 +894,6 @@ function mapPadding() {
   if (!S.map) return { tl: [base, base], br: [base, base] };
   const m = S.map.getContainer().getBoundingClientRect();
   if (!m.width || !m.height) return { tl: [base, base], br: [base, base] };
-  const near = 48;
   for (const sel of MAP_OVERLAYS) {
     const node = $(sel);
     if (!node || node.hidden) continue;
@@ -885,13 +902,9 @@ function mapPadding() {
     const r = node.getBoundingClientRect();
     if (!r.width || !r.height) continue;
     if (r.right <= m.left || r.left >= m.right || r.bottom <= m.top || r.top >= m.bottom) continue;
-    const cand = [];
-    if (r.left <= m.left + near) cand.push(['left', r.right - m.left]);
-    if (r.right >= m.right - near) cand.push(['right', m.right - r.left]);
-    if (r.top <= m.top + near) cand.push(['top', r.bottom - m.top]);
-    if (r.bottom >= m.bottom - near) cand.push(['bottom', m.bottom - r.top]);
-    if (!cand.length) continue;
-    cand.sort((a, b) => a[1] - b[1]);
+    const cand = [['left', r.right - m.left, m.width], ['right', m.right - r.left, m.width],
+      ['top', r.bottom - m.top, m.height], ['bottom', m.bottom - r.top, m.height]];
+    cand.sort((a, b) => a[1] / a[2] - b[1] / b[2]);
     const [edge, depth] = cand[0];
     pad[edge] = Math.max(pad[edge], depth + 12);
   }
@@ -935,7 +948,45 @@ function computeOffsets(records) {
     });
   }
 }
-function refreshOffsets() { /* offsets are in screen pixels and zoom-independent */ }
+// Markers that sit on, or nearly on, each other at the current zoom get a
+// count badge on the one drawn on top, so a marker hiding others says so; a
+// click there opens the chooser. Recomputed after every render and zoom.
+const STACK_PX = 10;
+function renderStackBadges() {
+  if (!S.map) return;
+  if (!S.badgeLayer) S.badgeLayer = L.layerGroup().addTo(S.map);
+  S.badgeLayer.clearLayers();
+  S.stacks = new Map();
+  const pts = [];
+  for (const [id, mk] of S.markers) {
+    if (!S.markerLayer.hasLayer(mk)) continue;
+    const p = S.map.latLngToContainerPoint(mk.getLatLng());
+    const off = S.offsets.get(id) || [0, 0];
+    // Leaflet stacks markers by screen y plus their z-index offset.
+    pts.push({ id, x: p.x + off[0], y: p.y + off[1], top: p.y + (mk.options.zIndexOffset || 0), mk });
+  }
+  pts.sort((a, b) => b.top - a.top || a.id.localeCompare(b.id));
+  const used = new Set();
+  for (const a of pts) {
+    if (used.has(a.id)) continue;
+    const grp = pts.filter(b => !used.has(b.id) && (b.x - a.x) ** 2 + (b.y - a.y) ** 2 <= STACK_PX * STACK_PX);
+    if (grp.length < 2) continue;
+    for (const b of grp) { used.add(b.id); S.stacks.set(b.id, grp.length); }
+    const off = S.offsets.get(a.id) || [0, 0];
+    const badge = L.marker(a.mk.getLatLng(), {
+      icon: L.divIcon({ className: 'stack-badge', html: `<span>${grp.length}</span>`, iconSize: [20, 16], iconAnchor: [-3 - off[0], 19 - off[1]] }),
+      interactive: false, keyboard: false, zIndexOffset: 10000,
+    });
+    S.badgeLayer.addLayer(badge);
+    const n = badge.getElement();
+    if (n) n.setAttribute('aria-hidden', 'true');
+  }
+}
+function refreshOffsets() {
+  const had = !!(S.stacks && S.stacks.size);
+  renderStackBadges();
+  if (had !== !!S.stacks.size) renderLegend();
+}
 
 function markerIcon(h, m) {
   const box = m.size + 16;
@@ -991,6 +1042,7 @@ function renderMap() {
     if (!S.markerLayer.hasLayer(mk)) S.markerLayer.addLayer(mk);
   }
   for (const [id, mk] of S.markers) if (!keep.has(id) && S.markerLayer.hasLayer(mk)) S.markerLayer.removeLayer(mk);
+  renderStackBadges();
   renderLines();
   renderOverlays();
 }
@@ -1008,7 +1060,9 @@ function markerTooltip(h) {
     lines.push(el('br'), tierOf(h) ? `${tierOf(h)} (${h.derived.tierBasis === 'national' ? 'national' : 'state level'})` : CAP_LABELS[capOf(h)] || '');
   }
   if (C.hasDocumented247Evt(h)) lines.push(' · 24/7 EVT');
-  if (a && a.evt247.status === 'ok') lines.push(el('br'), `${C.formatMiles(a.evt247.miles)} mi straight-line to nearest 24/7 EVT`);
+  if (a && a.evt247.status === 'ok') lines.push(el('br'), `${milesText(a.evt247.miles, h, a.evt247.dest)} mi straight-line to nearest documented 24/7 EVT center`);
+  const stacked = S.stacks && S.stacks.get(h.id);
+  if (stacked > 1) lines.push(el('br'), el('em', { text: `${stacked} hospitals overlap here at this zoom — click to choose, or zoom in` }));
   return el('span', null, lines);
 }
 
@@ -1073,7 +1127,7 @@ function lineStyle(kind) {
 }
 
 function lineLabel(l) {
-  return `${C.formatMiles(l.miles)} mi straight-line` + (l.kind === 'hub' ? ' · my center' : l.kind === 'adv' ? ' · CSC/TSC-level' : l.alsoHub ? ' · 24/7 EVT · my center' : ' · 24/7 EVT');
+  return `${milesText(l.miles, S.byId.get(S.ui.selected), l.to)} mi straight-line` + (l.kind === 'hub' ? ' · my center' : l.kind === 'adv' ? ' · CSC/TSC-level' : l.alsoHub ? ' · 24/7 EVT · my center' : ' · 24/7 EVT');
 }
 
 function renderLines() {
@@ -1136,6 +1190,7 @@ function legendModel() {
       [{ fill: '--c-psc', size: 14 }, 'PSC — Primary'],
       [{ fill: '--c-asr', size: 13 }, 'ASR — Acute Stroke Ready'],
       [{ fill: '--c-none' }, 'No certification or designation found in reviewed sources'],
+      [{ fill: '--c-none', dashOverlay: true }, 'Partly assessed — no tier found so far'],
       [{ hollow: true, dashed: true, stroke: '--c-unassessed' }, 'Capability not assessed'],
       [{ shape: 'diamond', hollow: true, stroke: '--c-conflict' }, 'Diamond: conflicting evidence (filled when a tier is still documented)'],
     ], note: 'A state level is shown on the tier it maps to (display crosswalk) — not national accreditation. The list and details name the basis.' });
@@ -1206,6 +1261,11 @@ function renderLegend() {
     if (g.note) grp.appendChild(el('p', { class: 'legend-note', text: g.note }));
     body.appendChild(grp);
   }
+  if (S.stacks && S.stacks.size) {
+    body.appendChild(el('div', { class: 'legend-group' }, [el('div', { class: 'legend-row' }, [
+      el('span', { class: 'stack-badge', 'aria-hidden': 'true' }, el('span', { text: '3' })),
+      el('span', { text: 'Markers overlapping at this zoom; click to choose, or zoom in' })])]));
+  }
   const lg = $('#legend');
   const open = legendExpanded();
   lg.classList.toggle('collapsed', !open);
@@ -1216,6 +1276,9 @@ function renderLegend() {
 
 // The saved legend choice, unless a fit has collapsed it for this view.
 function legendExpanded() { return S.legendAuto === false ? false : !!S.prefs.legend; }
+
+// States with a hospital stroke designation program (as scripts/build-dataset.py).
+const STATE_PROGRAM_STATES = ['WA', 'ID', 'WY'];
 
 // ------------------------------------------------------------------
 // Selection + detail panel
@@ -1248,7 +1311,22 @@ function openDetail() {
   const d = $('#detail');
   d.hidden = false;
   document.body.classList.add('detail-open');
+  syncInert();
   if (S.map) setTimeout(() => S.map.invalidateSize(), 0);
+}
+
+// Is the detail panel covering the tool column (tablet) or the screen (phone)?
+function detailCoversTools() { return !$('#detail').hidden && NARROW_Q.matches; }
+
+// Whatever a panel or sheet covers is inert, so Tab and screen readers cannot
+// reach controls hidden under it. On phones the bottom tab bar stays usable.
+function syncInert() {
+  const phone = MOBILE_Q.matches;
+  const covered = detailCoversTools();
+  const sheet = phone && document.body.classList.contains('sheet-open');
+  $('#main').toggleAttribute('inert', phone && (covered || sheet));
+  $('#sidebar').toggleAttribute('inert', covered && !phone);
+  for (const p of $$('#sidebar > .panel')) p.toggleAttribute('inert', covered && phone);
 }
 
 function closeDetail(restore) {
@@ -1256,6 +1334,7 @@ function closeDetail(restore) {
   if (d.hidden) return;
   d.hidden = true;
   document.body.classList.remove('detail-open');
+  syncInert();
   const prevId = S.ui.selected;
   S.ui.selected = null;
   update();
@@ -1284,7 +1363,7 @@ function minimizeDetail(focusBack) {
   $('#detail').hidden = true;
   document.body.classList.remove('detail-open');
   document.body.classList.add('detail-minimized');
-  setSheet(false);
+  if (MOBILE_Q.matches) setSheet(false); else syncInert();
   renderStatus();
   if (focusBack === false) return;
   const back = $$('#map-status .link-btn').find(b => b.textContent.startsWith('Details: '));
@@ -1421,6 +1500,7 @@ function renderDetail() {
 
   // 6. Nearby
   if (isLocated(h)) body.appendChild(renderNearby(h));
+  body.appendChild(el('p', { class: 'hint detail-disclaimer', text: 'Planning reference from public sources — not for clinical decisions, dispatch or patient routing. Confirm capability and availability with the hospital directly.' }));
   body.scrollTop = scrollTop;
 }
 
@@ -1449,6 +1529,12 @@ function renderDetailActions(h) {
   bar.appendChild(el('button', { type: 'button', class: 'btn', text: 'Copy link', on: { click: () => copyLink() } }));
 }
 
+// Distances from or to a campus placed at a town centre are approximate: show
+// them as "≈" whole miles and say why.
+function isApprox(...hs) { return hs.some(x => x && x.location && x.location.precision === 'city'); }
+function milesText(miles, ...hs) { return isApprox(...hs) ? `≈${Math.round(miles)}` : C.formatMiles(miles); }
+const APPROX_NOTE = 'Approximate: one end is placed at a town centre (no cited campus coordinates).';
+
 function accessRow(kind, label, res, extraNote) {
   const lineCls = kind === 'evt' ? '' : kind === 'hub' ? 'hub' : 'adv';
   const dest = res && res.dest;
@@ -1456,7 +1542,11 @@ function accessRow(kind, label, res, extraNote) {
   let note = extraNote || '';
   if (!res) { mi = '—'; }
   else if (res.status === 'on-site') { mi = '0 mi'; note = (note ? note + ' ' : '') + (kind === 'hub' ? 'This is my receiving center.' : 'On site — no interfacility transfer for this destination class.'); }
-  else if (res.status === 'ok') mi = C.formatMiles(res.miles) + ' mi';
+  else if (res.status === 'ok') {
+    const sel = S.byId.get(S.ui.selected);
+    mi = milesText(res.miles, sel, dest) + ' mi';
+    if (isApprox(sel, dest)) note = (note ? note + ' ' : '') + APPROX_NOTE;
+  }
   else if (res.status === 'no-location') { mi = '—'; note = 'Unavailable: no verified location for this hospital.'; }
   else { mi = '—'; note = 'Unavailable: no destination in this set.'; }
   return el('div', { class: 'access-row' }, [
@@ -1510,7 +1600,7 @@ function renderAccessSection(h) {
     tbl.appendChild(el('thead', null, el('tr', null, [el('th', { scope: 'col', text: 'Leg' }), ...dests.map(d => el('th', { scope: 'col', class: 'num', text: d[0] }))])));
     const tb = el('tbody');
     tb.appendChild(el('tr', null, [el('th', { scope: 'row', text: `DIDO at this hospital (scenario input; includes activation and loading)` }), ...dests.map(() => el('td', { class: 'num', text: String(p.didoMin) }))]));
-    for (const [mode, name] of [['ground', 'Ground ambulance'], ['rotor', 'Rotor-wing'], ['fixed', 'Fixed-wing (incl. ground legs)']]) {
+    for (const [mode, name] of [['ground', 'Ground ambulance (documented road network only)'], ['rotor', 'Rotor-wing (aircraft, weather and landing zone not assessed)'], ['fixed', 'Fixed-wing incl. ground legs (airport and landing access not assessed)']]) {
       tb.appendChild(el('tr', null, [el('th', { scope: 'row', text: name }), ...dests.map(d => {
         const leg = C.legScenario(mode, h, d[1], d[2], p);
         return el('td', { class: 'num', text: leg.minutes == null ? '—' : C.formatMinutes(leg.minutes), title: leg.reason || null });
@@ -1524,7 +1614,7 @@ function renderAccessSection(h) {
       if (leg.minutes == null && leg.reason) reasons.push(`${d[0]}, ${mode}: ${leg.reason}.`);
     }
     sec.appendChild(el('p', { class: 'hint', text: (reasons.length ? reasons.join(' ') + ' ' : '')
-      + `Assumptions: road distance = straight-line × ${p.roadFactor} at ${p.groundMph} mph; rotor ${p.rotorMph} mph up to ${p.rotorMaxMi} mi; fixed-wing ${p.fixedMph} mph plus ${p.fixedGroundLegsMin} min of ground legs. Not dispatch times; aircraft, weather and acceptance are not modelled; receiving-center treatment intervals are not included. Adjust in Explore → Transport scenario assumptions.` }));
+      + `Assumptions: ${assumptionsText(p)}. Not dispatch times; aircraft, weather and acceptance are not modelled; receiving-center treatment intervals are not included. Adjust in Explore → Transport scenario assumptions.` }));
   }
   return sec;
 }
@@ -1633,7 +1723,7 @@ function presetTitle(k) {
 const PRESET_NOTES = {
   telestroke: 'Asks: which campuses in the adult emergency analysis set lack on-site documented 24/7 EVT, and how far are they (straight-line) from documented centers? Does not establish telestroke coverage, onboarding eligibility, transfer agreements or feasibility.',
   evt: 'Asks: where is thrombectomy evidence missing, conflicting, or not documented as 24/7 — including CSC/TSC/PSC-tier sites and large unassessed hospitals? A list of things to verify, not a judgement of any program.',
-  state: 'Asks: which Washington and Idaho campuses have an unresolved or pending state stroke level, or a state level that does not match their national tier? State levels and national certifications are different systems.',
+  state: 'Asks: which Washington, Idaho and Wyoming campuses (the states with a hospital stroke designation program) have an unresolved or pending state level, or a state level that does not match their national tier? State levels and national certifications are different systems.',
 };
 function applyPreset(key) {
   if (S.ui.preset === key) { S.ui.preset = null; syncControls(); update(); return; }
@@ -1649,9 +1739,15 @@ function applyPreset(key) {
 
 const TRANSPORT_FIELDS = [
   ['didoMin', 'DIDO at sending hospital (min)'], ['roadFactor', 'Road / straight-line factor'], ['groundMph', 'Ground speed (mph)'],
-  ['rotorMph', 'Rotor-wing speed (mph)'], ['rotorMaxMi', 'Rotor-wing range (mi)'], ['fixedMph', 'Fixed-wing speed (mph)'],
-  ['fixedGroundLegsMin', 'Fixed-wing ground legs (min)'],
+  ['groundHandoffMin', 'Ground handover at arrival (min)'],
+  ['rotorMph', 'Rotor-wing speed (mph)'], ['rotorHandoffMin', 'Rotor-wing lift-off, pad and handover (min)'], ['rotorMaxMi', 'Rotor-wing range (mi)'],
+  ['fixedMph', 'Fixed-wing speed (mph)'], ['fixedGroundLegsMin', 'Fixed-wing ground legs to and from airports (min)'], ['fixedHandoffMin', 'Fixed-wing taxi, loading and handover (min)'],
 ];
+function assumptionsText(p) {
+  return `ground = straight-line × ${p.roadFactor} at ${p.groundMph} mph + ${p.groundHandoffMin} min handover; ` +
+    `rotor-wing ${p.rotorMph} mph + ${p.rotorHandoffMin} min, within ${p.rotorMaxMi} mi; ` +
+    `fixed-wing ${p.fixedMph} mph + ${p.fixedGroundLegsMin} min ground legs + ${p.fixedHandoffMin} min handling (airport and landing access not assessed)`;
+}
 function buildTransportForm() {
   const f = $('#transport-form');
   clear(f);
@@ -1691,12 +1787,13 @@ function stateStats(hs) {
     advanced: c(h => C.isAdvancedCenter(h)),
     psc: c(h => tierOf(h) === 'PSC'),
     asr: c(h => tierOf(h) === 'ASR'),
-    none: c(h => !tierOf(h) && (capOf(h) === 'assessed' || capOf(h) === 'partial')),
+    none: c(h => tierKey(h) === 'none'),
+    partial: c(h => tierKey(h) === 'partial'),
     evt: c(h => C.hasDocumented247Evt(h)),
   };
 }
 const STAT_COLS = [['records', 'Records'], ['eligible', 'Analysis set'], ['excluded', 'Excluded'], ['unresolved', 'Unresolved'], ['unlocated', 'Not located'],
-  ['assessed', 'Capability assessed'], ['unassessed', 'Not assessed'], ['conflicting', 'Conflicting'], ['advanced', 'CSC/TSC-level'], ['psc', 'PSC'], ['asr', 'ASR'], ['none', 'None found'], ['evt', '24/7 EVT documented']];
+  ['assessed', 'Capability assessed'], ['unassessed', 'Not assessed'], ['conflicting', 'Conflicting'], ['advanced', 'CSC/TSC-level'], ['psc', 'PSC'], ['asr', 'ASR'], ['none', 'None found'], ['partial', 'Partly assessed, no tier yet'], ['evt', '24/7 EVT documented']];
 
 function summaryRecords(scope) {
   return scope === 'all' ? S.all.filter(h => !isOOR(h)) : S.results.filter(h => !isOOR(h));
@@ -1728,7 +1825,7 @@ function renderSummaryTables() {
   const max = Math.max(1, ...bins.map(x => x[1]), unknown);
   const t2 = el('table', { class: 'data' });
   t2.appendChild(el('caption', { text: `Straight-line miles to nearest documented 24/7 EVT center — ${elig.length} records in the analysis set within this scope` }));
-  t2.appendChild(el('thead', null, el('tr', null, [el('th', { scope: 'col', text: 'Distance' }), el('th', { scope: 'col', class: 'num', text: 'Records' }), el('th', { scope: 'col', text: '' })])));
+  t2.appendChild(el('thead', null, el('tr', null, [el('th', { scope: 'col', text: 'Distance' }), el('th', { scope: 'col', class: 'num', text: 'Records' }), el('th', { scope: 'col' }, el('span', { class: 'visually-hidden', text: 'Bar (share of records)' }))])));
   const b2 = el('tbody');
   for (const [b, n] of bins.concat([[{ label: 'Unknown (not located)' }, unknown]])) {
     b2.appendChild(el('tr', null, [el('th', { scope: 'row', text: b.label }), el('td', { class: 'num', text: String(n) }),
@@ -1741,7 +1838,7 @@ function renderSummaryTables() {
 // ------------------------------------------------------------------
 // Access review dialog
 // ------------------------------------------------------------------
-const REVIEW_FIELDS = [['wGap', 'Weight: documented capability-tier gap'], ['wEvt', 'Weight: miles to nearest 24/7 EVT'], ['wAdv', 'Weight: miles to nearest CSC/TSC-level'], ['wHub', 'Weight: miles to my center'], ['capMi', 'Distance cap (mi)'], ['desertMi', 'Flag beyond (mi) to 24/7 EVT']];
+const REVIEW_FIELDS = [['wGap', 'Weight: documented capability-tier gap'], ['wEvt', 'Weight: miles to nearest documented 24/7 EVT'], ['wAdv', 'Weight: miles to nearest CSC/TSC-level'], ['wHub', 'Weight: miles to my center'], ['capMi', 'Distance cap (mi)'], ['desertMi', 'Flag beyond (mi) to 24/7 EVT']];
 function buildReviewForm() {
   const f = $('#review-form');
   clear(f);
@@ -1769,7 +1866,7 @@ function renderReview() {
   S.lastReview = res;
   const sum = $('#review-summary');
   if (res.error === 'all-weights-zero') {
-    sum.textContent = 'All weights are zero, so there is nothing to rank. Raise at least one weight.';
+    sum.textContent = `All weights are zero, so nothing is ranked; raise at least one weight. The verification shortlist (${res.shortlist.length}) does not depend on the weights and is still listed, by miles to the nearest documented 24/7 EVT center.`;
   } else {
     const beyond = res.ranked.concat(res.shortlist).filter(r => C.isNum(r.evtMi) && r.evtMi > res.params.desertMi).length;
     const pool = reviewInput();
@@ -1784,14 +1881,21 @@ function renderReview() {
   rt.textContent = `Verification shortlist (${res.shortlist.length})`;
   $('#rt-ranked').textContent = `Ranked — capability assessed (${res.ranked.length})`;
 }
+// The transfer modes the scenario model can describe to the nearest
+// documented 24/7 EVT center: shown beside the score, never part of it.
+function feasibilityText(r) {
+  const a = r.access.evt247;
+  return C.transferFeasibility(r.h, a.dest, a.miles, S.ui.transport).text;
+}
 function compLabel(c) {
-  return { gap: 'Documented capability-tier gap (national certification or state level)', evt: 'Miles to nearest 24/7 EVT', adv: 'Miles to nearest CSC/TSC-level', hub: 'Miles to my center' }[c.key];
+  return { gap: 'Documented capability-tier gap (national certification or state level)', evt: 'Miles to nearest documented 24/7 EVT', adv: 'Miles to nearest CSC/TSC-level', hub: 'Miles to my center' }[c.key];
 }
 function renderReviewTable(container, rows, sens, ranked) {
   clear(container);
-  if (!rows.length) { container.appendChild(el('p', { class: 'hint', text: ranked ? 'No ranked candidates in this scope.' : 'No unassessed or conflicting candidates in this scope.' })); return; }
+  if (!rows.length) { container.appendChild(el('p', { class: 'hint', text: ranked ? 'No ranked candidates in this scope.' : 'No candidates whose capability is not assessed, partly assessed or conflicting in this scope.' })); return; }
   const tbl = el('table', { class: 'data' });
-  const head = ['#', 'Hospital', 'State', ranked ? 'Tier (basis)' : 'Capability', 'Mi to 24/7 EVT', 'Mi to CSC/TSC', S.ui.hub ? 'Mi to my center' : null, 'Score', ranked ? 'Rank range' : null, 'Evidence checked', 'Details'].filter(Boolean);
+  const head = ['#', 'Hospital', 'State', ranked ? 'Tier (basis)' : 'Capability', 'Mi to documented 24/7 EVT', 'Mi to CSC/TSC', S.ui.hub ? 'Mi to my center' : null, 'Score', ranked ? 'Rank range' : null,
+    'Transfer scenario to nearest 24/7 EVT (not scored)', 'Evidence checked', 'Details'].filter(Boolean);
   tbl.appendChild(el('thead', null, el('tr', null, head.map(t => el('th', { scope: 'col', class: /Mi|Score|#|range/.test(t) ? 'num' : null, text: t })))));
   const tb = el('tbody');
   for (const r of rows) {
@@ -1799,12 +1903,13 @@ function renderReviewTable(container, rows, sens, ranked) {
     const why = el('tr', { hidden: true }, el('td', { colspan: String(head.length) }, el('ul', { class: 'why' }, r.comps.map(c =>
       el('li', { text: c.value == null ? `${compLabel(c)}: not available (${c.detail || 'unknown'}) — weight not used` : `${compLabel(c)}: component ${c.value.toFixed(2)} × weight ${c.weight} → ${c.points.toFixed(1)} points` })).concat([
       el('li', { text: `Nearest 24/7 EVT: ${r.access.evt247.dest ? r.access.evt247.dest.name : '—'}; nearest CSC/TSC-level: ${r.access.advanced.dest ? r.access.advanced.dest.name : '—'}.` }),
-      el('li', { text: 'Score = weighted mean of the components shown (0–100). Not an assessment of need, operations or feasibility.' }),
+      el('li', { text: r.score == null ? 'No score: no weighted component has a value for this campus.' : 'Score = weighted mean of the components shown (0–100). Not an assessment of need, operations or feasibility.' }),
     ]))));
-    const whyBtn = el('button', { type: 'button', class: 'link-btn', 'aria-expanded': 'false', text: 'Why?', 'aria-label': `Why ${h.name} scores ${r.score.toFixed(0)}` });
+    const scoreTxt = r.score == null ? '—' : r.score.toFixed(0);
+    const whyBtn = el('button', { type: 'button', class: 'link-btn', 'aria-expanded': 'false', text: 'Why?', 'aria-label': r.score == null ? `Why ${h.name} has no score` : `Why ${h.name} scores ${scoreTxt}` });
     whyBtn.addEventListener('click', () => { why.hidden = !why.hidden; whyBtn.setAttribute('aria-expanded', String(!why.hidden)); });
     const range = sens[h.id];
-    const tierTxt = ranked ? (tierOf(h) ? `${tierOf(h)} (${h.derived.tierBasis === 'national' ? 'national' : 'state'})` : 'none found') : CAP_LABELS[capOf(h)];
+    const tierTxt = ranked ? tierText(h, true) : CAP_LABELS[capOf(h)];
     const cells = [
       el('td', { class: 'num' }, [String(r.rank), r.tied ? el('span', { class: 'rank-tie', text: ' =' }) : null]),
       el('td', null, el('button', { type: 'button', class: 'link-btn', text: h.name, on: { click: () => { $('#dlg-review').close(); selectHospital(h.id, { source: 'review' }); } } })),
@@ -1813,8 +1918,9 @@ function renderReviewTable(container, rows, sens, ranked) {
       el('td', { class: 'num', text: C.formatMiles(r.evtMi) }),
       el('td', { class: 'num', text: C.formatMiles(r.advMi) }),
       S.ui.hub ? el('td', { class: 'num', text: C.formatMiles(r.access.hub && r.access.hub.miles) }) : null,
-      el('td', { class: 'num', text: r.score.toFixed(0) }),
+      el('td', { class: 'num', text: scoreTxt }),
       ranked ? el('td', { class: 'num', text: range ? (range[0] === range[1] ? String(range[0]) : `${range[0]}–${range[1]}`) : '—' }) : null,
+      el('td', { text: feasibilityText(r) }),
       el('td', { text: evidenceDateText(h) }),
       el('td', null, whyBtn),
     ].filter(Boolean);
@@ -1873,13 +1979,13 @@ function compareFields() {
     ['National certification', h => `${nationalLabel(h)}${h.national && h.national.checked ? ' (checked ' + h.national.checked + ')' : ''}`],
     ['State designation', h => `${stateLabel(h)}${h.stateDesignation && h.stateDesignation.checked ? ' (checked ' + h.stateDesignation.checked + ')' : ''}`],
     ['Thrombectomy (EVT)', h => evtLabel(h)],
-    ['Tier shown (basis)', h => tierOf(h) ? `${tierOf(h)} (${h.derived.tierBasis === 'national' ? 'national' : 'state crosswalk'})` : capOf(h) === 'unassessed' ? 'Not assessed' : 'None found'],
+    ['Tier shown (basis)', h => tierText(h)],
     ['Oldest critical evidence (age)', h => evidenceDateText(h)],
-    ['Nearest 24/7 EVT (straight-line)', h => accessText(S.access[h.id].evt247)],
-    ['Nearest CSC/TSC-level (straight-line)', h => accessText(S.access[h.id].advanced)],
+    ['Nearest documented 24/7 EVT center in this dataset (straight-line)', h => accessText(S.access[h.id].evt247, h)],
+    ['Nearest CSC/TSC-level (straight-line)', h => accessText(S.access[h.id].advanced, h)],
   ];
   if (hub) {
-    f.push([`My center: ${hub.name}`, h => accessText(S.access[h.id].hub)]);
+    f.push([`My center: ${hub.name}`, h => accessText(S.access[h.id].hub, h)]);
     f.push(['My center minus nearest 24/7 EVT', h => { const d = C.hubDifferential(h, S.access[h.id], S.ui.transport); return d.status === 'ok' ? `${C.formatSignedMiles(d.miles)} mi` + (d.sameCenter ? ' (same center)' : '') : 'Unavailable' + (d.reason ? ': ' + d.reason : ''); }]);
   }
   f.push(['Road network (ground model)', h => (h.roadNetwork && h.roadNetwork.value) || 'unknown']);
@@ -1902,10 +2008,10 @@ function claimSourceUrls(h) {
   }
   return urls.join(' ');
 }
-function accessText(r) {
+function accessText(r, h) {
   if (!r) return '—';
   if (r.status === 'on-site') return 'On site (0 mi)';
-  if (r.status === 'ok') return `${r.dest.name} — ${C.formatMiles(r.miles)} mi`;
+  if (r.status === 'ok') return `${r.dest.name} — ${milesText(r.miles, h, r.dest)} mi${isApprox(h, r.dest) ? ' (approximate: town-centre location)' : ''}`;
   if (r.status === 'no-location') return 'Unavailable (not located)';
   return 'Unavailable';
 }
@@ -2054,7 +2160,7 @@ function buildMethods() {
     h2('Access review scoring'),
     ul([
       'Score = weighted mean (0–100) of normalised components: documented capability-tier gap — national certification or state level, whichever sets the display tier (none found 1.0 · ASR 0.65 · PSC 0.35), straight-line miles to the nearest 24/7 EVT center, to the nearest CSC/TSC-level center, and optionally to my center, each capped and divided by the cap.',
-      'Only campuses in the analysis set without on-site 24/7 EVT or a CSC/TSC-level tier are candidates. Campuses whose capability was not assessed or is conflicting are never given a gap value; they appear on a separate verification shortlist ranked by geography alone.',
+      'Only campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier are candidates. Campuses whose capability is not assessed, partly assessed or conflicting are never given a gap value; they appear on a separate verification shortlist, ordered by geography alone, whose membership does not depend on the weights.',
       'Ties (same score to 0.1) share a rank and are ordered by distance to EVT, then name. All-zero weights produce no ranking. Rank range shows sensitivity to each weight. Nothing about volumes, population, staffing, existing coverage or business opportunity is modelled.',
     ]),
     h2('Geography'), p(m.geography.note + ' Boundaries: ' + m.geography.boundaries + '.'),
@@ -2077,7 +2183,7 @@ function buildShortcuts() {
   const rows = [['/', 'Focus hospital search'], ['L', 'Focus the hospital list'], ['M', 'Focus the map (then arrow keys pan, + and − zoom)'], ['F', 'Find view'], ['E', 'Explore view'], ['C', 'Compare view'], ['Q', 'Data & methods view'], ['G', 'Explore → summary by state'], ['D', 'Toggle light/dark theme'], ['Shift+R', 'Reset filters'], ['?', 'This list'], ['Esc', 'Close the open dialog, the hospital details, or the mobile sheet']];
   const tbl = el('table', { class: 'data' }, [el('thead', null, el('tr', null, [el('th', { scope: 'col', text: 'Key' }), el('th', { scope: 'col', text: 'Action' })])),
     el('tbody', null, rows.map(([k, v]) => el('tr', null, [el('td', null, el('kbd', { text: k })), el('td', { text: v })])))]);
-  appendAll(body, [tbl, el('p', { class: 'hint', text: 'Single-key shortcuts work only when focus is not in a text field, and can be turned off in Data & methods → Display. Browser shortcuts such as Ctrl/⌘+F are never intercepted.' })]);
+  appendAll(body, [tbl, el('p', { class: 'hint', text: 'Single-key shortcuts work only when focus is not in a text field, and can be turned off in Data & methods → Display. While they are on, “/” moves to the hospital search instead of the browser’s quick find; shortcuts with Ctrl, ⌘ or Alt, such as Ctrl/⌘+F, are left to the browser.' })]);
 }
 
 // ------------------------------------------------------------------
@@ -2118,10 +2224,10 @@ const CSV_HEADER = ['record_id', 'name', 'state', 'city', 'county_derived', 'sta
   'national_state', 'national_body', 'national_program', 'national_tier', 'national_effective', 'national_expires', 'national_checked', 'national_method', 'national_sources',
   'state_designation_state', 'state_system', 'state_level', 'state_status', 'state_checked', 'state_method', 'state_sources',
   'evt_state', 'evt_24x7_state', 'evt_24x7_basis', 'evt_checked', 'evt_sources',
-  'tier_shown', 'tier_basis', 'capability_evidence', 'capability_last_checked',
+  'tier_shown', 'tier_basis', 'tier_class', 'capability_evidence', 'capability_oldest_critical_checked', 'capability_undated',
   'latitude', 'longitude', 'location_method', 'location_precision', 'road_network',
   'nearest_24x7_evt_center', 'miles_to_nearest_24x7_evt', 'nearest_csc_tsc_level_center', 'miles_to_nearest_csc_tsc_level',
-  'my_center', 'miles_to_my_center', 'my_center_minus_nearest_evt_miles',
+  'my_center', 'miles_to_my_center', 'my_center_minus_nearest_evt_miles', 'distances_approximate',
   'needs_verification', 'distance_metric', 'export_scope', 'data_version', 'evidence_review_date', 'exported_on'];
 function csvRow(h, scope) {
   const a = S.access[h.id];
@@ -2135,10 +2241,11 @@ function csvRow(h, scope) {
     stOf(n), n.body || '', n.program || '', n.tier || '', n.effective || '', n.expires || '', n.checked || '', n.method || '', claimSources(n),
     stOf(sd), sd.system || '', sd.level || '', sd.status || '', sd.checked || '', sd.method || '', claimSources(sd),
     stOf(h.evt), stOf(h.evt247), (h.evt247 && h.evt247.basis) || '', (h.evt247 && h.evt247.checked) || (h.evt && h.evt.checked) || '', claimSources(h.evt247) || claimSources(h.evt),
-    tierOf(h) || '', h.derived.tierBasis || '', capOf(h), lastCheckedOf(h) || '',
+    tierOf(h) || '', h.derived.tierBasis || '', tierKey(h) || '', capOf(h), lastCheckedOf(h) || '', h.derived.capabilityUndated ? 'yes' : '',
     h.location ? h.location.lat : '', h.location ? h.location.lng : '', h.location ? h.location.method : '', h.location ? h.location.precision : '', (h.roadNetwork && h.roadNetwork.value) || 'unknown',
     a.evt247.dest ? a.evt247.dest.name : '', miles(a.evt247), a.advanced.dest ? a.advanced.dest.name : '', miles(a.advanced),
     hub ? hub.name : '', hub ? miles(a.hub) : '', diff && diff.status === 'ok' ? Number(diff.miles.toFixed(1)) : '',
+    isApprox(h, a.evt247.dest, a.advanced.dest, hub) ? 'yes (a town-centre location is involved)' : '',
     (h.derived.needsVerification || []).join(' '), 'straight-line miles', scopeDescription(scope), stamp(), S.meta.evidence_review_date, todayStr()];
 }
 function exportCsv(scope) {
@@ -2196,21 +2303,23 @@ function summaryMarkdown() {
   lines.push('', '“None found” = assessed, no certification or designation found in reviewed sources. EVT overlaps the tiers.', '');
   const res = C.accessReview(recs, S.access, S.ui.review, { hasHub: !!hub });
   lines.push('## Access review — public-data shortlist', '');
-  if (res.error) lines.push('All weights are zero; no ranking computed.');
-  else {
+  if (res.error) {
+    lines.push('All weights are zero; no ranking computed.', '');
+    lines.push(`Verification shortlist (capability not assessed, partly assessed or conflicting; does not depend on the weights): ${res.shortlist.slice(0, 8).map(r => esc(r.h.name) + ' (' + r.h.state + ', ' + C.formatMiles(r.evtMi) + ' mi)').join('; ') || 'none'}.`, '');
+  } else {
     const w = res.params;
     const cands = recs.filter(h => C.isReviewCandidate(h, S.access[h.id])).length;
     const unresolved = recs.filter(h => eligOf(h) === 'unknown').length;
     lines.push(`Candidates: ${cands} campuses in the analysis set without on-site documented 24/7 EVT or a CSC/TSC-level tier → ${res.ranked.length} ranked, ${res.shortlist.length} on the verification shortlist.` +
       (unresolved ? ` ${unresolved} records in scope have unresolved eligibility and are not ranked (see "Unknowns" below).` : ''), '');
     lines.push(`Weights: capability-tier gap ${w.wGap} (national certification or state level), miles to 24/7 EVT ${w.wEvt}, miles to CSC/TSC-level ${w.wAdv}${hub ? ', miles to my center ' + w.wHub : ''}; cap ${w.capMi} mi. Questions to investigate — not onboarding eligibility, feasibility or an outreach list.`, '');
-    lines.push('| Rank | Hospital | State | Tier (basis) | Mi to 24/7 EVT | Score | Evidence checked |', '|---:|---|---|---|---:|---:|---|');
-    for (const r of res.ranked.slice(0, 10)) lines.push(`| ${r.rank}${r.tied ? '=' : ''} | ${esc(r.h.name)} | ${r.h.state} | ${tierOf(r.h) ? tierOf(r.h) + ' (' + (r.h.derived.tierBasis === 'national' ? 'national' : 'state') + ')' : 'none found'} | ${C.formatMiles(r.evtMi)} | ${r.score.toFixed(0)} | ${evidenceDateText(r.h)} |`);
-    lines.push('', `Verification shortlist (capability not assessed or conflicting; ranked by geography only): ${res.shortlist.slice(0, 8).map(r => esc(r.h.name) + ' (' + r.h.state + ', ' + C.formatMiles(r.evtMi) + ' mi)').join('; ') || 'none'}.`, '');
+    lines.push('| Rank | Hospital | State | Tier (basis) | Mi to documented 24/7 EVT | Score | Transfer scenario to nearest 24/7 EVT (not scored) | Evidence checked |', '|---:|---|---|---|---:|---:|---|---|');
+    for (const r of res.ranked.slice(0, 10)) lines.push(`| ${r.rank}${r.tied ? '=' : ''} | ${esc(r.h.name)} | ${r.h.state} | ${tierText(r.h, true)} | ${C.formatMiles(r.evtMi)} | ${r.score.toFixed(0)} | ${feasibilityText(r)} | ${evidenceDateText(r.h)} |`);
+    lines.push('', `Verification shortlist (capability not assessed, partly assessed or conflicting; ranked by geography only): ${res.shortlist.slice(0, 8).map(r => esc(r.h.name) + ' (' + r.h.state + ', ' + C.formatMiles(r.evtMi) + ' mi)').join('; ') || 'none'}.`, '');
   }
   const p = C.transportParams(S.ui.transport);
   lines.push('## Assumptions', '');
-  lines.push(`- Transport scenarios (illustrative): DIDO ${p.didoMin} min; road distance = straight-line × ${p.roadFactor} at ${p.groundMph} mph; rotor-wing ${p.rotorMph} mph within ${p.rotorMaxMi} mi; fixed-wing ${p.fixedMph} mph + ${p.fixedGroundLegsMin} min ground legs. Endpoint: arrival at the receiving hospital. Not dispatch times; no treatment-time targets are applied.`);
+  lines.push(`- Transport scenarios (illustrative): DIDO ${p.didoMin} min; ${assumptionsText(p)}. Endpoint: arrival at the receiving hospital. Not dispatch times; no treatment-time targets are applied.`);
   lines.push('- Lines are straight-line geometry, not routes or referral relationships. Health-system affiliation does not imply telestroke or transfer agreements.', '');
   lines.push('## Unknowns and source coverage', '');
   const nv = {};
@@ -2298,7 +2407,7 @@ function exportCompareCsv() {
   const meta = (k, v) => rows.push([k].concat(hs.map(() => v)));
   meta('my_center', hub ? `${hub.name} (${hub.id})` : 'none chosen');
   meta('distance_metric', 'straight-line miles');
-  meta('transport_assumptions', `DIDO ${p.didoMin} min; ground straight-line x${p.roadFactor} at ${p.groundMph} mph; rotor ${p.rotorMph} mph within ${p.rotorMaxMi} mi; fixed-wing ${p.fixedMph} mph + ${p.fixedGroundLegsMin} min ground legs (illustrative)`);
+  meta('transport_assumptions', `DIDO ${p.didoMin} min; ${assumptionsText(p)} (illustrative)`);
   meta('data_version', S.meta.data_version);
   meta('evidence_review_date', S.meta.evidence_review_date);
   meta('exported_on', todayStr());
@@ -2424,7 +2533,7 @@ function drawShape(ctx, shape, x, y, r) {
 function drawGlyph(ctx, m, x, y) {
   const r = m.size / 2;
   ctx.save();
-  if (m.dim) ctx.globalAlpha = 0.45;
+  if (m.dim) ctx.globalAlpha = 0.6;
   if (m.selected) { drawShape(ctx, 'circle', x, y, r + 6); ctx.strokeStyle = cssVar('--marker-halo'); ctx.lineWidth = 6; ctx.stroke(); }
   if (m.hub) { drawShape(ctx, 'circle', x, y, r + 5.5); ctx.strokeStyle = cssVar('--c-hub'); ctx.lineWidth = 2.5; ctx.stroke(); }
   if (m.evtRing) { drawShape(ctx, m.shape === 'diamond' ? 'circle' : m.shape, x, y, r + (m.hub ? 1.4 : 2.6)); ctx.strokeStyle = cssVar('--c-evt'); ctx.lineWidth = 3; ctx.stroke(); }
@@ -2585,30 +2694,37 @@ function populateSystems() {
 function populateJump() {
   const sel = $('#jump');
   const add = (value, label) => sel.appendChild(el('option', { value, text: label }));
-  const og1 = el('optgroup', { label: 'Regions' });
+  // Counts are located WWAMI records in each area (whole dataset, not the current results).
+  const n = (key) => jumpRecords(key).length;
+  const og1 = el('optgroup', { label: 'Regions (located records)' });
   sel.appendChild(og1);
-  const region = (value, label) => og1.appendChild(el('option', { value, text: label }));
+  const region = (value, label) => og1.appendChild(el('option', { value, text: `${label} (${n(value)})` }));
   region('all', 'All five states');
   region('contig', 'Washington · Idaho · Montana · Wyoming');
   region('AK', 'Alaska');
-  const og2 = el('optgroup', { label: 'States' });
+  const og2 = el('optgroup', { label: 'States (located records)' });
   sel.appendChild(og2);
-  for (const st of ['WA', 'ID', 'MT', 'WY']) og2.appendChild(el('option', { value: st, text: STATE_NAMES[st] + ` (${S.all.filter(h => h.state === st && !isOOR(h) && isLocated(h)).length})` }));
-  const og3 = el('optgroup', { label: 'Metro areas' });
+  for (const st of ['WA', 'ID', 'MT', 'WY']) og2.appendChild(el('option', { value: st, text: `${STATE_NAMES[st]} (${n(st)})` }));
+  const og3 = el('optgroup', { label: 'Metro areas (located records)' });
   sel.appendChild(og3);
-  for (const m of METRO) og3.appendChild(el('option', { value: m.key, text: m.label }));
+  for (const m of METRO) og3.appendChild(el('option', { value: m.key, text: `${m.label} (${n(m.key)})` }));
   void add;
 }
-function jumpBounds(key) {
+function jumpRecords(key) {
   const inRegion = S.all.filter(h => !isOOR(h) && isLocated(h));
-  if (key === 'all') return dataBounds(inRegion);
-  if (key === 'contig') return dataBounds(inRegion.filter(h => h.state !== 'AK'));
-  if (['WA', 'AK', 'ID', 'MT', 'WY'].includes(key)) return dataBounds(inRegion.filter(h => h.state === key));
+  if (key === 'all') return inRegion;
+  if (key === 'contig') return inRegion.filter(h => h.state !== 'AK');
+  if (['WA', 'AK', 'ID', 'MT', 'WY'].includes(key)) return inRegion.filter(h => h.state === key);
   const m = METRO.find(x => x.key === key);
-  if (m) return dataBounds(inRegion.filter(h => C.haversineMi(m.lat, m.lng, h.location.lat, h.location.lng) <= m.mi));
-  return null;
+  if (m) return inRegion.filter(h => C.haversineMi(m.lat, m.lng, h.location.lat, h.location.lng) <= m.mi);
+  return [];
+}
+function jumpBounds(key) {
+  const recs = jumpRecords(key);
+  return recs.length ? dataBounds(recs) : null;
 }
 function jumpTo(key) {
+  if (!S.map) return;
   const b = jumpBounds(key);
   if (b) fitTo(b, key.startsWith('m-') ? 11 : 9);
 }
@@ -2625,6 +2741,8 @@ function switchView(view, opts) {
     t.tabIndex = on ? 0 : -1;
   }
   for (const v of C.VIEWS) $('#panel-' + v).hidden = v !== view;
+  // A view under the detail panel would open out of sight: put the details away first.
+  if (detailCoversTools()) minimizeDetail(false);
   if (view === 'data') renderDataPanel();
   if (MOBILE_Q.matches && (!opts || opts.sheet !== false)) setSheet(view !== 'find' || (opts && opts.sheet === true));
   scheduleUrlSave();
@@ -2636,9 +2754,7 @@ function setSheet(open) {
   t.setAttribute('aria-expanded', String(!!open));
   renderStatus();
   if (S.map) setTimeout(() => S.map.invalidateSize(), 50);
-  const mapNode = $('#main');
-  if (MOBILE_Q.matches) mapNode.toggleAttribute('inert', !!open);
-  else mapNode.removeAttribute('inert');
+  syncInert();
   measureSheetTop();
 }
 function measureSheetTop() {
@@ -2817,7 +2933,19 @@ function bindEvents() {
   $('#open-shortcuts').addEventListener('click', () => openDialog('dlg-shortcuts'));
 
   // Map chrome
-  $('#jump').addEventListener('change', e => { const v = e.target.value; if (v) jumpTo(v); e.target.value = ''; });
+  // Arrow keys on a closed select fire "change" in some browsers, so keyboard
+  // movement only chooses; Enter or leaving the control applies it. A pointer
+  // choice applies at once. The chosen place stays shown until the map is dragged.
+  const jump = $('#jump');
+  let jumpKeys = false; let jumped = '';
+  const applyJump = () => { const v = jump.value; jumpKeys = false; if (v && v !== jumped) { jumped = v; jumpTo(v); } };
+  jump.addEventListener('keydown', e => {
+    if (['ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'].includes(e.key)) jumpKeys = true;
+    else if (e.key === 'Enter') { e.preventDefault(); applyJump(); }
+  });
+  jump.addEventListener('change', () => { if (!jumpKeys) applyJump(); });
+  jump.addEventListener('blur', () => { if (jumpKeys) applyJump(); });
+  if (S.map) S.map.on('dragstart', () => { jump.value = ''; jumped = ''; });
   $('#legend-toggle').addEventListener('click', () => { S.prefs.legend = !legendExpanded(); S.legendAuto = null; S.prefs.legendChosen = true; savePrefs(); renderLegend(); });
 
   // Detail
@@ -2827,6 +2955,7 @@ function bindEvents() {
   bindDialogs();
   document.addEventListener('keydown', onGlobalKey);
   if (MOBILE_Q.addEventListener) MOBILE_Q.addEventListener('change', onLayoutChange);
+  if (NARROW_Q.addEventListener) NARROW_Q.addEventListener('change', onLayoutChange);
   window.addEventListener('resize', () => { measureSheetTop(); });
   if (typeof matchMedia === 'function') {
     const dq = matchMedia('(prefers-color-scheme: dark)');
@@ -2839,26 +2968,39 @@ function toggleInclude(key, on) {
   S.ui.include = Array.from(s);
   update();
 }
+// Keep Tab and reading order in step with the layout: on phones the view tabs
+// sit at the bottom of the screen, so they come after the search and the map.
+function placeViewTabs() {
+  const nav = $('.view-tabs');
+  if (!nav) return;
+  if (MOBILE_Q.matches) { if (nav.previousElementSibling !== $('#main')) $('#main').after(nav); }
+  else if (nav.nextElementSibling !== $('#panel-find')) $('#sidebar').insertBefore(nav, $('#panel-find'));
+}
 function onLayoutChange() {
-  if (!MOBILE_Q.matches) { document.body.classList.remove('sheet-open', 'detail-minimized'); $('#main').removeAttribute('inert'); }
+  placeViewTabs();
+  if (!MOBILE_Q.matches) document.body.classList.remove('sheet-open', 'detail-minimized');
+  syncInert();
   measureSheetTop();
   if (S.map) setTimeout(() => S.map.invalidateSize(), 50);
 }
 
 function exportReviewCsv() {
   const res = S.lastReview || C.accessReview(reviewInput(), S.access, S.ui.review, { hasHub: !!S.ui.hub });
-  if (res.error) { toast('All weights are zero — nothing to export', 'warn'); return; }
+  // With every weight at zero nothing is ranked, but the shortlist still exports.
   const w = res.params;
-  const head = ['list', 'rank', 'tied', 'record_id', 'name', 'state', 'tier_shown', 'tier_basis', 'capability_evidence', 'capability_last_checked',
+  const head = ['list', 'rank', 'tied', 'record_id', 'name', 'state', 'tier_shown', 'tier_basis', 'capability_evidence', 'capability_oldest_critical_checked',
     'miles_to_nearest_24x7_evt', 'nearest_24x7_evt_center', 'miles_to_nearest_csc_tsc_level', 'miles_to_my_center',
-    'points_gap', 'points_evt', 'points_adv', 'points_hub', 'score', 'w_gap', 'w_evt', 'w_adv', 'w_hub', 'cap_mi', 'candidate_scope', 'data_version'];
+    'points_gap', 'points_evt', 'points_adv', 'points_hub', 'score', 'transfer_scenario_to_nearest_24x7_evt_not_scored', 'transport_assumptions',
+    'w_gap', 'w_evt', 'w_adv', 'w_hub', 'cap_mi', 'candidate_scope', 'data_version'];
+  const assumptions = assumptionsText(C.transportParams(S.ui.transport));
   const pts = (r, k) => { const c = r.comps.find(x => x.key === k); return c && c.points != null ? Number(c.points.toFixed(2)) : ''; };
   const rows = [head];
   for (const [list, arr] of [['ranked', res.ranked], ['verification-shortlist', res.shortlist]]) {
     for (const r of arr) rows.push([list, r.rank, r.tied ? 'yes' : '', r.h.id, r.h.name, r.h.state, tierOf(r.h) || '', r.h.derived.tierBasis || '', capOf(r.h), lastCheckedOf(r.h) || '',
       C.isNum(r.evtMi) ? Number(r.evtMi.toFixed(1)) : '', r.access.evt247.dest ? r.access.evt247.dest.name : '', C.isNum(r.advMi) ? Number(r.advMi.toFixed(1)) : '',
       r.access.hub && C.isNum(r.access.hub.miles) ? Number(r.access.hub.miles.toFixed(1)) : '',
-      pts(r, 'gap'), pts(r, 'evt'), pts(r, 'adv'), pts(r, 'hub'), Number(r.score.toFixed(2)), w.wGap, w.wEvt, w.wAdv, S.ui.hub ? w.wHub : '', w.capMi,
+      pts(r, 'gap'), pts(r, 'evt'), pts(r, 'adv'), pts(r, 'hub'), r.score == null ? '' : Number(r.score.toFixed(2)), feasibilityText(r), assumptions,
+      w.wGap, w.wEvt, w.wAdv, S.ui.hub ? w.wHub : '', w.capMi,
       S.reviewScope === 'all' ? 'whole analysis set' : 'current results', stamp()]);
   }
   download(C.toCsv(rows), `stroke-access-review_w${w.wGap}-${w.wEvt}-${w.wAdv}-${w.wHub}_cap${w.capMi}_${stamp()}.csv`, 'text/csv');
@@ -2867,9 +3009,9 @@ function exportReviewCsv() {
 function onGlobalKey(e) {
   if (e.key === 'Escape') {
     if (document.querySelector('dialog[open]')) return; // native dialog handles it
-    if (S.map && S.map._popup && S.map.hasLayer(S.map._popup)) { S.map.closePopup(); return; }
+    if (S.map && S.map._popup && S.map.hasLayer(S.map._popup)) { S.map.closePopup(); $('#map').focus(); return; }
     if (!$('#detail').hidden) { e.preventDefault(); closeDetail(true); return; }
-    if (MOBILE_Q.matches && document.body.classList.contains('sheet-open')) { setSheet(false); return; }
+    if (MOBILE_Q.matches && document.body.classList.contains('sheet-open')) { setSheet(false); $('#sheet-toggle').focus(); return; }
     return;
   }
   if (!S.prefs.shortcuts) return;
@@ -2879,11 +3021,13 @@ function onGlobalKey(e) {
   if (tag === 'input' || tag === 'textarea' || tag === 'select' || (t && t.isContentEditable)) return;
   if (document.querySelector('dialog[open]')) return;
   const k = e.key;
-  // On a phone the detail sheet covers everything; a shortcut that moves focus
-  // elsewhere first puts the sheet away so focus never lands under it.
+  // Up to tablet widths the detail panel covers the tools (on a phone, the
+  // map too); a shortcut that moves focus there first puts the details away so
+  // focus never lands under the panel.
   const run = (fn) => {
     e.preventDefault();
-    if (MOBILE_Q.matches && !$('#detail').hidden && k !== '?' && k.toLowerCase() !== 'd') minimizeDetailOnPhone(false);
+    const lk = k.toLowerCase();
+    if (detailCoversTools() && k !== '?' && lk !== 'd' && !(lk === 'm' && !MOBILE_Q.matches)) minimizeDetail(false);
     fn();
   };
   if (k === '/') return run(() => { switchView('find'); $('#search').focus(); });
@@ -2953,12 +3097,24 @@ async function boot() {
   buildMethods();
   buildShortcuts();
   renderProvenance();
+  placeViewTabs();
+  // The footer wraps at narrow widths and larger text; the layout above it
+  // follows its real height.
+  const foot = $('#provenance');
+  if (foot && typeof ResizeObserver === 'function') {
+    new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--footer-real', foot.offsetHeight + 'px');
+      if (S.map) S.map.invalidateSize();
+    }).observe(foot);
+  }
   recomputeAccess();
   syncControls();
   switchView(S.ui.view, { sheet: false });
   if (mapOk) {
     if (S.explicit.viewport) S.map.setView([S.ui.view_lat, S.ui.view_lng], S.ui.view_z);
-    else fitTo(jumpBounds('contig'), 7);
+    // No explicit view: show what the link filters to (a one-state filter fits
+    // that state, Alaska included) before falling back to the contiguous states.
+    else fitTo(S.ui.state !== 'ALL' ? jumpBounds(S.ui.state) : jumpBounds('contig'), 7);
   }
   S.booted = true;
   update();

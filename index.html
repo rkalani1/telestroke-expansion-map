@@ -50,7 +50,7 @@
 
   <div class="app" id="app">
     <!-- Left: tools. On phones this becomes a sheet over the map. -->
-    <div class="sidebar" id="sidebar">
+    <section class="sidebar" id="sidebar" aria-label="Hospital tools">
       <header class="brand">
         <h1>Regional Hospital Stroke Capabilities</h1>
         <p class="brand-sub">Washington · Alaska · Idaho · Montana · Wyoming — public-source reference</p>
@@ -120,6 +120,7 @@
                   <button type="button" class="chip" data-tier="psc" aria-pressed="false"><span class="swatch sw-PSC" aria-hidden="true"></span>PSC <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="asr" aria-pressed="false"><span class="swatch sw-ASR" aria-hidden="true"></span>ASR <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="none" aria-pressed="false"><span class="swatch sw-NONE" aria-hidden="true"></span>None found <span class="count"></span></button>
+                  <button type="button" class="chip" data-tier="partial" aria-pressed="false"><span class="swatch sw-PARTIAL" aria-hidden="true"></span>Partly assessed <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="unassessed" aria-pressed="false"><span class="swatch sw-UNASSESSED" aria-hidden="true"></span>Not assessed <span class="count"></span></button>
                   <button type="button" class="chip" data-tier="conflicting" aria-pressed="false"><span class="swatch sw-CONFLICT" aria-hidden="true"></span>Conflicting <span class="count"></span></button>
                 </div>
@@ -224,9 +225,9 @@
             <h2 id="preset-heading">Question presets</h2>
             <p class="hint">Each preset sets filters, map mode and weights to frame a question. None establishes eligibility, feasibility or an outreach list.</p>
             <div class="preset-list">
-              <button type="button" class="preset" data-preset="telestroke"><strong>Telestroke access review</strong><span>Eligible campuses without on-site 24/7 EVT, ranked by straight-line distance and documented capability.</span></button>
+              <button type="button" class="preset" data-preset="telestroke"><strong>Telestroke access review</strong><span>Campuses in the analysis set without documented on-site 24/7 EVT, ranked by straight-line distance and documented capability.</span></button>
               <button type="button" class="preset" data-preset="evt"><strong>EVT capability assessment</strong><span>Where thrombectomy evidence is unknown, conflicting or not 24/7 — what to verify first.</span></button>
-              <button type="button" class="preset" data-preset="state"><strong>State designation review</strong><span>Washington and Idaho campuses whose state level is unresolved or differs from national status.</span></button>
+              <button type="button" class="preset" data-preset="state"><strong>State designation review</strong><span>Washington, Idaho and Wyoming campuses whose state level is unresolved or differs from national status.</span></button>
             </div>
             <p class="preset-active" id="preset-active" hidden></p>
           </section>
@@ -287,6 +288,7 @@
         <div class="panel-body">
           <section class="card" aria-labelledby="dataset-heading">
             <h2 id="dataset-heading">Dataset</h2>
+            <p class="disclaimer"><strong>Planning reference — not for clinical decisions, dispatch or patient routing.</strong> Public sources only; confirm capability and availability with the hospital directly.</p>
             <dl class="kv-list" id="data-overview"></dl>
             <button type="button" class="btn" id="open-methods">Methods, definitions and limits</button>
           </section>
@@ -353,17 +355,18 @@
           </section>
         </div>
       </section>
-    </div>
+    </section>
 
     <!-- Map -------------------------------------------------------------->
     <main class="map-area" id="main" aria-label="Map">
-      <section id="map" class="map" tabindex="0" aria-roledescription="map" aria-label="Map of hospitals. The hospital list in Find gives the same information." aria-describedby="map-keys"></section>
-      <p id="map-keys" class="visually-hidden">Arrow keys pan the map and plus and minus zoom when the map has focus.</p>
+      <!-- Status and jump menu come before the map in Tab order, as they sit above it on screen. -->
       <div class="map-status" id="map-status" aria-live="polite"></div>
       <div class="map-jump">
         <label class="visually-hidden" for="jump">Jump to region</label>
         <select id="jump" class="jump-select"><option value="">Jump to…</option></select>
       </div>
+      <section id="map" class="map" tabindex="0" aria-roledescription="map" aria-label="Map of hospitals. The hospital list in Find gives the same information." aria-describedby="map-keys"></section>
+      <p id="map-keys" class="visually-hidden">Arrow keys pan the map and plus and minus zoom when the map has focus.</p>
       <section class="legend" id="legend" aria-label="Map legend">
         <div class="legend-head">
           <h2 id="legend-title">Legend</h2>
@@ -373,7 +376,12 @@
         </div>
         <div id="legend-body" class="legend-body"></div>
       </section>
-      <p class="map-banner" id="map-banner" hidden></p>
+      <div class="map-banner" id="map-banner" role="status" hidden>
+        <p id="map-banner-text"></p>
+        <button type="button" class="icon-btn" id="map-banner-close" aria-label="Dismiss basemap message">
+          <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
     </main>
 
     <!-- Detail ------------------------------------------------------------>
