@@ -84,8 +84,8 @@ for (const [w, h] of [[768, 1024], [820, 1180], [1024, 768], [1280, 720], [1440,
 
 test('distance table: current results, sortable headers, on site 0, unknown with a reason, approximate cue, CSV with provenance', async () => {
   const { page, context, errors } = await openApp(browser, srv.base, '?hub=500064');
-  // The data has no unlocated record today; take the location off one in this
-  // page so the unknown path is exercised through the app's own recompute.
+  // Take the location off one record in this page so the unknown path is
+  // exercised through the app's own recompute (the data may also hold unlocated records).
   const lost = await page.evaluate(() => {
     const S = window.__strokeAtlas;
     const h = S.results.find(x => !x.outOfRegion && x.location && x.id !== '500064' && !x.derived.tier);
@@ -203,7 +203,7 @@ test('distance table: current results, sortable headers, on site 0, unknown with
   assert.equal(lostRow[c('nearest_documented_24x7_evt_status')], 'no-location');
   assert.equal(lostRow[c('my_center_status')], 'no-location');
   assert.equal(lostRow[c('miles_to_my_center')], '');
-  assert.ok(data.filter(r => r[0] !== '500064' && r[0] !== lost).every(r => r[c('my_center_status')] === 'ok' && r[c('miles_to_my_center')] !== ''));
+  assert.ok(data.filter(r => r[0] !== '500064' && r[0] !== lost && r[c('nearest_documented_24x7_evt_status')] !== 'no-location').every(r => r[c('my_center_status')] === 'ok' && r[c('miles_to_my_center')] !== ''));
 
   // A hospital name selects it.
   const target = await page.evaluate(() => document.querySelectorAll('#matrix-table tbody th button')[2].textContent);

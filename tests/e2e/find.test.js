@@ -154,8 +154,11 @@ test('unlocated records stay searchable, say why there is no marker, and are cou
   const lost = fx.unlocated;
   // In the analysis set, so the default list and the status lines count it.
   assert.ok(await p.$(`#results .result[data-id="${lost.id}"]`), 'listed without a search');
-  assert.match(await p.textContent('#result-summary'), / · 1 without a map location$/);
-  assert.match(await p.textContent('#map-status'), /, 1 not located;/);
+  // The fixture's record plus any record the data itself leaves unlocated.
+  const unlocated = await p.evaluate(() => window.__strokeAtlas.results.filter(h => !h.outOfRegion && !h.location).length);
+  assert.ok(unlocated >= 1);
+  assert.match(await p.textContent('#result-summary'), new RegExp(` · ${unlocated} without a map location$`));
+  assert.match(await p.textContent('#map-status'), new RegExp(`, ${unlocated} not located;`));
   const marked = await p.evaluate((id) => { const S = window.__strokeAtlas; const mk = S.markers.get(id); return !!(mk && S.markerLayer.hasLayer(mk)); }, lost.id);
   assert.equal(marked, false, 'no marker is drawn for it');
   await search(p, lost.name);

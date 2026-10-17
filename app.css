@@ -520,7 +520,8 @@ html[data-theme="dark"] .map.bm-standard .leaflet-tile-pane { filter: invert(1) 
 .map-jump { position: absolute; top: var(--sp-3); right: var(--sp-3); z-index: 500; }
 .jump-select { min-height: 36px; width: 156px; box-shadow: var(--shadow-1); font-weight: 600; text-overflow: ellipsis; }
 .map-banner {
-  position: absolute; left: 50%; transform: translateX(-50%); top: calc(var(--sp-3) + 52px); z-index: 600;
+  /* Below the status bar, whose measured height (--status-h) grows when it wraps. */
+  position: absolute; left: 50%; transform: translateX(-50%); top: calc(var(--sp-3) + var(--status-h, 40px) + 8px); z-index: 600;
   width: max-content; max-width: min(520px, calc(100% - 32px));
   display: flex; align-items: flex-start; gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-1) var(--sp-2) var(--sp-3); border-radius: var(--radius); font-size: var(--fs-sm);
