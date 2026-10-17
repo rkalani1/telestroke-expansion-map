@@ -82,14 +82,32 @@ test('a hospital that is itself a 24/7 EVT center shows on-site 0 mi, not unknow
   await context.close();
 });
 
-test('ferry or isolated road networks never get a ground-transfer time', async () => {
+test('no ground-transfer time across road networks; a shared local network keeps one', async () => {
   const { page, context } = await openApp(browser, srv.base);
-  const island = await pick(page, (S) => {
-    const h = S.all.find(x => x.location && x.roadNetwork && /ferry|isolated|ak-/.test(x.roadNetwork.value || '') && S.access[x.id].evt247.status === 'ok');
+  // Alaska ferry and isolated communities have their own networks, so any
+  // origin whose nearest documented 24/7 EVT center lies on another network
+  // must get no ground time (status not-connected), never a plausible number.
+  const cut = await pick(page, (S) => {
+    const h = S.all.find(x => x.location && x.roadNetwork && /ferry|isolated/.test(x.roadNetwork.value || '')
+      && S.access[x.id].evt247.status === 'ok' && S.access[x.id].evt247.dest.roadNetwork.value !== x.roadNetwork.value);
     return h && h.id;
   });
-  if (!island) return;
-  const leg = await pick(page, `(S, C) => C.legScenario('ground', S.byId.get('${island}'), S.access['${island}'].evt247.dest, S.access['${island}'].evt247.miles)`);
+  assert.ok(cut, 'an island or isolated site whose nearest EVT center is on another network');
+  const leg = await pick(page, `(S, C) => C.legScenario('ground', S.byId.get('${cut}'), S.access['${cut}'].evt247.dest, S.access['${cut}'].evt247.miles)`);
   assert.equal(leg.minutes, null);
+  assert.equal(leg.status, 'not-connected');
+  const rotor = await pick(page, `(S, C) => C.legScenario('fixed', S.byId.get('${cut}'), S.access['${cut}'].evt247.dest, S.access['${cut}'].evt247.miles)`);
+  assert.ok(rotor.minutes > 0, 'air scenarios do not depend on roads');
+  // Two campuses in the same ferry-served town share its local roads.
+  const local = await pick(page, (S, C) => {
+    const xs = S.all.filter(x => x.location && x.roadNetwork && /-ferry$/.test(x.roadNetwork.value || ''));
+    for (const a of xs) for (const b of xs) {
+      if (a.id !== b.id && a.roadNetwork.value === b.roadNetwork.value) {
+        return C.legScenario('ground', a, b, C.distanceBetween(a, b));
+      }
+    }
+    return null;
+  });
+  if (local) assert.ok(local.minutes > 0 && local.status === 'scenario', JSON.stringify(local));
   await context.close();
 });
